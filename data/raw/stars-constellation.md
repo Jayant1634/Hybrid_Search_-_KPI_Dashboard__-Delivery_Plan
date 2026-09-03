@@ -1,0 +1,16 @@
+---
+title: "Constellation"
+source: "https://simple.wikipedia.org/wiki/Constellation"
+license: "CC BY-SA 4.0"
+topic: "stars"
+fetched: "2026-09-03"
+---
+
+A constellation is a group of stars which make up imaginary outline or pattern in the night sky (the celestial sphere). Usually they are said to represent an animal, mythological person or creature in a shape. When seen, the group of stars seem to make a pattern. 
+The word constellation comes from Latin: con-, meaning together and stella- meaning stars. Some examples of constellations are Ursa major, Orion, Taurus, Draco, Cancer etc.  Constellations were used to group stars.  Different places in the world may have different constellations, but today astronomy has a fixed set of 88 constellations.  This set is based on the Greek set and later some southern constellations were added, for example Antlia - the air pump.  Most constellations have names that come from Greek mythology, like Orion or Andromeda.
+There are 12 constellations in the Zodiac. The Sun travels through the Zodiac once each year. There is also a thirteenth constellation Ophiuchus - the carrier of a serpent, which the Sun goes through. However, most people do not think that it is in the Zodiac.
+
+
+History
+No one knows who first saw the constellations. Ancient civilizations, like the Mayans, drew their own star maps of the skies with their constellations, very few of which we use today.
+Ptolemy's 48 constellations are still recognized by the IAU today, and the rest of the constellations were added later
