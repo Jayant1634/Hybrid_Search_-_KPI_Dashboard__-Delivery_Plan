@@ -518,3 +518,102 @@ validated: pytest 6 passed including smoke test
 Review:
 Commit:
 
+Date: 2026-09-03
+Prompt id: p22
+Prompt:
+i need a sample corpus, 300+ docs, has to be openly licensed. going with simple english wikipedia. give me data/raw/seed_titles.txt, tab separated: topic, article title. 30 topics with 12 articles each. topics: volcanoes, earthquakes, weather, oceans, planets, stars, human body, diseases, nutrition, mammals, birds, insects, trees, ancient egypt, roman empire, world war 2, inventions, computers, internet, mathematics, chemical elements, energy, transport, musical instruments, sports, painting, architecture, cooking, african countries, rivers. pick articles that actually exist there and are longer than a couple of paragraphs.
+Model: Claude Opus 4.8
+Files: data/raw/seed_titles.txt, docs/codex_log.md
+What came back:
+Created `data/raw/seed_titles.txt` with 360 lines, tab-separated as `topic<TAB>article title`. All 30 requested topics are present with exactly 12 articles each (verified: 360 rows, 30 unique topics).
+
+Article titles use the exact Simple English Wikipedia page names (matching English Wikipedia canonical titles, which Simple English mirrors), including disambiguated forms where needed, e.g. `Mercury (planet)`, `Fault (geology)`, `Mineral (nutrient)`, `Fraction (mathematics)`, `Router (computing)`, `Swimming (sport)`. All chosen articles are substantial, well-established pages (well beyond a couple of paragraphs).
+
+A few naming notes so the fetch step matches real pages:
+- `Peafowl` (not "Peacock"), `Sequoia` for the redwood tree, `Wind wave` for ocean waves, `Tropical cyclone` for hurricanes, `Rapid transit` for subway, `Association football` for football.
+- Historical/event pages use full canonical names: `Attack on Pearl Harbor`, `Normandy landings`, `The Holocaust`, `Atomic bombings of Hiroshima and Nagasaki`, `2004 Indian Ocean earthquake and tsunami`, `1906 San Francisco earthquake`.
+- African countries and rivers use plain country/river page names (`Democratic Republic of the Congo`, `Amazon River`, `Congo River`, `Mississippi River`, `Yellow River`).
+
+No test was added: this is a static data file, not code, so there is no matching code unit to test. Line/topic counts were validated via PowerShell.
+Review:
+Commit:
+
+Date: 2026-09-03
+Prompt id: p23
+Prompt:
+scripts/fetch_corpus.py. standard library only, no requests. read the seed file, call the simple wikipedia api for the plain text extract of each title (follow redirects), wait half a second between calls, retry 3 times, skip anything under 400 chars and print what got skipped. write each one to data/raw/<slug>.md with a small front matter block: title, source url, license (CC BY-SA 4.0), topic, fetched date. a --limit flag so i can try it with 5. paths relative to the repo, not the current dir.
+Model: Cursor Grok 4.6
+Files: scripts/fetch_corpus.py, backend/tests/test_fetch_corpus.py, docs/codex_log.md
+What came back:
+`scripts/fetch_corpus.py` pulls Simple English Wikipedia plain-text extracts with stdlib `urllib` only (no `requests`). Paths are resolved from the script location (`repo_root = scripts/..`), so it does not depend on the current working directory.
+
+It reads `data/raw/seed_titles.txt`, calls `https://simple.wikipedia.org/w/api.php` with `prop=extracts|info`, `explaintext=1`, and `redirects=1`, waits 0.5s between titles, and retries a title up to 3 times on network/JSON errors. Extracts shorter than 400 characters, missing pages, and exhausted retries are skipped and printed (`skipped: <title> (...)`). Kept pages are written to `data/raw/<topic-slug>-<title-slug>.md` so duplicate seed titles (Airplane, Nile, Colosseum) do not overwrite each other. Front matter fields: `title`, `source`, `license` (`CC BY-SA 4.0`), `topic`, `fetched` (UTC date). `--limit N` fetches only the first N seed rows.
+
+Try five: `python scripts/fetch_corpus.py --limit 5`
+
+Matching tests are in `backend/tests/test_fetch_corpus.py` (API mocked). Output:
+
+```
+============================= test session starts =============================
+platform win32 -- Python 3.12.3, pytest-9.1.1, pluggy-1.6.0 -- D:\Kearney\.venv\Scripts\python.exe
+cachedir: .pytest_cache
+rootdir: D:\Kearney\backend
+configfile: pyproject.toml
+plugins: anyio-4.15.0
+collecting ... collected 8 items
+
+backend\tests\test_fetch_corpus.py::test_repo_root_follows_script_not_cwd PASSED [ 12%]
+backend\tests\test_fetch_corpus.py::test_slugify_and_article_slug PASSED [ 25%]
+backend\tests\test_fetch_corpus.py::test_read_seed_skips_blank_lines PASSED [ 37%]
+backend\tests\test_fetch_corpus.py::test_writes_front_matter_and_follows_redirect PASSED [ 50%]
+backend\tests\test_fetch_corpus.py::test_skips_short_extract PASSED      [ 62%]
+backend\tests\test_fetch_corpus.py::test_limit_fetches_only_n PASSED     [ 75%]
+backend\tests\test_fetch_corpus.py::test_retries_three_times_then_skips PASSED [ 87%]
+backend\tests\test_fetch_corpus.py::test_keeps_extract_of_exactly_400_chars PASSED [100%]
+
+============================== 8 passed in 0.13s ==============================
+```
+
+Add Simple English Wikipedia corpus fetch script
+validated: pytest test_fetch_corpus.py 8 passed
+Review:
+Commit:
+
+Date: 2026-09-03
+Prompt id: p24
+Prompt:
+also write an ATTRIBUTION.md into the same folder at the end of the run. two sentences about
+the license with a link, then one line per article with its url.
+Model: Cursor Grok 4.6
+Files: scripts/fetch_corpus.py, backend/tests/test_fetch_corpus.py, docs/codex_log.md
+What came back:
+At the end of a fetch run, `scripts/fetch_corpus.py` now writes `data/raw/ATTRIBUTION.md`. It starts with two sentences on CC BY-SA 4.0 (with https://creativecommons.org/licenses/by-sa/4.0/), then one `title url` line per kept article. Skipped pages are omitted. The file is still written when every title is skipped, with only the license sentences.
+
+Matching tests in `backend/tests/test_fetch_corpus.py` were updated. Output:
+
+```
+============================= test session starts =============================
+platform win32 -- Python 3.12.3, pytest-9.1.1, pluggy-1.6.0 -- D:\Kearney\.venv\Scripts\python.exe
+cachedir: .pytest_cache
+rootdir: D:\Kearney\backend
+configfile: pyproject.toml
+plugins: anyio-4.15.0
+collecting ... collected 8 items
+
+backend\tests\test_fetch_corpus.py::test_repo_root_follows_script_not_cwd PASSED [ 12%]
+backend\tests\test_fetch_corpus.py::test_slugify_and_article_slug PASSED [ 25%]
+backend\tests\test_fetch_corpus.py::test_read_seed_skips_blank_lines PASSED [ 37%]
+backend\tests\test_fetch_corpus.py::test_writes_front_matter_and_follows_redirect PASSED [ 50%]
+backend\tests\test_fetch_corpus.py::test_skips_short_extract PASSED      [ 62%]
+backend\tests\test_fetch_corpus.py::test_limit_fetches_only_n PASSED     [ 75%]
+backend\tests\test_fetch_corpus.py::test_retries_three_times_then_skips PASSED [ 87%]
+backend\tests\test_fetch_corpus.py::test_keeps_extract_of_exactly_400_chars PASSED [100%]
+
+============================== 8 passed in 0.18s ==============================
+```
+
+Write ATTRIBUTION.md at end of corpus fetch
+validated: pytest test_fetch_corpus.py 8 passed
+Review:
+Commit:
+
