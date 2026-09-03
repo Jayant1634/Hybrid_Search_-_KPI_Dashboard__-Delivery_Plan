@@ -9,9 +9,10 @@ caller that omits them gets the deployment's configured behaviour.
 
 from __future__ import annotations
 
+from datetime import datetime
 from typing import Literal
 
-from pydantic import BaseModel, ConfigDict, Field
+from pydantic import BaseModel, ConfigDict, Field, field_validator
 
 from app.config import load_config
 
@@ -35,6 +36,18 @@ class SearchFiltersModel(BaseModel):
     source_contains: str | None = None
     created_from: str | None = None
     created_to: str | None = None
+
+    @field_validator("created_from", "created_to")
+    @classmethod
+    def _must_be_iso8601(cls, value: str | None) -> str | None:
+        if value is None:
+            return value
+        try:
+            datetime.fromisoformat(value.replace("Z", "+00:00"))
+        except ValueError as exc:
+            raise ValueError("must be an ISO-8601 datetime") from exc
+        return value
+
 
 
 class SearchRequest(BaseModel):

@@ -1622,3 +1622,88 @@ Note: the line just above the block still reads "Copied from low-level design," 
 Review:
 Commit:
 
+---
+
+Date: 2026-09-03
+Prompt id: p-api-search-validation
+Prompt: add tests to test_api_search.py for validation: empty query, 501 chars, top_k 0 and 51, alpha -0.1 and 1.1, normalization "foo", a bad date in the filters. all should be 422 with the field name somewhere in the body. if any of them isnt, fix the schema.
+Model: Cursor Grok 4.6
+Files: backend/tests/test_api_search.py, backend/app/api/schemas.py, docs/codex_log.md
+What came back:
+Added a parametrized `test_search_validation_errors` in `backend/tests/test_api_search.py` covering empty query, 501-character query, `top_k` 0 and 51, `alpha` -0.1 and 1.1, `normalization` "foo", and `filters.created_from` "not-a-date". Each case expects HTTP 422 and the field name somewhere in the response body.
+
+Query, `top_k`, `alpha`, and `normalization` already failed FastAPI/Pydantic validation. Filter dates did not — `created_from` / `created_to` were unconstrained strings — so I added an ISO-8601 `field_validator` on those two fields in `backend/app/api/schemas.py`. A bad date now 422s with `created_from` (or `created_to`) in the body.
+
+```
+tests/test_api_search.py::test_search_validation_errors[payload0-query] PASSED
+tests/test_api_search.py::test_search_validation_errors[payload1-query] PASSED
+tests/test_api_search.py::test_search_validation_errors[payload2-top_k] PASSED
+tests/test_api_search.py::test_search_validation_errors[payload3-top_k] PASSED
+tests/test_api_search.py::test_search_validation_errors[payload4-alpha] PASSED
+tests/test_api_search.py::test_search_validation_errors[payload5-alpha] PASSED
+tests/test_api_search.py::test_search_validation_errors[payload6-normalization] PASSED
+tests/test_api_search.py::test_search_validation_errors[payload7-created_from] PASSED
+28 passed, 2 warnings in 2.09s
+```
+
+Add /search 422 validation cases and ISO date filter check
+validated: 8 new 422 cases pass; schema date validator added; 28 passed
+
+Review:
+Commit:
+
+---
+
+Date: 2026-09-03
+Prompt id: p-ratelimit
+Prompt: a simple rate limiter, backend/app/api/ratelimit.py. token bucket per client ip, rate from config, a fastapi dependency that returns 429 with a Retry-After header. only on /search and /feedback. tests: allows n then denies, refills over time (inject a clock), and the endpoint gives 429 when the app is created with a limit of 2.
+Model: Cursor Grok 4.6
+Files: backend/app/api/ratelimit.py, backend/tests/test_ratelimit.py, docs/codex_log.md
+What came back:
+Added `backend/app/api/ratelimit.py`: a per-IP token bucket (`RateLimiter`) whose capacity is `rate_limit_per_minute` from config (overridable), refilling at `rate / 60` tokens per second. `clock` is injectable (`time.monotonic` by default). The class is a FastAPI dependency: over-limit calls raise HTTP 429 with a `Retry-After` header (seconds until the next token). It no-ops on every path except `/search` and `/feedback`. `rate_limit()` is the same check, reading `app.state.rate_limiter` or building a config-backed one.
+
+Tests in `backend/tests/test_ratelimit.py`: 3 allows then a deny at rate 3; after exhausting rate 2, advancing the injected clock 30s allows one more; a FastAPI app constructed with `dependencies=[Depends(RateLimiter(rate_per_minute=2))]` returns 429 + `Retry-After` on the third `/search` while `/health` stays 200.
+
+```
+tests/test_ratelimit.py::test_allows_n_then_denies PASSED
+tests/test_ratelimit.py::test_refills_over_time PASSED
+tests/test_ratelimit.py::test_endpoint_gives_429_when_app_created_with_limit_of_2 PASSED
+3 passed, 2 warnings in 1.16s
+```
+
+Heads-up (did not act, per the named-files-only rule): this is not wired into `create_app` or the real `/search` route, and `/feedback` does not exist yet. To enforce it on the live API, `create_app` needs `dependencies=[Depends(RateLimiter())]` (and a `rate_limit_per_minute=` override for tests). Say the word and I'll add that.
+
+Add per-IP token-bucket rate limiter with 429 Retry-After
+validated: 3 passed in 1.16s
+
+Review:
+Commit:
+
+---
+
+Date: 2026-09-03
+Prompt id: p-api-feedback
+Prompt: POST /feedback in routes_search.py: request_id, doc_id, relevant (bool), optional comment. store it in the feedback table, return {ok: true}. 404 for a doc_id we dont have. test both.
+Model: Cursor Grok 4.6
+Files: backend/app/api/routes_search.py, backend/tests/test_api_search.py, docs/codex_log.md
+What came back:
+Added `POST /feedback` on the search router. Body is the existing `FeedbackRequest` (`request_id`, `doc_id`, `relevant`, optional `comment`). Unknown `doc_id` (not in the loaded corpus) returns 404 and does not write a row. A known doc is inserted via `insert_feedback` into the `feedback` table and the handler returns `{ok: true}`. The handler is async so it uses the same SQLite connection as the app lifespan (a sync FastAPI handler would hit SQLite's same-thread check).
+
+Tests in `backend/tests/test_api_search.py`: a valid payload including a comment stores a row (`doc_id`, `relevant`) and returns `{ok: true}`; a missing `doc_id` is 404 with an empty table.
+
+```
+tests/test_api_search.py::test_feedback_stores_row PASSED
+tests/test_api_search.py::test_feedback_unknown_doc_is_404 PASSED
+14 passed, 2 warnings in 2.14s
+```
+
+Heads-up (did not act, per the named-files-only rule): `comment` is accepted on the request but not persisted — the `feedback` table and `insert_feedback` have no comment column.
+
+Add POST /feedback that stores a row or 404s unknown docs
+validated: 2 new tests pass; 14 passed in 2.14s
+
+Review:
+Commit:
+
+
+

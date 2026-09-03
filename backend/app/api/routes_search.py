@@ -1,10 +1,11 @@
-"""HTTP routes: ``GET /health`` and ``POST /search``.
+"""HTTP routes: ``GET /health``, ``POST /search``, and ``POST /feedback``.
 
 ``/search`` maps the validated request onto the loaded ``HybridSearcher``,
 translates the API-facing ``normalization``/``filters`` into the search layer's
 vocabulary, and returns each hit's full score breakdown and snippet plus a
-``request_id`` and ``took_ms``. ``/health`` reports liveness, build info, and the
-built index's metadata.
+``request_id`` and ``took_ms``. ``/feedback`` stores a relevance signal for a
+known ``doc_id`` (404 otherwise). ``/health`` reports liveness, build info, and
+the built index's metadata.
 """
 
 from __future__ import annotations
@@ -13,16 +14,17 @@ import time
 import uuid
 from dataclasses import asdict
 
-from fastapi import APIRouter, Request
+from fastapi import APIRouter, HTTPException, Request
 from fastapi.responses import PlainTextResponse
 from pydantic import BaseModel
 
 from app.api.deps import SearchService, get_commit, get_version
-from app.api.schemas import SearchRequest
+from app.api.schemas import FeedbackRequest, SearchRequest
 from app.config import load_config
 from app.index.metadata import IndexMetadata
 from app.observability.metrics import render as render_metrics
 from app.search.filters import SearchFilters
+from app.storage.repo import insert_feedback
 
 router = APIRouter()
 
@@ -68,6 +70,12 @@ class SearchResponse(BaseModel):
     request_id: str
     took_ms: float
     results: list[SearchResultItem]
+
+
+class FeedbackResponse(BaseModel):
+    """Acknowledgement that a feedback signal was stored."""
+
+    ok: bool = True
 
 
 def _get_service(request: Request) -> SearchService:
@@ -144,3 +152,20 @@ def search(payload: SearchRequest, request: Request) -> SearchResponse:
         took_ms=took_ms,
         results=results,
     )
+
+
+@router.post("/feedback", response_model=FeedbackResponse)
+async def feedback(
+    payload: FeedbackRequest, request: Request
+) -> FeedbackResponse:
+    """Store a relevance signal for a document that exists in the corpus."""
+    service = _get_service(request)
+    if payload.doc_id not in service.docs_by_id:
+        raise HTTPException(status_code=404, detail="document not found")
+    insert_feedback(
+        request.app.state.db,
+        request_id=payload.request_id,
+        doc_id=payload.doc_id,
+        relevant=payload.relevant,
+    )
+    return FeedbackResponse(ok=True)
