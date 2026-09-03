@@ -1,0 +1,13 @@
+---
+description: Working rules for this project
+alwaysApply: true
+---
+
+# Working rules
+
+- Only edit files named in the user's prompt. Exception: always append to `docs/codex_log.md` when the turn is done. If any other file must change, say so and stop. Do not edit it.
+- Python 3.11+, CPU only. Use type hints. Use pathlib for paths. Never use absolute paths.
+- When adding or changing code, add or update the matching test and run it. Show the test output in the reply.
+- Every prompt gets a log entry in `docs/codex_log.md` using the template, even if that file was not named. Fill Date, Prompt id (`pN`), Prompt (verbatim user prompt), Model (actual model name), Files, What came back (full user-facing reply, not a summary). Leave Review and Commit empty.
+- End every reply with a one-line suggested commit message, then a `validated:` line.
+- Never edit `docs/plan.md`, `docs/prompts.md`, `docs/decision_log.md`, or `docs/break_fix_log.md`.
