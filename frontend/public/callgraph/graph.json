@@ -1,12 +1,12 @@
 {
-  "generated_at": "2026-09-03T23:27:20Z",
+  "generated_at": "2026-09-03T23:46:45Z",
   "stats": {
     "file_count": 58,
-    "function_count": 250,
+    "function_count": 277,
     "uncalled_file_count": 13,
-    "uncalled_function_count": 67,
+    "uncalled_function_count": 76,
     "file_edge_count": 85,
-    "function_edge_count": 236
+    "function_edge_count": 256
   },
   "files": {
     "backend/app/__init__.py": {
@@ -1148,7 +1148,20 @@
     "frontend/src/pages/DebugPage.tsx": {
       "language": "typescript",
       "functions": [
-        "frontend/src/pages/DebugPage.tsx::DebugPage"
+        "frontend/src/pages/DebugPage.tsx::clampLimit",
+        "frontend/src/pages/DebugPage.tsx::levelParam",
+        "frontend/src/pages/DebugPage.tsx::windowFromSince",
+        "frontend/src/pages/DebugPage.tsx::parseTs",
+        "frontend/src/pages/DebugPage.tsx::inRange",
+        "frontend/src/pages/DebugPage.tsx::fetchLogs",
+        "frontend/src/pages/DebugPage.tsx::formatTime",
+        "frontend/src/pages/DebugPage.tsx::extraJson",
+        "frontend/src/pages/DebugPage.tsx::rowKey",
+        "frontend/src/pages/DebugPage.tsx::severityClass",
+        "frontend/src/pages/DebugPage.tsx::DebugPage",
+        "frontend/src/pages/DebugPage.tsx::apply",
+        "frontend/src/pages/DebugPage.tsx::reset",
+        "frontend/src/pages/DebugPage.tsx::LogRows"
       ],
       "imports": [],
       "imported_by": [
@@ -1162,7 +1175,14 @@
     "frontend/src/pages/EvaluationPage.tsx": {
       "language": "typescript",
       "functions": [
-        "frontend/src/pages/EvaluationPage.tsx::EvaluationPage"
+        "frontend/src/pages/EvaluationPage.tsx::fetchExperiments",
+        "frontend/src/pages/EvaluationPage.tsx::parseTime",
+        "frontend/src/pages/EvaluationPage.tsx::formatTime",
+        "frontend/src/pages/EvaluationPage.tsx::formatMetric",
+        "frontend/src/pages/EvaluationPage.tsx::compareRows",
+        "frontend/src/pages/EvaluationPage.tsx::ExperimentTooltip",
+        "frontend/src/pages/EvaluationPage.tsx::EvaluationPage",
+        "frontend/src/pages/EvaluationPage.tsx::onSort"
       ],
       "imports": [],
       "imported_by": [
@@ -1216,7 +1236,14 @@
     "frontend/src/pages/KpisPage.tsx": {
       "language": "typescript",
       "functions": [
-        "frontend/src/pages/KpisPage.tsx::KpisPage"
+        "frontend/src/pages/KpisPage.tsx::fetchJson",
+        "frontend/src/pages/KpisPage.tsx::loadKpis",
+        "frontend/src/pages/KpisPage.tsx::formatMs",
+        "frontend/src/pages/KpisPage.tsx::parseBucket",
+        "frontend/src/pages/KpisPage.tsx::formatBucket",
+        "frontend/src/pages/KpisPage.tsx::formatSeen",
+        "frontend/src/pages/KpisPage.tsx::KpisPage",
+        "frontend/src/pages/KpisPage.tsx::run"
       ],
       "imports": [],
       "imported_by": [
@@ -3928,24 +3955,228 @@
         "frontend/src/components/ResultCard.tsx::ResultCard"
       ]
     },
+    "frontend/src/pages/DebugPage.tsx::clampLimit": {
+      "file": "frontend/src/pages/DebugPage.tsx",
+      "name": "clampLimit",
+      "qualname": "clampLimit",
+      "lineno": 29,
+      "calls": [],
+      "called_by": [
+        "frontend/src/pages/DebugPage.tsx::DebugPage",
+        "frontend/src/pages/DebugPage.tsx::apply"
+      ]
+    },
+    "frontend/src/pages/DebugPage.tsx::levelParam": {
+      "file": "frontend/src/pages/DebugPage.tsx",
+      "name": "levelParam",
+      "qualname": "levelParam",
+      "lineno": 34,
+      "calls": [],
+      "called_by": []
+    },
+    "frontend/src/pages/DebugPage.tsx::windowFromSince": {
+      "file": "frontend/src/pages/DebugPage.tsx",
+      "name": "windowFromSince",
+      "qualname": "windowFromSince",
+      "lineno": 40,
+      "calls": [],
+      "called_by": []
+    },
+    "frontend/src/pages/DebugPage.tsx::parseTs": {
+      "file": "frontend/src/pages/DebugPage.tsx",
+      "name": "parseTs",
+      "qualname": "parseTs",
+      "lineno": 48,
+      "calls": [],
+      "called_by": []
+    },
+    "frontend/src/pages/DebugPage.tsx::inRange": {
+      "file": "frontend/src/pages/DebugPage.tsx",
+      "name": "inRange",
+      "qualname": "inRange",
+      "lineno": 53,
+      "calls": [],
+      "called_by": []
+    },
+    "frontend/src/pages/DebugPage.tsx::fetchLogs": {
+      "file": "frontend/src/pages/DebugPage.tsx",
+      "name": "fetchLogs",
+      "qualname": "fetchLogs",
+      "lineno": 66,
+      "calls": [],
+      "called_by": [
+        "frontend/src/pages/DebugPage.tsx::DebugPage"
+      ]
+    },
+    "frontend/src/pages/DebugPage.tsx::formatTime": {
+      "file": "frontend/src/pages/DebugPage.tsx",
+      "name": "formatTime",
+      "qualname": "formatTime",
+      "lineno": 89,
+      "calls": [],
+      "called_by": []
+    },
+    "frontend/src/pages/DebugPage.tsx::extraJson": {
+      "file": "frontend/src/pages/DebugPage.tsx",
+      "name": "extraJson",
+      "qualname": "extraJson",
+      "lineno": 95,
+      "calls": [],
+      "called_by": []
+    },
+    "frontend/src/pages/DebugPage.tsx::rowKey": {
+      "file": "frontend/src/pages/DebugPage.tsx",
+      "name": "rowKey",
+      "qualname": "rowKey",
+      "lineno": 103,
+      "calls": [],
+      "called_by": [
+        "frontend/src/pages/DebugPage.tsx::DebugPage"
+      ]
+    },
+    "frontend/src/pages/DebugPage.tsx::severityClass": {
+      "file": "frontend/src/pages/DebugPage.tsx",
+      "name": "severityClass",
+      "qualname": "severityClass",
+      "lineno": 107,
+      "calls": [],
+      "called_by": []
+    },
     "frontend/src/pages/DebugPage.tsx::DebugPage": {
       "file": "frontend/src/pages/DebugPage.tsx",
       "name": "DebugPage",
       "qualname": "DebugPage",
-      "lineno": 1,
-      "calls": [],
+      "lineno": 114,
+      "calls": [
+        "frontend/src/pages/DebugPage.tsx::fetchLogs",
+        "frontend/src/pages/DebugPage.tsx::apply",
+        "frontend/src/pages/DebugPage.tsx::clampLimit",
+        "frontend/src/pages/DebugPage.tsx::reset",
+        "frontend/src/pages/DebugPage.tsx::rowKey",
+        "frontend/src/pages/DebugPage.tsx::LogRows"
+      ],
       "called_by": [
         "frontend/src/App.tsx::App"
+      ]
+    },
+    "frontend/src/pages/DebugPage.tsx::apply": {
+      "file": "frontend/src/pages/DebugPage.tsx",
+      "name": "apply",
+      "qualname": "apply",
+      "lineno": 140,
+      "calls": [
+        "frontend/src/pages/DebugPage.tsx::clampLimit"
+      ],
+      "called_by": [
+        "frontend/src/pages/DebugPage.tsx::DebugPage"
+      ]
+    },
+    "frontend/src/pages/DebugPage.tsx::reset": {
+      "file": "frontend/src/pages/DebugPage.tsx",
+      "name": "reset",
+      "qualname": "reset",
+      "lineno": 147,
+      "calls": [],
+      "called_by": [
+        "frontend/src/pages/DebugPage.tsx::DebugPage"
+      ]
+    },
+    "frontend/src/pages/DebugPage.tsx::LogRows": {
+      "file": "frontend/src/pages/DebugPage.tsx",
+      "name": "LogRows",
+      "qualname": "LogRows",
+      "lineno": 347,
+      "calls": [],
+      "called_by": [
+        "frontend/src/pages/DebugPage.tsx::DebugPage"
+      ]
+    },
+    "frontend/src/pages/EvaluationPage.tsx::fetchExperiments": {
+      "file": "frontend/src/pages/EvaluationPage.tsx",
+      "name": "fetchExperiments",
+      "qualname": "fetchExperiments",
+      "lineno": 58,
+      "calls": [],
+      "called_by": [
+        "frontend/src/pages/EvaluationPage.tsx::EvaluationPage"
+      ]
+    },
+    "frontend/src/pages/EvaluationPage.tsx::parseTime": {
+      "file": "frontend/src/pages/EvaluationPage.tsx",
+      "name": "parseTime",
+      "qualname": "parseTime",
+      "lineno": 67,
+      "calls": [],
+      "called_by": [
+        "frontend/src/pages/EvaluationPage.tsx::EvaluationPage"
+      ]
+    },
+    "frontend/src/pages/EvaluationPage.tsx::formatTime": {
+      "file": "frontend/src/pages/EvaluationPage.tsx",
+      "name": "formatTime",
+      "qualname": "formatTime",
+      "lineno": 72,
+      "calls": [],
+      "called_by": [
+        "frontend/src/pages/EvaluationPage.tsx::EvaluationPage"
+      ]
+    },
+    "frontend/src/pages/EvaluationPage.tsx::formatMetric": {
+      "file": "frontend/src/pages/EvaluationPage.tsx",
+      "name": "formatMetric",
+      "qualname": "formatMetric",
+      "lineno": 83,
+      "calls": [],
+      "called_by": [
+        "frontend/src/pages/EvaluationPage.tsx::EvaluationPage"
+      ]
+    },
+    "frontend/src/pages/EvaluationPage.tsx::compareRows": {
+      "file": "frontend/src/pages/EvaluationPage.tsx",
+      "name": "compareRows",
+      "qualname": "compareRows",
+      "lineno": 88,
+      "calls": [],
+      "called_by": [
+        "frontend/src/pages/EvaluationPage.tsx::EvaluationPage"
+      ]
+    },
+    "frontend/src/pages/EvaluationPage.tsx::ExperimentTooltip": {
+      "file": "frontend/src/pages/EvaluationPage.tsx",
+      "name": "ExperimentTooltip",
+      "qualname": "ExperimentTooltip",
+      "lineno": 106,
+      "calls": [],
+      "called_by": [
+        "frontend/src/pages/EvaluationPage.tsx::EvaluationPage"
       ]
     },
     "frontend/src/pages/EvaluationPage.tsx::EvaluationPage": {
       "file": "frontend/src/pages/EvaluationPage.tsx",
       "name": "EvaluationPage",
       "qualname": "EvaluationPage",
-      "lineno": 1,
-      "calls": [],
+      "lineno": 127,
+      "calls": [
+        "frontend/src/pages/EvaluationPage.tsx::fetchExperiments",
+        "frontend/src/pages/EvaluationPage.tsx::parseTime",
+        "frontend/src/pages/EvaluationPage.tsx::formatTime",
+        "frontend/src/pages/EvaluationPage.tsx::compareRows",
+        "frontend/src/pages/EvaluationPage.tsx::onSort",
+        "frontend/src/pages/EvaluationPage.tsx::formatMetric",
+        "frontend/src/pages/EvaluationPage.tsx::ExperimentTooltip"
+      ],
       "called_by": [
         "frontend/src/App.tsx::App"
+      ]
+    },
+    "frontend/src/pages/EvaluationPage.tsx::onSort": {
+      "file": "frontend/src/pages/EvaluationPage.tsx",
+      "name": "onSort",
+      "qualname": "onSort",
+      "lineno": 170,
+      "calls": [],
+      "called_by": [
+        "frontend/src/pages/EvaluationPage.tsx::EvaluationPage"
       ]
     },
     "frontend/src/pages/HealthPage.tsx::HealthPage": {
@@ -3974,14 +4205,89 @@
         "frontend/src/App.tsx::App"
       ]
     },
+    "frontend/src/pages/KpisPage.tsx::fetchJson": {
+      "file": "frontend/src/pages/KpisPage.tsx",
+      "name": "fetchJson",
+      "qualname": "fetchJson",
+      "lineno": 50,
+      "calls": [],
+      "called_by": []
+    },
+    "frontend/src/pages/KpisPage.tsx::loadKpis": {
+      "file": "frontend/src/pages/KpisPage.tsx",
+      "name": "loadKpis",
+      "qualname": "loadKpis",
+      "lineno": 59,
+      "calls": [],
+      "called_by": [
+        "frontend/src/pages/KpisPage.tsx::KpisPage",
+        "frontend/src/pages/KpisPage.tsx::run"
+      ]
+    },
+    "frontend/src/pages/KpisPage.tsx::formatMs": {
+      "file": "frontend/src/pages/KpisPage.tsx",
+      "name": "formatMs",
+      "qualname": "formatMs",
+      "lineno": 70,
+      "calls": [],
+      "called_by": [
+        "frontend/src/pages/KpisPage.tsx::KpisPage"
+      ]
+    },
+    "frontend/src/pages/KpisPage.tsx::parseBucket": {
+      "file": "frontend/src/pages/KpisPage.tsx",
+      "name": "parseBucket",
+      "qualname": "parseBucket",
+      "lineno": 74,
+      "calls": [],
+      "called_by": []
+    },
+    "frontend/src/pages/KpisPage.tsx::formatBucket": {
+      "file": "frontend/src/pages/KpisPage.tsx",
+      "name": "formatBucket",
+      "qualname": "formatBucket",
+      "lineno": 84,
+      "calls": [],
+      "called_by": [
+        "frontend/src/pages/KpisPage.tsx::KpisPage"
+      ]
+    },
+    "frontend/src/pages/KpisPage.tsx::formatSeen": {
+      "file": "frontend/src/pages/KpisPage.tsx",
+      "name": "formatSeen",
+      "qualname": "formatSeen",
+      "lineno": 98,
+      "calls": [],
+      "called_by": [
+        "frontend/src/pages/KpisPage.tsx::KpisPage"
+      ]
+    },
     "frontend/src/pages/KpisPage.tsx::KpisPage": {
       "file": "frontend/src/pages/KpisPage.tsx",
       "name": "KpisPage",
       "qualname": "KpisPage",
-      "lineno": 1,
-      "calls": [],
+      "lineno": 104,
+      "calls": [
+        "frontend/src/pages/KpisPage.tsx::loadKpis",
+        "frontend/src/pages/KpisPage.tsx::run",
+        "frontend/src/pages/KpisPage.tsx::formatBucket",
+        "frontend/src/pages/KpisPage.tsx::formatMs",
+        "frontend/src/pages/KpisPage.tsx::formatSeen"
+      ],
       "called_by": [
         "frontend/src/App.tsx::App"
+      ]
+    },
+    "frontend/src/pages/KpisPage.tsx::run": {
+      "file": "frontend/src/pages/KpisPage.tsx",
+      "name": "run",
+      "qualname": "run",
+      "lineno": 114,
+      "calls": [
+        "frontend/src/pages/KpisPage.tsx::loadKpis"
+      ],
+      "called_by": [
+        "frontend/src/pages/KpisPage.tsx::KpisPage"
       ]
     },
     "frontend/src/pages/SearchPage.tsx::SearchPage": {
@@ -4105,6 +4411,15 @@
     "frontend/src/highlight.ts::escapeHtml",
     "frontend/src/highlight.ts::queryTerms",
     "frontend/src/highlight.ts::termMatchesWord",
+    "frontend/src/pages/DebugPage.tsx::extraJson",
+    "frontend/src/pages/DebugPage.tsx::formatTime",
+    "frontend/src/pages/DebugPage.tsx::inRange",
+    "frontend/src/pages/DebugPage.tsx::levelParam",
+    "frontend/src/pages/DebugPage.tsx::parseTs",
+    "frontend/src/pages/DebugPage.tsx::severityClass",
+    "frontend/src/pages/DebugPage.tsx::windowFromSince",
+    "frontend/src/pages/KpisPage.tsx::fetchJson",
+    "frontend/src/pages/KpisPage.tsx::parseBucket",
     "frontend/src/pages/SearchPage.tsx::handleClear",
     "frontend/src/pages/SearchPage.tsx::handleKeyDown",
     "scripts/fetch_until_done.py::main",
@@ -4480,6 +4795,15 @@
       "frontend/src/highlight.ts::escapeHtml",
       "frontend/src/highlight.ts::queryTerms",
       "frontend/src/highlight.ts::termMatchesWord",
+      "frontend/src/pages/DebugPage.tsx::extraJson",
+      "frontend/src/pages/DebugPage.tsx::formatTime",
+      "frontend/src/pages/DebugPage.tsx::inRange",
+      "frontend/src/pages/DebugPage.tsx::levelParam",
+      "frontend/src/pages/DebugPage.tsx::parseTs",
+      "frontend/src/pages/DebugPage.tsx::severityClass",
+      "frontend/src/pages/DebugPage.tsx::windowFromSince",
+      "frontend/src/pages/KpisPage.tsx::fetchJson",
+      "frontend/src/pages/KpisPage.tsx::parseBucket",
       "frontend/src/pages/SearchPage.tsx::handleClear",
       "frontend/src/pages/SearchPage.tsx::handleKeyDown",
       "scripts/fetch_until_done.py::main",
@@ -4550,6 +4874,15 @@
         "frontend/src/highlight.ts::escapeHtml",
         "frontend/src/highlight.ts::queryTerms",
         "frontend/src/highlight.ts::termMatchesWord",
+        "frontend/src/pages/DebugPage.tsx::extraJson",
+        "frontend/src/pages/DebugPage.tsx::formatTime",
+        "frontend/src/pages/DebugPage.tsx::inRange",
+        "frontend/src/pages/DebugPage.tsx::levelParam",
+        "frontend/src/pages/DebugPage.tsx::parseTs",
+        "frontend/src/pages/DebugPage.tsx::severityClass",
+        "frontend/src/pages/DebugPage.tsx::windowFromSince",
+        "frontend/src/pages/KpisPage.tsx::fetchJson",
+        "frontend/src/pages/KpisPage.tsx::parseBucket",
         "frontend/src/pages/SearchPage.tsx::handleClear",
         "frontend/src/pages/SearchPage.tsx::handleKeyDown",
         "scripts/fetch_until_done.py::main",
@@ -5451,6 +5784,15 @@
       "frontend/src/highlight.ts::escapeHtml",
       "frontend/src/highlight.ts::queryTerms",
       "frontend/src/highlight.ts::termMatchesWord",
+      "frontend/src/pages/DebugPage.tsx::extraJson",
+      "frontend/src/pages/DebugPage.tsx::formatTime",
+      "frontend/src/pages/DebugPage.tsx::inRange",
+      "frontend/src/pages/DebugPage.tsx::levelParam",
+      "frontend/src/pages/DebugPage.tsx::parseTs",
+      "frontend/src/pages/DebugPage.tsx::severityClass",
+      "frontend/src/pages/DebugPage.tsx::windowFromSince",
+      "frontend/src/pages/KpisPage.tsx::fetchJson",
+      "frontend/src/pages/KpisPage.tsx::parseBucket",
       "frontend/src/pages/SearchPage.tsx::handleClear",
       "frontend/src/pages/SearchPage.tsx::handleKeyDown",
       "scripts/fetch_until_done.py::main",
@@ -5593,6 +5935,15 @@
       "frontend/src/highlight.ts::escapeHtml",
       "frontend/src/highlight.ts::queryTerms",
       "frontend/src/highlight.ts::termMatchesWord",
+      "frontend/src/pages/DebugPage.tsx::extraJson",
+      "frontend/src/pages/DebugPage.tsx::formatTime",
+      "frontend/src/pages/DebugPage.tsx::inRange",
+      "frontend/src/pages/DebugPage.tsx::levelParam",
+      "frontend/src/pages/DebugPage.tsx::parseTs",
+      "frontend/src/pages/DebugPage.tsx::severityClass",
+      "frontend/src/pages/DebugPage.tsx::windowFromSince",
+      "frontend/src/pages/KpisPage.tsx::fetchJson",
+      "frontend/src/pages/KpisPage.tsx::parseBucket",
       "frontend/src/pages/SearchPage.tsx::handleClear",
       "frontend/src/pages/SearchPage.tsx::handleKeyDown",
       "scripts/fetch_until_done.py::main",
@@ -5768,6 +6119,15 @@
     "frontend/src/highlight.ts::escapeHtml",
     "frontend/src/highlight.ts::queryTerms",
     "frontend/src/highlight.ts::termMatchesWord",
+    "frontend/src/pages/DebugPage.tsx::extraJson",
+    "frontend/src/pages/DebugPage.tsx::formatTime",
+    "frontend/src/pages/DebugPage.tsx::inRange",
+    "frontend/src/pages/DebugPage.tsx::levelParam",
+    "frontend/src/pages/DebugPage.tsx::parseTs",
+    "frontend/src/pages/DebugPage.tsx::severityClass",
+    "frontend/src/pages/DebugPage.tsx::windowFromSince",
+    "frontend/src/pages/KpisPage.tsx::fetchJson",
+    "frontend/src/pages/KpisPage.tsx::parseBucket",
     "frontend/src/pages/SearchPage.tsx::handleClear",
     "frontend/src/pages/SearchPage.tsx::handleKeyDown",
     "scripts/fetch_until_done.py::main",

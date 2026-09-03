@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-09-03T23:27:20Z",
+  "generated_at": "2026-09-03T23:46:45Z",
   "files": {
     "backend/app/__init__.py": {
       "language": "python",
@@ -1140,7 +1140,20 @@
     "frontend/src/pages/DebugPage.tsx": {
       "language": "typescript",
       "functions": [
-        "frontend/src/pages/DebugPage.tsx::DebugPage"
+        "frontend/src/pages/DebugPage.tsx::clampLimit",
+        "frontend/src/pages/DebugPage.tsx::levelParam",
+        "frontend/src/pages/DebugPage.tsx::windowFromSince",
+        "frontend/src/pages/DebugPage.tsx::parseTs",
+        "frontend/src/pages/DebugPage.tsx::inRange",
+        "frontend/src/pages/DebugPage.tsx::fetchLogs",
+        "frontend/src/pages/DebugPage.tsx::formatTime",
+        "frontend/src/pages/DebugPage.tsx::extraJson",
+        "frontend/src/pages/DebugPage.tsx::rowKey",
+        "frontend/src/pages/DebugPage.tsx::severityClass",
+        "frontend/src/pages/DebugPage.tsx::DebugPage",
+        "frontend/src/pages/DebugPage.tsx::apply",
+        "frontend/src/pages/DebugPage.tsx::reset",
+        "frontend/src/pages/DebugPage.tsx::LogRows"
       ],
       "imports": [],
       "imported_by": [
@@ -1154,7 +1167,14 @@
     "frontend/src/pages/EvaluationPage.tsx": {
       "language": "typescript",
       "functions": [
-        "frontend/src/pages/EvaluationPage.tsx::EvaluationPage"
+        "frontend/src/pages/EvaluationPage.tsx::fetchExperiments",
+        "frontend/src/pages/EvaluationPage.tsx::parseTime",
+        "frontend/src/pages/EvaluationPage.tsx::formatTime",
+        "frontend/src/pages/EvaluationPage.tsx::formatMetric",
+        "frontend/src/pages/EvaluationPage.tsx::compareRows",
+        "frontend/src/pages/EvaluationPage.tsx::ExperimentTooltip",
+        "frontend/src/pages/EvaluationPage.tsx::EvaluationPage",
+        "frontend/src/pages/EvaluationPage.tsx::onSort"
       ],
       "imports": [],
       "imported_by": [
@@ -1208,7 +1228,14 @@
     "frontend/src/pages/KpisPage.tsx": {
       "language": "typescript",
       "functions": [
-        "frontend/src/pages/KpisPage.tsx::KpisPage"
+        "frontend/src/pages/KpisPage.tsx::fetchJson",
+        "frontend/src/pages/KpisPage.tsx::loadKpis",
+        "frontend/src/pages/KpisPage.tsx::formatMs",
+        "frontend/src/pages/KpisPage.tsx::parseBucket",
+        "frontend/src/pages/KpisPage.tsx::formatBucket",
+        "frontend/src/pages/KpisPage.tsx::formatSeen",
+        "frontend/src/pages/KpisPage.tsx::KpisPage",
+        "frontend/src/pages/KpisPage.tsx::run"
       ],
       "imports": [],
       "imported_by": [
