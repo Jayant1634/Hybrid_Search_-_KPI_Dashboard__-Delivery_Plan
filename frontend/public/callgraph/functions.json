@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-09-03T17:33:12Z",
+  "generated_at": "2026-09-03T18:24:45Z",
   "functions": {
     "backend/app/api/deps.py::_pyproject_path": {
       "file": "backend/app/api/deps.py",
@@ -170,10 +170,11 @@
       "file": "backend/app/api/routes_search.py",
       "name": "_get_service",
       "qualname": "_get_service",
-      "lineno": 81,
+      "lineno": 105,
       "calls": [],
       "called_by": [
         "backend/app/api/routes_search.py::search",
+        "backend/app/api/routes_search.py::get_document",
         "backend/app/api/routes_search.py::feedback"
       ]
     },
@@ -181,7 +182,7 @@
       "file": "backend/app/api/routes_search.py",
       "name": "_index_metadata",
       "qualname": "_index_metadata",
-      "lineno": 85,
+      "lineno": 109,
       "calls": [
         "backend/app/index/metadata.py::IndexMetadata.load",
         "backend/app/config.py::load_config"
@@ -194,7 +195,7 @@
       "file": "backend/app/api/routes_search.py",
       "name": "health",
       "qualname": "health",
-      "lineno": 94,
+      "lineno": 118,
       "calls": [
         "backend/app/api/deps.py::get_version",
         "backend/app/api/deps.py::get_commit",
@@ -206,7 +207,7 @@
       "file": "backend/app/api/routes_search.py",
       "name": "metrics",
       "qualname": "metrics",
-      "lineno": 105,
+      "lineno": 129,
       "calls": [
         "backend/app/observability/metrics.py::render"
       ],
@@ -216,9 +217,22 @@
       "file": "backend/app/api/routes_search.py",
       "name": "search",
       "qualname": "search",
-      "lineno": 114,
+      "lineno": 138,
       "calls": [
         "backend/app/api/routes_search.py::_get_service"
+      ],
+      "called_by": []
+    },
+    "backend/app/api/routes_search.py::get_document": {
+      "file": "backend/app/api/routes_search.py",
+      "name": "get_document",
+      "qualname": "get_document",
+      "lineno": 182,
+      "calls": [
+        "backend/app/api/routes_search.py::_get_service",
+        "backend/app/search/tokenize.py::tokenize",
+        "backend/app/search/highlight.py::highlight_containing",
+        "backend/app/search/highlight.py::count_occurrences"
       ],
       "called_by": []
     },
@@ -226,7 +240,7 @@
       "file": "backend/app/api/routes_search.py",
       "name": "feedback",
       "qualname": "feedback",
-      "lineno": 158,
+      "lineno": 205,
       "calls": [
         "backend/app/api/routes_search.py::_get_service",
         "backend/app/storage/repo.py::insert_feedback"
@@ -567,9 +581,226 @@
         "backend/app/api/routes_search.py::_index_metadata",
         "backend/app/api/schemas.py::_default_alpha",
         "backend/app/api/schemas.py::_default_normalization",
+        "backend/app/eval/__main__.py::main",
         "backend/app/index/__main__.py::main",
         "backend/app/ingest/__init__.py::main",
         "backend/app/search/embedder.py::SentenceTransformerEmbedder.__init__"
+      ]
+    },
+    "backend/app/eval/__main__.py::_resolve_path": {
+      "file": "backend/app/eval/__main__.py",
+      "name": "_resolve_path",
+      "qualname": "_resolve_path",
+      "lineno": 31,
+      "calls": [],
+      "called_by": [
+        "backend/app/eval/__main__.py::main"
+      ]
+    },
+    "backend/app/eval/__main__.py::_commit": {
+      "file": "backend/app/eval/__main__.py",
+      "name": "_commit",
+      "qualname": "_commit",
+      "lineno": 38,
+      "calls": [],
+      "called_by": [
+        "backend/app/eval/__main__.py::main"
+      ]
+    },
+    "backend/app/eval/__main__.py::_search_normalization": {
+      "file": "backend/app/eval/__main__.py",
+      "name": "_search_normalization",
+      "qualname": "_search_normalization",
+      "lineno": 55,
+      "calls": [],
+      "called_by": [
+        "backend/app/eval/__main__.py::main"
+      ]
+    },
+    "backend/app/eval/__main__.py::check_model": {
+      "file": "backend/app/eval/__main__.py",
+      "name": "check_model",
+      "qualname": "check_model",
+      "lineno": 63,
+      "calls": [
+        "backend/app/index/metadata.py::IndexMetadata.load"
+      ],
+      "called_by": [
+        "backend/app/eval/__main__.py::main"
+      ]
+    },
+    "backend/app/eval/__main__.py::_build_parser": {
+      "file": "backend/app/eval/__main__.py",
+      "name": "_build_parser",
+      "qualname": "_build_parser",
+      "lineno": 77,
+      "calls": [],
+      "called_by": [
+        "backend/app/eval/__main__.py::main"
+      ]
+    },
+    "backend/app/eval/__main__.py::main": {
+      "file": "backend/app/eval/__main__.py",
+      "name": "main",
+      "qualname": "main",
+      "lineno": 109,
+      "calls": [
+        "backend/app/config.py::load_config",
+        "backend/app/eval/__main__.py::_build_parser",
+        "backend/app/eval/__main__.py::check_model",
+        "backend/app/eval/__main__.py::_search_normalization",
+        "backend/app/eval/__main__.py::_resolve_path",
+        "backend/app/eval/runner.py::load_queries",
+        "backend/app/eval/runner.py::load_qrels",
+        "backend/app/eval/runner.py::run_eval",
+        "backend/app/eval/__main__.py::_commit",
+        "backend/app/eval/runner.py::append_experiment"
+      ],
+      "called_by": []
+    },
+    "backend/app/eval/metrics.py::_gains": {
+      "file": "backend/app/eval/metrics.py",
+      "name": "_gains",
+      "qualname": "_gains",
+      "lineno": 17,
+      "calls": [],
+      "called_by": [
+        "backend/app/eval/metrics.py::ndcg_at_k"
+      ]
+    },
+    "backend/app/eval/metrics.py::_dcg": {
+      "file": "backend/app/eval/metrics.py",
+      "name": "_dcg",
+      "qualname": "_dcg",
+      "lineno": 22,
+      "calls": [],
+      "called_by": [
+        "backend/app/eval/metrics.py::ndcg_at_k"
+      ]
+    },
+    "backend/app/eval/metrics.py::_positives": {
+      "file": "backend/app/eval/metrics.py",
+      "name": "_positives",
+      "qualname": "_positives",
+      "lineno": 31,
+      "calls": [],
+      "called_by": [
+        "backend/app/eval/metrics.py::recall_at_k",
+        "backend/app/eval/metrics.py::mrr_at_k"
+      ]
+    },
+    "backend/app/eval/metrics.py::ndcg_at_k": {
+      "file": "backend/app/eval/metrics.py",
+      "name": "ndcg_at_k",
+      "qualname": "ndcg_at_k",
+      "lineno": 35,
+      "calls": [
+        "backend/app/eval/metrics.py::_dcg",
+        "backend/app/eval/metrics.py::_gains"
+      ],
+      "called_by": [
+        "backend/app/eval/runner.py::run_eval"
+      ]
+    },
+    "backend/app/eval/metrics.py::recall_at_k": {
+      "file": "backend/app/eval/metrics.py",
+      "name": "recall_at_k",
+      "qualname": "recall_at_k",
+      "lineno": 49,
+      "calls": [
+        "backend/app/eval/metrics.py::_positives"
+      ],
+      "called_by": [
+        "backend/app/eval/runner.py::run_eval"
+      ]
+    },
+    "backend/app/eval/metrics.py::mrr_at_k": {
+      "file": "backend/app/eval/metrics.py",
+      "name": "mrr_at_k",
+      "qualname": "mrr_at_k",
+      "lineno": 62,
+      "calls": [
+        "backend/app/eval/metrics.py::_positives"
+      ],
+      "called_by": [
+        "backend/app/eval/runner.py::run_eval"
+      ]
+    },
+    "backend/app/eval/runner.py::Searcher.search": {
+      "file": "backend/app/eval/runner.py",
+      "name": "search",
+      "qualname": "Searcher.search",
+      "lineno": 27,
+      "calls": [],
+      "called_by": [
+        "backend/app/eval/runner.py::run_eval"
+      ]
+    },
+    "backend/app/eval/runner.py::load_queries": {
+      "file": "backend/app/eval/runner.py",
+      "name": "load_queries",
+      "qualname": "load_queries",
+      "lineno": 62,
+      "calls": [],
+      "called_by": [
+        "backend/app/eval/__main__.py::main"
+      ]
+    },
+    "backend/app/eval/runner.py::load_qrels": {
+      "file": "backend/app/eval/runner.py",
+      "name": "load_qrels",
+      "qualname": "load_qrels",
+      "lineno": 74,
+      "calls": [],
+      "called_by": [
+        "backend/app/eval/__main__.py::main"
+      ]
+    },
+    "backend/app/eval/runner.py::_as_query": {
+      "file": "backend/app/eval/runner.py",
+      "name": "_as_query",
+      "qualname": "_as_query",
+      "lineno": 83,
+      "calls": [],
+      "called_by": [
+        "backend/app/eval/runner.py::run_eval"
+      ]
+    },
+    "backend/app/eval/runner.py::_mean": {
+      "file": "backend/app/eval/runner.py",
+      "name": "_mean",
+      "qualname": "_mean",
+      "lineno": 89,
+      "calls": [],
+      "called_by": [
+        "backend/app/eval/runner.py::run_eval"
+      ]
+    },
+    "backend/app/eval/runner.py::run_eval": {
+      "file": "backend/app/eval/runner.py",
+      "name": "run_eval",
+      "qualname": "run_eval",
+      "lineno": 95,
+      "calls": [
+        "backend/app/eval/runner.py::_as_query",
+        "backend/app/eval/runner.py::Searcher.search",
+        "backend/app/eval/metrics.py::ndcg_at_k",
+        "backend/app/eval/metrics.py::recall_at_k",
+        "backend/app/eval/metrics.py::mrr_at_k",
+        "backend/app/eval/runner.py::_mean"
+      ],
+      "called_by": [
+        "backend/app/eval/__main__.py::main"
+      ]
+    },
+    "backend/app/eval/runner.py::append_experiment": {
+      "file": "backend/app/eval/runner.py",
+      "name": "append_experiment",
+      "qualname": "append_experiment",
+      "lineno": 137,
+      "calls": [],
+      "called_by": [
+        "backend/app/eval/__main__.py::main"
       ]
     },
     "backend/app/index/__main__.py::_resolve_path": {
@@ -660,6 +891,7 @@
       "calls": [],
       "called_by": [
         "backend/app/api/routes_search.py::_index_metadata",
+        "backend/app/eval/__main__.py::check_model",
         "backend/app/index/metadata.py::is_up_to_date"
       ]
     },
@@ -1209,6 +1441,54 @@
         "backend/app/search/hybrid.py::HybridSearcher.search"
       ]
     },
+    "backend/app/search/highlight.py::unique_terms": {
+      "file": "backend/app/search/highlight.py",
+      "name": "unique_terms",
+      "qualname": "unique_terms",
+      "lineno": 120,
+      "calls": [],
+      "called_by": [
+        "backend/app/search/highlight.py::count_occurrences",
+        "backend/app/search/highlight.py::highlight_containing"
+      ]
+    },
+    "backend/app/search/highlight.py::term_matches_word": {
+      "file": "backend/app/search/highlight.py",
+      "name": "term_matches_word",
+      "qualname": "term_matches_word",
+      "lineno": 133,
+      "calls": [],
+      "called_by": [
+        "backend/app/search/highlight.py::count_occurrences",
+        "backend/app/search/highlight.py::highlight_containing"
+      ]
+    },
+    "backend/app/search/highlight.py::count_occurrences": {
+      "file": "backend/app/search/highlight.py",
+      "name": "count_occurrences",
+      "qualname": "count_occurrences",
+      "lineno": 158,
+      "calls": [
+        "backend/app/search/highlight.py::unique_terms",
+        "backend/app/search/highlight.py::term_matches_word"
+      ],
+      "called_by": [
+        "backend/app/api/routes_search.py::get_document"
+      ]
+    },
+    "backend/app/search/highlight.py::highlight_containing": {
+      "file": "backend/app/search/highlight.py",
+      "name": "highlight_containing",
+      "qualname": "highlight_containing",
+      "lineno": 168,
+      "calls": [
+        "backend/app/search/highlight.py::unique_terms",
+        "backend/app/search/highlight.py::term_matches_word"
+      ],
+      "called_by": [
+        "backend/app/api/routes_search.py::get_document"
+      ]
+    },
     "backend/app/search/hybrid.py::HybridSearcher.__init__": {
       "file": "backend/app/search/hybrid.py",
       "name": "__init__",
@@ -1267,6 +1547,7 @@
       "lineno": 55,
       "calls": [],
       "called_by": [
+        "backend/app/api/routes_search.py::get_document",
         "backend/app/search/bm25.py::BM25Index._doc_tokens",
         "backend/app/search/bm25.py::BM25Index.query",
         "backend/app/search/bm25.py::BM25Index.scores_for_all",
@@ -1710,6 +1991,60 @@
       ],
       "called_by": []
     },
+    "scripts/qrels_helper.py::Searcher.search": {
+      "file": "scripts/qrels_helper.py",
+      "name": "search",
+      "qualname": "Searcher.search",
+      "lineno": 27,
+      "calls": [],
+      "called_by": [
+        "scripts/qrels_helper.py::label_queries"
+      ]
+    },
+    "scripts/qrels_helper.py::read_queries": {
+      "file": "scripts/qrels_helper.py",
+      "name": "read_queries",
+      "qualname": "read_queries",
+      "lineno": 34,
+      "calls": [],
+      "called_by": [
+        "scripts/qrels_helper.py::main"
+      ]
+    },
+    "scripts/qrels_helper.py::format_block": {
+      "file": "scripts/qrels_helper.py",
+      "name": "format_block",
+      "qualname": "format_block",
+      "lineno": 43,
+      "calls": [],
+      "called_by": [
+        "scripts/qrels_helper.py::label_queries"
+      ]
+    },
+    "scripts/qrels_helper.py::label_queries": {
+      "file": "scripts/qrels_helper.py",
+      "name": "label_queries",
+      "qualname": "label_queries",
+      "lineno": 51,
+      "calls": [
+        "scripts/qrels_helper.py::format_block",
+        "scripts/qrels_helper.py::Searcher.search"
+      ],
+      "called_by": [
+        "scripts/qrels_helper.py::main"
+      ]
+    },
+    "scripts/qrels_helper.py::main": {
+      "file": "scripts/qrels_helper.py",
+      "name": "main",
+      "qualname": "main",
+      "lineno": 65,
+      "calls": [
+        "scripts/qrels_helper.py::label_queries",
+        "scripts/qrels_helper.py::read_queries"
+      ],
+      "called_by": []
+    },
     "frontend/src/api.ts::_fetch": {
       "file": "frontend/src/api.ts",
       "name": "_fetch",
@@ -1722,17 +2057,27 @@
       "file": "frontend/src/api.ts",
       "name": "search",
       "qualname": "search",
-      "lineno": 112,
+      "lineno": 127,
       "calls": [],
       "called_by": [
         "frontend/src/pages/SearchPage.tsx::SearchPage"
+      ]
+    },
+    "frontend/src/api.ts::getDocument": {
+      "file": "frontend/src/api.ts",
+      "name": "getDocument",
+      "qualname": "getDocument",
+      "lineno": 135,
+      "calls": [],
+      "called_by": [
+        "frontend/src/components/ResultCard.tsx::ResultCard"
       ]
     },
     "frontend/src/api.ts::submitFeedback": {
       "file": "frontend/src/api.ts",
       "name": "submitFeedback",
       "qualname": "submitFeedback",
-      "lineno": 120,
+      "lineno": 147,
       "calls": [],
       "called_by": [
         "frontend/src/components/ResultCard.tsx::ResultCard",
@@ -1743,7 +2088,7 @@
       "file": "frontend/src/api.ts",
       "name": "getHealth",
       "qualname": "getHealth",
-      "lineno": 128,
+      "lineno": 155,
       "calls": [],
       "called_by": [
         "frontend/src/pages/HealthPage.tsx::HealthPage"
@@ -1753,7 +2098,7 @@
       "file": "frontend/src/api.ts",
       "name": "getKpiSummary",
       "qualname": "getKpiSummary",
-      "lineno": 132,
+      "lineno": 159,
       "calls": [],
       "called_by": []
     },
@@ -1761,7 +2106,7 @@
       "file": "frontend/src/api.ts",
       "name": "getKpiVolume",
       "qualname": "getKpiVolume",
-      "lineno": 136,
+      "lineno": 163,
       "calls": [],
       "called_by": []
     },
@@ -1769,7 +2114,7 @@
       "file": "frontend/src/api.ts",
       "name": "getTopQueries",
       "qualname": "getTopQueries",
-      "lineno": 140,
+      "lineno": 167,
       "calls": [],
       "called_by": []
     },
@@ -1777,7 +2122,7 @@
       "file": "frontend/src/api.ts",
       "name": "getZeroResultQueries",
       "qualname": "getZeroResultQueries",
-      "lineno": 146,
+      "lineno": 173,
       "calls": [],
       "called_by": []
     },
@@ -1785,7 +2130,7 @@
       "file": "frontend/src/api.ts",
       "name": "getExperiments",
       "qualname": "getExperiments",
-      "lineno": 152,
+      "lineno": 179,
       "calls": [],
       "called_by": []
     },
@@ -1793,7 +2138,7 @@
       "file": "frontend/src/api.ts",
       "name": "getLogs",
       "qualname": "getLogs",
-      "lineno": 156,
+      "lineno": 183,
       "calls": [],
       "called_by": []
     },
@@ -1954,14 +2299,30 @@
         "frontend/src/pages/HomePage.tsx::HomePage"
       ]
     },
+    "frontend/src/components/ResultCard.tsx::Highlighted": {
+      "file": "frontend/src/components/ResultCard.tsx",
+      "name": "Highlighted",
+      "qualname": "Highlighted",
+      "lineno": 19,
+      "calls": [],
+      "called_by": [
+        "frontend/src/components/ResultCard.tsx::ResultCard"
+      ]
+    },
     "frontend/src/components/ResultCard.tsx::ResultCard": {
       "file": "frontend/src/components/ResultCard.tsx",
       "name": "ResultCard",
       "qualname": "ResultCard",
-      "lineno": 11,
+      "lineno": 23,
       "calls": [
         "frontend/src/api.ts::submitFeedback",
+        "frontend/src/api.ts::getDocument",
+        "frontend/src/components/ResultCard.tsx::closeModal",
+        "frontend/src/highlight.ts::highlightContaining",
+        "frontend/src/highlight.ts::decodeSnippet",
+        "frontend/src/components/ResultCard.tsx::openModal",
         "frontend/src/components/ResultCard.tsx::handleFeedback",
+        "frontend/src/components/ResultCard.tsx::Highlighted",
         "frontend/src/components/ScoreBar.tsx::ScoreBar"
       ],
       "called_by": [
@@ -1972,13 +2333,44 @@
       "file": "frontend/src/components/ResultCard.tsx",
       "name": "handleFeedback",
       "qualname": "handleFeedback",
-      "lineno": 15,
+      "lineno": 31,
       "calls": [
         "frontend/src/api.ts::submitFeedback"
       ],
       "called_by": [
         "frontend/src/components/ResultCard.tsx::ResultCard"
       ]
+    },
+    "frontend/src/components/ResultCard.tsx::openModal": {
+      "file": "frontend/src/components/ResultCard.tsx",
+      "name": "openModal",
+      "qualname": "openModal",
+      "lineno": 44,
+      "calls": [],
+      "called_by": [
+        "frontend/src/components/ResultCard.tsx::ResultCard"
+      ]
+    },
+    "frontend/src/components/ResultCard.tsx::closeModal": {
+      "file": "frontend/src/components/ResultCard.tsx",
+      "name": "closeModal",
+      "qualname": "closeModal",
+      "lineno": 45,
+      "calls": [],
+      "called_by": [
+        "frontend/src/components/ResultCard.tsx::ResultCard",
+        "frontend/src/components/ResultCard.tsx::onKey"
+      ]
+    },
+    "frontend/src/components/ResultCard.tsx::onKey": {
+      "file": "frontend/src/components/ResultCard.tsx",
+      "name": "onKey",
+      "qualname": "onKey",
+      "lineno": 72,
+      "calls": [
+        "frontend/src/components/ResultCard.tsx::closeModal"
+      ],
+      "called_by": []
     },
     "frontend/src/components/ScoreBar.tsx::ScoreBar": {
       "file": "frontend/src/components/ScoreBar.tsx",
@@ -2020,6 +2412,50 @@
       "calls": [],
       "called_by": [
         "frontend/src/pages/HomePage.tsx::HomePage"
+      ]
+    },
+    "frontend/src/highlight.ts::queryTerms": {
+      "file": "frontend/src/highlight.ts",
+      "name": "queryTerms",
+      "qualname": "queryTerms",
+      "lineno": 8,
+      "calls": [],
+      "called_by": []
+    },
+    "frontend/src/highlight.ts::escapeHtml": {
+      "file": "frontend/src/highlight.ts",
+      "name": "escapeHtml",
+      "qualname": "escapeHtml",
+      "lineno": 19,
+      "calls": [],
+      "called_by": []
+    },
+    "frontend/src/highlight.ts::decodeSnippet": {
+      "file": "frontend/src/highlight.ts",
+      "name": "decodeSnippet",
+      "qualname": "decodeSnippet",
+      "lineno": 26,
+      "calls": [],
+      "called_by": [
+        "frontend/src/components/ResultCard.tsx::ResultCard"
+      ]
+    },
+    "frontend/src/highlight.ts::termMatchesWord": {
+      "file": "frontend/src/highlight.ts",
+      "name": "termMatchesWord",
+      "qualname": "termMatchesWord",
+      "lineno": 35,
+      "calls": [],
+      "called_by": []
+    },
+    "frontend/src/highlight.ts::highlightContaining": {
+      "file": "frontend/src/highlight.ts",
+      "name": "highlightContaining",
+      "qualname": "highlightContaining",
+      "lineno": 50,
+      "calls": [],
+      "called_by": [
+        "frontend/src/components/ResultCard.tsx::ResultCard"
       ]
     },
     "frontend/src/pages/HealthPage.tsx::HealthPage": {

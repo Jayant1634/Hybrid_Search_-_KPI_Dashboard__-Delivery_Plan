@@ -1,0 +1,725 @@
+=== how do volcanoes erupt lava and magma ===
+1. dc0972cbcaf4	Volcano
+2. af01a6734158	Lava
+3. 526a9cbc8e95	Magma
+4. 8846e14e4f15	Mount St. Helens
+5. 4a9ad6d251a2	Mauna Loa
+6. 3fc860778d8c	Plate tectonics
+7. 99ad94f4981e	Mount Etna
+8. 1a0feeace0dc	Pacific Ring of Fire
+9. 2143d63a7113	seed_titles
+10. b3c8c5cce368	Caldera
+11. be152513c7da	Mount Vesuvius
+12. a3ae84f461d3	Pacific Ocean
+13. 744aa8217035	Earthquake
+14. 1a0ec239a1df	Krakatoa
+15. 408cc52ba772	Earth
+16. 4afa609c7581	Fault (geology)
+17. 9fbb43e0eb62	Seismic wave
+18. 53fe5d2ea6e1	Mount Fuji
+19. 283961cbc5eb	Pompeii
+20. c4165a11d535	San Andreas Fault
+
+=== what causes earthquakes and tsunamis ===
+1. 8ae4f939dd31	Tsunami
+2. 744aa8217035	Earthquake
+3. a3ae84f461d3	Pacific Ocean
+4. 9fbb43e0eb62	Seismic wave
+5. cef27222f854	2004 Indian Ocean earthquake and tsunami
+6. 4afa609c7581	Fault (geology)
+7. 1a0feeace0dc	Pacific Ring of Fire
+8. 12e758c40d4d	Richter scale
+9. 84fcff006555	Seismometer
+10. 3fc860778d8c	Plate tectonics
+11. 2143d63a7113	seed_titles
+12. db0625ed190d	Aftershock
+13. 6a0fde9fcb13	1906 San Francisco earthquake
+14. c2e060d09eb2	Rain
+15. 3168afc45024	Disease
+16. c4165a11d535	San Andreas Fault
+17. 2a975f7fbe61	Cancer
+18. 1a0ec239a1df	Krakatoa
+19. 234e0e7844e7	Asthma
+20. 9a78e68742ec	Tide
+
+=== how do tornadoes and thunderstorms form ===
+1. c41822f0d0f5	Tornado
+2. 6990bf95a1f5	Thunderstorm
+3. 6932c701e1ce	Tropical cyclone
+4. c2e060d09eb2	Rain
+5. d6f384f8a58a	Cloud
+6. 3c7fa0bde495	Weather
+7. cf6d8ca0c352	Wind
+8. dfc26276237d	Lightning
+9. ed8d25fadaca	Boiling
+10. dc0972cbcaf4	Volcano
+11. 6f773f153f15	Fog
+12. 7994ce6fe1b1	Solar System
+13. 9fbb43e0eb62	Seismic wave
+14. e51ecfb2e2eb	Snow
+15. 785aa4835505	Wind power
+16. 408cc52ba772	Earth
+17. 623c25d821ad	Cedar
+18. 234e0e7844e7	Asthma
+19. 1a0feeace0dc	Pacific Ring of Fire
+20. 4e78cf26e9d7	Supernova
+
+=== largest ocean on earth pacific atlantic ===
+1. 817f0eab9fe9	Atlantic Ocean
+2. a3ae84f461d3	Pacific Ocean
+3. 3afd159a5984	Ocean
+4. f6abbbe5211c	Southern Ocean
+5. ec5bde469f54	Indian Ocean
+6. e6a16958ec93	Arctic Ocean
+7. c5e9fe22a7ab	Ocean current
+8. 1a0feeace0dc	Pacific Ring of Fire
+9. 4a9ad6d251a2	Mauna Loa
+10. 033c5d5fa6a0	Amazon River
+11. 6932c701e1ce	Tropical cyclone
+12. 8ae4f939dd31	Tsunami
+13. e72b2604c20e	Democratic Republic of the Congo
+14. 5be3c01a9028	Mariana Trench
+15. 3fc860778d8c	Plate tectonics
+16. cef27222f854	2004 Indian Ocean earthquake and tsunami
+17. cf536fd28e92	Congo River
+18. a8308627670f	Yangtze River
+19. 408cc52ba772	Earth
+20. 2143d63a7113	seed_titles
+
+=== planets in the solar system mars jupiter ===
+1. 23014c3f443a	Planet
+2. 7261357cb517	Jupiter
+3. 7994ce6fe1b1	Solar System
+4. 77828a32fa1e	Saturn
+5. 426b851a3722	Mars
+6. 8bb91020dc48	Mercury (planet)
+7. 965d4087041c	Dwarf planet
+8. 709fc3837b6b	Venus
+9. 23a8864d2672	Uranus
+10. 0ec33b8b6ba0	Neptune
+11. 408cc52ba772	Earth
+12. 2143d63a7113	seed_titles
+13. 57cf31f2deb5	Pluto
+14. e327a066f89b	Sun
+15. 01b1a2339433	Star
+16. 3210eaa00703	Water
+17. dc0972cbcaf4	Volcano
+18. cf6d8ca0c352	Wind
+19. 32b7f911ee95	Milky Way
+20. 4b563ec2911d	Red giant
+
+=== what is a black hole and a supernova ===
+1. 4e78cf26e9d7	Supernova
+2. 999cd99a42d5	Black hole
+3. 01b1a2339433	Star
+4. f8d55913d6c4	Neutron star
+5. 32b7f911ee95	Milky Way
+6. 59ff6df24cb2	White dwarf
+7. 10ec297593c5	Betelgeuse
+8. da3d1a35c106	Golf
+9. e327a066f89b	Sun
+10. 7994ce6fe1b1	Solar System
+11. 4b563ec2911d	Red giant
+12. 6990bf95a1f5	Thunderstorm
+13. d9449bdb6be2	Nuclear fusion
+14. 0ec33b8b6ba0	Neptune
+15. 2143d63a7113	seed_titles
+16. 2a975f7fbe61	Cancer
+17. 4afa609c7581	Fault (geology)
+18. 181a66dffe2e	Sirius
+19. 965d4087041c	Dwarf planet
+20. 29235ed551a6	Constellation
+
+=== how the heart and lungs work in the human body ===
+1. 8020f5594c50	Heart
+2. 16e6a517b719	Lung
+3. 36b06c9d1783	Skeleton
+4. 1010befe39ca	Human body
+5. ff9a76eda089	Muscle
+6. 9db57c0f18d9	Blood
+7. 3b2ac74e3e60	Brain
+8. 66da05f416cc	Pneumonia
+9. 234e0e7844e7	Asthma
+10. 5c619fe3fe44	Dog
+11. 9a4a5b5c8764	Stomach
+12. 3e9ee087c1cb	Tuberculosis
+13. 7c7e65729b6b	Skin
+14. ec2636be3315	Mummification
+15. 0ca0c229a8c2	Oxygen
+16. 748e2997a13d	Protein
+17. 58b9ed239ec5	Kidney
+18. 6ab8b6447157	Sport
+19. 2a975f7fbe61	Cancer
+20. 6db3b2b6a9cd	Carbon
+
+=== diseases malaria influenza tuberculosis ===
+1. a6f69d540330	Influenza
+2. 5aab1e9225d7	Malaria
+3. 3e9ee087c1cb	Tuberculosis
+4. 3168afc45024	Disease
+5. 784a1aadab68	Mosquito
+6. 2143d63a7113	seed_titles
+7. 15587e4dd776	Baobab
+8. 4748e225061b	ATTRIBUTION
+9. f962d4e947c3	HIV
+10. 9267396d56a4	Measles
+11. e72b2604c20e	Democratic Republic of the Congo
+12. 66da05f416cc	Pneumonia
+13. 506714d42de4	Cholera
+14. 6ab8b6447157	Sport
+15. 42ede0dbb734	Smallpox
+16. 8263ead59ce7	Insect
+17. 129f57ad4ecd	The Holocaust
+18. 1b65c2205f0d	Tutankhamun
+19. 234e0e7844e7	Asthma
+20. ff9a76eda089	Muscle
+
+=== vitamins protein and carbohydrates in food ===
+1. 38dcae347276	Nutrition
+2. 0010eb3af324	Carbohydrate
+3. ed9b920d5a86	Vitamin
+4. 3f03754039ff	Diet (nutrition)
+5. 19812891608c	Fat
+6. 748e2997a13d	Protein
+7. d8925e1d693e	Liver
+8. 9ed8db864628	Sugar
+9. 9a4a5b5c8764	Stomach
+10. 07156c89f51d	Frying
+11. 502b88ee1845	Dietary fiber
+12. f7f4d2d2f3b4	Grasshopper
+13. 913e3d48f2c3	Mineral (nutrient)
+14. 9db57c0f18d9	Blood
+15. 2d0942ad7db2	Rice
+16. d7a525cc84e0	Butter
+17. ff9a76eda089	Muscle
+18. 10adf16be996	Spice
+19. a011f403c2f8	Calcium
+20. 0d9f5dd4de1c	Soup
+
+=== mammals like lions elephants and whales ===
+1. ded497632840	Elephant
+2. 643021e59573	Whale
+3. 04e9eca8ca8c	Lion
+4. fa9390bcfa7f	Mammal
+5. 333109b8278e	Dolphin
+6. 3b2ac74e3e60	Brain
+7. 7ee7d7350451	Ostrich
+8. aac5075306b4	Bat
+9. 7c7e65729b6b	Skin
+10. 5c8e2f937270	Bear
+11. 5c619fe3fe44	Dog
+12. 3afd159a5984	Ocean
+13. 779232da7f91	Owl
+14. 36b06c9d1783	Skeleton
+15. a088df508a0a	Wolf
+16. 16e6a517b719	Lung
+17. 4a20265ab08b	Horse
+18. 61cb20cdbb42	Bird
+19. 1010befe39ca	Human body
+20. 178ea21e3f51	Kangaroo
+
+=== birds that cannot fly ostrich and penguin ===
+1. ca1987c871ef	Penguin
+2. 7ee7d7350451	Ostrich
+3. 61cb20cdbb42	Bird
+4. b10fda795fe2	Parrot
+5. 096b24a4b3c7	Hummingbird
+6. 0a707fc4e5d3	Peafowl
+7. 9518913178de	Flamingo
+8. aac5075306b4	Bat
+9. 779232da7f91	Owl
+10. 87e0cb2d46bb	Dragonfly
+11. ce1bee457dd9	Dove
+12. 26fa365b6444	Moth
+13. 08fb53213374	Eagle
+14. 4f199fad536b	Duck
+15. 59ace05a62b4	Chicken
+16. e3cebd2f8208	Butterfly
+17. f5ecaa2f1166	Helicopter
+18. 16e6a517b719	Lung
+19. 8263ead59ce7	Insect
+20. fa9390bcfa7f	Mammal
+
+=== insects bees ants and butterflies ===
+1. 9dbcc6ac4fe8	Bee
+2. ba2c427167ff	Wasp
+3. 8263ead59ce7	Insect
+4. e3cebd2f8208	Butterfly
+5. 32358c6cb084	Ant
+6. 9422f34b38aa	Termite
+7. 26fa365b6444	Moth
+8. 87e0cb2d46bb	Dragonfly
+9. 7782c1ea9e16	Beetle
+10. 096b24a4b3c7	Hummingbird
+11. aac5075306b4	Bat
+12. f7f4d2d2f3b4	Grasshopper
+13. 36b06c9d1783	Skeleton
+14. 43517aa96204	Cockroach
+15. 784a1aadab68	Mosquito
+16. 7ee7d7350451	Ostrich
+17. 9ed8db864628	Sugar
+18. 61cb20cdbb42	Bird
+19. 779232da7f91	Owl
+20. 0a707fc4e5d3	Peafowl
+
+=== oak pine and sequoia trees ===
+1. c230425d35ed	Oak
+2. 474eee503119	Sequoia
+3. e3dc83d2801e	Pine
+4. 9c6d71a10cb0	Tree
+5. 485d6003574c	Spruce
+6. 623c25d821ad	Cedar
+7. a1748de30bbe	Eucalyptus
+8. 7cadbc153cf2	Maple
+9. 15587e4dd776	Baobab
+10. 2143d63a7113	seed_titles
+11. 13224aa6d811	Willow
+12. 779232da7f91	Owl
+13. 26fa365b6444	Moth
+14. f768a8daa282	Bamboo
+15. 4748e225061b	ATTRIBUTION
+16. cf6d8ca0c352	Wind
+17. ba2c427167ff	Wasp
+18. 61cb20cdbb42	Bird
+19. 7782c1ea9e16	Beetle
+20. 8846e14e4f15	Mount St. Helens
+
+=== ancient egypt pyramids pharaohs and mummies ===
+1. 395c6a001a8e	Pyramid
+2. a4aa80d8a25e	Ancient Egypt
+3. ec2636be3315	Mummification
+4. 86f1f8f5830a	Pharaoh
+5. 1f15b18bb954	Great Pyramid of Giza
+6. 84e689a44964	Egypt
+7. 4e0b188e58f6	Ramesses II
+8. 750a22332690	Great Sphinx
+9. 591f1288776d	Nile
+10. e4c64f567693	Nile
+11. 1b65c2205f0d	Tutankhamun
+12. 5a2c1ed68fff	Cleopatra VII
+13. 0e9228ca3915	Hieroglyph
+14. c762c5731685	Architecture
+15. 90cd3b646629	Fresco
+16. 4748e225061b	ATTRIBUTION
+17. 2beb3a6321d1	Ancient Rome
+18. d251d1108bf7	Michelangelo
+19. bdf984cf6c4a	Harp
+20. 283961cbc5eb	Pompeii
+
+=== roman empire julius caesar and the colosseum ===
+1. dcbd3774d980	Augustus
+2. 249840904d38	Colosseum
+3. a26df970ccbf	Colosseum
+4. 465863353bb7	Roman Empire
+5. 80a8bf3180f9	Julius Caesar
+6. 818d15b7b979	Roman Republic
+7. 5a2c1ed68fff	Cleopatra VII
+8. 2beb3a6321d1	Ancient Rome
+9. b558be165566	Nero
+10. 2143d63a7113	seed_titles
+11. e533ea1a766d	Latin
+12. 92634b01d92c	Gladiator
+13. 3f8e03765b30	Roman army
+14. 283961cbc5eb	Pompeii
+15. 7de7b0c1c66a	Hadrian's Wall
+16. 4748e225061b	ATTRIBUTION
+17. 84e689a44964	Egypt
+18. 86f1f8f5830a	Pharaoh
+19. d251d1108bf7	Michelangelo
+20. 90cd3b646629	Fresco
+
+=== world war two pearl harbor and normandy ===
+1. ebad955e170e	Attack on Pearl Harbor
+2. 564aaa3fcb02	World War II
+3. ee6bc433277e	Normandy landings
+4. c9d68f841c74	Atomic bombings of Hiroshima and Nagasaki
+5. 9ae9202cfc87	Franklin D. Roosevelt
+6. 4a88c05d0525	Blitzkrieg
+7. 2143d63a7113	seed_titles
+8. 863a2cf7707b	Winston Churchill
+9. 6bdb10cd72e1	Nazi Germany
+10. 4c4d699d87e0	Adolf Hitler
+11. 71e37c1b88c5	Battle of Stalingrad
+12. c5e2898b12d0	Mona Lisa
+13. a92c0a3a485e	Joseph Stalin
+14. ef7b8eb6cd4a	Ship
+15. 129f57ad4ecd	The Holocaust
+16. 7de7b0c1c66a	Hadrian's Wall
+17. 8ae4f939dd31	Tsunami
+18. 5be3c01a9028	Mariana Trench
+19. 801fe4afaa79	Eiffel Tower
+20. 5a2c1ed68fff	Cleopatra VII
+
+=== invention of the telephone and printing press ===
+1. 54908d7306fa	Printing press
+2. 10d6d0159966	Telephone
+3. 8c5719a34b8d	Invention
+4. b8871e7f8876	Piano
+5. 2143d63a7113	seed_titles
+6. c5a068fd10f2	Book of the Dead
+7. 1832fc5ba8e2	Trumpet
+8. 4225fc9b7e7c	Radio
+9. 07b936e489e1	Electrical telegraph
+10. 4748e225061b	ATTRIBUTION
+11. f65db5130396	Impressionism
+12. 734c2abfccbc	Number
+13. 3c425f230c61	Train
+14. f2ce3d3c3ad6	Bicycle
+15. 0e9228ca3915	Hieroglyph
+16. a23c4269090f	Television
+17. 62415ef9c67b	Rembrandt
+18. 3b61085ed8b0	Leonardo da Vinci
+19. d4ffa005ee94	Internet
+20. ef7b8eb6cd4a	Ship
+
+=== how a computer cpu and memory work ===
+1. 38eb403d9a4f	Central processing unit
+2. 86cae6042054	Computer memory
+3. af4b98bc24b5	Computer
+4. 1094201b004d	Computer hardware
+5. a85c6f29d6a5	Personal computer
+6. 87968a3391ce	Microprocessor
+7. 58c53ef7b968	Operating system
+8. 492cfd7c0f07	Software
+9. bf899199cba7	Router
+10. 164b1388f272	Programming language
+11. 70f9afccfa83	Algorithm
+12. 832a11f6bcd2	Binary number
+13. b9419f9d502d	Arithmetic
+14. e5ca2e6bb377	Website
+15. 8c9aadb08620	Laptop
+16. 791e137ee75b	IP address
+17. 54680bb5c922	Search engine
+18. bb3dec23ce0b	Mathematics
+19. a23c4269090f	Television
+20. 0b223f2fe3d3	Web browser
+
+=== what is the internet world wide web and email ===
+1. d4ffa005ee94	Internet
+2. 7c330c85598e	E-mail
+3. a02e876e5080	World Wide Web
+4. 0b223f2fe3d3	Web browser
+5. 54680bb5c922	Search engine
+6. c079219e425a	Hypertext Transfer Protocol
+7. e5ca2e6bb377	Website
+8. 15e6933d64b1	Social network service
+9. 75e0cccc60f7	Domain name
+10. 2143d63a7113	seed_titles
+11. 791e137ee75b	IP address
+12. bf899199cba7	Router
+13. af4b98bc24b5	Computer
+14. 87968a3391ce	Microprocessor
+15. 332b7defa85e	Wi-Fi
+16. 10d6d0159966	Telephone
+17. a85c6f29d6a5	Personal computer
+18. 4748e225061b	ATTRIBUTION
+19. 4a4c834c5f93	Prime number
+20. 492cfd7c0f07	Software
+
+=== prime numbers geometry and pi in mathematics ===
+1. 3c853664dd15	Pi
+2. 4a4c834c5f93	Prime number
+3. bb3dec23ce0b	Mathematics
+4. dbd19da0f0aa	Geometry
+5. 734c2abfccbc	Number
+6. d0de2565a94c	Trigonometry
+7. 546e8557c943	Algebra
+8. b9419f9d502d	Arithmetic
+9. 45b46ecc93e6	Fraction (mathematics)
+10. 7c7b8c7ea36e	Calculus
+11. 2143d63a7113	seed_titles
+12. 7f3887b76d0a	Statistics
+13. 36cbc9c92d3a	Probability
+14. 4748e225061b	ATTRIBUTION
+15. 4e0b188e58f6	Ramesses II
+16. 395c6a001a8e	Pyramid
+17. db0625ed190d	Aftershock
+18. b56a0a525420	Chemical element
+19. 863a2cf7707b	Winston Churchill
+20. cef27222f854	2004 Indian Ocean earthquake and tsunami
+
+=== chemical elements oxygen carbon and gold ===
+1. 0ca0c229a8c2	Oxygen
+2. b56a0a525420	Chemical element
+3. 6db3b2b6a9cd	Carbon
+4. 6fa398cc09fc	Gold
+5. 97ce652d612e	Hydrogen
+6. 9d386726896f	Iron
+7. b90911e90038	Iron
+8. 913e3d48f2c3	Mineral (nutrient)
+9. eb1b9d44e324	Silver
+10. 53f1c8ad86d5	Helium
+11. 9da63ef73d04	Nitrogen
+12. d3e8291b3288	Copper
+13. fb4572b0bcc7	Uranium
+14. 4ffcbf8f6503	Coal
+15. 3210eaa00703	Water
+16. a011f403c2f8	Calcium
+17. 408cc52ba772	Earth
+18. 0010eb3af324	Carbohydrate
+19. e327a066f89b	Sun
+20. 426b851a3722	Mars
+
+=== solar energy wind power and fossil fuels ===
+1. d43ad38a8d09	Renewable energy
+2. 355843d9542d	Fossil fuel
+3. b5ea072b70a7	Solar energy
+4. 785aa4835505	Wind power
+5. 4ffcbf8f6503	Coal
+6. e7cae3da908a	Hydroelectricity
+7. cf6d8ca0c352	Wind
+8. da117a4a6fb5	Petroleum
+9. 214132962533	Steam engine
+10. 806831d07eb5	Nuclear power
+11. e327a066f89b	Sun
+12. 01b1a2339433	Star
+13. 49d136fcee95	Energy
+14. 7994ce6fe1b1	Solar System
+15. 8dc2921e568a	Electricity
+16. 95fc09b8675e	Light bulb
+17. 7261357cb517	Jupiter
+18. 0043a484eabd	Automobile
+19. 474eee503119	Sequoia
+20. 97ce652d612e	Hydrogen
+
+=== how trains airplanes and ships transport people ===
+1. 6219d8cde8cd	Transport
+2. 39337fe2b673	Airplane
+3. e9d23adc9d36	Airplane
+4. 3c425f230c61	Train
+5. ef7b8eb6cd4a	Ship
+6. aebc530aa7a4	Rapid transit
+7. 355843d9542d	Fossil fuel
+8. ed14c3ee12cd	Bus
+9. 0043a484eabd	Automobile
+10. 4225fc9b7e7c	Radio
+11. 497c7bc6acfe	Truck
+12. da117a4a6fb5	Petroleum
+13. 29a10e245f55	Wheel
+14. 5f6d80ce351c	Boat
+15. c478694179a3	Aqueduct
+16. f2ce3d3c3ad6	Bicycle
+17. 686f366844f5	River Thames
+18. 5dcbc3e12bfd	Motorcycle
+19. af4b98bc24b5	Computer
+20. 214132962533	Steam engine
+
+=== piano guitar and violin musical instruments ===
+1. 8dff87334b98	Musical instrument
+2. f13f1bce6059	Violin
+3. 4b082c9c020a	Guitar
+4. bdf984cf6c4a	Harp
+5. 1f6c92f10d01	Flute
+6. b8871e7f8876	Piano
+7. 73c9ce045d39	Cello
+8. e2e9722696ea	Clarinet
+9. 2143d63a7113	seed_titles
+10. f61f4f7e30b1	Saxophone
+11. 4a79e4b1a111	Drum
+12. 1832fc5ba8e2	Trumpet
+13. 6d68c0849390	Trombone
+14. 4748e225061b	ATTRIBUTION
+15. 5f6d80ce351c	Boat
+16. 87968a3391ce	Microprocessor
+17. a011f403c2f8	Calcium
+18. 4a20265ab08b	Horse
+19. 38eb403d9a4f	Central processing unit
+20. 0b223f2fe3d3	Web browser
+
+=== association football basketball and cricket ===
+1. 389972ad7b39	Association football
+2. 30472a23ba5a	Cricket
+3. 715e381981e8	Rugby football
+4. a15480b1655d	Basketball
+5. 6ab8b6447157	Sport
+6. 25d0afd83ca0	Volleyball
+7. 4b31a4153e19	Nigeria
+8. dcccf00073e6	South Africa
+9. 2143d63a7113	seed_titles
+10. 3a2216fca155	Baseball
+11. 5faa32f25f26	Uganda
+12. d3bab2de24a2	Ghana
+13. 1cdc79598a9a	Tennis
+14. 395c6a001a8e	Pyramid
+15. 4748e225061b	ATTRIBUTION
+16. da3d1a35c106	Golf
+17. 9dbcc6ac4fe8	Bee
+18. 556d6d2d5020	Ice hockey
+19. ba2c427167ff	Wasp
+20. e65f61515eb8	Tiger
+
+=== mona lisa leonardo da vinci oil painting ===
+1. c5e2898b12d0	Mona Lisa
+2. 3b61085ed8b0	Leonardo da Vinci
+3. 6546bbeeb373	Oil paint
+4. d554a3636294	Painting
+5. d251d1108bf7	Michelangelo
+6. f65db5130396	Impressionism
+7. 90cd3b646629	Fresco
+8. 998bf1ad5881	Pablo Picasso
+9. 3f1b78ce8006	Claude Monet
+10. 2143d63a7113	seed_titles
+11. da117a4a6fb5	Petroleum
+12. 47282bbd7ea8	Vincent van Gogh
+13. 2cdc4e025962	Watercolour
+14. 62415ef9c67b	Rembrandt
+15. f5ecaa2f1166	Helicopter
+16. 26b1090c9cbe	Taj Mahal
+17. 07156c89f51d	Frying
+18. 16ca720b3f72	Gothic cathedrals
+19. d7a525cc84e0	Butter
+20. 0e9228ca3915	Hieroglyph
+
+=== gothic cathedrals and the eiffel tower ===
+1. 16ca720b3f72	Gothic cathedrals
+2. 801fe4afaa79	Eiffel Tower
+3. c762c5731685	Architecture
+4. 67fdd30d73a5	Cathedral
+5. 1cffc7b481e3	Castle
+6. 04c3e2b8dc8f	Arch
+7. ea3af147f556	Skyscraper
+8. 686f366844f5	River Thames
+9. 395c6a001a8e	Pyramid
+10. 2143d63a7113	seed_titles
+11. c4165a11d535	San Andreas Fault
+12. 7de7b0c1c66a	Hadrian's Wall
+13. 283961cbc5eb	Pompeii
+14. 1377ae707cbe	Dome
+15. c5e2898b12d0	Mona Lisa
+16. 834af0f5a8a4	Building
+17. c41822f0d0f5	Tornado
+18. 4748e225061b	ATTRIBUTION
+19. be152513c7da	Mount Vesuvius
+20. 6a0fde9fcb13	1906 San Francisco earthquake
+
+=== baking bread cheese and chocolate ===
+1. 3289e4237329	Chocolate
+2. be2f1e1b2460	Bread
+3. bf305e0cf3eb	Baking
+4. e24263e1c2cd	Cake
+5. 294381c6b794	Cheese
+6. d7a525cc84e0	Butter
+7. 7d0d1ad3de0a	Cooking
+8. 0d9f5dd4de1c	Soup
+9. 0010eb3af324	Carbohydrate
+10. 4748e225061b	ATTRIBUTION
+11. 9ed8db864628	Sugar
+12. 2143d63a7113	seed_titles
+13. 15587e4dd776	Baobab
+14. 2d0942ad7db2	Rice
+15. e51ecfb2e2eb	Snow
+16. f2ce3d3c3ad6	Bicycle
+17. 38dcae347276	Nutrition
+18. 4f199fad536b	Duck
+19. a0c964fd9e12	Sodium
+20. 4ffcbf8f6503	Coal
+
+=== nile amazon and mississippi rivers ===
+1. 033c5d5fa6a0	Amazon River
+2. ebba11293c9a	River
+3. 65571020f331	Mississippi River
+4. 591f1288776d	Nile
+5. e4c64f567693	Nile
+6. cf536fd28e92	Congo River
+7. a8308627670f	Yangtze River
+8. c07e63ea3be0	Ganges
+9. 4748e225061b	ATTRIBUTION
+10. a4aa80d8a25e	Ancient Egypt
+11. 3bb7de6071b6	Sudan
+12. 3210eaa00703	Water
+13. a48c4adb148f	Danube
+14. 2143d63a7113	seed_titles
+15. 84e689a44964	Egypt
+16. cdd59e14f238	Yellow River
+17. 19a81ed81112	Kenya
+18. 1631274afe5c	Ethiopia
+19. 4df74d10c558	Volga
+20. 784a1aadab68	Mosquito
+
+=== glowing rock blasting from a hilltop ===
+1. b3c8c5cce368	Caldera
+2. 526a9cbc8e95	Magma
+3. dc0972cbcaf4	Volcano
+4. af01a6734158	Lava
+5. 1a0ec239a1df	Krakatoa
+6. 4ffcbf8f6503	Coal
+7. 3fc860778d8c	Plate tectonics
+8. 8846e14e4f15	Mount St. Helens
+9. 4afa609c7581	Fault (geology)
+10. 6990bf95a1f5	Thunderstorm
+11. 426b851a3722	Mars
+12. 7994ce6fe1b1	Solar System
+13. 1f15b18bb954	Great Pyramid of Giza
+14. 744aa8217035	Earthquake
+15. be152513c7da	Mount Vesuvius
+16. a0c964fd9e12	Sodium
+17. dfc26276237d	Lightning
+18. 4a9ad6d251a2	Mauna Loa
+19. 9fbb43e0eb62	Seismic wave
+20. da117a4a6fb5	Petroleum
+
+=== desk gadget that stores numbers and obeys typed commands ===
+1. 164b1388f272	Programming language
+2. 734c2abfccbc	Number
+3. af4b98bc24b5	Computer
+4. 10d6d0159966	Telephone
+5. 86cae6042054	Computer memory
+6. b9419f9d502d	Arithmetic
+7. 832a11f6bcd2	Binary number
+8. 45b46ecc93e6	Fraction (mathematics)
+9. 8c9aadb08620	Laptop
+10. 1094201b004d	Computer hardware
+11. 38eb403d9a4f	Central processing unit
+12. 87968a3391ce	Microprocessor
+13. 492cfd7c0f07	Software
+14. a85c6f29d6a5	Personal computer
+15. 791e137ee75b	IP address
+16. 58c53ef7b968	Operating system
+17. 7f3887b76d0a	Statistics
+18. 54908d7306fa	Printing press
+19. 95fc09b8675e	Light bulb
+20. f61f4f7e30b1	Saxophone
+
+=== worldwide clash in the nineteen forties across europe and the pacific ===
+1. 817f0eab9fe9	Atlantic Ocean
+2. 564aaa3fcb02	World War II
+3. a3ae84f461d3	Pacific Ocean
+4. ebad955e170e	Attack on Pearl Harbor
+5. 1a0feeace0dc	Pacific Ring of Fire
+6. 8ae4f939dd31	Tsunami
+7. c5e9fe22a7ab	Ocean current
+8. 389972ad7b39	Association football
+9. 5be3c01a9028	Mariana Trench
+10. f6abbbe5211c	Southern Ocean
+11. 3afd159a5984	Ocean
+12. 129f57ad4ecd	The Holocaust
+13. e6a16958ec93	Arctic Ocean
+14. a02e876e5080	World Wide Web
+15. 6932c701e1ce	Tropical cyclone
+16. 2beb3a6321d1	Ancient Rome
+17. ce1bee457dd9	Dove
+18. 4a9ad6d251a2	Mauna Loa
+19. c4165a11d535	San Andreas Fault
+20. ec5bde469f54	Indian Ocean
+
+=== what to eat so a person stays strong and does not fall ill ===
+1. a6f69d540330	Influenza
+2. d8925e1d693e	Liver
+3. 3f03754039ff	Diet (nutrition)
+4. 913e3d48f2c3	Mineral (nutrient)
+5. 506714d42de4	Cholera
+6. 38dcae347276	Nutrition
+7. 61cb20cdbb42	Bird
+8. 784a1aadab68	Mosquito
+9. 08fb53213374	Eagle
+10. 36b06c9d1783	Skeleton
+11. 7782c1ea9e16	Beetle
+12. b10fda795fe2	Parrot
+13. 58b9ed239ec5	Kidney
+14. ded497632840	Elephant
+15. 32358c6cb084	Ant
+16. 999cd99a42d5	Black hole
+17. 0d9f5dd4de1c	Soup
+18. 9db57c0f18d9	Blood
+19. 2d0942ad7db2	Rice
+20. 6990bf95a1f5	Thunderstorm

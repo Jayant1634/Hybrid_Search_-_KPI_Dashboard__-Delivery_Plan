@@ -1,4 +1,9 @@
-from app.search.highlight import make_snippet
+from app.search.highlight import (
+    count_occurrences,
+    highlight_containing,
+    make_snippet,
+    term_matches_word,
+)
 
 
 def test_wraps_whole_word_matches_in_em() -> None:
@@ -72,3 +77,41 @@ def test_blank_terms_are_ignored() -> None:
 def test_regex_special_term_is_literal() -> None:
     out = make_snippet("cost is a.b dollars", ["a.b"], window=240)
     assert out == "cost is <em>a.b</em> dollars"
+
+
+def test_highlight_containing_matches_shared_stem() -> None:
+    out = highlight_containing("Chemical element", ["chec"])
+    assert out == "<em>Chemical</em> element"
+
+
+def test_term_matches_word_needs_three_shared_chars() -> None:
+    assert term_matches_word("chec", "chemical")
+    assert term_matches_word("lava", "lava")
+    assert term_matches_word("lava", "lavatory")
+    assert not term_matches_word("xyz", "chemical")
+    assert not term_matches_word("ab", "about")
+
+
+def test_highlight_containing_is_case_insensitive() -> None:
+    out = highlight_containing("Calcium and CALCIUM", ["calcium"])
+    assert out == "<em>Calcium</em> and <em>CALCIUM</em>"
+
+
+def test_highlight_containing_escapes_html() -> None:
+    out = highlight_containing("rock & <b>lava</b>", ["lava"])
+    assert out == "rock &amp; &lt;b&gt;<em>lava</em>&lt;/b&gt;"
+
+
+def test_highlight_containing_empty_terms_is_escaped_text() -> None:
+    assert highlight_containing("a < b", []) == "a &lt; b"
+
+
+def test_count_occurrences_counts_words_containing_term() -> None:
+    text = "Calcium is a chemical element. Chemical compounds of calcium."
+    counts = dict(count_occurrences(text, ["chec", "calcium"]))
+    assert counts["chec"] == 2
+    assert counts["calcium"] == 2
+
+
+def test_count_occurrences_skips_blank_and_duplicate_terms() -> None:
+    assert count_occurrences("lava lava", ["Lava", "lava", "  "]) == [("lava", 2)]

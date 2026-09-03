@@ -404,6 +404,32 @@
   border-color: var(--c-border-strong);
   box-shadow: var(--shadow-sm);
 }
+.result-card-clickable {
+  cursor: pointer;
+  text-align: left;
+  width: 100%;
+}
+.result-card-clickable:hover {
+  border-color: var(--purple);
+  box-shadow: var(--shadow-md);
+}
+.result-card-clickable:focus-visible {
+  outline: 2px solid var(--purple);
+  outline-offset: 2px;
+}
+.result-snippet em,
+.result-title em,
+.doc-body em,
+.occur-chip em,
+.doc-modal-title em {
+  background: rgba(120, 35, 220, 0.16);
+  color: inherit;
+  font-style: normal;
+  font-weight: 650;
+  padding: 0 2px;
+  border-radius: 2px;
+  box-decoration-break: clone;
+}
 .result-rank {
   flex-shrink: 0;
   width: 26px;
@@ -529,6 +555,145 @@
   font-size: 12px;
   font-weight: 600;
   color: var(--success);
+}
+
+/* ── Document result modal ───────────────────────────────── */
+
+.doc-modal-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 80;
+  background: rgba(17, 17, 17, 0.48);
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  padding: 48px 24px 32px;
+  overflow: auto;
+}
+.doc-modal {
+  width: min(840px, 100%);
+  max-height: calc(100svh - 80px);
+  overflow: auto;
+  background: var(--c-surface);
+  border: 1px solid var(--c-border);
+  border-radius: 10px;
+  box-shadow: var(--shadow-md);
+  padding: 28px 32px 32px;
+  display: flex;
+  flex-direction: column;
+  gap: 22px;
+}
+.doc-modal-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+}
+.doc-modal-heading {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  min-width: 0;
+}
+.doc-modal-title {
+  font-size: 24px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  color: var(--c-heading);
+  line-height: 1.25;
+}
+.doc-modal-source {
+  font-size: 13px;
+  color: var(--c-secondary);
+  word-break: break-all;
+}
+.doc-modal-close {
+  flex-shrink: 0;
+}
+.doc-modal-section {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.doc-modal-label {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--c-muted);
+}
+.doc-modal-muted {
+  font-size: 13px;
+  color: var(--c-secondary);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.occur-list {
+  list-style: none;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.occur-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--c-surface-2);
+  border: 1px solid var(--c-border);
+  border-radius: 99px;
+  padding: 5px 12px;
+  font-size: 13px;
+}
+.occur-chip span {
+  font-family: var(--mono);
+  font-weight: 700;
+  color: var(--purple);
+}
+.kpi-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 10px;
+}
+.kpi-tile {
+  background: var(--c-surface-2);
+  border: 1px solid var(--c-border);
+  border-radius: 8px;
+  padding: 12px 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.kpi-tile-label {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--c-muted);
+}
+.kpi-tile-value {
+  font-family: var(--mono);
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--c-heading);
+}
+.kpi-tile-sub {
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--c-secondary);
+}
+.doc-body {
+  background: var(--c-bg-alt);
+  border: 1px solid var(--c-border);
+  border-radius: 8px;
+  padding: 16px 18px;
+  font-size: 14px;
+  line-height: 1.65;
+  color: var(--c-text);
+  white-space: pre-wrap;
+  word-break: break-word;
+  max-height: 42vh;
+  overflow: auto;
 }
 
 /* ── Empty state ─────────────────────────────────────────── */
@@ -1181,6 +1346,7 @@ g:has(.cg-node.focus) .cg-node-label {
   .cg-stats { grid-template-columns: repeat(3, 1fr); }
   .cg-body { grid-template-columns: 1fr; }
   .cg-topo, .cg-detail { max-height: 320px; }
+  .kpi-grid { grid-template-columns: repeat(2, 1fr); }
 }
 
 @media (max-width: 768px) {
@@ -1204,4 +1370,7 @@ g:has(.cg-node.focus) .cg-node-label {
   .stat-number { font-size: 30px; }
   .cg-stats { grid-template-columns: repeat(2, 1fr); }
   .page-container-wide { padding: 28px 20px 48px; }
+  .kpi-grid { grid-template-columns: repeat(2, 1fr); }
+  .doc-modal { padding: 20px; }
+  .doc-modal-overlay { padding: 16px; }
 }

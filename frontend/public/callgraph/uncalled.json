@@ -1,17 +1,19 @@
 {
-  "generated_at": "2026-09-03T17:33:12Z",
+  "generated_at": "2026-09-03T18:24:45Z",
   "files": [
     "backend/app/__init__.py",
     "backend/app/api/main.py",
     "backend/app/api/ratelimit.py",
     "backend/app/callgraph/__init__.py",
     "backend/app/callgraph/__main__.py",
+    "backend/app/eval/__main__.py",
     "backend/app/index/__main__.py",
     "backend/app/ingest/__main__.py",
     "backend/app/observability/logging.py",
     "frontend/src/main.tsx",
     "scripts/_check_titles.py",
-    "scripts/fetch_until_done.py"
+    "scripts/fetch_until_done.py",
+    "scripts/qrels_helper.py"
   ],
   "functions": [
     "backend/app/api/deps.py::SearchService.__init__",
@@ -22,6 +24,7 @@
     "backend/app/api/ratelimit.py::RateLimiter.allow",
     "backend/app/api/ratelimit.py::rate_limit",
     "backend/app/api/routes_search.py::feedback",
+    "backend/app/api/routes_search.py::get_document",
     "backend/app/api/routes_search.py::health",
     "backend/app/api/routes_search.py::metrics",
     "backend/app/api/routes_search.py::search",
@@ -31,6 +34,7 @@
     "backend/app/callgraph/__main__.py::main",
     "backend/app/callgraph/analyze.py::_CallCollector.__init__",
     "backend/app/callgraph/analyze.py::_CallCollector.visit_Call",
+    "backend/app/eval/__main__.py::main",
     "backend/app/index/__main__.py::main",
     "backend/app/index/metadata.py::IndexMetadata.save",
     "backend/app/ingest/__init__.py::main",
@@ -66,8 +70,13 @@
     "frontend/src/api.ts::getZeroResultQueries",
     "frontend/src/components/CallGraphView.tsx::resetView",
     "frontend/src/components/CallGraphView.tsx::shortFile",
+    "frontend/src/components/ResultCard.tsx::onKey",
+    "frontend/src/highlight.ts::escapeHtml",
+    "frontend/src/highlight.ts::queryTerms",
+    "frontend/src/highlight.ts::termMatchesWord",
     "frontend/src/pages/SearchPage.tsx::handleClear",
     "frontend/src/pages/SearchPage.tsx::handleKeyDown",
-    "scripts/fetch_until_done.py::main"
+    "scripts/fetch_until_done.py::main",
+    "scripts/qrels_helper.py::main"
   ]
 }

@@ -112,3 +112,81 @@ def make_snippet(text: str, terms: Iterable[str], window: int = 240) -> str:
     prefix = ELLIPSIS if win_start > 0 else ""
     suffix = ELLIPSIS if win_end < len(escaped) else ""
     return f"{prefix}{body}{suffix}"
+
+
+_WORD_RE = re.compile(r"\w+")
+
+
+def unique_terms(terms: Iterable[str]) -> list[str]:
+    """Lowercased, stripped terms with blanks and duplicates removed."""
+    seen: set[str] = set()
+    out: list[str] = []
+    for term in terms:
+        cleaned = term.strip().lower()
+        if not cleaned or cleaned in seen:
+            continue
+        seen.add(cleaned)
+        out.append(cleaned)
+    return out
+
+
+def term_matches_word(term: str, word: str) -> bool:
+    """True if ``term`` should highlight ``word`` (both already lowercased).
+
+    Exact tokens always match. Otherwise the term must be at least three
+    characters and either appear inside the word, prefix it, or share a
+    three-character stem so ``chec`` still lights up ``Chemical``.
+    """
+    if not term or not word:
+        return False
+    if word == term:
+        return True
+    if len(term) >= 3 and (term in word or word.startswith(term)):
+        return True
+    if len(word) >= 3 and term.startswith(word):
+        return True
+    if len(term) < 3:
+        return False
+    shared = 0
+    for left, right in zip(term, word, strict=False):
+        if left != right:
+            break
+        shared += 1
+    return shared >= 3
+
+
+def count_occurrences(text: str, terms: Iterable[str]) -> list[tuple[str, int]]:
+    """Count how many words in ``text`` match each query term."""
+    needles = unique_terms(terms)
+    words = _WORD_RE.findall(text.lower())
+    return [
+        (term, sum(1 for word in words if term_matches_word(term, word)))
+        for term in needles
+    ]
+
+
+def highlight_containing(text: str, terms: Iterable[str]) -> str:
+    """HTML-escape ``text`` and wrap every word that matches a query term.
+
+    Unlike ``make_snippet`` this is not limited to whole-word equality, so a
+    query like ``chec`` highlights ``Chemical``. Empty terms leave the escaped
+    text unchanged. The result is safe to drop into markup.
+    """
+    escaped = html.escape(text)
+    needles = unique_terms(terms)
+    if not needles:
+        return escaped
+
+    parts: list[str] = []
+    cursor = 0
+    for match in _WORD_RE.finditer(escaped):
+        word = match.group()
+        low = word.lower()
+        if any(term_matches_word(term, low) for term in needles):
+            parts.append(escaped[cursor : match.start()])
+            parts.append("<em>")
+            parts.append(word)
+            parts.append("</em>")
+            cursor = match.end()
+    parts.append(escaped[cursor:])
+    return "".join(parts)

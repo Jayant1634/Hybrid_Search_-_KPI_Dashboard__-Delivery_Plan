@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-09-03T17:33:12Z",
+  "generated_at": "2026-09-03T18:24:45Z",
   "files": {
     "backend/app/__init__.py": {
       "language": "python",
@@ -116,6 +116,7 @@
         "backend/app/api/routes_search.py::health",
         "backend/app/api/routes_search.py::metrics",
         "backend/app/api/routes_search.py::search",
+        "backend/app/api/routes_search.py::get_document",
         "backend/app/api/routes_search.py::feedback"
       ],
       "imports": [
@@ -125,6 +126,8 @@
         "backend/app/index/metadata.py",
         "backend/app/observability/metrics.py",
         "backend/app/search/filters.py",
+        "backend/app/search/highlight.py",
+        "backend/app/search/tokenize.py",
         "backend/app/storage/repo.py"
       ],
       "imported_by": [
@@ -137,6 +140,8 @@
         "backend/app/index/metadata.py",
         "backend/app/observability/metrics.py",
         "backend/app/search/filters.py",
+        "backend/app/search/highlight.py",
+        "backend/app/search/tokenize.py",
         "backend/app/storage/repo.py"
       ],
       "called_by": [
@@ -241,6 +246,7 @@
         "backend/app/api/ratelimit.py",
         "backend/app/api/routes_search.py",
         "backend/app/api/schemas.py",
+        "backend/app/eval/__main__.py",
         "backend/app/index/__main__.py",
         "backend/app/ingest/__init__.py",
         "backend/app/search/embedder.py"
@@ -252,9 +258,76 @@
         "backend/app/api/ratelimit.py",
         "backend/app/api/routes_search.py",
         "backend/app/api/schemas.py",
+        "backend/app/eval/__main__.py",
         "backend/app/index/__main__.py",
         "backend/app/ingest/__init__.py",
         "backend/app/search/embedder.py"
+      ]
+    },
+    "backend/app/eval/__main__.py": {
+      "language": "python",
+      "functions": [
+        "backend/app/eval/__main__.py::_resolve_path",
+        "backend/app/eval/__main__.py::_commit",
+        "backend/app/eval/__main__.py::_search_normalization",
+        "backend/app/eval/__main__.py::check_model",
+        "backend/app/eval/__main__.py::_build_parser",
+        "backend/app/eval/__main__.py::main"
+      ],
+      "imports": [
+        "backend/app/config.py",
+        "backend/app/eval/runner.py",
+        "backend/app/index/metadata.py"
+      ],
+      "imported_by": [],
+      "calls": [
+        "backend/app/config.py",
+        "backend/app/eval/runner.py",
+        "backend/app/index/metadata.py"
+      ],
+      "called_by": []
+    },
+    "backend/app/eval/metrics.py": {
+      "language": "python",
+      "functions": [
+        "backend/app/eval/metrics.py::_gains",
+        "backend/app/eval/metrics.py::_dcg",
+        "backend/app/eval/metrics.py::_positives",
+        "backend/app/eval/metrics.py::ndcg_at_k",
+        "backend/app/eval/metrics.py::recall_at_k",
+        "backend/app/eval/metrics.py::mrr_at_k"
+      ],
+      "imports": [],
+      "imported_by": [
+        "backend/app/eval/runner.py"
+      ],
+      "calls": [],
+      "called_by": [
+        "backend/app/eval/runner.py"
+      ]
+    },
+    "backend/app/eval/runner.py": {
+      "language": "python",
+      "functions": [
+        "backend/app/eval/runner.py::Searcher.search",
+        "backend/app/eval/runner.py::load_queries",
+        "backend/app/eval/runner.py::load_qrels",
+        "backend/app/eval/runner.py::_as_query",
+        "backend/app/eval/runner.py::_mean",
+        "backend/app/eval/runner.py::run_eval",
+        "backend/app/eval/runner.py::append_experiment"
+      ],
+      "imports": [
+        "backend/app/eval/metrics.py"
+      ],
+      "imported_by": [
+        "backend/app/eval/__main__.py"
+      ],
+      "calls": [
+        "backend/app/eval/metrics.py"
+      ],
+      "called_by": [
+        "backend/app/eval/__main__.py"
       ]
     },
     "backend/app/index/__main__.py": {
@@ -296,11 +369,13 @@
       "imports": [],
       "imported_by": [
         "backend/app/api/routes_search.py",
+        "backend/app/eval/__main__.py",
         "backend/app/index/__main__.py"
       ],
       "calls": [],
       "called_by": [
         "backend/app/api/routes_search.py",
+        "backend/app/eval/__main__.py",
         "backend/app/index/__main__.py"
       ]
     },
@@ -527,14 +602,20 @@
       "functions": [
         "backend/app/search/highlight.py::_clip_end",
         "backend/app/search/highlight.py::_snap_start",
-        "backend/app/search/highlight.py::make_snippet"
+        "backend/app/search/highlight.py::make_snippet",
+        "backend/app/search/highlight.py::unique_terms",
+        "backend/app/search/highlight.py::term_matches_word",
+        "backend/app/search/highlight.py::count_occurrences",
+        "backend/app/search/highlight.py::highlight_containing"
       ],
       "imports": [],
       "imported_by": [
+        "backend/app/api/routes_search.py",
         "backend/app/search/hybrid.py"
       ],
       "calls": [],
       "called_by": [
+        "backend/app/api/routes_search.py",
         "backend/app/search/hybrid.py"
       ]
     },
@@ -592,11 +673,13 @@
       ],
       "imports": [],
       "imported_by": [
+        "backend/app/api/routes_search.py",
         "backend/app/search/bm25.py",
         "backend/app/search/hybrid.py"
       ],
       "calls": [],
       "called_by": [
+        "backend/app/api/routes_search.py",
         "backend/app/search/bm25.py",
         "backend/app/search/hybrid.py"
       ]
@@ -722,11 +805,26 @@
       ],
       "called_by": []
     },
+    "scripts/qrels_helper.py": {
+      "language": "python",
+      "functions": [
+        "scripts/qrels_helper.py::Searcher.search",
+        "scripts/qrels_helper.py::read_queries",
+        "scripts/qrels_helper.py::format_block",
+        "scripts/qrels_helper.py::label_queries",
+        "scripts/qrels_helper.py::main"
+      ],
+      "imports": [],
+      "imported_by": [],
+      "calls": [],
+      "called_by": []
+    },
     "frontend/src/api.ts": {
       "language": "typescript",
       "functions": [
         "frontend/src/api.ts::_fetch",
         "frontend/src/api.ts::search",
+        "frontend/src/api.ts::getDocument",
         "frontend/src/api.ts::submitFeedback",
         "frontend/src/api.ts::getHealth",
         "frontend/src/api.ts::getKpiSummary",
@@ -854,11 +952,16 @@
     "frontend/src/components/ResultCard.tsx": {
       "language": "typescript",
       "functions": [
+        "frontend/src/components/ResultCard.tsx::Highlighted",
         "frontend/src/components/ResultCard.tsx::ResultCard",
-        "frontend/src/components/ResultCard.tsx::handleFeedback"
+        "frontend/src/components/ResultCard.tsx::handleFeedback",
+        "frontend/src/components/ResultCard.tsx::openModal",
+        "frontend/src/components/ResultCard.tsx::closeModal",
+        "frontend/src/components/ResultCard.tsx::onKey"
       ],
       "imports": [
         "frontend/src/api.ts",
+        "frontend/src/highlight.ts",
         "frontend/src/components/ScoreBar.tsx"
       ],
       "imported_by": [
@@ -866,7 +969,8 @@
       ],
       "calls": [
         "frontend/src/api.ts",
-        "frontend/src/components/ScoreBar.tsx"
+        "frontend/src/components/ScoreBar.tsx",
+        "frontend/src/highlight.ts"
       ],
       "called_by": [
         "frontend/src/pages/SearchPage.tsx"
@@ -930,6 +1034,24 @@
       "calls": [],
       "called_by": [
         "frontend/src/pages/HomePage.tsx"
+      ]
+    },
+    "frontend/src/highlight.ts": {
+      "language": "typescript",
+      "functions": [
+        "frontend/src/highlight.ts::queryTerms",
+        "frontend/src/highlight.ts::escapeHtml",
+        "frontend/src/highlight.ts::decodeSnippet",
+        "frontend/src/highlight.ts::termMatchesWord",
+        "frontend/src/highlight.ts::highlightContaining"
+      ],
+      "imports": [],
+      "imported_by": [
+        "frontend/src/components/ResultCard.tsx"
+      ],
+      "calls": [],
+      "called_by": [
+        "frontend/src/components/ResultCard.tsx"
       ]
     },
     "frontend/src/main.tsx": {
