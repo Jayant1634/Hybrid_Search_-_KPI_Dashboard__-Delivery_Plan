@@ -54,6 +54,7 @@ ehthumbs.db
 $RECYCLE.BIN/
 
 # Editors
+.vscode/
 .idea/
 *.swp
 *.swo

@@ -2259,4 +2259,117 @@ Commit:
 
 ---
 
+Date: 2026-09-04
+Prompt id: p-kpi-page
+Prompt:
+the KPI page. a window selector, 1h / 24h / 7d. tiles for p50, p95, total requests, zero results. a recharts line of volume per bucket. two tables, top queries and zero result queries. refresh every 30s. npm run build.
+Model: Cursor Grok 4.6
+Files: frontend/src/pages/KpisPage.tsx, frontend/package.json, frontend/package-lock.json, frontend/public/callgraph/*.json, docs/codex_log.md
+What came back:
+The KPIs page is wired to `/api/dashboard`. It has a 1h / 24h / 7d window selector, four tiles (p50, p95, total requests, zero results), a Recharts line of volume per bucket, top-query and zero-result tables, and a 30s refresh. `npm run build` passed.
+
+**Page.** `KpisPage` loads four endpoints in parallel: `GET /api/dashboard/kpi/summary`, `/volume`, `/top-queries`, and `/zero-results` with the selected `window`. Changing 1h / 24h / 7d refetches immediately; a 30s interval refreshes the same window without flashing the first-load spinner. Tiles use the existing health-card layout. The line chart plots `count` against formatted `bucket` labels. The two tables show query, count, and avg latency / last seen. Empty windows get a short empty-state line instead of a blank chart or table.
+
+**Client.** Fetches stay on this page and match the dashboard response shapes (`total` / `p50` / `p95` / `zero_result_count`, `bucket`+`count`). `frontend/src/api.ts` still points at the old `/metrics/*` types and was not edited.
+
+**Dependency.** `recharts` ^3.10.1 was added so the volume line can compile. That required `frontend/package.json` and `frontend/package-lock.json`.
+
+There is no frontend test runner. Matching coverage is the existing dashboard API tests, plus a live curl against the running API (19 requests in 24h, volume bucket, top queries, empty zero-results).
+
+```
+.........                                                                [100%]
+9 passed, 2 warnings in 3.68s
+```
+
+**npm run build:**
+
+```
+> frontend@0.0.0 build
+> tsc -b && vite build
+
+vite v8.2.2 building client environment for production...
+✓ 609 modules transformed.
+dist/index.html                   0.66 kB │ gzip:   0.38 kB
+dist/assets/index-B37WhxAx.css   25.36 kB │ gzip:   5.42 kB
+dist/assets/index-DvuNlTV6.js   600.94 kB │ gzip: 179.01 kB
+
+✓ built in 3.41s
+```
+
+The JS chunk is over 500 kB because Recharts is in the main bundle. Regenerated `frontend/public/callgraph/*.json`. No browser tools were available, so the window selector, 30s refresh, and chart were not clicked in a browser.
+
+Wire KPI page to dashboard with Recharts volume
+validated: 9 passed in 3.68s; npm run build passed
+
+Review:
+Commit:
+
+---
+
+Date: 2026-09-04
+Prompt id: p-eval-page
+Prompt:
+the Evaluation page, from /api/dashboard/experiments. a line chart of ndcg10 across runs in time order, tooltip shows tag, alpha, normalization, model, commit. below it the full table, sortable by clicking the header. an empty state when there are no rows.
+Model: Cursor Grok 4.6
+Files: frontend/src/pages/EvaluationPage.tsx, frontend/public/callgraph/*.json, docs/codex_log.md
+What came back:
+The Evaluation page now reads `GET /api/dashboard/experiments`. When rows exist it draws an nDCG@10 line in timestamp order and a full sortable table under it. An empty list shows the empty state instead of a blank chart.
+
+**Chart.** Runs are sorted by `timestamp` regardless of table sort. The line is `ndcg10` on a 0–1 axis. Hovering a point shows tag, alpha, normalization, model, and commit.
+
+**Table.** All CSV columns are shown (timestamp, commit, tag, alpha, normalization, model, preprocessing, nDCG@10, Recall@10, MRR@10, n). Click a header to sort; click again to flip direction. Numeric columns start descending; strings and timestamp start ascending. Chart order does not change when the table is sorted.
+
+**Empty.** `[]` from the API (missing or empty CSV) renders the existing empty-state block: title plus one line telling you to run the eval CLI. A fetch error is an error banner, not that empty state.
+
+`frontend/src/api.ts` still points at `/api/experiments` with the old row shape and was not edited. Recharts was already installed.
+
+There is no frontend test runner. Matching coverage is the dashboard experiments tests, plus a live curl that returned the 8 scored rows.
+
+```
+..                                                                       [100%]
+2 passed, 2 warnings in 2.83s
+```
+
+`npm run build` passed (`tsc -b && vite build`, 609 modules, 4.14s). Regenerated `frontend/public/callgraph/*.json`. No browser tools were available, so header sorting, the tooltip, and the empty state were not clicked in a browser.
+
+Wire Evaluation page to experiment nDCG trend
+validated: 2 passed in 2.83s; npm run build passed
+
+Review:
+Commit:
+
+---
+
+Date: 2026-09-04
+Prompt id: p-debug-page
+Prompt:
+the Debug page. a severity select (all / warning / error), from and to datetime inputs, a limit. a table of logs with an expander per row that shows the extra json. apply and reset buttons
+Model: Cursor Grok 4.6
+Files: frontend/src/pages/DebugPage.tsx, frontend/public/callgraph/*.json, docs/codex_log.md
+What came back:
+The Debug page now reads `GET /api/dashboard/logs`. Filters stay in the form until Apply; Reset puts severity / from / to / limit back to all, empty, empty, 100 and refetches.
+
+**Filters.** Severity is all / warning / error (`WARNING` / `ERROR` on the API, omitted for all). From and To are `datetime-local`. Limit is 1–100. Apply fetches; changing a control without Apply does not.
+
+**Table.** Time, severity, message, request id. Each row has an expander that pretty-prints the leftover JSON (`request_id` and any other keys the API adds later). No matches after a successful fetch is the empty-state block, not a blank table.
+
+**API gap.** `select_logs` already has `since` / `until`, but `/api/dashboard/logs` still only takes `window`, `level`, and `limit`. This page was the only named file, so the route was not changed. From is turned into a `Nh` window so the server `since` is early enough; To is applied on the client. `from` / `to` are also sent as query params (FastAPI ignores unknown ones today). `frontend/src/api.ts` still points at `/api/logs` and was not edited.
+
+There is no frontend test runner. Matching coverage is the existing logs tests. A live curl of `/api/dashboard/logs?window=24h` returned `[]`.
+
+```
+...                                                                      [100%]
+3 passed, 2 warnings in 2.89s
+```
+
+`npm run build` passed (`tsc -b && vite build`, 609 modules). Regenerated `frontend/public/callgraph/*.json`. No browser tools were available, so Apply / Reset, the datetime filters, and the row expander were not clicked in a browser.
+
+Wire Debug page to filtered dashboard logs
+validated: 3 passed in 2.89s; npm run build passed
+
+Review:
+Commit:
+
+---
+
 
