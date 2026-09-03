@@ -7,7 +7,7 @@ Options:
 Decision:
 Consequences:
 
-## 2026-09-03 — phase 2, backend/ + editable install
+## 2026-09-03 — backend/ + editable install
 
 Context:
 The brief is inconsistent about layout. §6 shows CLIs as `python -m app.ingest`
@@ -104,3 +104,36 @@ treated as "not relevant".
 Consequences:
 Eval will not score 1.0. Paraphrases should look worse at alpha=1 than alpha=0.
 q32/q33 are the better zero-overlap candidates for Scenario C.
+
+## 2026-09-04 — phase 14, default alpha
+
+Context:
+`scripts/run_experiments.sh` ran the FR-21 set: alpha 0 / 0.3 / 0.5 / 0.7 / 1
+with minmax, alpha 0.5 with zscore, `paraphrase-albert-small-v2`, and
+`--sentence-split`. 8 rows in `data/metrics/experiments.csv`, n=33 each.
+Need a default `HSS_DEFAULT_ALPHA` from that sweep.
+
+Options:
+1. 0.0 (pure vector). Strong (nDCG 0.8566) but ignores BM25, so hybrid is unused.
+2. 0.3. Best of the sweep: nDCG 0.8588, recall 0.8265, MRR 0.9773.
+3. 0.5. The previous default. Worse than 0.3 (nDCG 0.8178, recall 0.7739).
+4. 0.7 or 1.0. More BM25. Worst numbers; alpha=1 is nDCG 0.6865 because the
+   paraphrase queries have almost no lexical overlap.
+
+Decision:
+Option 2. Default alpha is 0.3 (`HSS_DEFAULT_ALPHA=0.3` in `.env.example`).
+A little BM25 on top of the vectors is the peak; more BM25 pulls lexical
+near-misses above the paraphrase hits.
+
+Other rows, for the record:
+- zscore at alpha 0.5 matched minmax exactly (nDCG 0.8178). No reason to
+  change the phase 8 default.
+- Albert at alpha 0.5: nDCG 0.8290, slightly above MiniLM 0.5, below MiniLM 0.3.
+  Stay on MiniLM (smaller, already the index default).
+- sentence-split at alpha 0.5 matched document-level 0.5 exactly. Keep
+  document-level ingest; the extra newlines did not move metrics.
+
+Consequences:
+Search and eval without `--alpha` now blend 30% BM25 / 70% vector. Phase 20
+Scenario C still uses a paraphrase query; alpha 0.3 will lean on the vector
+side there, which is what we want.

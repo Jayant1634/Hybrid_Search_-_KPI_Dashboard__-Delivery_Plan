@@ -86,7 +86,7 @@ def load_config() -> Settings:
         metrics_dir=data_dir / "metrics",
         sqlite_path=data_dir / "hss.sqlite",
         embedding_model=_env_str("HSS_EMBEDDING_MODEL", "all-MiniLM-L6-v2"),
-        default_alpha=_env_float("HSS_DEFAULT_ALPHA", 0.5),
+        default_alpha=_env_float("HSS_DEFAULT_ALPHA", 0.3),
         normalisation=_env_str("HSS_NORMALISATION", "minmax"),
         api_port=_env_int("HSS_API_PORT", 8000),
         ui_port=_env_int("HSS_UI_PORT", 5173),
