@@ -300,3 +300,221 @@ Add decision log template and section 9 break/fix headings
 validated: both skeletons written; headings only on break/fix; log entry appended; no tests (not code)
 Review:
 Commit:
+
+Date: 2026-09-03
+Prompt id: p15
+Prompt:
+lets set up the repo. a .gitignore, for a python fast api backend and react vite forntend .  i am on windows and dont want CRLF in shell scripts. and a .env.example with the settings i think we need: embedding model (all-MiniLM-L6-v2), default alpha 0.5, normalisation minmax, api port 8000, ui port 5173, a rate limit per minute, log level. prefix them HSS_.
+Model: Cursor Grok 4.6
+Files: .gitignore, .gitattributes, .env.example, docs/codex_log.md
+What came back:
+Repo bootstrap files are in place: `.gitignore` for FastAPI + Vite, `.env.example` with the `HSS_` settings you listed, and `.gitattributes` so `*.sh` stays LF on Windows.
+
+`.gitignore` covers Python (venv, pycache, pytest/mypy/ruff, coverage), Node/Vite (`node_modules`, Vite `dist-ssr`, debug logs), generated artifacts (`data/processed/`, `data/index/`, SQLite), `.env` (not `.env.example`), OS junk, and editor swap files. `data/raw` and `data/eval` are not ignored so the sample corpus and qrels can be committed.
+
+`.gitignore` cannot set line endings. I added `.gitattributes` with `*.sh text eol=lf` so Git Bash / reviewer Linux-macOS scripts are not checked out as CRLF. Say if you did not want that file.
+
+`.env.example`:
+
+- `HSS_EMBEDDING_MODEL=all-MiniLM-L6-v2`
+- `HSS_DEFAULT_ALPHA=0.5`
+- `HSS_NORMALISATION=minmax`
+- `HSS_API_PORT=8000`
+- `HSS_UI_PORT=5173`
+- `HSS_RATE_LIMIT_PER_MINUTE=60` (you did not pick a number; 60 is the placeholder)
+- `HSS_LOG_LEVEL=INFO` (same, placeholder)
+
+No tests: config files only, no application code yet.
+
+Add gitignore, LF shell scripts, and HSS_ env example
+validated: gitignore + env example written; gitattributes added for *.sh LF; log entry appended; no tests (not code)
+Review:
+Commit:
+
+Date: 2026-09-03
+Prompt id: p16
+Prompt:
+requirements.txt. fastapi, uvicorn, pydantic v2, rank-bm25, sentence-transformers, faiss-cpu, numpy, torch (cpu build), pytest, httpx for the test client. pin versions you are fairly sure have wheels on windows, linux and mac. a comment on top saying how to install torch from the cpu index. nothing else in there.
+Model: Cursor Grok 4.6
+Files: requirements.txt, docs/codex_log.md
+What came back:
+Wrote `requirements.txt` with only the packages you named, pinned, plus a CPU-index comment for torch.
+
+Install torch first, then the rest:
+
+    pip install torch==2.14.0 --index-url https://download.pytorch.org/whl/cpu
+    pip install -r requirements.txt
+
+Pins (checked on PyPI / the CPU wheel index):
+
+- fastapi==0.141.1, uvicorn==0.52.4, pydantic==2.13.5 (v2), rank-bm25==0.2.2, sentence-transformers==6.0.1, pytest==9.1.1, httpx==0.28.1 — pure/any wheels
+- faiss-cpu==1.15.0 — win_amd64, manylinux x86_64/aarch64, macOS arm64 and x86_64
+- numpy==2.4.6 — 3.11+ wheels on Windows, Linux, macOS. Latest 2.5.2 requires Python 3.12, which would break 3.11
+- torch==2.14.0 — CPU index has Linux/Windows `+cpu` wheels and macOS arm64. PyPI Linux torch 2.14.0 depends on CUDA, which is why the comment is there
+
+No extra packages. No tests: pin file only, not application code.
+
+Pin backend deps with CPU torch install comment
+validated: requirements.txt written with pinned wheels; numpy 2.4.6 for Python 3.11; log entry appended; no tests (not code)
+Review:
+Commit:
+
+Date: 2026-09-03
+Prompt id: p17
+Prompt:
+ install in a fresh .venv, then replace the pins with what pip freeze says.
+Model: Cursor Grok 4.6
+Files: requirements.txt, docs/codex_log.md
+What came back:
+Created a fresh `.venv` on Python 3.12.3, installed CPU torch, then `requirements.txt`. Replaced the pins with `pip freeze` (comment kept).
+
+Install:
+
+    python -m venv .venv
+    .venv/Scripts/python -m pip install --upgrade pip
+    .venv/Scripts/python -m pip install torch==2.14.0 --index-url https://download.pytorch.org/whl/cpu
+    .venv/Scripts/python -m pip install -r requirements.txt
+
+Torch is `2.14.0+cpu`; `torch.cuda.is_available()` is False. Freeze includes transitive deps. `torch==2.14.0+cpu` is the Windows/Linux CPU local version; macOS CPU wheels are `2.14.0` without `+cpu`. `colorama==0.4.6` came in via pytest/click on Windows.
+
+No tests: lockfile only, not application code.
+
+Freeze installed deps into requirements.txt from fresh venv
+validated: fresh venv; CPU torch 2.14.0+cpu; requirements.txt replaced with pip freeze; log entry appended; no tests (not code)
+Review:
+Commit:
+
+Date: 2026-09-03
+Prompt id: p18
+Prompt:
+i want the backend to be a proper package so `python -m app.ingest` works from the repo root like the assignment shows. create backend/pyproject.toml, package name app, code under backend/app. version 0.1.0, python >= 3.11, no dependencies listed (requirements.txt has them). put the pytest config in there too, tests in backend/tests, and a "slow" marker for tests that load the real model. then check pip install -e backend works from the root
+Model: Cursor Grok 4.6
+Files: backend/pyproject.toml, backend/app/__init__.py, backend/app/ingest.py, backend/tests/test_app.py, docs/codex_log.md
+What came back:
+`app` is an installable package under `backend/`. From the repo root, `python -m app.ingest` works after `pip install -e backend`.
+
+`backend/pyproject.toml`: name `app`, version `0.1.0`, `requires-python = ">=3.11"`, no dependencies. Pytest `testpaths = ["tests"]` and marker `slow: tests that load the real model`.
+
+Stub `backend/app/ingest.py` so `-m app.ingest` is a real module (empty `main()` for now). Tests cover version, that ingest runs, and the slow marker (no real model load).
+
+`pip install -e backend` from root: installed `app-0.1.0`. `python -m app.ingest` exit 0.
+
+```
+============================= test session starts =============================
+platform win32 -- Python 3.12.3, pytest-9.1.1, pluggy-1.6.0
+rootdir: D:\Kearney\backend
+configfile: pyproject.toml
+plugins: anyio-4.15.0
+collected 3 items
+
+backend\tests\test_app.py ...                                            [100%]
+
+============================== 3 passed in 0.04s ==============================
+```
+
+Add installable app package with pytest slow marker
+validated: pip install -e backend ok; python -m app.ingest exit 0; pytest 3 passed
+Review:
+Commit:
+
+Date: 2026-09-03
+Prompt id: p19
+Prompt:
+backend/app/config.py. one settings object, a plain dataclass, no pydantic here. it has to find the repo root by itself (walk up until it sees up.sh or .git, or take HSS_REPO_ROOT from the env) and build the data paths from it: raw, processed, index, eval, metrics, and the sqlite file. plus the settings from .env.example read with the HSS_ prefix. a test in backend/tests/test_config.py that the root resolves right and the env override works.
+Model: Cursor Grok 4.6
+Files: backend/app/config.py, backend/tests/test_config.py, docs/codex_log.md
+What came back:
+`load_config()` returns one frozen `Settings` dataclass (no pydantic). Repo root is `HSS_REPO_ROOT` if set, otherwise a walk up from cwd (then from this file) until `up.sh` or `.git`. Paths are `data/raw`, `data/processed`, `data/index`, `data/eval`, `data/metrics`, and `data/hss.sqlite`. HSS_ fields match `.env.example` (defaults if unset).
+
+```
+============================= test session starts =============================
+platform win32 -- Python 3.12.3, pytest-9.1.1, pluggy-1.6.0
+rootdir: D:\Kearney\backend
+configfile: pyproject.toml
+plugins: anyio-4.15.0
+collected 2 items
+
+backend\tests\test_config.py ..                                          [100%]
+
+============================== 2 passed in 0.05s ==============================
+```
+
+Add Settings dataclass with repo-root and HSS_ env
+validated: test_config.py 2 passed (root resolve + env override)
+Review:
+Commit:
+
+Date: 2026-09-03
+Prompt id: p20
+Prompt:
+done some changes with the Cache load_config with lru_cache and cache_clear, cehck them,
+it caches the settings and the test cant reset it. add a small clear function, or use
+lru_cache and call cache_clear in the test, whichever is less code.
+Model: Cursor Grok 4.6
+Files: backend/tests/test_config.py, docs/codex_log.md
+What came back:
+Checked: `@lru_cache` on `load_config()` is fine. Less code than a wrapper is `load_config.cache_clear()` in the tests (no extra function in `config.py`).
+
+`cache_clear` only at the start of `_clear_hss` leaves the override cached after the test ends (monkeypatch restores env, cache does not). Autouse fixture now clears before and after every test. `_clear_hss` only drops HSS_ env vars.
+
+```
+============================= test session starts =============================
+platform win32 -- Python 3.12.3, pytest-9.1.1, pluggy-1.6.0 -- D:\Kearney\.venv\Scripts\python.exe
+cachedir: .pytest_cache
+rootdir: D:\Kearney\backend
+configfile: pyproject.toml
+plugins: anyio-4.15.0
+collecting ... collected 2 items
+
+backend\tests\test_config.py::test_env_override PASSED                   [ 50%]
+backend\tests\test_config.py::test_repo_root_resolves PASSED             [100%]
+
+============================== 2 passed in 0.04s ==============================
+```
+
+Reverse order (override then root) and the full 5-test suite also passed.
+
+Clear load_config lru_cache in tests
+validated: test_config.py 2 passed both orders; full backend suite 5 passed
+Review:
+Commit:
+
+Date: 2026-09-03
+Prompt id: p21
+Prompt:
+a conftest with fake docs we can reuse everywhere. six short docs in the jsonl shape, clearly different topics (volcanoes, bread, python, the moon, football, jazz). a fixture that writes them to a tmp jsonl, and one that points HSS_REPO_ROOT at a tmp dir with the data folders already created. one smoke test so pytest has something to run.
+Model: Cursor Grok 4.6
+Files: backend/tests/conftest.py, backend/tests/test_smoke.py, docs/codex_log.md
+What came back:
+Shared fixtures are in `backend/tests/conftest.py`. `SAMPLE_DOCS` is six JSONL records (doc_id, title, text, source, created_at) on volcanoes, bread, python, the moon, football, and jazz.
+
+- `sample_docs` — copy of that list
+- `sample_docs_jsonl` — writes them to a tmp `docs.jsonl` and returns the path
+- `tmp_repo` — tmp dir with `data/raw`, `processed`, `index`, `eval`, `metrics`; sets `HSS_REPO_ROOT`; clears the `load_config` cache
+
+Smoke test `backend/tests/test_smoke.py` checks six titles, the data folders, and that `load_config().repo_root` is the tmp repo.
+
+```
+============================= test session starts =============================
+platform win32 -- Python 3.12.3, pytest-9.1.1, pluggy-1.6.0 -- D:\Kearney\.venv\Scripts\python.exe
+cachedir: .pytest_cache
+rootdir: D:\Kearney\backend
+configfile: pyproject.toml
+plugins: anyio-4.15.0
+collecting ... collected 6 items
+
+backend\tests\test_app.py::test_package_version PASSED                   [ 16%]
+backend\tests\test_app.py::test_ingest_module_is_runnable PASSED         [ 33%]
+backend\tests\test_app.py::test_slow_marker_for_real_model PASSED        [ 50%]
+backend\tests\test_config.py::test_repo_root_resolves PASSED             [ 66%]
+backend\tests\test_config.py::test_env_override PASSED                   [ 83%]
+backend\tests\test_smoke.py::test_sample_docs_and_tmp_repo PASSED        [100%]
+
+============================== 6 passed in 0.11s ==============================
+```
+
+Add shared sample docs fixtures and smoke test
+validated: pytest 6 passed including smoke test
+Review:
+Commit:
+
