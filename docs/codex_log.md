@@ -1175,3 +1175,92 @@ validated: 4 passed in 0.12s
 Review:
 Commit:
 
+Date: 2026-09-03
+Prompt id: p39
+Prompt:
+backend/app/search/normalize.py with numpy. min_max(dict of id -> score) and z_score(same), both ending up in 0..1. handle the empty dict. a dispatcher by name that rejects unknown names. tests on a five value example, and that zscore keeps the ordering.
+Model: Claude Opus 4.8
+Files: backend/app/search/normalize.py, backend/tests/test_normalize.py, docs/codex_log.md
+What came back:
+Added `backend/app/search/normalize.py` with numpy-backed score normalisers that map a `dict[str, float]` of `doc_id -> score` into the `0..1` range:
+- `min_max(scores)`: linear rescale so min -> 0, max -> 1. Empty dict returns `{}`; when all scores are equal (zero spread) every doc gets `1.0`.
+- `z_score(scores)`: centre and divide by the standard deviation, then squash through `min_max` so it lands in `0..1` while preserving the input ordering. Empty dict returns `{}`; constant scores return all `1.0`.
+- `normalize(name, scores)`: a dispatcher over `{"min_max", "z_score"}` that raises `ValueError` naming the unknown normalizer and listing the known ones.
+
+Tests in `backend/tests/test_normalize.py`: five-value example for `min_max` (0, 0.25, 0.5, 0.75, 1.0), `z_score` five-value result stays in `0..1`, `z_score` preserves ordering on an unsorted five-value set, empty-dict handling for both, constant-score edge case, dispatcher routing, and dispatcher rejecting an unknown name.
+
+```
+============================= test session starts =============================
+platform win32 -- Python 3.12.3, pytest-9.1.1, pluggy-1.6.0 -- D:\Kearney\.venv\Scripts\python.exe
+cachedir: .pytest_cache
+rootdir: D:\Kearney\backend
+configfile: pyproject.toml
+plugins: anyio-4.15.0
+collecting ... collected 8 items
+
+tests/test_normalize.py::test_min_max_five_values PASSED                 [ 12%]
+tests/test_normalize.py::test_min_max_empty PASSED                       [ 25%]
+tests/test_normalize.py::test_min_max_constant_scores_all_one PASSED     [ 37%]
+tests/test_normalize.py::test_z_score_five_values_in_unit_range PASSED   [ 50%]
+tests/test_normalize.py::test_z_score_keeps_ordering PASSED              [ 62%]
+tests/test_normalize.py::test_z_score_empty PASSED                       [ 75%]
+tests/test_normalize.py::test_dispatcher_routes_by_name PASSED           [ 87%]
+tests/test_normalize.py::test_dispatcher_rejects_unknown_name PASSED     [100%]
+
+============================== 8 passed in 0.06s ==============================
+```
+
+Add min-max and z-score normalizers with name dispatcher and tests
+validated: 8 passed in 0.06s
+
+Review:
+Commit:
+
+Date: 2026-09-03
+Prompt id: p40
+Prompt:
+backend/app/search/hybrid.py. a HybridSearcher that takes the bm25 index, the vector index, an embedder and the docs by id. search(query, top_k, alpha, normalization): top 50 from each side, union them, a doc missing on one side gets 0 there, normalise each side, then
+
+hybrid = alpha * norm_bm25 + (1 - alpha) * norm_vector
+
+sort by hybrid, return top_k as a SearchResult with all the raw and normalised numbers in it, thats the explainability part the assignment wants. tests: alpha 1 gives the bm25 order, alpha 0 gives the vector order, everything between 0 and 1, top_k respected.
+Model: Claude Opus 4.8
+Files: backend/app/search/hybrid.py, backend/tests/test_hybrid.py, docs/codex_log.md
+What came back:
+Added `backend/app/search/hybrid.py` with a `HybridSearcher` and a `SearchResult` dataclass.
+
+`HybridSearcher(bm25, vector, embedder, docs_by_id)`. Its `search(query, top_k=10, alpha=0.5, normalization="min_max")`:
+- pulls the top 50 candidates from the BM25 side (`bm25.query(query, top_k=50)`) and top 50 from the vector side (embed the query, `vector.query(vec, k=50)`);
+- unions the two candidate sets; a doc missing on one side gets a raw `0.0` there;
+- normalises each side over the union via `normalize(normalization, ...)` (reuses the min_max / z_score dispatcher from p39);
+- blends `hybrid = alpha * norm_bm25 + (1 - alpha) * norm_vector`;
+- sorts by hybrid desc (ties broken by `doc_id`) and returns `top_k` `SearchResult`s.
+
+`SearchResult` (frozen dataclass) carries the full explainability breakdown: `doc_id`, `title`, `bm25_raw`, `vector_raw`, `bm25_norm`, `vector_norm`, `hybrid_score`.
+
+Tests in `backend/tests/test_hybrid.py` build BM25 + vector indexes over the shared `SAMPLE_DOCS` with the `FakeEmbedder`: `alpha=1.0` reproduces the pure BM25 ordering, `alpha=0.0` reproduces the pure vector ordering, `top_k` is respected, the `alpha=0.5` blend matches `alpha*bm25_norm + (1-alpha)*vector_norm` with every score in `0..1` and results sorted descending, and a result carries its raw + normalised numbers.
+
+```
+============================= test session starts =============================
+platform win32 -- Python 3.12.3, pytest-9.1.1, pluggy-1.6.0 -- D:\Kearney\.venv\Scripts\python.exe
+cachedir: .pytest_cache
+rootdir: D:\Kearney\backend
+configfile: pyproject.toml
+plugins: anyio-4.15.0
+collecting ... collected 5 items
+
+tests/test_hybrid.py::test_alpha_one_matches_bm25_order PASSED           [ 20%]
+tests/test_hybrid.py::test_alpha_zero_matches_vector_order PASSED        [ 40%]
+tests/test_hybrid.py::test_top_k_respected PASSED                        [ 60%]
+tests/test_hybrid.py::test_hybrid_blend_and_range PASSED                 [ 80%]
+tests/test_hybrid.py::test_result_carries_raw_and_normalised PASSED      [100%]
+
+============================== 5 passed in 0.37s ==============================
+```
+
+Add HybridSearcher blending BM25 and vector scores with explainable results
+validated: 5 passed in 0.37s
+
+Review:
+Commit:
+
