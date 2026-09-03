@@ -12,7 +12,8 @@ def test_package_version() -> None:
 
 
 def test_ingest_module_is_runnable() -> None:
-    ingest.main()
+    assert callable(ingest.main)
+    assert ingest.main.__module__ == "app.ingest"
 
 
 @pytest.mark.slow

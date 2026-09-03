@@ -223,3 +223,72 @@ def test_keeps_extract_of_exactly_400_chars(
     assert (tmp_path / "data" / "raw" / "oceans-ocean.md").is_file()
     attribution = (tmp_path / "data" / "raw" / "ATTRIBUTION.md").read_text(encoding="utf-8")
     assert "Ocean https://simple.wikipedia.org/wiki/Ocean" in attribution
+
+
+def test_skips_already_written_files(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    _write_seed(tmp_path, [("volcanoes", "Volcano"), ("volcanoes", "Lava")])
+    raw = tmp_path / "data" / "raw"
+    (raw / "volcanoes-volcano.md").write_text(
+        fetch_corpus.render_markdown(
+            title="Volcano",
+            source="https://simple.wikipedia.org/wiki/Volcano",
+            topic="volcanoes",
+            fetched="2026-09-03",
+            body=LONG_TEXT,
+        ),
+        encoding="utf-8",
+    )
+    seen: list[str] = []
+
+    def fake_urlopen(request: object, timeout: int = 30) -> FakeResponse:
+        url = request.full_url  # type: ignore[attr-defined]
+        title = url.rsplit("titles=", 1)[-1]
+        seen.append(title)
+        return FakeResponse(_page_payload(title, LONG_TEXT))
+
+    monkeypatch.setattr(fetch_corpus.time, "sleep", lambda _s: None)
+    monkeypatch.setattr(fetch_corpus.urllib.request, "urlopen", fake_urlopen)
+    assert fetch_corpus.main([], root=tmp_path) == 0
+    assert seen == ["Lava"]
+    attribution = (raw / "ATTRIBUTION.md").read_text(encoding="utf-8")
+    assert "Volcano https://simple.wikipedia.org/wiki/Volcano" in attribution
+    assert "Lava https://simple.wikipedia.org/wiki/Lava" in attribution
+
+
+def test_rate_limit_is_not_permanent(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+    capsys: pytest.CaptureFixture[str],
+) -> None:
+    from email.message import EmailMessage
+    from io import BytesIO
+
+    _write_seed(tmp_path, [("stars", "Sun")])
+    sleeps: list[float] = []
+
+    def fake_urlopen(request: object, timeout: int = 30) -> FakeResponse:
+        headers = EmailMessage()
+        headers["Retry-After"] = "7"
+        raise urllib.error.HTTPError(
+            "https://simple.wikipedia.org/w/api.php",
+            429,
+            "Too Many Requests",
+            headers,
+            BytesIO(b""),
+        )
+
+    monkeypatch.setattr(fetch_corpus.time, "sleep", lambda seconds: sleeps.append(seconds))
+    monkeypatch.setattr(fetch_corpus.urllib.request, "urlopen", fake_urlopen)
+    assert fetch_corpus.main([], root=tmp_path) == 0
+    assert sleeps == [7.0, 7.0]
+    raw = tmp_path / "data" / "raw"
+    assert not (raw / "skipped.txt").exists()
+    pending = fetch_corpus.pending_rows(raw, fetch_corpus.read_seed(raw / "seed_titles.txt"))
+    assert [(row.topic, row.title) for row in pending] == [("stars", "Sun")]
+    captured = capsys.readouterr()
+    assert "rate limited: Sun, waiting 7.0s" in captured.out
+    assert "skipped: Sun (failed after 3 tries:" in captured.out
+

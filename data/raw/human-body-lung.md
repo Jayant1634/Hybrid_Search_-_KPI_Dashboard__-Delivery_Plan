@@ -1,0 +1,31 @@
+---
+title: "Lung"
+source: "https://simple.wikipedia.org/wiki/Lung"
+license: "CC BY-SA 4.0"
+topic: "human body"
+fetched: "2026-09-03"
+---
+
+The lung is an organ in many vertebrates (animals having a spine, or backbone). It takes blood oxygen from the air, and expels carbon dioxide. Most vertebrates with lungs have two of them.
+In animals, the lungs are the area where gas exchange takes place. Without gas exchange, oxygen would not pass into the blood from the lungs so the body cells would not be able to receive the oxygen needed for respiration.
+Gas exchange happens in the alveoli. The alveoli are moist to allow oxygen to move from the lung through the alveoli into blood vessels and red blood cells. Carbon dioxide passes from the blood into the alveoli. The oxygen-filled blood goes back to the heart and the carbon dioxide in the alveoli is pushed out of the lungs and into the air we breathe out.
+
+
+Bird lung
+Birds lungs are smaller than mammal lungs, and do not have alveoli, instead they have millions of para-bronchi. These para-bronchi end up in tiny capillaries or very small blood vessels and they pass close to the body's blood vessels, so diffusion can occur and the oxygen and carbon dioxide is exchanged. The oxygen and carbon dioxide in birds lungs are continuously  diffused into and out of the blood, not like in mammals where diffusion can only happen in the alveoli. Air does not go into and back out of the lungs as in mammals. Instead, muscular air sacs push the air forward through bird lungs.
+
+
+Reptile lung
+Reptile lungs open and close because of the ribs surrounding them pressing down on them and then opening up with the help of muscles. The liver is also attached to the bottom of the lungs and when a muscle which is attached to the liver pulls, the liver moves away from the lungs and pulls them, making them bigger.
+
+
+Amphibian lung
+Frog lungs are very simple compared to most other lungs, they are simply balloons, with moist outsides allowing for diffusion. But frogs do not move around much and so do not need lots of oxygen, but they can also take in oxygen through their moist outer skin if a big demand of oxygen is needed (e.g. Fight or flight response)
+
+
+Other websites
+A revision site directed towards IGSCE students Archived 2002-11-08 at the Wayback Machine
+A to Z list of diseases of the Lung
+List of Lung Cancer information sites Archived 2008-11-10 at the Wayback Machine
+In depth articles on the lung
+In depth article on the anatomy of a lung

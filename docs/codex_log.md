@@ -617,3 +617,225 @@ validated: pytest test_fetch_corpus.py 8 passed
 Review:
 Commit:
 
+Date: 2026-09-03
+Prompt id: p25
+Prompt:
+first ingest piece, backend/app/ingest/clean.py. a function to split the front matter off (just key: value lines between --- markers, no yaml lib) and one to clean the text: unicode normalise, drop the [1] style reference markers, cut off the trailing sections simple wikipedia has (References, Related pages, Other websites), collapse whitespace. also a "too short" check (under 200 chars) and a cap for very long docs, cut at a sentence end somewhere around 20k chars. tests in backend/tests/test_clean.py with small inline examples, including one with a wiki tail that must go.
+Model: Cursor Grok 4.6
+Files: backend/app/ingest/clean.py, backend/tests/test_clean.py, backend/app/ingest/__init__.py, backend/app/ingest/__main__.py, docs/codex_log.md
+What came back:
+`backend/app/ingest/clean.py` is the first ingest piece. `split_front_matter` reads `key: value` lines between `---` markers (no YAML library; surrounding quotes are stripped). `clean_text` NFC-normalises Unicode, drops `[1]`/`[12]` markers, cuts Simple Wikipedia trailing sections (`References`, `Related pages`, `Other websites`), collapses whitespace, and caps very long docs at a sentence end near 20k characters (hard cut at 20k if none is nearby). `is_too_short` is true under 200 characters.
+
+`backend/app/ingest.py` cannot sit next to an `ingest/` package, so the stub CLI moved to `backend/app/ingest/__init__.py` and `__main__.py`. `python -m app.ingest` still exits 0.
+
+Tests in `backend/tests/test_clean.py` use small inline examples, including a wiki tail that must disappear. Output:
+
+```
+============================= test session starts =============================
+platform win32 -- Python 3.12.3, pytest-9.1.1, pluggy-1.6.0 -- D:\Kearney\.venv\Scripts\python.exe
+cachedir: .pytest_cache
+rootdir: D:\Kearney\backend
+configfile: pyproject.toml
+plugins: anyio-4.15.0
+collecting ... collected 14 items
+
+tests/test_clean.py::test_splits_quoted_front_matter PASSED              [  7%]
+tests/test_clean.py::test_split_without_front_matter_returns_all_text PASSED [ 14%]
+tests/test_clean.py::test_splits_unquoted_key_values PASSED              [ 21%]
+tests/test_clean.py::test_unicode_normalise PASSED                       [ 28%]
+tests/test_clean.py::test_drops_numeric_reference_markers PASSED         [ 35%]
+tests/test_clean.py::test_drops_simple_wikipedia_trailing_sections PASSED [ 42%]
+tests/test_clean.py::test_collapses_whitespace PASSED                    [ 50%]
+tests/test_clean.py::test_too_short_under_200_chars PASSED               [ 57%]
+tests/test_clean.py::test_wiki_tail_can_leave_text_too_short PASSED      [ 64%]
+tests/test_clean.py::test_caps_long_doc_at_sentence_end_near_20k PASSED  [ 71%]
+tests/test_clean.py::test_hard_caps_when_no_sentence_end PASSED          [ 78%]
+tests/test_app.py::test_package_version PASSED                           [ 85%]
+tests/test_app.py::test_ingest_module_is_runnable PASSED                 [ 92%]
+tests/test_app.py::test_slow_marker_for_real_model PASSED                [100%]
+
+============================= 14 passed in 0.07s ==============================
+```
+
+Add ingest text cleaning and front-matter split
+validated: pytest test_clean.py 11 passed; test_app.py 3 passed
+Review:
+Commit:
+
+Date: 2026-09-03
+Prompt id: p26
+Prompt:
+the sentence cutting should be its own thing, i want it again later for a sentence-split
+option. move it to backend/app/ingest/split.py as split_sentences, handle e.g. / Dr. / U.S.
+style abbreviations, test it on its own.
+Model: Cursor Grok 4.6
+Files: backend/app/ingest/split.py, backend/app/ingest/clean.py, backend/tests/test_split.py, docs/codex_log.md
+What came back:
+Sentence cutting now lives in `backend/app/ingest/split.py` as `split_sentences`. It keeps `Dr.`, `U.S.`, and `e.g.` (and similar dotted titles/acronyms) inside the current sentence instead of splitting on those periods.
+
+The 20k cap in `clean.py` uses `split_sentences` instead of its own period scan, so the same splitter is ready for a later sentence-split option.
+
+Tests are in `backend/tests/test_split.py` (plain splits, Dr./U.S./e.g., `!?`, empty). Existing clean cap tests still pass. Output:
+
+```
+============================= test session starts =============================
+platform win32 -- Python 3.12.3, pytest-9.1.1, pluggy-1.6.0 -- D:\Kearney\.venv\Scripts\python.exe
+cachedir: .pytest_cache
+rootdir: D:\Kearney\backend
+configfile: pyproject.toml
+plugins: anyio-4.15.0
+collecting ... collected 18 items
+
+tests/test_split.py::test_splits_plain_sentences PASSED                  [  5%]
+tests/test_split.py::test_keeps_dr_abbreviation PASSED                   [ 11%]
+tests/test_split.py::test_keeps_us_abbreviation PASSED                   [ 16%]
+tests/test_split.py::test_keeps_eg_abbreviation PASSED                   [ 22%]
+tests/test_split.py::test_question_and_exclaim PASSED                    [ 27%]
+tests/test_split.py::test_empty_and_blank PASSED                         [ 33%]
+tests/test_split.py::test_single_sentence_unchanged PASSED               [ 38%]
+tests/test_clean.py::test_splits_quoted_front_matter PASSED              [ 44%]
+tests/test_clean.py::test_split_without_front_matter_returns_all_text PASSED [ 50%]
+tests/test_clean.py::test_splits_unquoted_key_values PASSED              [ 55%]
+tests/test_clean.py::test_unicode_normalise PASSED                       [ 61%]
+tests/test_clean.py::test_drops_numeric_reference_markers PASSED         [ 66%]
+tests/test_clean.py::test_drops_simple_wikipedia_trailing_sections PASSED [ 72%]
+tests/test_clean.py::test_collapses_whitespace PASSED                    [ 77%]
+tests/test_clean.py::test_too_short_under_200_chars PASSED               [ 83%]
+tests/test_clean.py::test_wiki_tail_can_leave_text_too_short PASSED      [ 88%]
+tests/test_clean.py::test_caps_long_doc_at_sentence_end_near_20k PASSED  [ 94%]
+tests/test_clean.py::test_hard_caps_when_no_sentence_end PASSED          [100%]
+
+============================= 18 passed in 0.06s ==============================
+```
+
+Extract sentence splitting into ingest.split
+validated: pytest test_split.py 7 passed; test_clean.py 11 passed
+Review:
+Commit:
+
+Date: 2026-09-03
+Prompt id: p27
+Prompt:
+now the writing side, backend/app/ingest/writer.py. a Doc dataclass with the five fields from the lld. doc_id is a short sha1 of the relative file path so it stays stable across runs. write jsonl, read jsonl, a corpus hash (sha256 over ids and text, sorted by id) and a manifest.json with count, hash, time, input dir. tests: round trip, id is stable, hash changes when one character changes
+Model: Cursor Grok 4.6
+Files: backend/app/ingest/writer.py, backend/tests/test_writer.py, docs/codex_log.md
+What came back:
+`backend/app/ingest/writer.py` has the writing side. `Doc` is a frozen dataclass with the five lld s6.1 fields (`doc_id`, `title`, `text`, `source`, `created_at`). `make_doc_id` is a short (12-char) SHA1 of the POSIX relative file path, so ids stay stable across runs and OSes. `write_jsonl`/`read_jsonl` round-trip one JSON object per line. `corpus_hash` is a SHA256 over each doc's id and text, ordered by id (so it is order-independent), returned as `sha256:...`. `write_manifest` writes `manifest.json` with `count`, `corpus_hash`, `built_at`, and `input_dir`.
+
+Tests in `backend/tests/test_writer.py`: round trip, stable id, hash changes when one character changes, plus order-independence and manifest fields. Output:
+
+```
+============================= test session starts =============================
+platform win32 -- Python 3.12.3, pytest-9.1.1, pluggy-1.6.0 -- D:\Kearney\.venv\Scripts\python.exe
+cachedir: .pytest_cache
+rootdir: D:\Kearney\backend
+configfile: pyproject.toml
+plugins: anyio-4.15.0
+collecting ... collected 5 items
+
+tests/test_writer.py::test_round_trip PASSED                             [ 20%]
+tests/test_writer.py::test_doc_id_is_stable_across_runs PASSED           [ 40%]
+tests/test_writer.py::test_hash_changes_when_one_character_changes PASSED [ 60%]
+tests/test_writer.py::test_hash_is_order_independent PASSED              [ 80%]
+tests/test_writer.py::test_manifest_fields PASSED                        [100%]
+
+============================== 5 passed in 0.12s ==============================
+```
+
+Add ingest writer with JSONL, corpus hash, manifest
+validated: pytest test_writer.py 5 passed
+Review:
+Commit:
+
+Date: 2026-09-03
+Prompt id: p28
+Prompt:
+wire it into a cli, backend/app/ingest/__main__.py, so this works from the repo root:
+
+python -m app.ingest --input data/raw --out data/processed
+
+walk .md and .txt files, clean, skip the short ones and print them, write docs.jsonl and
+manifest.json, one line summary at the end. a --sentence-split flag that stores the text as
+one sentence per line. defaults from config when the flags are missing. exit 1 if nothing was written. test it on a tmp folder with three files where one is too short
+Model: Cursor Grok 4.6
+Files: backend/app/ingest/__init__.py, backend/app/ingest/__main__.py, backend/tests/test_ingest.py, backend/tests/test_app.py, docs/codex_log.md
+What came back:
+Wired the ingest CLI. From the repo root: `python -m app.ingest --input data/raw --out data/processed`.
+
+It walks `.md`/`.txt` under `--input`, splits front matter, cleans text, skips short docs (prints `skipped: <path> (too short, N chars)`), writes `docs.jsonl` + `manifest.json`, and prints a one-line summary. `--sentence-split` stores cleaned text as one sentence per line. Missing `--input`/`--out` use config `raw_dir` / `processed_dir`. Exit code 1 if nothing was written.
+
+Logic lives in `app.ingest` (`ingest()`, `main()`); `__main__.py` is the thin `-m` entry. Also adjusted `test_app.py` so the smoke test no longer calls bare `main()` against real `data/raw`.
+
+Tests on a tmp folder with three files (one too short): wrote 2, skipped 1, exit 0; all-short → exit 1. Output:
+
+```
+============================= test session starts =============================
+platform win32 -- Python 3.12.3, pytest-9.1.1, pluggy-1.6.0 -- D:\Kearney\.venv\Scripts\python.exe
+cachedir: .pytest_cache
+rootdir: D:\Kearney\backend
+configfile: pyproject.toml
+plugins: anyio-4.15.0
+collecting ... collected 6 items
+
+tests/test_ingest.py::test_cli_writes_two_skips_short PASSED             [ 16%]
+tests/test_ingest.py::test_cli_exit_1_when_nothing_written PASSED        [ 33%]
+tests/test_ingest.py::test_sentence_split_flag PASSED                    [ 50%]
+tests/test_app.py::test_package_version PASSED                           [ 66%]
+tests/test_app.py::test_ingest_module_is_runnable PASSED                 [ 83%]
+tests/test_app.py::test_slow_marker_for_real_model PASSED                [100%]
+
+============================== 6 passed in 0.17s ==============================
+```
+
+Wire ingest CLI to clean, skip short, write JSONL
+validated: pytest test_ingest.py 3 passed; test_app.py 3 passed
+Review:
+Commit:
+
+Date: 2026-09-03
+Prompt id: p29
+Prompt:
+@c:\Users\JAYANT\.cursor\projects\d-Kearney\terminals\4.txt:213-225 i am getting rate limit 429,  running command withou it, so make a script to tun again and again, until all files got extracted
+Model: Cursor Grok 4.6
+Files: scripts/fetch_until_done.py, scripts/fetch_corpus.py, backend/tests/test_fetch_corpus.py, backend/tests/test_fetch_until_done.py, docs/codex_log.md
+What came back:
+The 429s happened because a full run re-requested titles already saved from `--limit 5`, and three 0.5s retries are too short for Wikimedia's rate limit.
+
+`python scripts/fetch_until_done.py` now loops `fetch_corpus` until every seed title has a `.md` file (or is permanently skipped as missing/short). Between passes it waits 15s (`--wait` to change that). `fetch_corpus.py` skips files already in `data/raw`, treats 429 as temporary (honours `Retry-After`, otherwise 10s/20s), and does not record 429s in `skipped.txt`, so the next pass retries them. ATTRIBUTION.md is rebuilt from all kept articles on disk.
+
+You already have five volcano articles; the loop will resume from the rest. Run:
+
+`python scripts/fetch_until_done.py`
+
+Tests (API mocked):
+
+```
+============================= test session starts =============================
+platform win32 -- Python 3.12.3, pytest-9.1.1, pluggy-1.6.0 -- D:\Kearney\.venv\Scripts\python.exe
+cachedir: .pytest_cache
+rootdir: D:\Kearney\backend
+configfile: pyproject.toml
+plugins: anyio-4.15.0
+collecting ... collected 12 items
+
+backend\tests\test_fetch_corpus.py::test_repo_root_follows_script_not_cwd PASSED [  8%]
+backend\tests\test_fetch_corpus.py::test_slugify_and_article_slug PASSED [ 16%]
+backend\tests\test_fetch_corpus.py::test_read_seed_skips_blank_lines PASSED [ 25%]
+backend\tests\test_fetch_corpus.py::test_writes_front_matter_and_follows_redirect PASSED [ 33%]
+backend\tests\test_fetch_corpus.py::test_skips_short_extract PASSED      [ 41%]
+backend\tests\test_fetch_corpus.py::test_limit_fetches_only_n PASSED     [ 50%]
+backend\tests\test_fetch_corpus.py::test_retries_three_times_then_skips PASSED [ 58%]
+backend\tests\test_fetch_corpus.py::test_keeps_extract_of_exactly_400_chars PASSED [ 66%]
+backend\tests\test_fetch_corpus.py::test_skips_already_written_files PASSED [ 75%]
+backend\tests\test_fetch_corpus.py::test_rate_limit_is_not_permanent PASSED [ 83%]
+backend\tests\test_fetch_until_done.py::test_until_done_loops_until_all_extracted PASSED [ 91%]
+backend\tests\test_fetch_until_done.py::test_until_done_stops_when_nothing_pending PASSED [100%]
+
+============================= 12 passed in 0.38s ==============================
+```
+
+Loop corpus fetch until all seed titles are extracted
+validated: pytest test_fetch_corpus.py test_fetch_until_done.py 12 passed
+Review:
+Commit:
+
