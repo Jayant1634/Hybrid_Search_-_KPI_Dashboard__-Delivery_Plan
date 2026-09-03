@@ -1,6 +1,6 @@
 import ThemeToggle from './ThemeToggle'
 
-type Page = 'home' | 'search' | 'health'
+type Page = 'home' | 'search' | 'health' | 'settings'
 
 interface Props {
   current: Page
@@ -72,6 +72,24 @@ export default function Sidebar({ current, onNavigate, dark, onToggleTheme }: Pr
       </nav>
 
       <div className="sidebar-bottom">
+        <button
+          className={`sidebar-nav-item ${current === 'settings' ? 'active' : ''}`}
+          onClick={() => onNavigate('settings')}
+        >
+          <span className="sidebar-nav-icon">
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+              <circle cx="8" cy="8" r="2.2" stroke="currentColor" strokeWidth="1.4" />
+              <path
+                d="M8 1.5l.6 1.4 1.5-.3.9 1.3 1.4.6-.3 1.5 1.3.9-.6 1.4.3 1.5-1.4.6-.9 1.3-1.5-.3L8 14.5l-.6-1.4-1.5.3-.9-1.3-1.4-.6.3-1.5-1.3-.9.6-1.4-.3-1.5 1.4-.6.9-1.3 1.5.3L8 1.5z"
+                stroke="currentColor"
+                strokeWidth="1.2"
+                strokeLinejoin="round"
+              />
+            </svg>
+          </span>
+          Settings
+          {current === 'settings' && <span className="sidebar-active-indicator" />}
+        </button>
         <ThemeToggle dark={dark} onToggle={onToggleTheme} />
         <div className="sidebar-version">v0.1.0 · Hybrid Search API</div>
       </div>

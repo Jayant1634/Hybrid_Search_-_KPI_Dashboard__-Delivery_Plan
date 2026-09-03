@@ -1,0 +1,17 @@
+---
+description: Regenerate call-graph JSON at the end of any prompt that changes scanned source.
+alwaysApply: true
+---
+
+# Call graph refresh
+
+If this prompt added, changed, renamed, or deleted any file under `backend/app`, `scripts`, or `frontend/src` (not the generated JSON itself):
+
+1. After tests pass, from `backend/` run: `python -m app.callgraph`
+2. That rewrites `frontend/public/callgraph/*.json` (relative paths only).
+3. Do this at the **end** of the prompt, before the `docs/codex_log.md` entry.
+4. Do not hand-edit those JSON files.
+
+Skip if no scanned source files changed.
+
+Do not treat `frontend/public/callgraph/` as source; it is generated output.

@@ -1,0 +1,1030 @@
+{
+  "generated_at": "2026-09-03T17:33:12Z",
+  "files": {
+    "backend/app/__init__.py": {
+      "language": "python",
+      "functions": [],
+      "imports": [],
+      "imported_by": [],
+      "calls": [],
+      "called_by": []
+    },
+    "backend/app/api/deps.py": {
+      "language": "python",
+      "functions": [
+        "backend/app/api/deps.py::_pyproject_path",
+        "backend/app/api/deps.py::get_version",
+        "backend/app/api/deps.py::get_commit",
+        "backend/app/api/deps.py::SearchService.__init__",
+        "backend/app/api/deps.py::SearchService.load"
+      ],
+      "imports": [
+        "backend/app/config.py",
+        "backend/app/ingest/writer.py",
+        "backend/app/search/bm25.py",
+        "backend/app/search/embedder.py",
+        "backend/app/search/hybrid.py",
+        "backend/app/search/vector.py"
+      ],
+      "imported_by": [
+        "backend/app/api/main.py",
+        "backend/app/api/routes_search.py"
+      ],
+      "calls": [
+        "backend/app/config.py",
+        "backend/app/ingest/writer.py",
+        "backend/app/search/bm25.py",
+        "backend/app/search/embedder.py",
+        "backend/app/search/hybrid.py",
+        "backend/app/search/vector.py"
+      ],
+      "called_by": [
+        "backend/app/api/main.py",
+        "backend/app/api/routes_search.py"
+      ]
+    },
+    "backend/app/api/main.py": {
+      "language": "python",
+      "functions": [
+        "backend/app/api/main.py::create_app"
+      ],
+      "imports": [
+        "backend/app/api/deps.py",
+        "backend/app/api/middleware.py",
+        "backend/app/api/routes_search.py",
+        "backend/app/config.py",
+        "backend/app/search/embedder.py",
+        "backend/app/storage/db.py"
+      ],
+      "imported_by": [],
+      "calls": [
+        "backend/app/api/deps.py",
+        "backend/app/api/middleware.py",
+        "backend/app/api/routes_search.py",
+        "backend/app/config.py",
+        "backend/app/search/embedder.py",
+        "backend/app/storage/db.py"
+      ],
+      "called_by": []
+    },
+    "backend/app/api/middleware.py": {
+      "language": "python",
+      "functions": [
+        "backend/app/api/middleware.py::RequestContextMiddleware.dispatch",
+        "backend/app/api/middleware.py::_read_search_params",
+        "backend/app/api/middleware.py::_capture_result_count",
+        "backend/app/api/middleware.py::_persist_search"
+      ],
+      "imports": [
+        "backend/app/observability/metrics.py",
+        "backend/app/storage/repo.py"
+      ],
+      "imported_by": [
+        "backend/app/api/main.py"
+      ],
+      "calls": [
+        "backend/app/observability/metrics.py",
+        "backend/app/storage/repo.py"
+      ],
+      "called_by": [
+        "backend/app/api/main.py"
+      ]
+    },
+    "backend/app/api/ratelimit.py": {
+      "language": "python",
+      "functions": [
+        "backend/app/api/ratelimit.py::RateLimiter.__init__",
+        "backend/app/api/ratelimit.py::RateLimiter.allow",
+        "backend/app/api/ratelimit.py::RateLimiter.take",
+        "backend/app/api/ratelimit.py::RateLimiter.__call__",
+        "backend/app/api/ratelimit.py::rate_limit"
+      ],
+      "imports": [
+        "backend/app/config.py"
+      ],
+      "imported_by": [],
+      "calls": [
+        "backend/app/config.py"
+      ],
+      "called_by": []
+    },
+    "backend/app/api/routes_search.py": {
+      "language": "python",
+      "functions": [
+        "backend/app/api/routes_search.py::_get_service",
+        "backend/app/api/routes_search.py::_index_metadata",
+        "backend/app/api/routes_search.py::health",
+        "backend/app/api/routes_search.py::metrics",
+        "backend/app/api/routes_search.py::search",
+        "backend/app/api/routes_search.py::feedback"
+      ],
+      "imports": [
+        "backend/app/api/deps.py",
+        "backend/app/api/schemas.py",
+        "backend/app/config.py",
+        "backend/app/index/metadata.py",
+        "backend/app/observability/metrics.py",
+        "backend/app/search/filters.py",
+        "backend/app/storage/repo.py"
+      ],
+      "imported_by": [
+        "backend/app/api/main.py"
+      ],
+      "calls": [
+        "backend/app/api/deps.py",
+        "backend/app/api/schemas.py",
+        "backend/app/config.py",
+        "backend/app/index/metadata.py",
+        "backend/app/observability/metrics.py",
+        "backend/app/search/filters.py",
+        "backend/app/storage/repo.py"
+      ],
+      "called_by": [
+        "backend/app/api/main.py"
+      ]
+    },
+    "backend/app/api/schemas.py": {
+      "language": "python",
+      "functions": [
+        "backend/app/api/schemas.py::_default_alpha",
+        "backend/app/api/schemas.py::_default_normalization",
+        "backend/app/api/schemas.py::SearchFiltersModel._must_be_iso8601"
+      ],
+      "imports": [
+        "backend/app/config.py"
+      ],
+      "imported_by": [
+        "backend/app/api/routes_search.py"
+      ],
+      "calls": [
+        "backend/app/config.py"
+      ],
+      "called_by": [
+        "backend/app/api/routes_search.py"
+      ]
+    },
+    "backend/app/callgraph/__init__.py": {
+      "language": "python",
+      "functions": [],
+      "imports": [
+        "backend/app/callgraph/analyze.py"
+      ],
+      "imported_by": [],
+      "calls": [
+        "backend/app/callgraph/analyze.py"
+      ],
+      "called_by": []
+    },
+    "backend/app/callgraph/__main__.py": {
+      "language": "python",
+      "functions": [
+        "backend/app/callgraph/__main__.py::main"
+      ],
+      "imports": [
+        "backend/app/callgraph/analyze.py"
+      ],
+      "imported_by": [],
+      "calls": [
+        "backend/app/callgraph/analyze.py"
+      ],
+      "called_by": []
+    },
+    "backend/app/callgraph/analyze.py": {
+      "language": "python",
+      "functions": [
+        "backend/app/callgraph/analyze.py::find_repo_root",
+        "backend/app/callgraph/analyze.py::_rel",
+        "backend/app/callgraph/analyze.py::iter_source_files",
+        "backend/app/callgraph/analyze.py::_py_module",
+        "backend/app/callgraph/analyze.py::_resolve_py_from",
+        "backend/app/callgraph/analyze.py::_analyze_python",
+        "backend/app/callgraph/analyze.py::_CallCollector.__init__",
+        "backend/app/callgraph/analyze.py::_CallCollector.visit_Call",
+        "backend/app/callgraph/analyze.py::_call_name",
+        "backend/app/callgraph/analyze.py::_match_brace_end",
+        "backend/app/callgraph/analyze.py::_resolve_ts_import",
+        "backend/app/callgraph/analyze.py::_analyze_typescript",
+        "backend/app/callgraph/analyze.py::_func_id",
+        "backend/app/callgraph/analyze.py::_index_functions",
+        "backend/app/callgraph/analyze.py::_resolve_calls",
+        "backend/app/callgraph/analyze.py::_kahn_topo",
+        "backend/app/callgraph/analyze.py::_bfs_one_level",
+        "backend/app/callgraph/analyze.py::build_callgraph",
+        "backend/app/callgraph/analyze.py::write_callgraph_json"
+      ],
+      "imports": [],
+      "imported_by": [
+        "backend/app/callgraph/__init__.py",
+        "backend/app/callgraph/__main__.py"
+      ],
+      "calls": [],
+      "called_by": [
+        "backend/app/callgraph/__init__.py",
+        "backend/app/callgraph/__main__.py"
+      ]
+    },
+    "backend/app/config.py": {
+      "language": "python",
+      "functions": [
+        "backend/app/config.py::_is_repo_root",
+        "backend/app/config.py::_walk_up",
+        "backend/app/config.py::find_repo_root",
+        "backend/app/config.py::_env_str",
+        "backend/app/config.py::_env_int",
+        "backend/app/config.py::_env_float",
+        "backend/app/config.py::load_config"
+      ],
+      "imports": [],
+      "imported_by": [
+        "backend/app/api/deps.py",
+        "backend/app/api/main.py",
+        "backend/app/api/ratelimit.py",
+        "backend/app/api/routes_search.py",
+        "backend/app/api/schemas.py",
+        "backend/app/index/__main__.py",
+        "backend/app/ingest/__init__.py",
+        "backend/app/search/embedder.py"
+      ],
+      "calls": [],
+      "called_by": [
+        "backend/app/api/deps.py",
+        "backend/app/api/main.py",
+        "backend/app/api/ratelimit.py",
+        "backend/app/api/routes_search.py",
+        "backend/app/api/schemas.py",
+        "backend/app/index/__main__.py",
+        "backend/app/ingest/__init__.py",
+        "backend/app/search/embedder.py"
+      ]
+    },
+    "backend/app/index/__main__.py": {
+      "language": "python",
+      "functions": [
+        "backend/app/index/__main__.py::_resolve_path",
+        "backend/app/index/__main__.py::_embed_text",
+        "backend/app/index/__main__.py::build_indexes",
+        "backend/app/index/__main__.py::_build_parser",
+        "backend/app/index/__main__.py::main"
+      ],
+      "imports": [
+        "backend/app/config.py",
+        "backend/app/ingest/writer.py",
+        "backend/app/search/bm25.py",
+        "backend/app/search/embedder.py",
+        "backend/app/search/vector.py",
+        "backend/app/index/metadata.py"
+      ],
+      "imported_by": [],
+      "calls": [
+        "backend/app/config.py",
+        "backend/app/index/metadata.py",
+        "backend/app/ingest/writer.py",
+        "backend/app/search/bm25.py",
+        "backend/app/search/embedder.py",
+        "backend/app/search/vector.py"
+      ],
+      "called_by": []
+    },
+    "backend/app/index/metadata.py": {
+      "language": "python",
+      "functions": [
+        "backend/app/index/metadata.py::IndexMetadata.create",
+        "backend/app/index/metadata.py::IndexMetadata.save",
+        "backend/app/index/metadata.py::IndexMetadata.load",
+        "backend/app/index/metadata.py::is_up_to_date"
+      ],
+      "imports": [],
+      "imported_by": [
+        "backend/app/api/routes_search.py",
+        "backend/app/index/__main__.py"
+      ],
+      "calls": [],
+      "called_by": [
+        "backend/app/api/routes_search.py",
+        "backend/app/index/__main__.py"
+      ]
+    },
+    "backend/app/ingest/__init__.py": {
+      "language": "python",
+      "functions": [
+        "backend/app/ingest/__init__.py::_resolve_path",
+        "backend/app/ingest/__init__.py::_iter_source_files",
+        "backend/app/ingest/__init__.py::_title_from",
+        "backend/app/ingest/__init__.py::_source_from",
+        "backend/app/ingest/__init__.py::_created_at_from",
+        "backend/app/ingest/__init__.py::_format_text",
+        "backend/app/ingest/__init__.py::ingest",
+        "backend/app/ingest/__init__.py::_build_parser",
+        "backend/app/ingest/__init__.py::main"
+      ],
+      "imports": [
+        "backend/app/config.py",
+        "backend/app/ingest/clean.py",
+        "backend/app/ingest/split.py",
+        "backend/app/ingest/writer.py"
+      ],
+      "imported_by": [
+        "backend/app/ingest/__main__.py"
+      ],
+      "calls": [
+        "backend/app/config.py",
+        "backend/app/ingest/clean.py",
+        "backend/app/ingest/split.py",
+        "backend/app/ingest/writer.py"
+      ],
+      "called_by": [
+        "backend/app/ingest/__main__.py"
+      ]
+    },
+    "backend/app/ingest/__main__.py": {
+      "language": "python",
+      "functions": [],
+      "imports": [
+        "backend/app/ingest/__init__.py"
+      ],
+      "imported_by": [],
+      "calls": [
+        "backend/app/ingest/__init__.py"
+      ],
+      "called_by": []
+    },
+    "backend/app/ingest/clean.py": {
+      "language": "python",
+      "functions": [
+        "backend/app/ingest/clean.py::_unquote",
+        "backend/app/ingest/clean.py::split_front_matter",
+        "backend/app/ingest/clean.py::_drop_wiki_tail",
+        "backend/app/ingest/clean.py::_cap_at_sentence",
+        "backend/app/ingest/clean.py::clean_text",
+        "backend/app/ingest/clean.py::is_too_short"
+      ],
+      "imports": [
+        "backend/app/ingest/split.py"
+      ],
+      "imported_by": [
+        "backend/app/ingest/__init__.py"
+      ],
+      "calls": [
+        "backend/app/ingest/split.py"
+      ],
+      "called_by": [
+        "backend/app/ingest/__init__.py"
+      ]
+    },
+    "backend/app/ingest/split.py": {
+      "language": "python",
+      "functions": [
+        "backend/app/ingest/split.py::_token_before_period",
+        "backend/app/ingest/split.py::_is_abbreviation",
+        "backend/app/ingest/split.py::_is_sentence_end",
+        "backend/app/ingest/split.py::split_sentences"
+      ],
+      "imports": [],
+      "imported_by": [
+        "backend/app/ingest/__init__.py",
+        "backend/app/ingest/clean.py"
+      ],
+      "calls": [],
+      "called_by": [
+        "backend/app/ingest/__init__.py",
+        "backend/app/ingest/clean.py"
+      ]
+    },
+    "backend/app/ingest/writer.py": {
+      "language": "python",
+      "functions": [
+        "backend/app/ingest/writer.py::make_doc_id",
+        "backend/app/ingest/writer.py::write_jsonl",
+        "backend/app/ingest/writer.py::read_jsonl",
+        "backend/app/ingest/writer.py::corpus_hash",
+        "backend/app/ingest/writer.py::write_manifest"
+      ],
+      "imports": [],
+      "imported_by": [
+        "backend/app/api/deps.py",
+        "backend/app/index/__main__.py",
+        "backend/app/ingest/__init__.py"
+      ],
+      "calls": [],
+      "called_by": [
+        "backend/app/api/deps.py",
+        "backend/app/index/__main__.py",
+        "backend/app/ingest/__init__.py"
+      ]
+    },
+    "backend/app/observability/logging.py": {
+      "language": "python",
+      "functions": [
+        "backend/app/observability/logging.py::JsonFormatter.format",
+        "backend/app/observability/logging.py::SqliteLogHandler.__init__",
+        "backend/app/observability/logging.py::SqliteLogHandler.emit",
+        "backend/app/observability/logging.py::_find_flagged",
+        "backend/app/observability/logging.py::configure"
+      ],
+      "imports": [
+        "backend/app/storage/repo.py"
+      ],
+      "imported_by": [],
+      "calls": [
+        "backend/app/storage/repo.py"
+      ],
+      "called_by": []
+    },
+    "backend/app/observability/metrics.py": {
+      "language": "python",
+      "functions": [
+        "backend/app/observability/metrics.py::reset",
+        "backend/app/observability/metrics.py::record_request",
+        "backend/app/observability/metrics.py::record_search_latency",
+        "backend/app/observability/metrics.py::percentile",
+        "backend/app/observability/metrics.py::snapshot",
+        "backend/app/observability/metrics.py::render"
+      ],
+      "imports": [],
+      "imported_by": [
+        "backend/app/api/middleware.py",
+        "backend/app/api/routes_search.py"
+      ],
+      "calls": [],
+      "called_by": [
+        "backend/app/api/middleware.py",
+        "backend/app/api/routes_search.py"
+      ]
+    },
+    "backend/app/search/bm25.py": {
+      "language": "python",
+      "functions": [
+        "backend/app/search/bm25.py::BM25Index.__init__",
+        "backend/app/search/bm25.py::BM25Index._doc_tokens",
+        "backend/app/search/bm25.py::BM25Index.build",
+        "backend/app/search/bm25.py::BM25Index.query",
+        "backend/app/search/bm25.py::BM25Index.scores_for_all",
+        "backend/app/search/bm25.py::BM25Index.save",
+        "backend/app/search/bm25.py::BM25Index.load"
+      ],
+      "imports": [
+        "backend/app/search/tokenize.py"
+      ],
+      "imported_by": [
+        "backend/app/api/deps.py",
+        "backend/app/index/__main__.py",
+        "backend/app/search/hybrid.py"
+      ],
+      "calls": [
+        "backend/app/search/tokenize.py"
+      ],
+      "called_by": [
+        "backend/app/api/deps.py",
+        "backend/app/index/__main__.py",
+        "backend/app/search/hybrid.py"
+      ]
+    },
+    "backend/app/search/embedder.py": {
+      "language": "python",
+      "functions": [
+        "backend/app/search/embedder.py::Embedder.encode",
+        "backend/app/search/embedder.py::SentenceTransformerEmbedder.__init__",
+        "backend/app/search/embedder.py::SentenceTransformerEmbedder.encode"
+      ],
+      "imports": [
+        "backend/app/config.py"
+      ],
+      "imported_by": [
+        "backend/app/api/deps.py",
+        "backend/app/api/main.py",
+        "backend/app/index/__main__.py",
+        "backend/app/search/hybrid.py"
+      ],
+      "calls": [
+        "backend/app/config.py"
+      ],
+      "called_by": [
+        "backend/app/api/deps.py",
+        "backend/app/api/main.py",
+        "backend/app/index/__main__.py",
+        "backend/app/search/hybrid.py"
+      ]
+    },
+    "backend/app/search/filters.py": {
+      "language": "python",
+      "functions": [
+        "backend/app/search/filters.py::SearchFilters.matches",
+        "backend/app/search/filters.py::apply"
+      ],
+      "imports": [],
+      "imported_by": [
+        "backend/app/api/routes_search.py",
+        "backend/app/search/hybrid.py"
+      ],
+      "calls": [],
+      "called_by": [
+        "backend/app/api/routes_search.py",
+        "backend/app/search/hybrid.py"
+      ]
+    },
+    "backend/app/search/highlight.py": {
+      "language": "python",
+      "functions": [
+        "backend/app/search/highlight.py::_clip_end",
+        "backend/app/search/highlight.py::_snap_start",
+        "backend/app/search/highlight.py::make_snippet"
+      ],
+      "imports": [],
+      "imported_by": [
+        "backend/app/search/hybrid.py"
+      ],
+      "calls": [],
+      "called_by": [
+        "backend/app/search/hybrid.py"
+      ]
+    },
+    "backend/app/search/hybrid.py": {
+      "language": "python",
+      "functions": [
+        "backend/app/search/hybrid.py::HybridSearcher.__init__",
+        "backend/app/search/hybrid.py::HybridSearcher.search"
+      ],
+      "imports": [
+        "backend/app/search/bm25.py",
+        "backend/app/search/embedder.py",
+        "backend/app/search/filters.py",
+        "backend/app/search/highlight.py",
+        "backend/app/search/normalize.py",
+        "backend/app/search/tokenize.py",
+        "backend/app/search/vector.py"
+      ],
+      "imported_by": [
+        "backend/app/api/deps.py"
+      ],
+      "calls": [
+        "backend/app/search/bm25.py",
+        "backend/app/search/embedder.py",
+        "backend/app/search/filters.py",
+        "backend/app/search/highlight.py",
+        "backend/app/search/normalize.py",
+        "backend/app/search/tokenize.py",
+        "backend/app/search/vector.py"
+      ],
+      "called_by": [
+        "backend/app/api/deps.py"
+      ]
+    },
+    "backend/app/search/normalize.py": {
+      "language": "python",
+      "functions": [
+        "backend/app/search/normalize.py::min_max",
+        "backend/app/search/normalize.py::z_score",
+        "backend/app/search/normalize.py::normalize"
+      ],
+      "imports": [],
+      "imported_by": [
+        "backend/app/search/hybrid.py"
+      ],
+      "calls": [],
+      "called_by": [
+        "backend/app/search/hybrid.py"
+      ]
+    },
+    "backend/app/search/tokenize.py": {
+      "language": "python",
+      "functions": [
+        "backend/app/search/tokenize.py::tokenize"
+      ],
+      "imports": [],
+      "imported_by": [
+        "backend/app/search/bm25.py",
+        "backend/app/search/hybrid.py"
+      ],
+      "calls": [],
+      "called_by": [
+        "backend/app/search/bm25.py",
+        "backend/app/search/hybrid.py"
+      ]
+    },
+    "backend/app/search/vector.py": {
+      "language": "python",
+      "functions": [
+        "backend/app/search/vector.py::VectorIndex.__init__",
+        "backend/app/search/vector.py::VectorIndex.dimension",
+        "backend/app/search/vector.py::VectorIndex.build",
+        "backend/app/search/vector.py::VectorIndex.query",
+        "backend/app/search/vector.py::VectorIndex.save",
+        "backend/app/search/vector.py::VectorIndex.load"
+      ],
+      "imports": [],
+      "imported_by": [
+        "backend/app/api/deps.py",
+        "backend/app/index/__main__.py",
+        "backend/app/search/hybrid.py"
+      ],
+      "calls": [],
+      "called_by": [
+        "backend/app/api/deps.py",
+        "backend/app/index/__main__.py",
+        "backend/app/search/hybrid.py"
+      ]
+    },
+    "backend/app/storage/db.py": {
+      "language": "python",
+      "functions": [
+        "backend/app/storage/db.py::connect",
+        "backend/app/storage/db.py::init_schema"
+      ],
+      "imports": [],
+      "imported_by": [
+        "backend/app/api/main.py"
+      ],
+      "calls": [],
+      "called_by": [
+        "backend/app/api/main.py"
+      ]
+    },
+    "backend/app/storage/repo.py": {
+      "language": "python",
+      "functions": [
+        "backend/app/storage/repo.py::_now",
+        "backend/app/storage/repo.py::insert_request",
+        "backend/app/storage/repo.py::insert_feedback",
+        "backend/app/storage/repo.py::insert_log",
+        "backend/app/storage/repo.py::select_requests",
+        "backend/app/storage/repo.py::select_feedback",
+        "backend/app/storage/repo.py::select_logs"
+      ],
+      "imports": [],
+      "imported_by": [
+        "backend/app/api/middleware.py",
+        "backend/app/api/routes_search.py",
+        "backend/app/observability/logging.py"
+      ],
+      "calls": [],
+      "called_by": [
+        "backend/app/api/middleware.py",
+        "backend/app/api/routes_search.py",
+        "backend/app/observability/logging.py"
+      ]
+    },
+    "scripts/_check_titles.py": {
+      "language": "python",
+      "functions": [],
+      "imports": [],
+      "imported_by": [],
+      "calls": [],
+      "called_by": []
+    },
+    "scripts/fetch_corpus.py": {
+      "language": "python",
+      "functions": [
+        "scripts/fetch_corpus.py::repo_root",
+        "scripts/fetch_corpus.py::today_iso",
+        "scripts/fetch_corpus.py::slugify",
+        "scripts/fetch_corpus.py::article_slug",
+        "scripts/fetch_corpus.py::article_path",
+        "scripts/fetch_corpus.py::wiki_source_url",
+        "scripts/fetch_corpus.py::read_seed",
+        "scripts/fetch_corpus.py::read_skipped",
+        "scripts/fetch_corpus.py::append_skipped",
+        "scripts/fetch_corpus.py::pending_rows",
+        "scripts/fetch_corpus.py::_yaml_quote",
+        "scripts/fetch_corpus.py::_yaml_unquote",
+        "scripts/fetch_corpus.py::parse_front_matter",
+        "scripts/fetch_corpus.py::kept_from_raw",
+        "scripts/fetch_corpus.py::write_attribution",
+        "scripts/fetch_corpus.py::render_attribution",
+        "scripts/fetch_corpus.py::render_markdown",
+        "scripts/fetch_corpus.py::_api_url",
+        "scripts/fetch_corpus.py::fetch_extract",
+        "scripts/fetch_corpus.py::retry_wait_seconds",
+        "scripts/fetch_corpus.py::fetch_with_retry",
+        "scripts/fetch_corpus.py::parse_args",
+        "scripts/fetch_corpus.py::main"
+      ],
+      "imports": [],
+      "imported_by": [
+        "scripts/fetch_until_done.py"
+      ],
+      "calls": [],
+      "called_by": [
+        "scripts/fetch_until_done.py"
+      ]
+    },
+    "scripts/fetch_until_done.py": {
+      "language": "python",
+      "functions": [
+        "scripts/fetch_until_done.py::parse_args",
+        "scripts/fetch_until_done.py::main"
+      ],
+      "imports": [
+        "scripts/fetch_corpus.py"
+      ],
+      "imported_by": [],
+      "calls": [
+        "scripts/fetch_corpus.py"
+      ],
+      "called_by": []
+    },
+    "frontend/src/api.ts": {
+      "language": "typescript",
+      "functions": [
+        "frontend/src/api.ts::_fetch",
+        "frontend/src/api.ts::search",
+        "frontend/src/api.ts::submitFeedback",
+        "frontend/src/api.ts::getHealth",
+        "frontend/src/api.ts::getKpiSummary",
+        "frontend/src/api.ts::getKpiVolume",
+        "frontend/src/api.ts::getTopQueries",
+        "frontend/src/api.ts::getZeroResultQueries",
+        "frontend/src/api.ts::getExperiments",
+        "frontend/src/api.ts::getLogs"
+      ],
+      "imports": [],
+      "imported_by": [
+        "frontend/src/components/HealthGrid.tsx",
+        "frontend/src/components/ResultCard.tsx",
+        "frontend/src/pages/HealthPage.tsx",
+        "frontend/src/pages/SearchPage.tsx"
+      ],
+      "calls": [],
+      "called_by": [
+        "frontend/src/components/HealthGrid.tsx",
+        "frontend/src/components/ResultCard.tsx",
+        "frontend/src/pages/HealthPage.tsx",
+        "frontend/src/pages/SearchPage.tsx"
+      ]
+    },
+    "frontend/src/App.tsx": {
+      "language": "typescript",
+      "functions": [
+        "frontend/src/App.tsx::useTheme",
+        "frontend/src/App.tsx::App"
+      ],
+      "imports": [
+        "frontend/src/components/Sidebar.tsx",
+        "frontend/src/pages/HomePage.tsx",
+        "frontend/src/pages/SearchPage.tsx",
+        "frontend/src/pages/HealthPage.tsx",
+        "frontend/src/pages/SettingsPage.tsx"
+      ],
+      "imported_by": [
+        "frontend/src/main.tsx"
+      ],
+      "calls": [
+        "frontend/src/components/Sidebar.tsx",
+        "frontend/src/pages/HealthPage.tsx",
+        "frontend/src/pages/HomePage.tsx",
+        "frontend/src/pages/SearchPage.tsx",
+        "frontend/src/pages/SettingsPage.tsx"
+      ],
+      "called_by": [
+        "frontend/src/main.tsx"
+      ]
+    },
+    "frontend/src/callgraphTypes.ts": {
+      "language": "typescript",
+      "functions": [],
+      "imports": [],
+      "imported_by": [
+        "frontend/src/components/CallGraphView.tsx",
+        "frontend/src/pages/SettingsPage.tsx"
+      ],
+      "calls": [],
+      "called_by": [
+        "frontend/src/components/CallGraphView.tsx",
+        "frontend/src/pages/SettingsPage.tsx"
+      ]
+    },
+    "frontend/src/components/CallGraphView.tsx": {
+      "language": "typescript",
+      "functions": [
+        "frontend/src/components/CallGraphView.tsx::shortFile",
+        "frontend/src/components/CallGraphView.tsx::shortNode",
+        "frontend/src/components/CallGraphView.tsx::outgoing",
+        "frontend/src/components/CallGraphView.tsx::incoming",
+        "frontend/src/components/CallGraphView.tsx::edgePath",
+        "frontend/src/components/CallGraphView.tsx::CallGraphView",
+        "frontend/src/components/CallGraphView.tsx::triggerHop",
+        "frontend/src/components/CallGraphView.tsx::goTo",
+        "frontend/src/components/CallGraphView.tsx::resetView",
+        "frontend/src/components/CallGraphView.tsx::playHops"
+      ],
+      "imports": [
+        "frontend/src/callgraphTypes.ts"
+      ],
+      "imported_by": [
+        "frontend/src/pages/SettingsPage.tsx"
+      ],
+      "calls": [
+        "frontend/src/callgraphTypes.ts"
+      ],
+      "called_by": [
+        "frontend/src/pages/SettingsPage.tsx"
+      ]
+    },
+    "frontend/src/components/HealthGrid.tsx": {
+      "language": "typescript",
+      "functions": [
+        "frontend/src/components/HealthGrid.tsx::HealthGrid"
+      ],
+      "imports": [
+        "frontend/src/api.ts"
+      ],
+      "imported_by": [
+        "frontend/src/pages/HealthPage.tsx"
+      ],
+      "calls": [
+        "frontend/src/api.ts"
+      ],
+      "called_by": [
+        "frontend/src/pages/HealthPage.tsx"
+      ]
+    },
+    "frontend/src/components/Navbar.tsx": {
+      "language": "typescript",
+      "functions": [
+        "frontend/src/components/Navbar.tsx::Navbar"
+      ],
+      "imports": [],
+      "imported_by": [
+        "frontend/src/pages/HomePage.tsx"
+      ],
+      "calls": [],
+      "called_by": [
+        "frontend/src/pages/HomePage.tsx"
+      ]
+    },
+    "frontend/src/components/ResultCard.tsx": {
+      "language": "typescript",
+      "functions": [
+        "frontend/src/components/ResultCard.tsx::ResultCard",
+        "frontend/src/components/ResultCard.tsx::handleFeedback"
+      ],
+      "imports": [
+        "frontend/src/api.ts",
+        "frontend/src/components/ScoreBar.tsx"
+      ],
+      "imported_by": [
+        "frontend/src/pages/SearchPage.tsx"
+      ],
+      "calls": [
+        "frontend/src/api.ts",
+        "frontend/src/components/ScoreBar.tsx"
+      ],
+      "called_by": [
+        "frontend/src/pages/SearchPage.tsx"
+      ]
+    },
+    "frontend/src/components/ScoreBar.tsx": {
+      "language": "typescript",
+      "functions": [
+        "frontend/src/components/ScoreBar.tsx::ScoreBar"
+      ],
+      "imports": [],
+      "imported_by": [
+        "frontend/src/components/ResultCard.tsx"
+      ],
+      "calls": [],
+      "called_by": [
+        "frontend/src/components/ResultCard.tsx"
+      ]
+    },
+    "frontend/src/components/Sidebar.tsx": {
+      "language": "typescript",
+      "functions": [
+        "frontend/src/components/Sidebar.tsx::Sidebar"
+      ],
+      "imports": [
+        "frontend/src/components/ThemeToggle.tsx"
+      ],
+      "imported_by": [
+        "frontend/src/App.tsx"
+      ],
+      "calls": [
+        "frontend/src/components/ThemeToggle.tsx"
+      ],
+      "called_by": [
+        "frontend/src/App.tsx"
+      ]
+    },
+    "frontend/src/components/ThemeToggle.tsx": {
+      "language": "typescript",
+      "functions": [
+        "frontend/src/components/ThemeToggle.tsx::ThemeToggle"
+      ],
+      "imports": [],
+      "imported_by": [
+        "frontend/src/components/Sidebar.tsx"
+      ],
+      "calls": [],
+      "called_by": [
+        "frontend/src/components/Sidebar.tsx"
+      ]
+    },
+    "frontend/src/components/VantaHero.tsx": {
+      "language": "typescript",
+      "functions": [
+        "frontend/src/components/VantaHero.tsx::VantaHero"
+      ],
+      "imports": [],
+      "imported_by": [
+        "frontend/src/pages/HomePage.tsx"
+      ],
+      "calls": [],
+      "called_by": [
+        "frontend/src/pages/HomePage.tsx"
+      ]
+    },
+    "frontend/src/main.tsx": {
+      "language": "typescript",
+      "functions": [],
+      "imports": [
+        "frontend/src/App.tsx"
+      ],
+      "imported_by": [],
+      "calls": [
+        "frontend/src/App.tsx"
+      ],
+      "called_by": []
+    },
+    "frontend/src/pages/HealthPage.tsx": {
+      "language": "typescript",
+      "functions": [
+        "frontend/src/pages/HealthPage.tsx::HealthPage"
+      ],
+      "imports": [
+        "frontend/src/api.ts",
+        "frontend/src/components/HealthGrid.tsx"
+      ],
+      "imported_by": [
+        "frontend/src/App.tsx"
+      ],
+      "calls": [
+        "frontend/src/api.ts",
+        "frontend/src/components/HealthGrid.tsx"
+      ],
+      "called_by": [
+        "frontend/src/App.tsx"
+      ]
+    },
+    "frontend/src/pages/HomePage.tsx": {
+      "language": "typescript",
+      "functions": [
+        "frontend/src/pages/HomePage.tsx::HomePage"
+      ],
+      "imports": [
+        "frontend/src/components/VantaHero.tsx",
+        "frontend/src/components/Navbar.tsx"
+      ],
+      "imported_by": [
+        "frontend/src/App.tsx"
+      ],
+      "calls": [
+        "frontend/src/components/Navbar.tsx",
+        "frontend/src/components/VantaHero.tsx"
+      ],
+      "called_by": [
+        "frontend/src/App.tsx"
+      ]
+    },
+    "frontend/src/pages/SearchPage.tsx": {
+      "language": "typescript",
+      "functions": [
+        "frontend/src/pages/SearchPage.tsx::SearchPage",
+        "frontend/src/pages/SearchPage.tsx::handleKeyDown",
+        "frontend/src/pages/SearchPage.tsx::handleClear"
+      ],
+      "imports": [
+        "frontend/src/api.ts",
+        "frontend/src/components/ResultCard.tsx"
+      ],
+      "imported_by": [
+        "frontend/src/App.tsx"
+      ],
+      "calls": [
+        "frontend/src/api.ts",
+        "frontend/src/components/ResultCard.tsx"
+      ],
+      "called_by": [
+        "frontend/src/App.tsx"
+      ]
+    },
+    "frontend/src/pages/SettingsPage.tsx": {
+      "language": "typescript",
+      "functions": [
+        "frontend/src/pages/SettingsPage.tsx::SettingsPage"
+      ],
+      "imports": [
+        "frontend/src/callgraphTypes.ts",
+        "frontend/src/components/CallGraphView.tsx"
+      ],
+      "imported_by": [
+        "frontend/src/App.tsx"
+      ],
+      "calls": [
+        "frontend/src/callgraphTypes.ts",
+        "frontend/src/components/CallGraphView.tsx"
+      ],
+      "called_by": [
+        "frontend/src/App.tsx"
+      ]
+    }
+  }
+}
