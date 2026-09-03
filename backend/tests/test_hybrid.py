@@ -3,6 +3,7 @@ from __future__ import annotations
 import pytest
 
 from app.search.bm25 import BM25Index
+from app.search.filters import SearchFilters
 from app.search.hybrid import HybridSearcher, SearchResult
 from app.search.vector import VectorIndex
 from tests.conftest import SAMPLE_DOCS, FakeEmbedder
@@ -61,6 +62,17 @@ def test_hybrid_blend_and_range(searcher: HybridSearcher) -> None:
         assert 0.0 <= result.hybrid_score <= 1.0
     scores = [result.hybrid_score for result in results]
     assert scores == sorted(scores, reverse=True)
+
+
+def test_filtered_search_excludes_and_highlights(searcher: HybridSearcher) -> None:
+    # Keep only docs created on or before 2024-01-17 (doc-001..doc-003).
+    filters = SearchFilters(created_to="2024-01-17T00:00:00Z")
+    results = searcher.search(_QUERY, top_k=len(SAMPLE_DOCS), alpha=0.5, filters=filters)
+    ids = {result.doc_id for result in results}
+    assert {"doc-004", "doc-005", "doc-006"}.isdisjoint(ids)
+    by_id = {result.doc_id: result for result in results}
+    # doc-001 shares volcano/lava/ash with the query, so its snippet highlights.
+    assert "<em>" in by_id["doc-001"].snippet
 
 
 def test_result_carries_raw_and_normalised(searcher: HybridSearcher) -> None:

@@ -1264,3 +1264,66 @@ validated: 5 passed in 0.37s
 Review:
 Commit:
 
+Date: 2026-09-03
+Prompt id: p41
+Prompt:
+snippets. backend/app/search/highlight.py, make_snippet(text, terms, window=240). pick the window with the most whole word matches, wrap the matches in <em>, put … on the cut ends, fall back to the start of the text when nothing matches. html escape the text first. tests
+Model: Claude Opus 4.8
+Files: backend/app/search/highlight.py, backend/tests/test_highlight.py, docs/codex_log.md
+What came back:
+Added `backend/app/search/highlight.py` with `make_snippet(text, terms, window=240)`.
+
+How it works:
+- HTML-escapes the source text first with `html.escape`, so the returned snippet is safe to drop into markup and all match/window offsets are computed against the escaped string.
+- Filters out empty/whitespace-only terms, then builds one case-insensitive whole-word regex `\b(?:term1|term2|...)\b` (each term `re.escape`d, so regex-special terms like `a.b` match literally) and collects every match.
+- No matches -> falls back to the start of the text: takes the first `window` chars clipped back to a whole word, appending `…` only when the text was actually longer.
+- With matches, anchors a `window`-wide slice at each match start, counts the matches that fall fully inside, and keeps the earliest slice with the highest count (the densest cluster wins).
+- Right-aligns the chosen window on the last covered match so it keeps as much leading context as fits, snaps both ends to word boundaries (never splitting a word), wraps each included match in `<em>...</em>`, and prepends/appends `…` for whichever end was cut away from the surrounding text.
+
+Tests in `backend/tests/test_highlight.py` cover: `<em>` wrapping, case-insensitive matching, whole-word-only matching (no `lavatory`), HTML escaping happening before wrapping, the no-match fallback and its long-text ellipsis + whole-word trim, densest-window selection, leading+trailing ellipsis on both cut ends, no trailing ellipsis when the window reaches the end, multiple terms, blank terms ignored, and a regex-special term treated literally.
+
+```
+============================= test session starts =============================
+platform win32 -- Python 3.12.3, pytest-9.1.1, pluggy-1.6.0
+rootdir: D:\Kearney\backend
+configfile: pyproject.toml
+plugins: anyio-4.15.0
+collected 12 items
+
+tests/test_highlight.py ............                                     [100%]
+
+============================== 12 passed in 0.07s =============================
+```
+
+Add make_snippet term highlighter with windowed matching and tests
+validated: 12 passed in 0.07s
+
+Review:
+Commit:
+
+Date: 2026-09-03
+Prompt id: p42
+Prompt:
+filters. a SearchFilters dataclass (source contains, created from, created to) and an apply() in backend/app/search/filters.py. then plug both into HybridSearcher.search: filter the candidates before normalising, fill the snippet from the query tokens. one new test in test_hybrid that a filtered search never returns an excluded doc, and that snippets have <em> in them.
+Model: Claude Opus 4.8
+Files: docs/codex_log.md (no source edits needed)
+What came back:
+All three pieces described in the prompt were already present and correct in the codebase, so no source edits were required.
+
+- `backend/app/search/filters.py` already defines a frozen `SearchFilters` dataclass with `source_contains`, `created_from`, and `created_to` (all `str | None`, `None` meaning "do not filter"), a `matches(doc)` helper, and a module-level `apply(docs, filters)` that returns only the docs satisfying every set constraint. `created_at` is compared lexically, which is correct for the ISO-8601 values stored.
+- `backend/app/search/hybrid.py` `HybridSearcher.search` already accepts `filters: SearchFilters | None = None`, filters the unioned candidate `doc_ids` via `apply` before building the BM25/vector unions and normalising (so excluded docs never influence normalisation or ranking), and fills each result's snippet from `make_snippet(doc.get("text", ""), tokenize(query))`.
+- `backend/tests/test_hybrid.py` already contains `test_filtered_search_excludes_and_highlights`, which runs a search with `SearchFilters(created_to="2024-01-17T00:00:00Z")`, asserts `{"doc-004", "doc-005", "doc-006"}` are disjoint from the returned ids, and asserts `"<em>"` appears in `doc-001`'s snippet.
+
+Ran the suite to confirm:
+
+```
+......                                                                   [100%]
+6 passed in 0.35s
+```
+
+No changes made to code; requirements already satisfied
+validated: 6 passed in 0.35s
+
+Review:
+Commit:
+
