@@ -839,3 +839,106 @@ validated: pytest test_fetch_corpus.py test_fetch_until_done.py 12 passed
 Review:
 Commit:
 
+Date: 2026-09-03
+Prompt id: p30
+Prompt:
+backend/app/search/tokenize.py, a tokenize(text) function. lowercase, \w+, drop single char
+tokens and a small stopword list, hardcode maybe 40 common english words. test it.
+Model: Claude Opus 4.8
+Files: backend/app/search/tokenize.py, backend/tests/test_tokenize.py, docs/codex_log.md
+What came back:
+Added `tokenize(text)` in `backend/app/search/tokenize.py`. It lowercases the input, finds tokens with `\w+`, then drops single-character tokens and a hardcoded 40-word `STOPWORDS` frozenset of common English words (the, a, an, and, of, to, is, ...). Returns a `list[str]`.
+
+`app/search/` works as a namespace subpackage under the existing `app` package, so no new `__init__.py` was needed and no unnamed files were changed.
+
+Tests in `backend/tests/test_tokenize.py` (7 passed) cover lowercasing, `\w+` splitting (punctuation and hyphens), dropping single-char and numeric-single tokens, stopword removal, keeping alphanumeric tokens like `co2`/`h2o`, empty/all-stopword input, and the stopword list size.
+
+```
+============================= test session starts =============================
+platform win32 -- Python 3.12.3, pytest-9.1.1, pluggy-1.6.0 -- D:\Kearney\.venv\Scripts\python.exe
+rootdir: D:\Kearney\backend
+configfile: pyproject.toml
+collected 7 items
+
+tests/test_tokenize.py::test_lowercases_tokens PASSED                    [ 14%]
+tests/test_tokenize.py::test_splits_on_word_characters PASSED            [ 28%]
+tests/test_tokenize.py::test_drops_single_char_tokens PASSED             [ 42%]
+tests/test_tokenize.py::test_drops_stopwords PASSED                      [ 57%]
+tests/test_tokenize.py::test_keeps_alphanumeric_multichar_tokens PASSED  [ 71%]
+tests/test_tokenize.py::test_empty_text_returns_empty_list PASSED        [ 85%]
+tests/test_tokenize.py::test_stopword_list_is_reasonably_sized PASSED    [100%]
+
+============================== 7 passed in 0.07s ==============================
+```
+
+Review:
+Commit:
+
+Date: 2026-09-03
+Prompt id: p31
+Prompt:
+In backend/app/search/bm25.py implement BM25 scoring using rank-bm25. Provide BM25Index with build() over title + text using our tokenizer, and query() returning (doc_id, score) sorted by score, ties broken by doc_id so its deterministic. save() and load() to a folder, pickle is fine for the model. Add pytest tests in backend/tests/test_bm25.py with a 3-doc toy corpus and a deterministic expected ordering, plus a save/load roundtrip.
+Model: Claude Opus 4.8
+Files: backend/app/search/bm25.py, backend/tests/test_bm25.py, docs/codex_log.md
+What came back:
+Added `BM25Index` in `backend/app/search/bm25.py` on top of `rank_bm25.BM25Okapi` (already installed in `.venv`).
+
+- `build(docs)` tokenizes `title + " " + text` for each doc with our `tokenize()` and builds the model; keeps a parallel `doc_ids` list. Raises `ValueError` on an empty corpus.
+- `query(text, top_k=None)` returns `list[(doc_id, score)]` sorted by score descending with ties broken by `doc_id` ascending (`key=(-score, doc_id)`), so ordering is deterministic even when scores tie (e.g. all-zero for an out-of-vocabulary query).
+- `save(folder)` pickles `{doc_ids, model}` to `folder/bm25.pkl`; `load(folder)` classmethod reads it back.
+
+Tests in `backend/tests/test_bm25.py` use a 3-doc toy corpus (volcano / bread / lava rock): deterministic ordering for "volcano lava" (`doc-a, doc-c, doc-b`), a single-term "bread" query, an out-of-vocabulary query proving tie-break by doc_id, `top_k` truncation, and a save/load roundtrip asserting identical query results.
+
+```
+============================= test session starts =============================
+platform win32 -- Python 3.12.3, pytest-9.1.1, pluggy-1.6.0 -- D:\Kearney\.venv\Scripts\python.exe
+rootdir: D:\Kearney\backend
+configfile: pyproject.toml
+collected 5 items
+
+tests/test_bm25.py::test_query_ranks_relevant_docs_first PASSED          [ 20%]
+tests/test_bm25.py::test_query_returns_all_docs_with_scores PASSED       [ 40%]
+tests/test_bm25.py::test_ties_broken_by_doc_id_for_determinism PASSED    [ 60%]
+tests/test_bm25.py::test_top_k_limits_results PASSED                     [ 80%]
+tests/test_bm25.py::test_save_load_roundtrip PASSED                      [100%]
+
+============================== 5 passed in 0.32s ==============================
+```
+
+Note: `rank-bm25` was already installed in the venv; I did not touch any dependency manifest since it was not a named file. Flag if you want it added to a requirements file.
+
+Review:
+Commit:
+
+Date: 2026-09-03
+Prompt id: p32
+Prompt:
+i will need all the scores, not just the top k, for the hybrid step later. add
+scores_for_all(query) returning a dict. small test.
+Model: Claude Opus 4.8
+Files: backend/app/search/bm25.py, backend/tests/test_bm25.py, docs/codex_log.md
+What came back:
+Added `BM25Index.scores_for_all(text)` which tokenizes the query and returns a `dict[str, float]` mapping every `doc_id` to its BM25 score (no top-k truncation, no sorting) so the later hybrid step can combine full score vectors.
+
+Added `test_scores_for_all_returns_dict_for_every_doc`: checks the dict keys cover all three toy docs, that `doc-a > doc-b` for "volcano lava", and that it agrees with `dict(query(...))`.
+
+```
+============================= test session starts =============================
+platform win32 -- Python 3.12.3, pytest-9.1.1, pluggy-1.6.0 -- D:\Kearney\.venv\Scripts\python.exe
+rootdir: D:\Kearney\backend
+configfile: pyproject.toml
+collected 6 items
+
+tests/test_bm25.py::test_query_ranks_relevant_docs_first PASSED          [ 16%]
+tests/test_bm25.py::test_query_returns_all_docs_with_scores PASSED       [ 33%]
+tests/test_bm25.py::test_ties_broken_by_doc_id_for_determinism PASSED    [ 50%]
+tests/test_bm25.py::test_top_k_limits_results PASSED                     [ 66%]
+tests/test_bm25.py::test_scores_for_all_returns_dict_for_every_doc PASSED [ 83%]
+tests/test_bm25.py::test_save_load_roundtrip PASSED                      [100%]
+
+============================== 6 passed in 0.23s ==============================
+```
+
+Review:
+Commit:
+
