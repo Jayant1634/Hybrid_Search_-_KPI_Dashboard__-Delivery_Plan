@@ -1053,3 +1053,125 @@ validated: 3 passed in 0.22s
 Review:
 Commit:
 
+Date: 2026-09-03
+Prompt id: p36
+Prompt:
+metadata for the indexes, backend/app/index/metadata.py. a dataclass with model name, dimension, corpus hash, doc count, built_at. json save/load and an is_up_to_date(path, hash, model) helper. test it, including the three ways it can be stale.
+Model: Claude Opus 4.8
+Files: backend/app/index/metadata.py, backend/tests/test_metadata.py, docs/codex_log.md
+What came back:
+Added `IndexMetadata` in `backend/app/index/metadata.py`, a frozen dataclass with `model`, `dimension`, `corpus_hash`, `doc_count`, and `built_at`.
+
+- `IndexMetadata.create(...)` builds an instance and defaults `built_at` to the current UTC time in ISO format.
+- `save(folder)` writes a pretty-printed `metadata.json` into the folder (creating it if needed) and returns the path; `load(folder)` reads it back.
+- `is_up_to_date(folder, corpus_hash, model)` returns `True` only when a saved index matches both the corpus hash and the model. It reports stale in three ways: no metadata file exists, the corpus hash differs, or the model differs (and also treats an unreadable/corrupt file as stale).
+
+Tests in `backend/tests/test_metadata.py` cover the default UTC `built_at`, a save/load roundtrip, the up-to-date case, and each of the three staleness cases (missing file, changed hash, changed model).
+
+```
+============================= test session starts =============================
+platform win32 -- Python 3.12.3, pytest-9.1.1, pluggy-1.6.0 -- D:\Kearney\.venv\Scripts\python.exe
+cachedir: .pytest_cache
+rootdir: D:\Kearney\backend
+configfile: pyproject.toml
+plugins: anyio-4.15.0
+collecting ... collected 6 items
+
+tests/test_metadata.py::test_create_defaults_built_at_to_utc PASSED      [ 16%]
+tests/test_metadata.py::test_save_load_roundtrip PASSED                  [ 33%]
+tests/test_metadata.py::test_up_to_date_when_hash_and_model_match PASSED [ 50%]
+tests/test_metadata.py::test_stale_when_metadata_missing PASSED          [ 66%]
+tests/test_metadata.py::test_stale_when_corpus_hash_differs PASSED       [ 83%]
+tests/test_metadata.py::test_stale_when_model_differs PASSED             [100%]
+
+============================== 6 passed in 0.10s ==============================
+```
+
+Add index metadata dataclass with save/load and staleness check
+validated: 6 passed in 0.10s
+
+Review:
+Commit:
+
+Date: 2026-09-03
+Prompt id: p37
+Prompt:
+the index cli, backend/app/index/__main__.py:
+
+python -m app.index --input data/processed/docs.jsonl
+
+read the jsonl, compute the hash, if the metadata says up to date and theres no --force just say so and exit 0. otherwise build bm25 into data/index/bm25, embed title + text and build the vector index into data/index/vector, write data/index/metadata.json, print model, dim, count and seconds taken. let main() take an embedder so the test can pass the fake one. test: build once, run again, second run says up to date.
+Model: Claude Opus 4.8
+Files: backend/app/index/__main__.py, backend/tests/test_index_cli.py, docs/codex_log.md
+What came back:
+Added the index CLI in `backend/app/index/__main__.py`, runnable as `python -m app.index --input data/processed/docs.jsonl`.
+
+- Reads the JSONL corpus with `read_jsonl`, computes `corpus_hash`, and takes the model name from config.
+- If `is_up_to_date(index_dir, hash, model)` and no `--force`, it prints an "up to date" line and returns 0 without rebuilding.
+- Otherwise it builds the BM25 index into `data/index/bm25`, embeds `title + text` and builds the vector index into `data/index/vector`, writes `data/index/metadata.json`, and prints `model`, `dim`, `count`, and `seconds` taken.
+- `main(argv, embedder=None)` accepts an embedder so tests pass the fake one; production falls back to `SentenceTransformerEmbedder` (imported lazily only when a build is needed).
+
+Tests in `backend/tests/test_index_cli.py` use the `tmp_repo` + `fake_embedder` fixtures: the first run builds (writing `metadata.json`, `bm25/bm25.pkl`, `vector/index.faiss`) and the second run reports "up to date"; a second test confirms `--force` rebuilds anyway.
+
+```
+============================= test session starts =============================
+platform win32 -- Python 3.12.3, pytest-9.1.1, pluggy-1.6.0 -- D:\Kearney\.venv\Scripts\python.exe
+cachedir: .pytest_cache
+rootdir: D:\Kearney\backend
+configfile: pyproject.toml
+plugins: anyio-4.15.0
+collecting ... collected 2 items
+
+tests/test_index_cli.py::test_build_then_second_run_is_up_to_date PASSED [ 50%]
+tests/test_index_cli.py::test_force_rebuilds_even_when_up_to_date PASSED [100%]
+
+============================== 2 passed in 0.27s ==============================
+```
+
+Add index CLI that builds BM25 and vector indexes with staleness skip
+validated: 2 passed in 0.27s
+
+Review:
+Commit:
+
+Date: 2026-09-03
+Prompt id: p38
+Prompt:
+Record the timing, real build took (16.99s), producing a 384-dim index over 359 docs. Note this in docs/codex_log.md @terminals/4.txt:207-255
+
+that FutureWarning about get_sentence_embedding_dimension being renamed to get_embedding_dimension in backend/app/search/embedder.py. It works today but will break in a future sentence-transformers version. Low priority, but a one-line fix, want a clean run.
+Model: Claude Opus 4.8
+Files: backend/app/search/embedder.py, backend/tests/test_embedder.py, docs/codex_log.md
+What came back:
+Two things: recorded the real build timing and silenced the sentence-transformers FutureWarning.
+
+Real index build timing (from `python -m app.index --input data/processed/docs.jsonl`):
+- 359 docs, 384-dim vector index, model `all-MiniLM-L6-v2`.
+- Wall time: 16.99s (includes a one-time model download on first run).
+- CLI output line: `built index: model=all-MiniLM-L6-v2 dim=384 count=359 seconds=16.99`.
+
+Warning fix in `backend/app/search/embedder.py`: `SentenceTransformer.get_sentence_embedding_dimension()` was renamed to `get_embedding_dimension()`. Now it prefers `get_embedding_dimension()` when present and falls back to the old name otherwise, so it stays compatible across versions and no longer emits the `FutureWarning`. Updated the fake in `backend/tests/test_embedder.py` to the new method name so the test exercises the current API.
+
+```
+============================= test session starts =============================
+platform win32 -- Python 3.12.3, pytest-9.1.1, pluggy-1.6.0 -- D:\Kearney\.venv\Scripts\python.exe
+cachedir: .pytest_cache
+rootdir: D:\Kearney\backend
+configfile: pyproject.toml
+plugins: anyio-4.15.0
+collecting ... collected 4 items
+
+tests/test_embedder.py::test_uses_model_name_from_config PASSED          [ 25%]
+tests/test_embedder.py::test_encode_returns_normalised_float32 PASSED    [ 50%]
+tests/test_embedder.py::test_encode_empty_list_has_zero_rows PASSED      [ 75%]
+tests/test_embedder.py::test_fake_embedder_shape_and_norm PASSED         [100%]
+
+============================== 4 passed in 0.12s ==============================
+```
+
+Fix sentence-transformers dimension deprecation and record 16.99s build timing
+validated: 4 passed in 0.12s
+
+Review:
+Commit:
+
