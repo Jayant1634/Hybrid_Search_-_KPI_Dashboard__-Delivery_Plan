@@ -23,7 +23,7 @@ class _FakeSentenceTransformer:
         self.encode_kwargs: dict[str, Any] | None = None
         type(self).last = self
 
-    def get_sentence_embedding_dimension(self) -> int:
+    def get_embedding_dimension(self) -> int:
         return 4
 
     def encode(

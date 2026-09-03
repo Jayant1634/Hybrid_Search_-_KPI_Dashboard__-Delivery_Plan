@@ -30,7 +30,10 @@ class SentenceTransformerEmbedder:
 
         model_name = load_config().embedding_model
         self._model = SentenceTransformer(model_name, device=_DEVICE)
-        dimension = self._model.get_sentence_embedding_dimension()
+        if hasattr(self._model, "get_embedding_dimension"):
+            dimension = self._model.get_embedding_dimension()
+        else:
+            dimension = self._model.get_sentence_embedding_dimension()
         if dimension is None:
             raise ValueError(f"model {model_name!r} has no sentence embedding dimension")
         self.dimension = int(dimension)
