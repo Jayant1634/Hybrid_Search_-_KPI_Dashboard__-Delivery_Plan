@@ -7,6 +7,83 @@ Options:
 Decision:
 Consequences:
 
+## 2026-09-03 — phase 2, backend/ + editable install
+
+Context:
+The brief is inconsistent about layout. §6 shows CLIs as `python -m app.ingest`
+(and index, eval) run from the repo root, with `data/` also at the repo root.
+§10's suggested tree puts Python under something like `backend/`. A reviewer
+must be able to follow the documented commands without rewriting them.
+
+Options:
+1. Put the `app` package at the repo root (`./app/`, `./tests/`). Commands
+   work with no install, but the root mixes Python, Vite, scripts, and data.
+2. A `src/` layout under `backend/` (`backend/src/app`). Clean packaging, but
+   `python -m app.ingest` from the root needs PYTHONPATH or an install, and
+   the extra `src/` directory is not in the brief.
+3. `backend/app/` as package `app`, with `backend/pyproject.toml`, installed
+   editable from the root: `pip install -e backend`. `data/` stays at the repo
+   root. Config finds the root by walking up to `up.sh` or `.git`.
+
+Decision:
+Option 3.
+
+- The brief's commands stay verbatim: `python -m app.ingest`, `python -m app.index`,
+  `python -m app.eval` from the repo root after `pip install -e backend`.
+- `data/raw`, `data/processed`, `data/index`, `data/eval`, `data/metrics` match
+  §6 instead of living under `backend/`.
+- Frontend, `up.sh`, and `scripts/` stay at the root; Python code is one folder
+  the reviewer can ignore when they are looking at the UI.
+- Pytest config lives in `backend/pyproject.toml` (`testpaths = tests`), so
+  `python -m pytest` from the backend package still finds `backend/tests`.
+
+Consequences:
+`up.sh` and a fresh clone must run `pip install -e backend` or `python -m app.*`
+will fail with ModuleNotFoundError. Paths never go through `backend/`;
+`config.py` resolves `repo_root` first, then builds `data/...` from that.
+Windows uses `.venv/Scripts`, Linux/macOS `.venv/bin`; both work because we
+call the venv's Python rather than relying on cwd.
+
+## 2026-09-03 — min-max vs z-score normalisation
+
+Context:
+Hybrid scoring is `hybrid = alpha * norm_bm25 + (1 - alpha) * norm_vector`. BM25
+and cosine live on different scales, so each side has to be rescaled before the
+blend. The assignment wants two strategies and a written reason for the default.
+
+Options:
+1. Min-max as default (linear rescale, min -> 0, max -> 1). Z-score as the
+   alternative (centre by mean, divide by std, then squash back to 0..1).
+2. Z-score as default, min-max as the alternative.
+3. Reciprocal rank fusion, which avoids raw scores entirely.
+
+Decision:
+Option 1. Default is min-max (`HSS_NORMALISATION=minmax`, search-layer name
+`min_max`). Z-score (`zscore` / `z_score`) stays available on `/search` and
+on the eval CLI.
+
+Why min-max is the default:
+- Bounded in 0..1, so the three score bars on a result are readable and the
+  hybrid value is just a weighted average of two unit scores.
+- Interpretable: 1 is the best candidate on that side for this query, 0 is the
+  worst. A reviewer can check the breakdown without knowing BM25's raw range.
+- Cosine on unit vectors is already roughly 0..1; min-max does not distort it
+  much. BM25 is the side that actually needs rescaling.
+
+When z-score is better:
+- BM25 is heavy-tailed. One very high lexical hit stretches the min-max range,
+  so every other BM25 score collapses toward 0 and alpha barely matters.
+- Z-score scores relative to the candidate-set mean, so a single outlier does
+  not flatten the rest. Use it when the BM25 distribution for a query is
+  obviously skewed (many near-zero, one huge hit).
+
+Consequences:
+The dashboard and eval default to min-max. Phase 14 still runs alpha 0.5 with
+z-score as one of the recorded experiments so we can see whether the skew
+case actually moves nDCG. Scenario C is about constant BM25 (all zeros on a
+paraphrase query), which is a divide-by-zero in min-max, not a reason to
+change the default.
+
 ## 2026-09-03 — eval qrels labelling
 
 Context:
