@@ -20,6 +20,21 @@ function Highlighted({ html, className }: { html: string; className?: string }) 
   return <span className={className} dangerouslySetInnerHTML={{ __html: html }} />
 }
 
+function looksLikeUrl(value: string): boolean {
+  return /^https?:\/\//i.test(value.trim())
+}
+
+function formatCreatedAt(value: string): string {
+  if (!value) return ''
+  const parsed = new Date(value)
+  if (Number.isNaN(parsed.getTime())) return value
+  return parsed.toLocaleDateString(undefined, {
+    year: 'numeric',
+    month: 'short',
+    day: 'numeric',
+  })
+}
+
 export default function ResultCard({ result, requestId, rank, query }: Props) {
   const [feedback, setFeedback] = useState<'up' | 'down' | null>(null)
   const [sending, setSending] = useState(false)
@@ -84,7 +99,22 @@ export default function ResultCard({ result, requestId, rank, query }: Props) {
   const snippetHtml = highlightContaining(decodeSnippet(result.snippet), query)
   const titleHtml = highlightContaining(result.title, query)
   const fileName = doc?.title || result.title
-  const source = doc?.source ?? ''
+  const source = result.source || doc?.source || ''
+  const createdAt = result.created_at
+  const titleIsUrl = looksLikeUrl(result.source)
+  const titleNode = result.source ? (
+    <a
+      className="result-title"
+      href={result.source}
+      {...(titleIsUrl ? { target: '_blank', rel: 'noopener noreferrer' } : {})}
+      onClick={e => e.stopPropagation()}
+      onKeyDown={e => e.stopPropagation()}
+    >
+      <Highlighted html={titleHtml} />
+    </a>
+  ) : (
+    <Highlighted className="result-title" html={titleHtml} />
+  )
 
   return (
     <>
@@ -104,7 +134,14 @@ export default function ResultCard({ result, requestId, rank, query }: Props) {
         <div className="result-rank">{rank}</div>
         <div className="result-body">
           <div className="result-header">
-            <Highlighted className="result-title" html={titleHtml} />
+            <div className="result-heading">
+              {titleNode}
+              {createdAt && (
+                <time className="result-date" dateTime={createdAt}>
+                  {formatCreatedAt(createdAt)}
+                </time>
+              )}
+            </div>
             <span className="result-hybrid-score">{result.hybrid_score.toFixed(4)}</span>
           </div>
           <p className="result-snippet">
@@ -114,13 +151,15 @@ export default function ResultCard({ result, requestId, rank, query }: Props) {
           <div className="score-breakdown">
             <div className="score-row">
               <span className="score-label">BM25</span>
-              <ScoreBar value={result.bm25_norm} color="neutral" />
-              <span className="score-num">{result.bm25_norm.toFixed(3)}</span>
+              <ScoreBar value={result.bm25_norm} raw={result.bm25_score} color="neutral" />
             </div>
             <div className="score-row">
               <span className="score-label">Vector</span>
-              <ScoreBar value={result.vector_norm} color="purple" />
-              <span className="score-num">{result.vector_norm.toFixed(3)}</span>
+              <ScoreBar value={result.vector_norm} raw={result.vector_score} color="purple" />
+            </div>
+            <div className="score-row">
+              <span className="score-label">Hybrid</span>
+              <ScoreBar value={result.hybrid_score} raw={result.hybrid_score} color="hybrid" />
             </div>
           </div>
 

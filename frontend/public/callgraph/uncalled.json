@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-09-03T18:24:45Z",
+  "generated_at": "2026-09-03T23:27:20Z",
   "files": [
     "backend/app/__init__.py",
     "backend/app/api/main.py",
@@ -23,6 +23,12 @@
     "backend/app/api/ratelimit.py::RateLimiter.__init__",
     "backend/app/api/ratelimit.py::RateLimiter.allow",
     "backend/app/api/ratelimit.py::rate_limit",
+    "backend/app/api/routes_dashboard.py::dashboard_experiments",
+    "backend/app/api/routes_dashboard.py::dashboard_kpi_summary",
+    "backend/app/api/routes_dashboard.py::dashboard_kpi_top_queries",
+    "backend/app/api/routes_dashboard.py::dashboard_kpi_volume",
+    "backend/app/api/routes_dashboard.py::dashboard_kpi_zero_results",
+    "backend/app/api/routes_dashboard.py::dashboard_logs",
     "backend/app/api/routes_search.py::feedback",
     "backend/app/api/routes_search.py::get_document",
     "backend/app/api/routes_search.py::health",
@@ -58,7 +64,6 @@
     "backend/app/search/vector.py::VectorIndex.query",
     "backend/app/search/vector.py::VectorIndex.save",
     "backend/app/storage/repo.py::select_feedback",
-    "backend/app/storage/repo.py::select_logs",
     "backend/app/storage/repo.py::select_requests",
     "frontend/src/App.tsx::App",
     "frontend/src/api.ts::_fetch",

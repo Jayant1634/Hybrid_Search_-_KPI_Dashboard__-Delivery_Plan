@@ -1,6 +1,5 @@
 import ThemeToggle from './ThemeToggle'
-
-type Page = 'home' | 'search' | 'health' | 'settings'
+import type { Page } from '../App'
 
 interface Props {
   current: Page
@@ -26,6 +25,35 @@ const NAV: { page: Page; label: string; icon: React.ReactNode }[] = [
       <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
         <circle cx="7" cy="7" r="4.5" stroke="currentColor" strokeWidth="1.4" />
         <path d="M11 11l2.5 2.5" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" />
+      </svg>
+    ),
+  },
+  {
+    page: 'kpis',
+    label: 'KPIs',
+    icon: (
+      <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+        <path d="M3 12V8M8 12V4M13 12V6" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" />
+      </svg>
+    ),
+  },
+  {
+    page: 'evaluation',
+    label: 'Evaluation',
+    icon: (
+      <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+        <rect x="3" y="2.5" width="10" height="11" rx="1.2" stroke="currentColor" strokeWidth="1.4" />
+        <path d="M5.5 6h5M5.5 8.5h5M5.5 11h3" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" />
+      </svg>
+    ),
+  },
+  {
+    page: 'debug',
+    label: 'Debug',
+    icon: (
+      <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+        <path d="M4 8h8M6.5 5.5L5 3.5M9.5 5.5L11 3.5M6.5 10.5L5 12.5M9.5 10.5L11 12.5" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" />
+        <circle cx="8" cy="8" r="2.6" stroke="currentColor" strokeWidth="1.4" />
       </svg>
     ),
   },
@@ -91,7 +119,6 @@ export default function Sidebar({ current, onNavigate, dark, onToggleTheme }: Pr
           {current === 'settings' && <span className="sidebar-active-indicator" />}
         </button>
         <ThemeToggle dark={dark} onToggle={onToggleTheme} />
-        <div className="sidebar-version">v0.1.0 · Hybrid Search API</div>
       </div>
     </aside>
   )

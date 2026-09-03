@@ -79,6 +79,8 @@ def test_result_carries_raw_and_normalised(searcher: HybridSearcher) -> None:
     results = searcher.search(_QUERY, top_k=1, alpha=0.5)
     top = results[0]
     assert top.title
+    assert top.source == "sample"
+    assert top.created_at
     assert isinstance(top.bm25_raw, float)
     assert isinstance(top.vector_raw, float)
     assert isinstance(top.bm25_norm, float)

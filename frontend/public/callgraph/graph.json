@@ -1,12 +1,12 @@
 {
-  "generated_at": "2026-09-03T18:24:45Z",
+  "generated_at": "2026-09-03T23:27:20Z",
   "stats": {
-    "file_count": 54,
-    "function_count": 231,
+    "file_count": 58,
+    "function_count": 250,
     "uncalled_file_count": 13,
-    "uncalled_function_count": 62,
-    "file_edge_count": 74,
-    "function_edge_count": 209
+    "uncalled_function_count": 67,
+    "file_edge_count": 85,
+    "function_edge_count": 236
   },
   "files": {
     "backend/app/__init__.py": {
@@ -59,6 +59,7 @@
       "imports": [
         "backend/app/api/deps.py",
         "backend/app/api/middleware.py",
+        "backend/app/api/routes_dashboard.py",
         "backend/app/api/routes_search.py",
         "backend/app/config.py",
         "backend/app/search/embedder.py",
@@ -68,6 +69,7 @@
       "calls": [
         "backend/app/api/deps.py",
         "backend/app/api/middleware.py",
+        "backend/app/api/routes_dashboard.py",
         "backend/app/api/routes_search.py",
         "backend/app/config.py",
         "backend/app/search/embedder.py",
@@ -115,6 +117,36 @@
         "backend/app/config.py"
       ],
       "called_by": []
+    },
+    "backend/app/api/routes_dashboard.py": {
+      "language": "python",
+      "functions": [
+        "backend/app/api/routes_dashboard.py::parse_window",
+        "backend/app/api/routes_dashboard.py::_db",
+        "backend/app/api/routes_dashboard.py::_read_experiments",
+        "backend/app/api/routes_dashboard.py::dashboard_kpi_summary",
+        "backend/app/api/routes_dashboard.py::dashboard_kpi_volume",
+        "backend/app/api/routes_dashboard.py::dashboard_kpi_top_queries",
+        "backend/app/api/routes_dashboard.py::dashboard_kpi_zero_results",
+        "backend/app/api/routes_dashboard.py::dashboard_experiments",
+        "backend/app/api/routes_dashboard.py::dashboard_logs"
+      ],
+      "imports": [
+        "backend/app/config.py",
+        "backend/app/storage/db.py",
+        "backend/app/storage/repo.py"
+      ],
+      "imported_by": [
+        "backend/app/api/main.py"
+      ],
+      "calls": [
+        "backend/app/config.py",
+        "backend/app/storage/db.py",
+        "backend/app/storage/repo.py"
+      ],
+      "called_by": [
+        "backend/app/api/main.py"
+      ]
     },
     "backend/app/api/routes_search.py": {
       "language": "python",
@@ -252,6 +284,7 @@
         "backend/app/api/deps.py",
         "backend/app/api/main.py",
         "backend/app/api/ratelimit.py",
+        "backend/app/api/routes_dashboard.py",
         "backend/app/api/routes_search.py",
         "backend/app/api/schemas.py",
         "backend/app/eval/__main__.py",
@@ -264,6 +297,7 @@
         "backend/app/api/deps.py",
         "backend/app/api/main.py",
         "backend/app/api/ratelimit.py",
+        "backend/app/api/routes_dashboard.py",
         "backend/app/api/routes_search.py",
         "backend/app/api/schemas.py",
         "backend/app/eval/__main__.py",
@@ -526,12 +560,14 @@
       "imports": [],
       "imported_by": [
         "backend/app/api/middleware.py",
-        "backend/app/api/routes_search.py"
+        "backend/app/api/routes_search.py",
+        "backend/app/storage/repo.py"
       ],
       "calls": [],
       "called_by": [
         "backend/app/api/middleware.py",
-        "backend/app/api/routes_search.py"
+        "backend/app/api/routes_search.py",
+        "backend/app/storage/repo.py"
       ]
     },
     "backend/app/search/bm25.py": {
@@ -723,33 +759,46 @@
       ],
       "imports": [],
       "imported_by": [
-        "backend/app/api/main.py"
+        "backend/app/api/main.py",
+        "backend/app/api/routes_dashboard.py"
       ],
       "calls": [],
       "called_by": [
-        "backend/app/api/main.py"
+        "backend/app/api/main.py",
+        "backend/app/api/routes_dashboard.py"
       ]
     },
     "backend/app/storage/repo.py": {
       "language": "python",
       "functions": [
         "backend/app/storage/repo.py::_now",
+        "backend/app/storage/repo.py::_bucket_sql",
         "backend/app/storage/repo.py::insert_request",
         "backend/app/storage/repo.py::insert_feedback",
         "backend/app/storage/repo.py::insert_log",
         "backend/app/storage/repo.py::select_requests",
         "backend/app/storage/repo.py::select_feedback",
-        "backend/app/storage/repo.py::select_logs"
+        "backend/app/storage/repo.py::select_logs",
+        "backend/app/storage/repo.py::kpi_summary",
+        "backend/app/storage/repo.py::request_volume",
+        "backend/app/storage/repo.py::top_queries",
+        "backend/app/storage/repo.py::zero_result_queries"
       ],
-      "imports": [],
+      "imports": [
+        "backend/app/observability/metrics.py"
+      ],
       "imported_by": [
         "backend/app/api/middleware.py",
+        "backend/app/api/routes_dashboard.py",
         "backend/app/api/routes_search.py",
         "backend/app/observability/logging.py"
       ],
-      "calls": [],
+      "calls": [
+        "backend/app/observability/metrics.py"
+      ],
       "called_by": [
         "backend/app/api/middleware.py",
+        "backend/app/api/routes_dashboard.py",
         "backend/app/api/routes_search.py",
         "backend/app/observability/logging.py"
       ]
@@ -844,6 +893,7 @@
       ],
       "imports": [],
       "imported_by": [
+        "frontend/src/App.tsx",
         "frontend/src/components/HealthGrid.tsx",
         "frontend/src/components/ResultCard.tsx",
         "frontend/src/pages/HealthPage.tsx",
@@ -851,6 +901,7 @@
       ],
       "calls": [],
       "called_by": [
+        "frontend/src/App.tsx",
         "frontend/src/components/HealthGrid.tsx",
         "frontend/src/components/ResultCard.tsx",
         "frontend/src/pages/HealthPage.tsx",
@@ -864,23 +915,35 @@
         "frontend/src/App.tsx::App"
       ],
       "imports": [
+        "frontend/src/api.ts",
         "frontend/src/components/Sidebar.tsx",
         "frontend/src/pages/HomePage.tsx",
         "frontend/src/pages/SearchPage.tsx",
         "frontend/src/pages/HealthPage.tsx",
-        "frontend/src/pages/SettingsPage.tsx"
+        "frontend/src/pages/SettingsPage.tsx",
+        "frontend/src/pages/KpisPage.tsx",
+        "frontend/src/pages/EvaluationPage.tsx",
+        "frontend/src/pages/DebugPage.tsx"
       ],
       "imported_by": [
+        "frontend/src/components/Navbar.tsx",
+        "frontend/src/components/Sidebar.tsx",
         "frontend/src/main.tsx"
       ],
       "calls": [
+        "frontend/src/api.ts",
         "frontend/src/components/Sidebar.tsx",
+        "frontend/src/pages/DebugPage.tsx",
+        "frontend/src/pages/EvaluationPage.tsx",
         "frontend/src/pages/HealthPage.tsx",
         "frontend/src/pages/HomePage.tsx",
+        "frontend/src/pages/KpisPage.tsx",
         "frontend/src/pages/SearchPage.tsx",
         "frontend/src/pages/SettingsPage.tsx"
       ],
       "called_by": [
+        "frontend/src/components/Navbar.tsx",
+        "frontend/src/components/Sidebar.tsx",
         "frontend/src/main.tsx"
       ]
     },
@@ -948,11 +1011,15 @@
       "functions": [
         "frontend/src/components/Navbar.tsx::Navbar"
       ],
-      "imports": [],
+      "imports": [
+        "frontend/src/App.tsx"
+      ],
       "imported_by": [
         "frontend/src/pages/HomePage.tsx"
       ],
-      "calls": [],
+      "calls": [
+        "frontend/src/App.tsx"
+      ],
       "called_by": [
         "frontend/src/pages/HomePage.tsx"
       ]
@@ -961,6 +1028,8 @@
       "language": "typescript",
       "functions": [
         "frontend/src/components/ResultCard.tsx::Highlighted",
+        "frontend/src/components/ResultCard.tsx::looksLikeUrl",
+        "frontend/src/components/ResultCard.tsx::formatCreatedAt",
         "frontend/src/components/ResultCard.tsx::ResultCard",
         "frontend/src/components/ResultCard.tsx::handleFeedback",
         "frontend/src/components/ResultCard.tsx::openModal",
@@ -1004,12 +1073,14 @@
         "frontend/src/components/Sidebar.tsx::Sidebar"
       ],
       "imports": [
+        "frontend/src/App.tsx",
         "frontend/src/components/ThemeToggle.tsx"
       ],
       "imported_by": [
         "frontend/src/App.tsx"
       ],
       "calls": [
+        "frontend/src/App.tsx",
         "frontend/src/components/ThemeToggle.tsx"
       ],
       "called_by": [
@@ -1074,6 +1145,34 @@
       ],
       "called_by": []
     },
+    "frontend/src/pages/DebugPage.tsx": {
+      "language": "typescript",
+      "functions": [
+        "frontend/src/pages/DebugPage.tsx::DebugPage"
+      ],
+      "imports": [],
+      "imported_by": [
+        "frontend/src/App.tsx"
+      ],
+      "calls": [],
+      "called_by": [
+        "frontend/src/App.tsx"
+      ]
+    },
+    "frontend/src/pages/EvaluationPage.tsx": {
+      "language": "typescript",
+      "functions": [
+        "frontend/src/pages/EvaluationPage.tsx::EvaluationPage"
+      ],
+      "imports": [],
+      "imported_by": [
+        "frontend/src/App.tsx"
+      ],
+      "calls": [],
+      "called_by": [
+        "frontend/src/App.tsx"
+      ]
+    },
     "frontend/src/pages/HealthPage.tsx": {
       "language": "typescript",
       "functions": [
@@ -1110,6 +1209,20 @@
         "frontend/src/components/Navbar.tsx",
         "frontend/src/components/VantaHero.tsx"
       ],
+      "called_by": [
+        "frontend/src/App.tsx"
+      ]
+    },
+    "frontend/src/pages/KpisPage.tsx": {
+      "language": "typescript",
+      "functions": [
+        "frontend/src/pages/KpisPage.tsx::KpisPage"
+      ],
+      "imports": [],
+      "imported_by": [
+        "frontend/src/App.tsx"
+      ],
+      "calls": [],
       "called_by": [
         "frontend/src/App.tsx"
       ]
@@ -1219,7 +1332,7 @@
       "file": "backend/app/api/main.py",
       "name": "create_app",
       "qualname": "create_app",
-      "lineno": 24,
+      "lineno": 25,
       "calls": [
         "backend/app/api/deps.py::SearchService.load",
         "backend/app/storage/db.py::connect",
@@ -1323,11 +1436,124 @@
       "calls": [],
       "called_by": []
     },
+    "backend/app/api/routes_dashboard.py::parse_window": {
+      "file": "backend/app/api/routes_dashboard.py",
+      "name": "parse_window",
+      "qualname": "parse_window",
+      "lineno": 70,
+      "calls": [],
+      "called_by": [
+        "backend/app/api/routes_dashboard.py::dashboard_kpi_summary",
+        "backend/app/api/routes_dashboard.py::dashboard_kpi_volume",
+        "backend/app/api/routes_dashboard.py::dashboard_kpi_top_queries",
+        "backend/app/api/routes_dashboard.py::dashboard_kpi_zero_results",
+        "backend/app/api/routes_dashboard.py::dashboard_logs"
+      ]
+    },
+    "backend/app/api/routes_dashboard.py::_db": {
+      "file": "backend/app/api/routes_dashboard.py",
+      "name": "_db",
+      "qualname": "_db",
+      "lineno": 94,
+      "calls": [
+        "backend/app/storage/db.py::connect",
+        "backend/app/config.py::load_config"
+      ],
+      "called_by": [
+        "backend/app/api/routes_dashboard.py::dashboard_kpi_summary",
+        "backend/app/api/routes_dashboard.py::dashboard_kpi_volume",
+        "backend/app/api/routes_dashboard.py::dashboard_kpi_top_queries",
+        "backend/app/api/routes_dashboard.py::dashboard_kpi_zero_results",
+        "backend/app/api/routes_dashboard.py::dashboard_logs"
+      ]
+    },
+    "backend/app/api/routes_dashboard.py::_read_experiments": {
+      "file": "backend/app/api/routes_dashboard.py",
+      "name": "_read_experiments",
+      "qualname": "_read_experiments",
+      "lineno": 104,
+      "calls": [
+        "backend/app/config.py::load_config"
+      ],
+      "called_by": [
+        "backend/app/api/routes_dashboard.py::dashboard_experiments"
+      ]
+    },
+    "backend/app/api/routes_dashboard.py::dashboard_kpi_summary": {
+      "file": "backend/app/api/routes_dashboard.py",
+      "name": "dashboard_kpi_summary",
+      "qualname": "dashboard_kpi_summary",
+      "lineno": 113,
+      "calls": [
+        "backend/app/api/routes_dashboard.py::parse_window",
+        "backend/app/api/routes_dashboard.py::_db",
+        "backend/app/storage/repo.py::kpi_summary"
+      ],
+      "called_by": []
+    },
+    "backend/app/api/routes_dashboard.py::dashboard_kpi_volume": {
+      "file": "backend/app/api/routes_dashboard.py",
+      "name": "dashboard_kpi_volume",
+      "qualname": "dashboard_kpi_volume",
+      "lineno": 127,
+      "calls": [
+        "backend/app/api/routes_dashboard.py::parse_window",
+        "backend/app/api/routes_dashboard.py::_db",
+        "backend/app/storage/repo.py::request_volume"
+      ],
+      "called_by": []
+    },
+    "backend/app/api/routes_dashboard.py::dashboard_kpi_top_queries": {
+      "file": "backend/app/api/routes_dashboard.py",
+      "name": "dashboard_kpi_top_queries",
+      "qualname": "dashboard_kpi_top_queries",
+      "lineno": 135,
+      "calls": [
+        "backend/app/api/routes_dashboard.py::parse_window",
+        "backend/app/api/routes_dashboard.py::_db",
+        "backend/app/storage/repo.py::top_queries"
+      ],
+      "called_by": []
+    },
+    "backend/app/api/routes_dashboard.py::dashboard_kpi_zero_results": {
+      "file": "backend/app/api/routes_dashboard.py",
+      "name": "dashboard_kpi_zero_results",
+      "qualname": "dashboard_kpi_zero_results",
+      "lineno": 153,
+      "calls": [
+        "backend/app/api/routes_dashboard.py::parse_window",
+        "backend/app/api/routes_dashboard.py::_db",
+        "backend/app/storage/repo.py::zero_result_queries"
+      ],
+      "called_by": []
+    },
+    "backend/app/api/routes_dashboard.py::dashboard_experiments": {
+      "file": "backend/app/api/routes_dashboard.py",
+      "name": "dashboard_experiments",
+      "qualname": "dashboard_experiments",
+      "lineno": 171,
+      "calls": [
+        "backend/app/api/routes_dashboard.py::_read_experiments"
+      ],
+      "called_by": []
+    },
+    "backend/app/api/routes_dashboard.py::dashboard_logs": {
+      "file": "backend/app/api/routes_dashboard.py",
+      "name": "dashboard_logs",
+      "qualname": "dashboard_logs",
+      "lineno": 176,
+      "calls": [
+        "backend/app/api/routes_dashboard.py::parse_window",
+        "backend/app/api/routes_dashboard.py::_db",
+        "backend/app/storage/repo.py::select_logs"
+      ],
+      "called_by": []
+    },
     "backend/app/api/routes_search.py::_get_service": {
       "file": "backend/app/api/routes_search.py",
       "name": "_get_service",
       "qualname": "_get_service",
-      "lineno": 105,
+      "lineno": 107,
       "calls": [],
       "called_by": [
         "backend/app/api/routes_search.py::search",
@@ -1339,7 +1565,7 @@
       "file": "backend/app/api/routes_search.py",
       "name": "_index_metadata",
       "qualname": "_index_metadata",
-      "lineno": 109,
+      "lineno": 111,
       "calls": [
         "backend/app/index/metadata.py::IndexMetadata.load",
         "backend/app/config.py::load_config"
@@ -1352,7 +1578,7 @@
       "file": "backend/app/api/routes_search.py",
       "name": "health",
       "qualname": "health",
-      "lineno": 118,
+      "lineno": 120,
       "calls": [
         "backend/app/api/deps.py::get_version",
         "backend/app/api/deps.py::get_commit",
@@ -1364,7 +1590,7 @@
       "file": "backend/app/api/routes_search.py",
       "name": "metrics",
       "qualname": "metrics",
-      "lineno": 129,
+      "lineno": 131,
       "calls": [
         "backend/app/observability/metrics.py::render"
       ],
@@ -1374,7 +1600,7 @@
       "file": "backend/app/api/routes_search.py",
       "name": "search",
       "qualname": "search",
-      "lineno": 138,
+      "lineno": 140,
       "calls": [
         "backend/app/api/routes_search.py::_get_service"
       ],
@@ -1384,7 +1610,7 @@
       "file": "backend/app/api/routes_search.py",
       "name": "get_document",
       "qualname": "get_document",
-      "lineno": 182,
+      "lineno": 186,
       "calls": [
         "backend/app/api/routes_search.py::_get_service",
         "backend/app/search/tokenize.py::tokenize",
@@ -1397,7 +1623,7 @@
       "file": "backend/app/api/routes_search.py",
       "name": "feedback",
       "qualname": "feedback",
-      "lineno": 205,
+      "lineno": 209,
       "calls": [
         "backend/app/api/routes_search.py::_get_service",
         "backend/app/storage/repo.py::insert_feedback"
@@ -1735,6 +1961,8 @@
         "backend/app/api/deps.py::SearchService.load",
         "backend/app/api/main.py::create_app",
         "backend/app/api/ratelimit.py::RateLimiter.__init__",
+        "backend/app/api/routes_dashboard.py::_db",
+        "backend/app/api/routes_dashboard.py::_read_experiments",
         "backend/app/api/routes_search.py::_index_metadata",
         "backend/app/api/schemas.py::_default_alpha",
         "backend/app/api/schemas.py::_default_normalization",
@@ -2420,7 +2648,8 @@
       "lineno": 53,
       "calls": [],
       "called_by": [
-        "backend/app/observability/metrics.py::snapshot"
+        "backend/app/observability/metrics.py::snapshot",
+        "backend/app/storage/repo.py::kpi_summary"
       ]
     },
     "backend/app/observability/metrics.py::snapshot": {
@@ -2650,7 +2879,7 @@
       "file": "backend/app/search/hybrid.py",
       "name": "__init__",
       "qualname": "HybridSearcher.__init__",
-      "lineno": 42,
+      "lineno": 44,
       "calls": [],
       "called_by": []
     },
@@ -2658,7 +2887,7 @@
       "file": "backend/app/search/hybrid.py",
       "name": "search",
       "qualname": "HybridSearcher.search",
-      "lineno": 54,
+      "lineno": 56,
       "calls": [
         "backend/app/search/filters.py::apply",
         "backend/app/search/normalize.py::normalize",
@@ -2770,7 +2999,8 @@
       "lineno": 43,
       "calls": [],
       "called_by": [
-        "backend/app/api/main.py::create_app"
+        "backend/app/api/main.py::create_app",
+        "backend/app/api/routes_dashboard.py::_db"
       ]
     },
     "backend/app/storage/db.py::init_schema": {
@@ -2787,7 +3017,7 @@
       "file": "backend/app/storage/repo.py",
       "name": "_now",
       "qualname": "_now",
-      "lineno": 9,
+      "lineno": 44,
       "calls": [],
       "called_by": [
         "backend/app/storage/repo.py::insert_request",
@@ -2795,11 +3025,21 @@
         "backend/app/storage/repo.py::insert_log"
       ]
     },
+    "backend/app/storage/repo.py::_bucket_sql": {
+      "file": "backend/app/storage/repo.py",
+      "name": "_bucket_sql",
+      "qualname": "_bucket_sql",
+      "lineno": 48,
+      "calls": [],
+      "called_by": [
+        "backend/app/storage/repo.py::request_volume"
+      ]
+    },
     "backend/app/storage/repo.py::insert_request": {
       "file": "backend/app/storage/repo.py",
       "name": "insert_request",
       "qualname": "insert_request",
-      "lineno": 13,
+      "lineno": 56,
       "calls": [
         "backend/app/storage/repo.py::_now"
       ],
@@ -2811,7 +3051,7 @@
       "file": "backend/app/storage/repo.py",
       "name": "insert_feedback",
       "qualname": "insert_feedback",
-      "lineno": 49,
+      "lineno": 92,
       "calls": [
         "backend/app/storage/repo.py::_now"
       ],
@@ -2823,7 +3063,7 @@
       "file": "backend/app/storage/repo.py",
       "name": "insert_log",
       "qualname": "insert_log",
-      "lineno": 70,
+      "lineno": 113,
       "calls": [
         "backend/app/storage/repo.py::_now"
       ],
@@ -2835,7 +3075,7 @@
       "file": "backend/app/storage/repo.py",
       "name": "select_requests",
       "qualname": "select_requests",
-      "lineno": 91,
+      "lineno": 134,
       "calls": [],
       "called_by": []
     },
@@ -2843,7 +3083,7 @@
       "file": "backend/app/storage/repo.py",
       "name": "select_feedback",
       "qualname": "select_feedback",
-      "lineno": 103,
+      "lineno": 146,
       "calls": [],
       "called_by": []
     },
@@ -2851,9 +3091,55 @@
       "file": "backend/app/storage/repo.py",
       "name": "select_logs",
       "qualname": "select_logs",
-      "lineno": 125,
+      "lineno": 168,
       "calls": [],
-      "called_by": []
+      "called_by": [
+        "backend/app/api/routes_dashboard.py::dashboard_logs"
+      ]
+    },
+    "backend/app/storage/repo.py::kpi_summary": {
+      "file": "backend/app/storage/repo.py",
+      "name": "kpi_summary",
+      "qualname": "kpi_summary",
+      "lineno": 204,
+      "calls": [
+        "backend/app/observability/metrics.py::percentile"
+      ],
+      "called_by": [
+        "backend/app/api/routes_dashboard.py::dashboard_kpi_summary"
+      ]
+    },
+    "backend/app/storage/repo.py::request_volume": {
+      "file": "backend/app/storage/repo.py",
+      "name": "request_volume",
+      "qualname": "request_volume",
+      "lineno": 232,
+      "calls": [
+        "backend/app/storage/repo.py::_bucket_sql"
+      ],
+      "called_by": [
+        "backend/app/api/routes_dashboard.py::dashboard_kpi_volume"
+      ]
+    },
+    "backend/app/storage/repo.py::top_queries": {
+      "file": "backend/app/storage/repo.py",
+      "name": "top_queries",
+      "qualname": "top_queries",
+      "lineno": 257,
+      "calls": [],
+      "called_by": [
+        "backend/app/api/routes_dashboard.py::dashboard_kpi_top_queries"
+      ]
+    },
+    "backend/app/storage/repo.py::zero_result_queries": {
+      "file": "backend/app/storage/repo.py",
+      "name": "zero_result_queries",
+      "qualname": "zero_result_queries",
+      "lineno": 287,
+      "calls": [],
+      "called_by": [
+        "backend/app/api/routes_dashboard.py::dashboard_kpi_zero_results"
+      ]
     },
     "scripts/fetch_corpus.py::repo_root": {
       "file": "scripts/fetch_corpus.py",
@@ -3206,7 +3492,7 @@
       "file": "frontend/src/api.ts",
       "name": "_fetch",
       "qualname": "_fetch",
-      "lineno": 103,
+      "lineno": 105,
       "calls": [],
       "called_by": []
     },
@@ -3214,7 +3500,7 @@
       "file": "frontend/src/api.ts",
       "name": "search",
       "qualname": "search",
-      "lineno": 127,
+      "lineno": 129,
       "calls": [],
       "called_by": [
         "frontend/src/pages/SearchPage.tsx::SearchPage"
@@ -3224,7 +3510,7 @@
       "file": "frontend/src/api.ts",
       "name": "getDocument",
       "qualname": "getDocument",
-      "lineno": 135,
+      "lineno": 137,
       "calls": [],
       "called_by": [
         "frontend/src/components/ResultCard.tsx::ResultCard"
@@ -3234,7 +3520,7 @@
       "file": "frontend/src/api.ts",
       "name": "submitFeedback",
       "qualname": "submitFeedback",
-      "lineno": 147,
+      "lineno": 149,
       "calls": [],
       "called_by": [
         "frontend/src/components/ResultCard.tsx::ResultCard",
@@ -3245,9 +3531,10 @@
       "file": "frontend/src/api.ts",
       "name": "getHealth",
       "qualname": "getHealth",
-      "lineno": 155,
+      "lineno": 157,
       "calls": [],
       "called_by": [
+        "frontend/src/App.tsx::App",
         "frontend/src/pages/HealthPage.tsx::HealthPage"
       ]
     },
@@ -3255,7 +3542,7 @@
       "file": "frontend/src/api.ts",
       "name": "getKpiSummary",
       "qualname": "getKpiSummary",
-      "lineno": 159,
+      "lineno": 161,
       "calls": [],
       "called_by": []
     },
@@ -3263,7 +3550,7 @@
       "file": "frontend/src/api.ts",
       "name": "getKpiVolume",
       "qualname": "getKpiVolume",
-      "lineno": 163,
+      "lineno": 165,
       "calls": [],
       "called_by": []
     },
@@ -3271,7 +3558,7 @@
       "file": "frontend/src/api.ts",
       "name": "getTopQueries",
       "qualname": "getTopQueries",
-      "lineno": 167,
+      "lineno": 169,
       "calls": [],
       "called_by": []
     },
@@ -3279,7 +3566,7 @@
       "file": "frontend/src/api.ts",
       "name": "getZeroResultQueries",
       "qualname": "getZeroResultQueries",
-      "lineno": 173,
+      "lineno": 175,
       "calls": [],
       "called_by": []
     },
@@ -3287,7 +3574,7 @@
       "file": "frontend/src/api.ts",
       "name": "getExperiments",
       "qualname": "getExperiments",
-      "lineno": 179,
+      "lineno": 181,
       "calls": [],
       "called_by": []
     },
@@ -3295,7 +3582,7 @@
       "file": "frontend/src/api.ts",
       "name": "getLogs",
       "qualname": "getLogs",
-      "lineno": 183,
+      "lineno": 185,
       "calls": [],
       "called_by": []
     },
@@ -3303,7 +3590,7 @@
       "file": "frontend/src/App.tsx",
       "name": "useTheme",
       "qualname": "useTheme",
-      "lineno": 11,
+      "lineno": 15,
       "calls": [],
       "called_by": [
         "frontend/src/App.tsx::App"
@@ -3313,14 +3600,18 @@
       "file": "frontend/src/App.tsx",
       "name": "App",
       "qualname": "App",
-      "lineno": 26,
+      "lineno": 30,
       "calls": [
         "frontend/src/App.tsx::useTheme",
+        "frontend/src/api.ts::getHealth",
         "frontend/src/pages/HomePage.tsx::HomePage",
         "frontend/src/components/Sidebar.tsx::Sidebar",
         "frontend/src/pages/SearchPage.tsx::SearchPage",
         "frontend/src/pages/HealthPage.tsx::HealthPage",
-        "frontend/src/pages/SettingsPage.tsx::SettingsPage"
+        "frontend/src/pages/SettingsPage.tsx::SettingsPage",
+        "frontend/src/pages/KpisPage.tsx::KpisPage",
+        "frontend/src/pages/EvaluationPage.tsx::EvaluationPage",
+        "frontend/src/pages/DebugPage.tsx::DebugPage"
       ],
       "called_by": []
     },
@@ -3450,7 +3741,7 @@
       "file": "frontend/src/components/Navbar.tsx",
       "name": "Navbar",
       "qualname": "Navbar",
-      "lineno": 8,
+      "lineno": 17,
       "calls": [],
       "called_by": [
         "frontend/src/pages/HomePage.tsx::HomePage"
@@ -3466,18 +3757,40 @@
         "frontend/src/components/ResultCard.tsx::ResultCard"
       ]
     },
+    "frontend/src/components/ResultCard.tsx::looksLikeUrl": {
+      "file": "frontend/src/components/ResultCard.tsx",
+      "name": "looksLikeUrl",
+      "qualname": "looksLikeUrl",
+      "lineno": 23,
+      "calls": [],
+      "called_by": [
+        "frontend/src/components/ResultCard.tsx::ResultCard"
+      ]
+    },
+    "frontend/src/components/ResultCard.tsx::formatCreatedAt": {
+      "file": "frontend/src/components/ResultCard.tsx",
+      "name": "formatCreatedAt",
+      "qualname": "formatCreatedAt",
+      "lineno": 27,
+      "calls": [],
+      "called_by": [
+        "frontend/src/components/ResultCard.tsx::ResultCard"
+      ]
+    },
     "frontend/src/components/ResultCard.tsx::ResultCard": {
       "file": "frontend/src/components/ResultCard.tsx",
       "name": "ResultCard",
       "qualname": "ResultCard",
-      "lineno": 23,
+      "lineno": 38,
       "calls": [
         "frontend/src/api.ts::submitFeedback",
         "frontend/src/api.ts::getDocument",
         "frontend/src/components/ResultCard.tsx::closeModal",
         "frontend/src/highlight.ts::highlightContaining",
         "frontend/src/highlight.ts::decodeSnippet",
+        "frontend/src/components/ResultCard.tsx::looksLikeUrl",
         "frontend/src/components/ResultCard.tsx::openModal",
+        "frontend/src/components/ResultCard.tsx::formatCreatedAt",
         "frontend/src/components/ResultCard.tsx::handleFeedback",
         "frontend/src/components/ResultCard.tsx::Highlighted",
         "frontend/src/components/ScoreBar.tsx::ScoreBar"
@@ -3490,7 +3803,7 @@
       "file": "frontend/src/components/ResultCard.tsx",
       "name": "handleFeedback",
       "qualname": "handleFeedback",
-      "lineno": 31,
+      "lineno": 46,
       "calls": [
         "frontend/src/api.ts::submitFeedback"
       ],
@@ -3502,7 +3815,7 @@
       "file": "frontend/src/components/ResultCard.tsx",
       "name": "openModal",
       "qualname": "openModal",
-      "lineno": 44,
+      "lineno": 59,
       "calls": [],
       "called_by": [
         "frontend/src/components/ResultCard.tsx::ResultCard"
@@ -3512,7 +3825,7 @@
       "file": "frontend/src/components/ResultCard.tsx",
       "name": "closeModal",
       "qualname": "closeModal",
-      "lineno": 45,
+      "lineno": 60,
       "calls": [],
       "called_by": [
         "frontend/src/components/ResultCard.tsx::ResultCard",
@@ -3523,7 +3836,7 @@
       "file": "frontend/src/components/ResultCard.tsx",
       "name": "onKey",
       "qualname": "onKey",
-      "lineno": 72,
+      "lineno": 87,
       "calls": [
         "frontend/src/components/ResultCard.tsx::closeModal"
       ],
@@ -3533,7 +3846,7 @@
       "file": "frontend/src/components/ScoreBar.tsx",
       "name": "ScoreBar",
       "qualname": "ScoreBar",
-      "lineno": 7,
+      "lineno": 10,
       "calls": [],
       "called_by": [
         "frontend/src/components/ResultCard.tsx::ResultCard"
@@ -3543,7 +3856,7 @@
       "file": "frontend/src/components/Sidebar.tsx",
       "name": "Sidebar",
       "qualname": "Sidebar",
-      "lineno": 44,
+      "lineno": 72,
       "calls": [
         "frontend/src/components/ThemeToggle.tsx::ThemeToggle"
       ],
@@ -3615,6 +3928,26 @@
         "frontend/src/components/ResultCard.tsx::ResultCard"
       ]
     },
+    "frontend/src/pages/DebugPage.tsx::DebugPage": {
+      "file": "frontend/src/pages/DebugPage.tsx",
+      "name": "DebugPage",
+      "qualname": "DebugPage",
+      "lineno": 1,
+      "calls": [],
+      "called_by": [
+        "frontend/src/App.tsx::App"
+      ]
+    },
+    "frontend/src/pages/EvaluationPage.tsx::EvaluationPage": {
+      "file": "frontend/src/pages/EvaluationPage.tsx",
+      "name": "EvaluationPage",
+      "qualname": "EvaluationPage",
+      "lineno": 1,
+      "calls": [],
+      "called_by": [
+        "frontend/src/App.tsx::App"
+      ]
+    },
     "frontend/src/pages/HealthPage.tsx::HealthPage": {
       "file": "frontend/src/pages/HealthPage.tsx",
       "name": "HealthPage",
@@ -3637,6 +3970,16 @@
         "frontend/src/components/Navbar.tsx::Navbar",
         "frontend/src/components/VantaHero.tsx::VantaHero"
       ],
+      "called_by": [
+        "frontend/src/App.tsx::App"
+      ]
+    },
+    "frontend/src/pages/KpisPage.tsx::KpisPage": {
+      "file": "frontend/src/pages/KpisPage.tsx",
+      "name": "KpisPage",
+      "qualname": "KpisPage",
+      "lineno": 1,
+      "calls": [],
       "called_by": [
         "frontend/src/App.tsx::App"
       ]
@@ -3706,6 +4049,12 @@
     "backend/app/api/ratelimit.py::RateLimiter.__init__",
     "backend/app/api/ratelimit.py::RateLimiter.allow",
     "backend/app/api/ratelimit.py::rate_limit",
+    "backend/app/api/routes_dashboard.py::dashboard_experiments",
+    "backend/app/api/routes_dashboard.py::dashboard_kpi_summary",
+    "backend/app/api/routes_dashboard.py::dashboard_kpi_top_queries",
+    "backend/app/api/routes_dashboard.py::dashboard_kpi_volume",
+    "backend/app/api/routes_dashboard.py::dashboard_kpi_zero_results",
+    "backend/app/api/routes_dashboard.py::dashboard_logs",
     "backend/app/api/routes_search.py::feedback",
     "backend/app/api/routes_search.py::get_document",
     "backend/app/api/routes_search.py::health",
@@ -3741,7 +4090,6 @@
     "backend/app/search/vector.py::VectorIndex.query",
     "backend/app/search/vector.py::VectorIndex.save",
     "backend/app/storage/repo.py::select_feedback",
-    "backend/app/storage/repo.py::select_logs",
     "backend/app/storage/repo.py::select_requests",
     "frontend/src/App.tsx::App",
     "frontend/src/api.ts::_fetch",
@@ -3797,6 +4145,7 @@
       [
         "backend/app/api/deps.py",
         "backend/app/api/middleware.py",
+        "backend/app/api/routes_dashboard.py",
         "backend/app/api/routes_search.py",
         "backend/app/config.py",
         "backend/app/search/embedder.py",
@@ -3821,6 +4170,10 @@
       {
         "from": "backend/app/api/main.py",
         "to": "backend/app/api/middleware.py"
+      },
+      {
+        "from": "backend/app/api/main.py",
+        "to": "backend/app/api/routes_dashboard.py"
       },
       {
         "from": "backend/app/api/main.py",
@@ -3911,6 +4264,10 @@
       {
         "from": "backend/app/api/main.py",
         "to": "backend/app/api/middleware.py"
+      },
+      {
+        "from": "backend/app/api/main.py",
+        "to": "backend/app/api/routes_dashboard.py"
       },
       {
         "from": "backend/app/api/main.py",
@@ -4009,6 +4366,7 @@
       "scripts/qrels_helper.py",
       "backend/app/api/deps.py",
       "backend/app/api/middleware.py",
+      "backend/app/api/routes_dashboard.py",
       "backend/app/api/routes_search.py",
       "backend/app/storage/db.py",
       "backend/app/callgraph/analyze.py",
@@ -4040,6 +4398,7 @@
       "scripts/qrels_helper.py",
       "backend/app/api/deps.py",
       "backend/app/api/middleware.py",
+      "backend/app/api/routes_dashboard.py",
       "backend/app/api/routes_search.py",
       "backend/app/config.py",
       "backend/app/search/embedder.py",
@@ -4065,6 +4424,12 @@
       "backend/app/api/ratelimit.py::RateLimiter.__init__",
       "backend/app/api/ratelimit.py::RateLimiter.allow",
       "backend/app/api/ratelimit.py::rate_limit",
+      "backend/app/api/routes_dashboard.py::dashboard_experiments",
+      "backend/app/api/routes_dashboard.py::dashboard_kpi_summary",
+      "backend/app/api/routes_dashboard.py::dashboard_kpi_top_queries",
+      "backend/app/api/routes_dashboard.py::dashboard_kpi_volume",
+      "backend/app/api/routes_dashboard.py::dashboard_kpi_zero_results",
+      "backend/app/api/routes_dashboard.py::dashboard_logs",
       "backend/app/api/routes_search.py::feedback",
       "backend/app/api/routes_search.py::get_document",
       "backend/app/api/routes_search.py::health",
@@ -4100,7 +4465,6 @@
       "backend/app/search/vector.py::VectorIndex.query",
       "backend/app/search/vector.py::VectorIndex.save",
       "backend/app/storage/repo.py::select_feedback",
-      "backend/app/storage/repo.py::select_logs",
       "backend/app/storage/repo.py::select_requests",
       "frontend/src/App.tsx::App",
       "frontend/src/api.ts::_fetch",
@@ -4130,6 +4494,12 @@
         "backend/app/api/ratelimit.py::RateLimiter.__init__",
         "backend/app/api/ratelimit.py::RateLimiter.allow",
         "backend/app/api/ratelimit.py::rate_limit",
+        "backend/app/api/routes_dashboard.py::dashboard_experiments",
+        "backend/app/api/routes_dashboard.py::dashboard_kpi_summary",
+        "backend/app/api/routes_dashboard.py::dashboard_kpi_top_queries",
+        "backend/app/api/routes_dashboard.py::dashboard_kpi_volume",
+        "backend/app/api/routes_dashboard.py::dashboard_kpi_zero_results",
+        "backend/app/api/routes_dashboard.py::dashboard_logs",
         "backend/app/api/routes_search.py::feedback",
         "backend/app/api/routes_search.py::get_document",
         "backend/app/api/routes_search.py::health",
@@ -4165,7 +4535,6 @@
         "backend/app/search/vector.py::VectorIndex.query",
         "backend/app/search/vector.py::VectorIndex.save",
         "backend/app/storage/repo.py::select_feedback",
-        "backend/app/storage/repo.py::select_logs",
         "backend/app/storage/repo.py::select_requests",
         "frontend/src/App.tsx::App",
         "frontend/src/api.ts::_fetch",
@@ -4197,6 +4566,14 @@
         "backend/app/observability/metrics.py::record_request",
         "backend/app/api/middleware.py::_capture_result_count",
         "backend/app/api/ratelimit.py::RateLimiter.take",
+        "backend/app/api/routes_dashboard.py::_read_experiments",
+        "backend/app/api/routes_dashboard.py::parse_window",
+        "backend/app/api/routes_dashboard.py::_db",
+        "backend/app/storage/repo.py::kpi_summary",
+        "backend/app/storage/repo.py::top_queries",
+        "backend/app/storage/repo.py::request_volume",
+        "backend/app/storage/repo.py::zero_result_queries",
+        "backend/app/storage/repo.py::select_logs",
         "backend/app/api/routes_search.py::_get_service",
         "backend/app/storage/repo.py::insert_feedback",
         "backend/app/search/tokenize.py::tokenize",
@@ -4234,11 +4611,15 @@
         "backend/app/search/highlight.py::make_snippet",
         "backend/app/search/normalize.py::min_max",
         "frontend/src/App.tsx::useTheme",
+        "frontend/src/api.ts::getHealth",
         "frontend/src/pages/HomePage.tsx::HomePage",
         "frontend/src/components/Sidebar.tsx::Sidebar",
         "frontend/src/pages/SearchPage.tsx::SearchPage",
         "frontend/src/pages/HealthPage.tsx::HealthPage",
         "frontend/src/pages/SettingsPage.tsx::SettingsPage",
+        "frontend/src/pages/KpisPage.tsx::KpisPage",
+        "frontend/src/pages/EvaluationPage.tsx::EvaluationPage",
+        "frontend/src/pages/DebugPage.tsx::DebugPage",
         "frontend/src/components/ResultCard.tsx::closeModal",
         "scripts/fetch_until_done.py::parse_args",
         "scripts/fetch_corpus.py::repo_root",
@@ -4300,6 +4681,70 @@
         "to": "backend/app/api/ratelimit.py::RateLimiter.take"
       },
       {
+        "from": "backend/app/api/routes_dashboard.py::dashboard_experiments",
+        "to": "backend/app/api/routes_dashboard.py::_read_experiments"
+      },
+      {
+        "from": "backend/app/api/routes_dashboard.py::dashboard_kpi_summary",
+        "to": "backend/app/api/routes_dashboard.py::parse_window"
+      },
+      {
+        "from": "backend/app/api/routes_dashboard.py::dashboard_kpi_summary",
+        "to": "backend/app/api/routes_dashboard.py::_db"
+      },
+      {
+        "from": "backend/app/api/routes_dashboard.py::dashboard_kpi_summary",
+        "to": "backend/app/storage/repo.py::kpi_summary"
+      },
+      {
+        "from": "backend/app/api/routes_dashboard.py::dashboard_kpi_top_queries",
+        "to": "backend/app/api/routes_dashboard.py::parse_window"
+      },
+      {
+        "from": "backend/app/api/routes_dashboard.py::dashboard_kpi_top_queries",
+        "to": "backend/app/api/routes_dashboard.py::_db"
+      },
+      {
+        "from": "backend/app/api/routes_dashboard.py::dashboard_kpi_top_queries",
+        "to": "backend/app/storage/repo.py::top_queries"
+      },
+      {
+        "from": "backend/app/api/routes_dashboard.py::dashboard_kpi_volume",
+        "to": "backend/app/api/routes_dashboard.py::parse_window"
+      },
+      {
+        "from": "backend/app/api/routes_dashboard.py::dashboard_kpi_volume",
+        "to": "backend/app/api/routes_dashboard.py::_db"
+      },
+      {
+        "from": "backend/app/api/routes_dashboard.py::dashboard_kpi_volume",
+        "to": "backend/app/storage/repo.py::request_volume"
+      },
+      {
+        "from": "backend/app/api/routes_dashboard.py::dashboard_kpi_zero_results",
+        "to": "backend/app/api/routes_dashboard.py::parse_window"
+      },
+      {
+        "from": "backend/app/api/routes_dashboard.py::dashboard_kpi_zero_results",
+        "to": "backend/app/api/routes_dashboard.py::_db"
+      },
+      {
+        "from": "backend/app/api/routes_dashboard.py::dashboard_kpi_zero_results",
+        "to": "backend/app/storage/repo.py::zero_result_queries"
+      },
+      {
+        "from": "backend/app/api/routes_dashboard.py::dashboard_logs",
+        "to": "backend/app/api/routes_dashboard.py::parse_window"
+      },
+      {
+        "from": "backend/app/api/routes_dashboard.py::dashboard_logs",
+        "to": "backend/app/api/routes_dashboard.py::_db"
+      },
+      {
+        "from": "backend/app/api/routes_dashboard.py::dashboard_logs",
+        "to": "backend/app/storage/repo.py::select_logs"
+      },
+      {
         "from": "backend/app/api/routes_search.py::feedback",
         "to": "backend/app/api/routes_search.py::_get_service"
       },
@@ -4493,6 +4938,10 @@
       },
       {
         "from": "frontend/src/App.tsx::App",
+        "to": "frontend/src/api.ts::getHealth"
+      },
+      {
+        "from": "frontend/src/App.tsx::App",
         "to": "frontend/src/pages/HomePage.tsx::HomePage"
       },
       {
@@ -4510,6 +4959,18 @@
       {
         "from": "frontend/src/App.tsx::App",
         "to": "frontend/src/pages/SettingsPage.tsx::SettingsPage"
+      },
+      {
+        "from": "frontend/src/App.tsx::App",
+        "to": "frontend/src/pages/KpisPage.tsx::KpisPage"
+      },
+      {
+        "from": "frontend/src/App.tsx::App",
+        "to": "frontend/src/pages/EvaluationPage.tsx::EvaluationPage"
+      },
+      {
+        "from": "frontend/src/App.tsx::App",
+        "to": "frontend/src/pages/DebugPage.tsx::DebugPage"
       },
       {
         "from": "frontend/src/components/ResultCard.tsx::onKey",
@@ -4598,6 +5059,70 @@
         "to": "backend/app/api/ratelimit.py::RateLimiter.take"
       },
       {
+        "from": "backend/app/api/routes_dashboard.py::dashboard_experiments",
+        "to": "backend/app/api/routes_dashboard.py::_read_experiments"
+      },
+      {
+        "from": "backend/app/api/routes_dashboard.py::dashboard_kpi_summary",
+        "to": "backend/app/api/routes_dashboard.py::parse_window"
+      },
+      {
+        "from": "backend/app/api/routes_dashboard.py::dashboard_kpi_summary",
+        "to": "backend/app/api/routes_dashboard.py::_db"
+      },
+      {
+        "from": "backend/app/api/routes_dashboard.py::dashboard_kpi_summary",
+        "to": "backend/app/storage/repo.py::kpi_summary"
+      },
+      {
+        "from": "backend/app/api/routes_dashboard.py::dashboard_kpi_top_queries",
+        "to": "backend/app/api/routes_dashboard.py::parse_window"
+      },
+      {
+        "from": "backend/app/api/routes_dashboard.py::dashboard_kpi_top_queries",
+        "to": "backend/app/api/routes_dashboard.py::_db"
+      },
+      {
+        "from": "backend/app/api/routes_dashboard.py::dashboard_kpi_top_queries",
+        "to": "backend/app/storage/repo.py::top_queries"
+      },
+      {
+        "from": "backend/app/api/routes_dashboard.py::dashboard_kpi_volume",
+        "to": "backend/app/api/routes_dashboard.py::parse_window"
+      },
+      {
+        "from": "backend/app/api/routes_dashboard.py::dashboard_kpi_volume",
+        "to": "backend/app/api/routes_dashboard.py::_db"
+      },
+      {
+        "from": "backend/app/api/routes_dashboard.py::dashboard_kpi_volume",
+        "to": "backend/app/storage/repo.py::request_volume"
+      },
+      {
+        "from": "backend/app/api/routes_dashboard.py::dashboard_kpi_zero_results",
+        "to": "backend/app/api/routes_dashboard.py::parse_window"
+      },
+      {
+        "from": "backend/app/api/routes_dashboard.py::dashboard_kpi_zero_results",
+        "to": "backend/app/api/routes_dashboard.py::_db"
+      },
+      {
+        "from": "backend/app/api/routes_dashboard.py::dashboard_kpi_zero_results",
+        "to": "backend/app/storage/repo.py::zero_result_queries"
+      },
+      {
+        "from": "backend/app/api/routes_dashboard.py::dashboard_logs",
+        "to": "backend/app/api/routes_dashboard.py::parse_window"
+      },
+      {
+        "from": "backend/app/api/routes_dashboard.py::dashboard_logs",
+        "to": "backend/app/api/routes_dashboard.py::_db"
+      },
+      {
+        "from": "backend/app/api/routes_dashboard.py::dashboard_logs",
+        "to": "backend/app/storage/repo.py::select_logs"
+      },
+      {
         "from": "backend/app/api/routes_search.py::feedback",
         "to": "backend/app/api/routes_search.py::_get_service"
       },
@@ -4791,6 +5316,10 @@
       },
       {
         "from": "frontend/src/App.tsx::App",
+        "to": "frontend/src/api.ts::getHealth"
+      },
+      {
+        "from": "frontend/src/App.tsx::App",
         "to": "frontend/src/pages/HomePage.tsx::HomePage"
       },
       {
@@ -4808,6 +5337,18 @@
       {
         "from": "frontend/src/App.tsx::App",
         "to": "frontend/src/pages/SettingsPage.tsx::SettingsPage"
+      },
+      {
+        "from": "frontend/src/App.tsx::App",
+        "to": "frontend/src/pages/KpisPage.tsx::KpisPage"
+      },
+      {
+        "from": "frontend/src/App.tsx::App",
+        "to": "frontend/src/pages/EvaluationPage.tsx::EvaluationPage"
+      },
+      {
+        "from": "frontend/src/App.tsx::App",
+        "to": "frontend/src/pages/DebugPage.tsx::DebugPage"
       },
       {
         "from": "frontend/src/components/ResultCard.tsx::onKey",
@@ -4854,6 +5395,12 @@
       "backend/app/api/ratelimit.py::RateLimiter.__init__",
       "backend/app/api/ratelimit.py::RateLimiter.allow",
       "backend/app/api/ratelimit.py::rate_limit",
+      "backend/app/api/routes_dashboard.py::dashboard_experiments",
+      "backend/app/api/routes_dashboard.py::dashboard_kpi_summary",
+      "backend/app/api/routes_dashboard.py::dashboard_kpi_top_queries",
+      "backend/app/api/routes_dashboard.py::dashboard_kpi_volume",
+      "backend/app/api/routes_dashboard.py::dashboard_kpi_zero_results",
+      "backend/app/api/routes_dashboard.py::dashboard_logs",
       "backend/app/api/routes_search.py::feedback",
       "backend/app/api/routes_search.py::get_document",
       "backend/app/api/routes_search.py::health",
@@ -4889,7 +5436,6 @@
       "backend/app/search/vector.py::VectorIndex.query",
       "backend/app/search/vector.py::VectorIndex.save",
       "backend/app/storage/repo.py::select_feedback",
-      "backend/app/storage/repo.py::select_logs",
       "backend/app/storage/repo.py::select_requests",
       "frontend/src/App.tsx::App",
       "frontend/src/api.ts::_fetch",
@@ -4918,6 +5464,14 @@
       "backend/app/observability/metrics.py::record_request",
       "backend/app/observability/metrics.py::record_search_latency",
       "backend/app/api/ratelimit.py::RateLimiter.take",
+      "backend/app/api/routes_dashboard.py::_read_experiments",
+      "backend/app/storage/repo.py::kpi_summary",
+      "backend/app/storage/repo.py::top_queries",
+      "backend/app/storage/repo.py::request_volume",
+      "backend/app/storage/repo.py::zero_result_queries",
+      "backend/app/api/routes_dashboard.py::_db",
+      "backend/app/api/routes_dashboard.py::parse_window",
+      "backend/app/storage/repo.py::select_logs",
       "backend/app/storage/repo.py::insert_feedback",
       "backend/app/search/highlight.py::count_occurrences",
       "backend/app/search/highlight.py::highlight_containing",
@@ -4956,9 +5510,13 @@
       "backend/app/search/tokenize.py::tokenize",
       "backend/app/search/normalize.py::min_max",
       "frontend/src/App.tsx::useTheme",
+      "frontend/src/api.ts::getHealth",
       "frontend/src/components/Sidebar.tsx::Sidebar",
+      "frontend/src/pages/DebugPage.tsx::DebugPage",
+      "frontend/src/pages/EvaluationPage.tsx::EvaluationPage",
       "frontend/src/pages/HealthPage.tsx::HealthPage",
       "frontend/src/pages/HomePage.tsx::HomePage",
+      "frontend/src/pages/KpisPage.tsx::KpisPage",
       "frontend/src/pages/SearchPage.tsx::SearchPage",
       "frontend/src/pages/SettingsPage.tsx::SettingsPage",
       "frontend/src/components/ResultCard.tsx::closeModal",
@@ -4979,6 +5537,12 @@
       "backend/app/api/ratelimit.py::RateLimiter.__init__",
       "backend/app/api/ratelimit.py::RateLimiter.allow",
       "backend/app/api/ratelimit.py::rate_limit",
+      "backend/app/api/routes_dashboard.py::dashboard_experiments",
+      "backend/app/api/routes_dashboard.py::dashboard_kpi_summary",
+      "backend/app/api/routes_dashboard.py::dashboard_kpi_top_queries",
+      "backend/app/api/routes_dashboard.py::dashboard_kpi_volume",
+      "backend/app/api/routes_dashboard.py::dashboard_kpi_zero_results",
+      "backend/app/api/routes_dashboard.py::dashboard_logs",
       "backend/app/api/routes_search.py::feedback",
       "backend/app/api/routes_search.py::get_document",
       "backend/app/api/routes_search.py::health",
@@ -5014,7 +5578,6 @@
       "backend/app/search/vector.py::VectorIndex.query",
       "backend/app/search/vector.py::VectorIndex.save",
       "backend/app/storage/repo.py::select_feedback",
-      "backend/app/storage/repo.py::select_logs",
       "backend/app/storage/repo.py::select_requests",
       "frontend/src/App.tsx::App",
       "frontend/src/api.ts::_fetch",
@@ -5044,6 +5607,14 @@
       "backend/app/observability/metrics.py::record_request",
       "backend/app/api/middleware.py::_capture_result_count",
       "backend/app/api/ratelimit.py::RateLimiter.take",
+      "backend/app/api/routes_dashboard.py::_read_experiments",
+      "backend/app/api/routes_dashboard.py::parse_window",
+      "backend/app/api/routes_dashboard.py::_db",
+      "backend/app/storage/repo.py::kpi_summary",
+      "backend/app/storage/repo.py::top_queries",
+      "backend/app/storage/repo.py::request_volume",
+      "backend/app/storage/repo.py::zero_result_queries",
+      "backend/app/storage/repo.py::select_logs",
       "backend/app/api/routes_search.py::_get_service",
       "backend/app/storage/repo.py::insert_feedback",
       "backend/app/search/tokenize.py::tokenize",
@@ -5081,11 +5652,15 @@
       "backend/app/search/highlight.py::make_snippet",
       "backend/app/search/normalize.py::min_max",
       "frontend/src/App.tsx::useTheme",
+      "frontend/src/api.ts::getHealth",
       "frontend/src/pages/HomePage.tsx::HomePage",
       "frontend/src/components/Sidebar.tsx::Sidebar",
       "frontend/src/pages/SearchPage.tsx::SearchPage",
       "frontend/src/pages/HealthPage.tsx::HealthPage",
       "frontend/src/pages/SettingsPage.tsx::SettingsPage",
+      "frontend/src/pages/KpisPage.tsx::KpisPage",
+      "frontend/src/pages/EvaluationPage.tsx::EvaluationPage",
+      "frontend/src/pages/DebugPage.tsx::DebugPage",
       "frontend/src/components/ResultCard.tsx::closeModal",
       "scripts/fetch_until_done.py::parse_args",
       "scripts/fetch_corpus.py::repo_root",
@@ -5113,6 +5688,7 @@
     "scripts/qrels_helper.py",
     "backend/app/api/deps.py",
     "backend/app/api/middleware.py",
+    "backend/app/api/routes_dashboard.py",
     "backend/app/api/routes_search.py",
     "backend/app/storage/db.py",
     "backend/app/callgraph/analyze.py",
@@ -5136,6 +5712,12 @@
     "backend/app/api/ratelimit.py::RateLimiter.__init__",
     "backend/app/api/ratelimit.py::RateLimiter.allow",
     "backend/app/api/ratelimit.py::rate_limit",
+    "backend/app/api/routes_dashboard.py::dashboard_experiments",
+    "backend/app/api/routes_dashboard.py::dashboard_kpi_summary",
+    "backend/app/api/routes_dashboard.py::dashboard_kpi_top_queries",
+    "backend/app/api/routes_dashboard.py::dashboard_kpi_volume",
+    "backend/app/api/routes_dashboard.py::dashboard_kpi_zero_results",
+    "backend/app/api/routes_dashboard.py::dashboard_logs",
     "backend/app/api/routes_search.py::feedback",
     "backend/app/api/routes_search.py::get_document",
     "backend/app/api/routes_search.py::health",
@@ -5171,7 +5753,6 @@
     "backend/app/search/vector.py::VectorIndex.query",
     "backend/app/search/vector.py::VectorIndex.save",
     "backend/app/storage/repo.py::select_feedback",
-    "backend/app/storage/repo.py::select_logs",
     "backend/app/storage/repo.py::select_requests",
     "frontend/src/App.tsx::App",
     "frontend/src/api.ts::_fetch",
@@ -5200,6 +5781,14 @@
     "backend/app/observability/metrics.py::record_request",
     "backend/app/observability/metrics.py::record_search_latency",
     "backend/app/api/ratelimit.py::RateLimiter.take",
+    "backend/app/api/routes_dashboard.py::_read_experiments",
+    "backend/app/storage/repo.py::kpi_summary",
+    "backend/app/storage/repo.py::top_queries",
+    "backend/app/storage/repo.py::request_volume",
+    "backend/app/storage/repo.py::zero_result_queries",
+    "backend/app/api/routes_dashboard.py::_db",
+    "backend/app/api/routes_dashboard.py::parse_window",
+    "backend/app/storage/repo.py::select_logs",
     "backend/app/storage/repo.py::insert_feedback",
     "backend/app/search/highlight.py::count_occurrences",
     "backend/app/search/highlight.py::highlight_containing",
@@ -5238,9 +5827,13 @@
     "backend/app/search/tokenize.py::tokenize",
     "backend/app/search/normalize.py::min_max",
     "frontend/src/App.tsx::useTheme",
+    "frontend/src/api.ts::getHealth",
     "frontend/src/components/Sidebar.tsx::Sidebar",
+    "frontend/src/pages/DebugPage.tsx::DebugPage",
+    "frontend/src/pages/EvaluationPage.tsx::EvaluationPage",
     "frontend/src/pages/HealthPage.tsx::HealthPage",
     "frontend/src/pages/HomePage.tsx::HomePage",
+    "frontend/src/pages/KpisPage.tsx::KpisPage",
     "frontend/src/pages/SearchPage.tsx::SearchPage",
     "frontend/src/pages/SettingsPage.tsx::SettingsPage",
     "frontend/src/components/ResultCard.tsx::closeModal",
@@ -5261,6 +5854,10 @@
     {
       "from": "backend/app/api/main.py",
       "to": "backend/app/api/middleware.py"
+    },
+    {
+      "from": "backend/app/api/main.py",
+      "to": "backend/app/api/routes_dashboard.py"
     },
     {
       "from": "backend/app/api/main.py",
@@ -5391,6 +5988,70 @@
     {
       "from": "backend/app/api/ratelimit.py::RateLimiter.allow",
       "to": "backend/app/api/ratelimit.py::RateLimiter.take"
+    },
+    {
+      "from": "backend/app/api/routes_dashboard.py::dashboard_experiments",
+      "to": "backend/app/api/routes_dashboard.py::_read_experiments"
+    },
+    {
+      "from": "backend/app/api/routes_dashboard.py::dashboard_kpi_summary",
+      "to": "backend/app/api/routes_dashboard.py::parse_window"
+    },
+    {
+      "from": "backend/app/api/routes_dashboard.py::dashboard_kpi_summary",
+      "to": "backend/app/api/routes_dashboard.py::_db"
+    },
+    {
+      "from": "backend/app/api/routes_dashboard.py::dashboard_kpi_summary",
+      "to": "backend/app/storage/repo.py::kpi_summary"
+    },
+    {
+      "from": "backend/app/api/routes_dashboard.py::dashboard_kpi_top_queries",
+      "to": "backend/app/api/routes_dashboard.py::parse_window"
+    },
+    {
+      "from": "backend/app/api/routes_dashboard.py::dashboard_kpi_top_queries",
+      "to": "backend/app/api/routes_dashboard.py::_db"
+    },
+    {
+      "from": "backend/app/api/routes_dashboard.py::dashboard_kpi_top_queries",
+      "to": "backend/app/storage/repo.py::top_queries"
+    },
+    {
+      "from": "backend/app/api/routes_dashboard.py::dashboard_kpi_volume",
+      "to": "backend/app/api/routes_dashboard.py::parse_window"
+    },
+    {
+      "from": "backend/app/api/routes_dashboard.py::dashboard_kpi_volume",
+      "to": "backend/app/api/routes_dashboard.py::_db"
+    },
+    {
+      "from": "backend/app/api/routes_dashboard.py::dashboard_kpi_volume",
+      "to": "backend/app/storage/repo.py::request_volume"
+    },
+    {
+      "from": "backend/app/api/routes_dashboard.py::dashboard_kpi_zero_results",
+      "to": "backend/app/api/routes_dashboard.py::parse_window"
+    },
+    {
+      "from": "backend/app/api/routes_dashboard.py::dashboard_kpi_zero_results",
+      "to": "backend/app/api/routes_dashboard.py::_db"
+    },
+    {
+      "from": "backend/app/api/routes_dashboard.py::dashboard_kpi_zero_results",
+      "to": "backend/app/storage/repo.py::zero_result_queries"
+    },
+    {
+      "from": "backend/app/api/routes_dashboard.py::dashboard_logs",
+      "to": "backend/app/api/routes_dashboard.py::parse_window"
+    },
+    {
+      "from": "backend/app/api/routes_dashboard.py::dashboard_logs",
+      "to": "backend/app/api/routes_dashboard.py::_db"
+    },
+    {
+      "from": "backend/app/api/routes_dashboard.py::dashboard_logs",
+      "to": "backend/app/storage/repo.py::select_logs"
     },
     {
       "from": "backend/app/api/routes_search.py::feedback",
@@ -5586,6 +6247,10 @@
     },
     {
       "from": "frontend/src/App.tsx::App",
+      "to": "frontend/src/api.ts::getHealth"
+    },
+    {
+      "from": "frontend/src/App.tsx::App",
       "to": "frontend/src/pages/HomePage.tsx::HomePage"
     },
     {
@@ -5603,6 +6268,18 @@
     {
       "from": "frontend/src/App.tsx::App",
       "to": "frontend/src/pages/SettingsPage.tsx::SettingsPage"
+    },
+    {
+      "from": "frontend/src/App.tsx::App",
+      "to": "frontend/src/pages/KpisPage.tsx::KpisPage"
+    },
+    {
+      "from": "frontend/src/App.tsx::App",
+      "to": "frontend/src/pages/EvaluationPage.tsx::EvaluationPage"
+    },
+    {
+      "from": "frontend/src/App.tsx::App",
+      "to": "frontend/src/pages/DebugPage.tsx::DebugPage"
     },
     {
       "from": "frontend/src/components/ResultCard.tsx::onKey",

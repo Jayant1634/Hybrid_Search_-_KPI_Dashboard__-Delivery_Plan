@@ -28,6 +28,8 @@ class SearchResult:
 
     doc_id: str
     title: str
+    source: str
+    created_at: str
     bm25_raw: float
     vector_raw: float
     bm25_norm: float
@@ -101,6 +103,8 @@ class HybridSearcher:
                 SearchResult(
                     doc_id=doc_id,
                     title=doc.get("title", ""),
+                    source=doc.get("source", ""),
+                    created_at=doc.get("created_at", ""),
                     bm25_raw=bm25_union[doc_id],
                     vector_raw=vector_union[doc_id],
                     bm25_norm=bm25_norm[doc_id],
