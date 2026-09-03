@@ -942,3 +942,114 @@ tests/test_bm25.py::test_save_load_roundtrip PASSED                      [100%]
 Review:
 Commit:
 
+Date: 2026-09-03
+Prompt id: p33
+Prompt:
+backend/app/search/embedder.py. a small Embedder protocol (dimension, encode(list of str) -> normalised float32 numpy array) and one implementation on sentence-transformers, device cpu, batch 32, normalize_embeddings on. model name from config. no test that downloads the model unless its marked slow.
+Model: Cursor Grok 4.6
+Files: backend/app/search/embedder.py, backend/tests/test_embedder.py, docs/codex_log.md
+What came back:
+Added `Embedder` (runtime-checkable protocol) and `SentenceTransformerEmbedder` in `backend/app/search/embedder.py`.
+
+- Protocol: `dimension: int` and `encode(texts: list[str]) -> NDArray[np.float32]` (L2-normalised).
+- Implementation: model name from `load_config().embedding_model` (`HSS_EMBEDDING_MODEL`, default `all-MiniLM-L6-v2`), `device="cpu"`, `batch_size=32`, `normalize_embeddings=True`. Empty input returns shape `(0, dimension)` without calling the model. `sentence_transformers` is imported lazily so constructing the class is what loads the library.
+
+Tests in `backend/tests/test_embedder.py` inject a fake `sentence_transformers` module, so the default suite never downloads weights (and never imports torch). They check config model name, CPU device, batch 32, `normalize_embeddings`, float32 dtype, unit-norm rows, and empty input. The real-model check is `pytest.mark.slow` and was not run.
+
+```
+============================= test session starts =============================
+platform win32 -- Python 3.12.3, pytest-9.1.1, pluggy-1.6.0 -- D:\Kearney\.venv\Scripts\python.exe
+cachedir: .pytest_cache
+rootdir: D:\Kearney\backend
+configfile: pyproject.toml
+plugins: anyio-4.15.0
+collecting ... collected 4 items / 1 deselected / 3 selected
+
+tests/test_embedder.py::test_uses_model_name_from_config PASSED          [ 33%]
+tests/test_embedder.py::test_encode_returns_normalised_float32 PASSED    [ 66%]
+tests/test_embedder.py::test_encode_empty_list_has_zero_rows PASSED      [100%]
+
+======================= 3 passed, 1 deselected in 0.31s =======================
+```
+
+Add CPU sentence-transformers embedder behind a small protocol
+validated: 3 passed, 1 deselected (slow) in 0.31s
+
+Review:
+Commit:
+
+Date: 2026-09-03
+Prompt id: p34
+Prompt:
+for all the other tests i dont want the real model at all. put a FakeEmbedder in conftest, deterministic, hash the text to seed a vector of dim 8 and normalise it. test shape and norm with that one
+Model: Cursor Grok 4.6
+Files: backend/tests/conftest.py, backend/tests/test_embedder.py, docs/codex_log.md
+What came back:
+Added `FakeEmbedder` in `backend/tests/conftest.py` (plus a `fake_embedder` fixture) so later tests can stay off the real model.
+
+- `dimension = 8`
+- `encode` SHA-256s each text, uses the first 8 bytes as a `numpy` RNG seed, draws a dim-8 vector, L2-normalises, returns float32
+- empty input is `(0, 8)`
+
+Shape and norm are checked in `test_fake_embedder_shape_and_norm`. Removed the `@pytest.mark.slow` real-model test. The remaining `SentenceTransformerEmbedder` tests still stub `sentence_transformers` and do not download weights.
+
+```
+============================= test session starts =============================
+platform win32 -- Python 3.12.3, pytest-9.1.1, pluggy-1.6.0 -- D:\Kearney\.venv\Scripts\python.exe
+cachedir: .pytest_cache
+rootdir: D:\Kearney\backend
+configfile: pyproject.toml
+plugins: anyio-4.15.0
+collecting ... collected 4 items
+
+tests/test_embedder.py::test_uses_model_name_from_config PASSED          [ 25%]
+tests/test_embedder.py::test_encode_returns_normalised_float32 PASSED    [ 50%]
+tests/test_embedder.py::test_encode_empty_list_has_zero_rows PASSED      [ 75%]
+tests/test_embedder.py::test_fake_embedder_shape_and_norm PASSED         [100%]
+
+============================== 4 passed in 0.15s ==============================
+```
+
+Add deterministic FakeEmbedder for tests
+validated: 4 passed in 0.15s
+
+Review:
+Commit:
+
+Date: 2026-09-03
+Prompt id: p35
+Prompt:
+backend/app/search/vector.py, a VectorIndex on faiss IndexFlatIP (vectors are unit length so inner product is cosine). build(doc_ids, vectors), query(vector, k), save/load to a folder (index.faiss and doc_ids.json). if a query vector has the wrong dimension raise a ValueError that prints both numbers. tests with the fake embedder: a docs own vector finds itself first, roundtrip works, wrong dim raises
+Model: Claude Opus 4.8
+Files: backend/app/search/vector.py, backend/tests/test_vector.py, docs/codex_log.md
+What came back:
+Added `VectorIndex` in `backend/app/search/vector.py` on `faiss.IndexFlatIP` (inner product = cosine since vectors are unit length).
+
+- `build(doc_ids, vectors)` casts to float32, validates 2-D shape and that `doc_ids` and rows match, rejects an empty corpus, then adds the matrix to a fresh `IndexFlatIP`.
+- `query(vector, k)` reshapes to a single row and raises `ValueError` if its dimension differs from the index, with a message printing both numbers (e.g. "query vector dimension 3 does not match index dimension 8"). Clamps `k` to the corpus size and returns `(doc_id, score)` sorted by score desc.
+- `save(folder)` writes `index.faiss` (via `faiss.write_index`) and `doc_ids.json`; `load(folder)` reads both back.
+
+Tests in `backend/tests/test_vector.py` use the `fake_embedder` fixture: each doc's own vector ranks itself first with score ~1.0, a save/load roundtrip returns identical query results, and a wrong-dimension query raises `ValueError` mentioning both `3` and `8`.
+
+```
+============================= test session starts =============================
+platform win32 -- Python 3.12.3, pytest-9.1.1, pluggy-1.6.0 -- D:\Kearney\.venv\Scripts\python.exe
+cachedir: .pytest_cache
+rootdir: D:\Kearney\backend
+configfile: pyproject.toml
+plugins: anyio-4.15.0
+collecting ... collected 3 items
+
+tests/test_vector.py::test_doc_finds_itself_first PASSED                 [ 33%]
+tests/test_vector.py::test_save_load_roundtrip PASSED                    [ 66%]
+tests/test_vector.py::test_query_wrong_dimension_raises PASSED           [100%]
+
+============================== 3 passed in 0.22s ==============================
+```
+
+Add faiss VectorIndex with cosine search and save/load
+validated: 3 passed in 0.22s
+
+Review:
+Commit:
+
