@@ -3,9 +3,10 @@ import Sidebar from './components/Sidebar'
 import HomePage from './pages/HomePage'
 import SearchPage from './pages/SearchPage'
 import HealthPage from './pages/HealthPage'
+import SettingsPage from './pages/SettingsPage'
 import './App.css'
 
-type Page = 'home' | 'search' | 'health'
+type Page = 'home' | 'search' | 'health' | 'settings'
 
 function useTheme() {
   const [dark, setDark] = useState<boolean>(() => {
@@ -36,6 +37,7 @@ export default function App() {
       <main className="app-main">
         {page === 'search' && <SearchPage />}
         {page === 'health' && <HealthPage />}
+        {page === 'settings' && <SettingsPage />}
       </main>
     </div>
   )

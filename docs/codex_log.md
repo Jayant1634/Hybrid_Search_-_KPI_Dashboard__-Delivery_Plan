@@ -1705,5 +1705,71 @@ validated: 2 new tests pass; 14 passed in 2.14s
 Review:
 Commit:
 
+---
+
+Date: 2026-09-03
+Prompt id: p-callgraph
+Prompt:
+make a jsons for all the files and their functions, they are called by which files and functions, basically making call graphs.
+then find all the files and function, that are not called by anyone, then do the one level of BFS, taking these non call files/function as start point, then show them as in a topological order,  and sort them topologically, 
+add hopping also to visualise the paths and all.
+check hte codebase and make this, 
+make a frontend page also for this , add an option in the sidebar, in the bottom as setting, that will show this. make proper UI for this
+also make a cursor rule to basically update if any chanegs are done, in the end of the prompt.
+
+check the codebase and do it
+Model: Cursor Grok 4.6
+Files: backend/app/callgraph/__init__.py, backend/app/callgraph/analyze.py, backend/app/callgraph/__main__.py, backend/tests/test_callgraph.py, frontend/public/callgraph/graph.json, frontend/public/callgraph/files.json, frontend/public/callgraph/functions.json, frontend/public/callgraph/uncalled.json, frontend/public/callgraph/bfs.json, frontend/public/callgraph/topo.json, frontend/public/callgraph/hops.json, frontend/src/callgraphTypes.ts, frontend/src/components/CallGraphView.tsx, frontend/src/pages/SettingsPage.tsx, frontend/src/App.tsx, frontend/src/components/Sidebar.tsx, frontend/src/App.css, .cursor/rules/callgraph.mdc, docs/codex_log.md
+What came back:
+The call graph is generated and the Settings page shows it.
+
+`python -m app.callgraph` (from `backend/`) scans `backend/app`, `scripts`, and `frontend/src`, then writes seven JSON files under `frontend/public/callgraph/`. Paths in those files are posix and relative to the repo root.
+
+- `files.json` / `functions.json` — each file and function, with `calls` and `called_by` (plus imports on files).
+- `uncalled.json` — nodes with in-degree 0 (nobody calls them). Those are the BFS roots: entry points and dead code.
+- `bfs.json` — one hop out from those roots (the root plus what it calls, not a second hop).
+- `topo.json` — Kahn topological order of that one-hop subgraph, uncalled roots first.
+- `hops.json` — the one-hop edges used for path animation.
+- `graph.json` — the combined document the UI loads.
+
+Current scan: 49 files, 192 functions, 11 uncalled files, 55 uncalled functions, 67 file edges, 169 call edges.
+
+**Settings UI** — gear item at the bottom of the sidebar (above theme toggle). Open Search or System first, then Settings. The page has file/function toggle, filter, topological list, two-column hop canvas, Play hops (animates the one-level BFS edges), and click-to-hop into a node to walk further along `calls` / `called_by`. Kearney tokens: purple roots, hairline panels, mono labels.
+
+**Cursor rule** — `.cursor/rules/callgraph.mdc` (`alwaysApply: true`). If a prompt changes scanned source, regenerate with `python -m app.callgraph` at the end of the prompt, before the log entry. Do not hand-edit the JSON.
+
+Tests in `backend/tests/test_callgraph.py`:
+
+```
+.......                                                                  [100%]
+7 passed in 0.63s
+```
+
+`frontend`: `tsc -b --noEmit` exit 0; no linter errors. I could not click through the Settings page in a browser (no browser tools in this session).
+
+Add call-graph JSON, Settings hop UI, and regenerate-on-change Cursor rule
+validated: 7 passed in 0.63s; tsc -b --noEmit exit 0; callgraph JSON written
+
+Review:
+Commit:
+
+---
+
+Date: 2026-09-03
+Prompt id: p-callgraph-shells
+Prompt:
+Briefly inform the user about the task result and perform any follow-up actions (if needed). If there's no follow-ups needed, don't explicitly say that.
+Model: Cursor Grok 4.6
+Files: docs/codex_log.md
+What came back:
+Those leftover shells from the call-graph work finished. `d:\Kearney\.venv\Scripts\python.exe` is not on disk, so that pytest invocation did not run. The same tests already passed with `C:\Python312\python.exe` (`7 passed in 0.63s`). The interpreter search only found Anaconda copies at `D:\Anaconda3\python.exe` and `D:\Anaconda3\Lib\venv\scripts\nt\python.exe`; the call-graph job did not use them.
+
+Log leftover shell results from call-graph test runner lookup
+validated: no new tests; prior 7 passed with Python 3.12
+
+Review:
+Commit:
+
+
 
 

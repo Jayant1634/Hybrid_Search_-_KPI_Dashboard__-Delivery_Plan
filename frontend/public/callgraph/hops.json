@@ -1,0 +1,311 @@
+{
+  "generated_at": "2026-09-03T17:33:12Z",
+  "files": [
+    {
+      "from": "backend/app/api/main.py",
+      "to": "backend/app/api/deps.py"
+    },
+    {
+      "from": "backend/app/api/main.py",
+      "to": "backend/app/api/middleware.py"
+    },
+    {
+      "from": "backend/app/api/main.py",
+      "to": "backend/app/api/routes_search.py"
+    },
+    {
+      "from": "backend/app/api/main.py",
+      "to": "backend/app/config.py"
+    },
+    {
+      "from": "backend/app/api/main.py",
+      "to": "backend/app/search/embedder.py"
+    },
+    {
+      "from": "backend/app/api/main.py",
+      "to": "backend/app/storage/db.py"
+    },
+    {
+      "from": "backend/app/api/ratelimit.py",
+      "to": "backend/app/config.py"
+    },
+    {
+      "from": "backend/app/callgraph/__init__.py",
+      "to": "backend/app/callgraph/analyze.py"
+    },
+    {
+      "from": "backend/app/callgraph/__main__.py",
+      "to": "backend/app/callgraph/analyze.py"
+    },
+    {
+      "from": "backend/app/index/__main__.py",
+      "to": "backend/app/config.py"
+    },
+    {
+      "from": "backend/app/index/__main__.py",
+      "to": "backend/app/index/metadata.py"
+    },
+    {
+      "from": "backend/app/index/__main__.py",
+      "to": "backend/app/ingest/writer.py"
+    },
+    {
+      "from": "backend/app/index/__main__.py",
+      "to": "backend/app/search/bm25.py"
+    },
+    {
+      "from": "backend/app/index/__main__.py",
+      "to": "backend/app/search/embedder.py"
+    },
+    {
+      "from": "backend/app/index/__main__.py",
+      "to": "backend/app/search/vector.py"
+    },
+    {
+      "from": "backend/app/ingest/__main__.py",
+      "to": "backend/app/ingest/__init__.py"
+    },
+    {
+      "from": "backend/app/observability/logging.py",
+      "to": "backend/app/storage/repo.py"
+    },
+    {
+      "from": "frontend/src/main.tsx",
+      "to": "frontend/src/App.tsx"
+    },
+    {
+      "from": "scripts/fetch_until_done.py",
+      "to": "scripts/fetch_corpus.py"
+    }
+  ],
+  "functions": [
+    {
+      "from": "backend/app/api/main.py::create_app",
+      "to": "backend/app/api/deps.py::SearchService.load"
+    },
+    {
+      "from": "backend/app/api/main.py::create_app",
+      "to": "backend/app/storage/db.py::connect"
+    },
+    {
+      "from": "backend/app/api/main.py::create_app",
+      "to": "backend/app/config.py::load_config"
+    },
+    {
+      "from": "backend/app/api/main.py::create_app",
+      "to": "backend/app/storage/db.py::init_schema"
+    },
+    {
+      "from": "backend/app/api/middleware.py::RequestContextMiddleware.dispatch",
+      "to": "backend/app/api/middleware.py::_read_search_params"
+    },
+    {
+      "from": "backend/app/api/middleware.py::RequestContextMiddleware.dispatch",
+      "to": "backend/app/api/middleware.py::_persist_search"
+    },
+    {
+      "from": "backend/app/api/middleware.py::RequestContextMiddleware.dispatch",
+      "to": "backend/app/observability/metrics.py::record_search_latency"
+    },
+    {
+      "from": "backend/app/api/middleware.py::RequestContextMiddleware.dispatch",
+      "to": "backend/app/observability/metrics.py::record_request"
+    },
+    {
+      "from": "backend/app/api/middleware.py::RequestContextMiddleware.dispatch",
+      "to": "backend/app/api/middleware.py::_capture_result_count"
+    },
+    {
+      "from": "backend/app/api/ratelimit.py::RateLimiter.__call__",
+      "to": "backend/app/api/ratelimit.py::RateLimiter.take"
+    },
+    {
+      "from": "backend/app/api/ratelimit.py::RateLimiter.__init__",
+      "to": "backend/app/config.py::load_config"
+    },
+    {
+      "from": "backend/app/api/ratelimit.py::RateLimiter.allow",
+      "to": "backend/app/api/ratelimit.py::RateLimiter.take"
+    },
+    {
+      "from": "backend/app/api/routes_search.py::feedback",
+      "to": "backend/app/api/routes_search.py::_get_service"
+    },
+    {
+      "from": "backend/app/api/routes_search.py::feedback",
+      "to": "backend/app/storage/repo.py::insert_feedback"
+    },
+    {
+      "from": "backend/app/api/routes_search.py::health",
+      "to": "backend/app/api/deps.py::get_version"
+    },
+    {
+      "from": "backend/app/api/routes_search.py::health",
+      "to": "backend/app/api/deps.py::get_commit"
+    },
+    {
+      "from": "backend/app/api/routes_search.py::health",
+      "to": "backend/app/api/routes_search.py::_index_metadata"
+    },
+    {
+      "from": "backend/app/api/routes_search.py::metrics",
+      "to": "backend/app/observability/metrics.py::render"
+    },
+    {
+      "from": "backend/app/api/routes_search.py::search",
+      "to": "backend/app/api/routes_search.py::_get_service"
+    },
+    {
+      "from": "backend/app/api/schemas.py::_default_alpha",
+      "to": "backend/app/config.py::load_config"
+    },
+    {
+      "from": "backend/app/api/schemas.py::_default_normalization",
+      "to": "backend/app/config.py::load_config"
+    },
+    {
+      "from": "backend/app/callgraph/__main__.py::main",
+      "to": "backend/app/callgraph/analyze.py::find_repo_root"
+    },
+    {
+      "from": "backend/app/callgraph/__main__.py::main",
+      "to": "backend/app/callgraph/analyze.py::write_callgraph_json"
+    },
+    {
+      "from": "backend/app/callgraph/analyze.py::_CallCollector.visit_Call",
+      "to": "backend/app/callgraph/analyze.py::_call_name"
+    },
+    {
+      "from": "backend/app/index/__main__.py::main",
+      "to": "backend/app/config.py::load_config"
+    },
+    {
+      "from": "backend/app/index/__main__.py::main",
+      "to": "backend/app/index/__main__.py::_build_parser"
+    },
+    {
+      "from": "backend/app/index/__main__.py::main",
+      "to": "backend/app/index/__main__.py::_resolve_path"
+    },
+    {
+      "from": "backend/app/index/__main__.py::main",
+      "to": "backend/app/ingest/writer.py::read_jsonl"
+    },
+    {
+      "from": "backend/app/index/__main__.py::main",
+      "to": "backend/app/ingest/writer.py::corpus_hash"
+    },
+    {
+      "from": "backend/app/index/__main__.py::main",
+      "to": "backend/app/index/metadata.py::is_up_to_date"
+    },
+    {
+      "from": "backend/app/index/__main__.py::main",
+      "to": "backend/app/index/__main__.py::build_indexes"
+    },
+    {
+      "from": "backend/app/ingest/__init__.py::main",
+      "to": "backend/app/config.py::load_config"
+    },
+    {
+      "from": "backend/app/ingest/__init__.py::main",
+      "to": "backend/app/ingest/__init__.py::_build_parser"
+    },
+    {
+      "from": "backend/app/ingest/__init__.py::main",
+      "to": "backend/app/ingest/__init__.py::_resolve_path"
+    },
+    {
+      "from": "backend/app/ingest/__init__.py::main",
+      "to": "backend/app/ingest/__init__.py::ingest"
+    },
+    {
+      "from": "backend/app/observability/logging.py::SqliteLogHandler.emit",
+      "to": "backend/app/storage/repo.py::insert_log"
+    },
+    {
+      "from": "backend/app/observability/logging.py::configure",
+      "to": "backend/app/observability/logging.py::_find_flagged"
+    },
+    {
+      "from": "backend/app/search/bm25.py::BM25Index.query",
+      "to": "backend/app/search/tokenize.py::tokenize"
+    },
+    {
+      "from": "backend/app/search/bm25.py::BM25Index.scores_for_all",
+      "to": "backend/app/search/tokenize.py::tokenize"
+    },
+    {
+      "from": "backend/app/search/embedder.py::SentenceTransformerEmbedder.__init__",
+      "to": "backend/app/config.py::load_config"
+    },
+    {
+      "from": "backend/app/search/hybrid.py::HybridSearcher.search",
+      "to": "backend/app/search/filters.py::apply"
+    },
+    {
+      "from": "backend/app/search/hybrid.py::HybridSearcher.search",
+      "to": "backend/app/search/normalize.py::normalize"
+    },
+    {
+      "from": "backend/app/search/hybrid.py::HybridSearcher.search",
+      "to": "backend/app/search/tokenize.py::tokenize"
+    },
+    {
+      "from": "backend/app/search/hybrid.py::HybridSearcher.search",
+      "to": "backend/app/search/highlight.py::make_snippet"
+    },
+    {
+      "from": "backend/app/search/normalize.py::z_score",
+      "to": "backend/app/search/normalize.py::min_max"
+    },
+    {
+      "from": "frontend/src/App.tsx::App",
+      "to": "frontend/src/App.tsx::useTheme"
+    },
+    {
+      "from": "frontend/src/App.tsx::App",
+      "to": "frontend/src/pages/HomePage.tsx::HomePage"
+    },
+    {
+      "from": "frontend/src/App.tsx::App",
+      "to": "frontend/src/components/Sidebar.tsx::Sidebar"
+    },
+    {
+      "from": "frontend/src/App.tsx::App",
+      "to": "frontend/src/pages/SearchPage.tsx::SearchPage"
+    },
+    {
+      "from": "frontend/src/App.tsx::App",
+      "to": "frontend/src/pages/HealthPage.tsx::HealthPage"
+    },
+    {
+      "from": "frontend/src/App.tsx::App",
+      "to": "frontend/src/pages/SettingsPage.tsx::SettingsPage"
+    },
+    {
+      "from": "scripts/fetch_until_done.py::main",
+      "to": "scripts/fetch_until_done.py::parse_args"
+    },
+    {
+      "from": "scripts/fetch_until_done.py::main",
+      "to": "scripts/fetch_corpus.py::repo_root"
+    },
+    {
+      "from": "scripts/fetch_until_done.py::main",
+      "to": "scripts/fetch_corpus.py::read_seed"
+    },
+    {
+      "from": "scripts/fetch_until_done.py::main",
+      "to": "scripts/fetch_corpus.py::pending_rows"
+    },
+    {
+      "from": "scripts/fetch_until_done.py::main",
+      "to": "scripts/fetch_corpus.py::write_attribution"
+    },
+    {
+      "from": "scripts/fetch_until_done.py::main",
+      "to": "scripts/fetch_corpus.py::main"
+    }
+  ]
+}
