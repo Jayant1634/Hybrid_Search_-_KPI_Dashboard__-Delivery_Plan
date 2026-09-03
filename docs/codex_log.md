@@ -1477,3 +1477,148 @@ Drafted a single squash-style commit message covering the full body of work (bac
 Review:
 Commit:
 
+---
+
+Date: 2026-09-03
+Prompt id: p-json-logging
+Prompt: json logging. backend/app/observability/logging.py, a formatter that writes one json object per line (ts, level, logger, message, plus whatever came in extra) and a configure function thats safe to call twice. test that extra fields end up in the json.
+Model: Claude Opus 4.8
+Files: backend/app/observability/logging.py, backend/tests/test_logging.py
+What came back:
+
+Created `backend/app/observability/logging.py` with `JsonFormatter` and `configure`. `JsonFormatter.format` emits one JSON object per line with `ts` (ISO-8601 UTC), `level`, `logger`, and `message`, then merges any non-reserved record attributes (i.e. anything passed via `extra=`); it also appends `exc_info` when present and uses `default=str` so odd values never crash serialization. `configure(level)` attaches a single stdout `StreamHandler` tagged with a flag attribute; a second call finds that handler, only refreshes its level, and returns without adding a duplicate, so it is safe to call twice.
+
+Added `backend/tests/test_logging.py` with 4 tests: core fields present, extra fields (`query_id`, `latency_ms`) end up in the JSON, output is a single line with no embedded newline, and `configure` called twice adds exactly one handler at the latest level. All 4 pass:
+
+```
+tests/test_logging.py::test_core_fields_present PASSED
+tests/test_logging.py::test_extra_fields_end_up_in_json PASSED
+tests/test_logging.py::test_one_json_object_per_line PASSED
+tests/test_logging.py::test_configure_is_safe_to_call_twice PASSED
+4 passed in 0.06s
+```
+
+Review:
+Commit:
+
+---
+
+Date: 2026-09-03
+Prompt id: p-sqlite-storage
+Prompt: sqlite. backend/app/storage/db.py with connect(path) (WAL, row factory) and init_schema() doing create table if not exists for the three tables in the lld: requests, feedback, logs. keep it simple, no migration framework, just the create statements. and backend/app/storage/repo.py with insert and select functions, parameterised sql only. tests for both
+Model: Claude Opus 4.8
+Files: backend/app/storage/db.py, backend/app/storage/repo.py, backend/tests/test_db.py, backend/tests/test_repo.py
+What came back:
+
+Created `backend/app/storage/db.py` with `connect(path)` and `init_schema(conn)`. `connect` opens a `sqlite3` connection, sets `row_factory = sqlite3.Row`, enables WAL (`PRAGMA journal_mode=WAL`) and `foreign_keys=ON`, and creates parent dirs for file paths (`:memory:` is passed through). `init_schema` runs three `CREATE TABLE IF NOT EXISTS` statements — `requests`, `feedback`, `logs` — with columns taken from the LLD (s6.3/s6.6): requests(`request_id, query, latency_ms, top_k, alpha, result_count, error, created_at`), feedback(`request_id, doc_id, relevant, created_at`), logs(`created_at, severity, message, request_id`), each with an autoincrement `id`. No migration framework.
+
+Created `backend/app/storage/repo.py` with parameterised (`?` placeholder) inserts and selects: `insert_request`, `insert_feedback`, `insert_log` (each returns the rowid and defaults `created_at` to UTC now), and `select_requests`, `select_feedback` (optional `request_id` filter), `select_logs` (optional `severity` filter) — all newest-first with a `limit`. No string interpolation of values.
+
+Added `backend/tests/test_db.py` (4) and `backend/tests/test_repo.py` (5). Repo tests cover insert/select round-trips, newest-first ordering, the filters, and a SQL-injection payload as a value proving statements are parameterised (the `requests` table survives). All 9 pass:
+
+```
+tests/test_db.py ....                                              [ 44%]
+tests/test_repo.py .....                                           [100%]
+9 passed in 0.16s
+```
+
+Review:
+Commit:
+
+---
+
+Date: 2026-09-03
+Prompt id: p-api-middleware
+Prompt: middleware, backend/app/api/middleware.py. for every request: a request_id (reuse X-Request-ID if the client sent one), timing, one info log line with request_id, path, status, latency_ms. for /search also write a row to the requests table: query, top_k, alpha, normalization, latency, result count, and the error if there was one. on an exception log at error and return a 500 with the request_id in the body. wire it in create_app and open the db in the lifespan. tests: two searches give two rows, a forced exception gives 500 with the id.
+Model: Claude Opus 4.8
+Files: backend/app/api/middleware.py, backend/app/api/main.py, backend/tests/test_middleware.py
+What came back:
+
+Created `backend/app/api/middleware.py` with `RequestContextMiddleware` (a Starlette `BaseHTTPMiddleware`). For every request it derives a `request_id` (reusing the client's `X-Request-ID` header when present, else `uuid4().hex`), stashes it on `request.state`, times the request with `perf_counter`, emits one `logger.info("request", extra={request_id, path, status, latency_ms})` line, and echoes `X-Request-ID` back on the response. For `POST /search` it best-effort parses the JSON body for `query`/`top_k`/`alpha`, drains and rebuilds the streamed response to count `results`, and writes a row to the `requests` table via `insert_request` (query, top_k, alpha, latency_ms, result_count, error). On any unhandled exception it logs at error level and returns a 500 whose JSON body carries the `request_id` (also writing a search row with the error). I verified in Starlette 1.6.0's `base.py` that `_CachedRequest.wrapped_receive` replays the cached body, so reading the body in the middleware does not starve the downstream route.
+
+Wired into `create_app` (`backend/app/api/main.py`): added `app.add_middleware(RequestContextMiddleware)` and opened the SQLite DB in the lifespan (`connect(load_config().sqlite_path)` + `init_schema`, stored on `app.state.db`, closed on shutdown).
+
+Added `backend/tests/test_middleware.py` (3 tests): two searches write two rows (asserting queries, non-null latency/result_count, null error), the client's `X-Request-ID` is reused and echoed, and a forced `searcher.search` exception yields a 500 whose body and header carry the supplied id. All 3 pass; existing `test_api_search.py` (5) still passes.
+
+```
+tests/test_middleware.py::test_two_searches_write_two_rows PASSED
+tests/test_middleware.py::test_reuses_client_request_id_header PASSED
+tests/test_middleware.py::test_forced_exception_returns_500_with_request_id PASSED
+3 passed in 1.34s
+```
+
+Heads-up (did not act, per the named-files-only rule): the prompt asks the row to also store `normalization`, but the `requests` table (`db.py`) and `insert_request` (`repo.py`) I built earlier have no such column/param, and neither file was named in this prompt. So `normalization` is currently not persisted. Adding it needs a `normalization` column in `db.py` and a matching param in `repo.py` — say the word and I'll make those two edits.
+
+Review:
+Commit:
+
+---
+
+Date: 2026-09-03
+Prompt id: p-logs-db-handler
+Prompt: warnings and errors should also land in the logs table, the debug page will read from there. a logging handler that inserts into it, attached in configure.
+Model: Claude Opus 4.8
+Files: backend/app/observability/logging.py, backend/tests/test_logging.py
+What came back:
+
+Added `SqliteLogHandler(logging.Handler)` to `backend/app/observability/logging.py`. It defaults to level `WARNING` (so only WARNING/ERROR/CRITICAL are persisted) and on `emit` writes one row to the `logs` table via `insert_log` (severity = `record.levelname`, message = `record.getMessage()`, `request_id` pulled from `extra=` if present). Insert failures go through `handleError`, so logging never crashes the caller.
+
+Reworked `configure` to take an optional keyword `db: sqlite3.Connection | None`. It still attaches the JSON stdout handler idempotently (now refreshing its level), and when `db` is given it attaches the `SqliteLogHandler` once — a second call with a db reuses the existing handler and just refreshes its connection, so no duplicate rows. Both handlers are found via private flag attributes.
+
+Added two tests to `backend/tests/test_logging.py` (with a fixture that restores the root logger's handlers): WARNING and ERROR land in the `logs` table while INFO is filtered out and the ERROR row carries its `request_id`; and calling `configure(db=...)` twice does not duplicate the DB handler (one warning -> one row). All 6 logging tests pass:
+
+```
+tests/test_logging.py::test_warnings_and_errors_land_in_logs_table PASSED
+tests/test_logging.py::test_db_handler_not_duplicated_on_second_configure PASSED
+6 passed in 0.10s
+```
+
+Heads-up (did not act, per the named-files-only rule): for these DB logs to actually populate while the API runs, something must call `configure(db=app.state.db)` — the natural spot is `create_app`'s lifespan in `backend/app/api/main.py`, which wasn't named in this prompt, so I left it unchanged. Also note SQLite connections are single-thread by default; if logs are emitted from FastAPI's threadpool workers the insert may fail (silently, via `handleError`) unless `db.py`'s `connect` opens with `check_same_thread=False`. Say the word and I'll wire `configure` into the lifespan (and adjust `connect`).
+
+Review:
+Commit:
+
+---
+
+Date: 2026-09-03
+Prompt id: p-metrics
+Prompt: metrics. backend/app/observability/metrics.py, in process: a request counter by path and status, and search latency keeping the last 1000 values with p50 / p95 / count / sum. a render function in prometheus text format. record from the middleware, expose GET /metrics as text/plain. test p50 and p95 on a known list, and that the endpoint shows count 3 after three searches.
+Model: Cursor Grok 4.5
+Files: backend/app/observability/metrics.py, backend/app/api/middleware.py, backend/app/api/routes_search.py, backend/tests/test_metrics.py
+What came back:
+
+Created `backend/app/observability/metrics.py` with in-process, thread-locked state: `record_request(path, status)` increments a counter keyed by path+status; `record_search_latency(ms)` keeps a deque of the last 1000 values plus running sum/count; `percentile` does linear interpolation at `(n-1)*p/100`; `snapshot` / `render` / `reset` for observation and tests. `render()` emits Prometheus text: `http_requests_total{path,status}` counters and a `search_latency_ms` summary (quantile 0.5 / 0.95, `_sum`, `_count`).
+
+Wired recording into `RequestContextMiddleware` (success and exception paths): every request calls `record_request`; every `/search` also calls `record_search_latency`.
+
+Exposed `GET /metrics` on the existing search router as `PlainTextResponse` (`text/plain; version=0.0.4`).
+
+Added `backend/tests/test_metrics.py`: p50/p95 on `[10..100]` (55.0 / ~95.5), empty/single edge cases, snapshot after three recorded latencies, and an API test that three searches leave `search_latency_ms_count 3` (and the matching request counter) in `/metrics`. All 4 pass:
+
+```
+tests/test_metrics.py::test_percentile_p50_p95_on_known_list PASSED
+tests/test_metrics.py::test_percentile_empty_and_single PASSED
+tests/test_metrics.py::test_search_latency_window_and_snapshot PASSED
+tests/test_metrics.py::test_metrics_endpoint_shows_count_3_after_three_searches PASSED
+4 passed in 1.53s
+```
+
+Review:
+Commit:
+
+---
+
+Date: 2026-09-03
+Prompt id: p-arch-sqlite-sync
+Prompt: update the sqlite section of docs/architecture.md so the create table statements match db.py exactly. nothing else in that file.
+Model: Claude Opus 4.8
+Files: docs/architecture.md
+What came back:
+
+Replaced the SQL block in the SQLite section of `docs/architecture.md` so the `CREATE TABLE` statements match `backend/app/storage/db.py` verbatim: renamed `request_log` -> `requests` and `error_log` -> `logs`, added the `IF NOT EXISTS` clauses, the `id INTEGER PRIMARY KEY AUTOINCREMENT` column on all three tables, the `NOT NULL` constraints, and matched db.py's 4-space indentation. No other part of the file was touched.
+
+Note: the line just above the block still reads "Copied from low-level design," which is now slightly inaccurate (the block matches `db.py`, whose table names differ from the LLD's `request_log`/`error_log`). I left it unchanged per your "nothing else in that file" instruction — flag me if you'd like it reworded.
+
+Review:
+Commit:
+

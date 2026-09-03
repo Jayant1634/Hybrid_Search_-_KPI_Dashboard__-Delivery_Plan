@@ -14,12 +14,14 @@ import uuid
 from dataclasses import asdict
 
 from fastapi import APIRouter, Request
+from fastapi.responses import PlainTextResponse
 from pydantic import BaseModel
 
 from app.api.deps import SearchService, get_commit, get_version
 from app.api.schemas import SearchRequest
 from app.config import load_config
 from app.index.metadata import IndexMetadata
+from app.observability.metrics import render as render_metrics
 from app.search.filters import SearchFilters
 
 router = APIRouter()
@@ -88,6 +90,15 @@ def health() -> HealthResponse:
         version=get_version(),
         commit=get_commit(),
         index=_index_metadata(),
+    )
+
+
+@router.get("/metrics")
+def metrics() -> PlainTextResponse:
+    """Prometheus text exposition of in-process request and search metrics."""
+    return PlainTextResponse(
+        render_metrics(),
+        media_type="text/plain; version=0.0.4; charset=utf-8",
     )
 
 

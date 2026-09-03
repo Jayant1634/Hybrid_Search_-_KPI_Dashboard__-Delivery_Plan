@@ -14,8 +14,11 @@ from contextlib import asynccontextmanager
 from fastapi import FastAPI
 
 from app.api.deps import SearchService
+from app.api.middleware import RequestContextMiddleware
 from app.api.routes_search import router
+from app.config import load_config
 from app.search.embedder import Embedder
+from app.storage.db import connect, init_schema
 
 
 def create_app(
@@ -35,8 +38,16 @@ def create_app(
                 active_embedder = SentenceTransformerEmbedder()
             service = SearchService.load(active_embedder)
         app.state.search_service = service
-        yield
+
+        conn = connect(load_config().sqlite_path)
+        init_schema(conn)
+        app.state.db = conn
+        try:
+            yield
+        finally:
+            conn.close()
 
     app = FastAPI(title="Hybrid Search API", lifespan=lifespan)
+    app.add_middleware(RequestContextMiddleware)
     app.include_router(router)
     return app
