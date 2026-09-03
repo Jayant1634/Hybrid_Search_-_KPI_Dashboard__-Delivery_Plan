@@ -41,7 +41,7 @@ def test_repo_root_resolves(monkeypatch: pytest.MonkeyPatch) -> None:
     assert settings.metrics_dir == expected / "data" / "metrics"
     assert settings.sqlite_path == expected / "data" / "hss.sqlite"
     assert settings.embedding_model == "all-MiniLM-L6-v2"
-    assert settings.default_alpha == 0.5
+    assert settings.default_alpha == 0.3
     assert settings.normalisation == "minmax"
     assert settings.api_port == 8000
     assert settings.ui_port == 5173
@@ -53,7 +53,7 @@ def test_env_override(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
     _clear_hss(monkeypatch)
     monkeypatch.setenv("HSS_REPO_ROOT", str(tmp_path))
     monkeypatch.setenv("HSS_EMBEDDING_MODEL", "other-model")
-    monkeypatch.setenv("HSS_DEFAULT_ALPHA", "0.3")
+    monkeypatch.setenv("HSS_DEFAULT_ALPHA", "0.7")
     monkeypatch.setenv("HSS_API_PORT", "9000")
     settings = load_config()
     root = tmp_path.resolve()
@@ -65,5 +65,5 @@ def test_env_override(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
     assert settings.metrics_dir == root / "data" / "metrics"
     assert settings.sqlite_path == root / "data" / "hss.sqlite"
     assert settings.embedding_model == "other-model"
-    assert settings.default_alpha == 0.3
+    assert settings.default_alpha == 0.7
     assert settings.api_port == 9000
