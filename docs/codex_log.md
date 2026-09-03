@@ -2372,4 +2372,135 @@ Commit:
 
 ---
 
+Date: 2026-09-04
+Prompt id: p-up-sh
+Prompt:
+Write up.sh that creates .venv if missing, installs requirements (torch from the cpu index)vand `-e backend`, runs ingest and index only if the artifacts are missing, runs npm ci if node_modules is missing, and starts uvicorn + the vite dev server. Print both urls. Ensure Ctrl+C stops both.
+
+it has to work in git bash on windows and on linux/mac, so: detect .venv/bin/python vs .venv/Scripts/python.exe, always go through `python -m pip`, no pkill, write the pids to a .run folder and kill from there in the trap. set -euo pipefail, cd to the scripts own directory first. python 3.11 or newer, fail with a message otherwise.
+Model: Cursor Grok 4.6
+Files: up.sh, docs/codex_log.md
+What came back:
+`up.sh` at the repo root boots the stack on Git Bash (Windows) and on Linux/macOS. It `cd`s to its own directory, uses `set -euo pipefail`, and refuses to run on Python older than 3.11.
+
+**Env.** If `.venv` is missing it creates one from `python3` or `python` after the 3.11 check. The interpreter is `.venv/bin/python` or `.venv/Scripts/python.exe`. Installs always go through `"$PYTHON" -m pip`: CPU torch (`https://download.pytorch.org/whl/cpu`), then `requirements.txt`, then `-e backend`.
+
+**Skip when present.** Ingest runs only without `data/processed/docs.jsonl`. Index runs only without `data/index/metadata.json`. `npm ci --prefix frontend` runs only without `frontend/node_modules`.
+
+**Servers.** Uvicorn is `app.api.main:create_app --factory` on `HSS_API_PORT` (default 8000). Vite is started via `node` when that binary exists, otherwise `npm run dev`. Both PIDs go in `.run/*.pid`. A trap on EXIT/INT/TERM `kill`s those PIDs (no `pkill`). Printed URLs:
+
+```
+API: http://127.0.0.1:8000
+UI: http://127.0.0.1:5173
+```
+
+Ports follow `.env` / `HSS_API_PORT` / `HSS_UI_PORT` when set.
+
+I did not add a pytest file (not named). I did not add `.run/` to `.gitignore` (not named). I did not run the full `./up.sh` (uvicorn is already on 8000 in another terminal; first index build also downloads the embedding model).
+
+```
+bash -n up.sh
+bash-n-ok
+
+PASS set -euo pipefail
+...
+PASS py311
+passed 18 / 18
+```
+
+Add `./up.sh` that boots venv, artifacts, API, and Vite
+validated: bash -n ok; 18/18 contract checks passed
+
+Review:
+Commit:
+
+---
+
+Date: 2026-09-04
+Prompt id: p-up-sh-followup
+Prompt:
+Briefly inform the user about the task result and perform any follow-up actions (if needed). If there's no follow-ups needed, don't explicitly say that.
+Model: Cursor Grok 4.6
+Files: docs/codex_log.md
+What came back:
+That leftover check failed: Windows `bash` hit WSL (no `/bin/bash`), and `git update-index --chmod=+x` could not touch untracked `up.sh`. The later Git Bash run already passed `bash -n`.
+
+That leftover check failed for an unused path
+validated: n/a (notification only)
+
+Review:
+Commit:
+
+---
+
+Date: 2026-09-04
+Prompt id: p-up-sh-req-hash
+Prompt:
+skip the pip install when nothing changed. hash requirements.txt into a marker file inside .venv and compare.
+Model: Cursor Grok 4.6
+Files: up.sh, docs/codex_log.md
+What came back:
+`up.sh` now skips the three pip steps when `requirements.txt` has not changed.
+
+SHA-256 of `requirements.txt` is written to `.venv/.requirements.sha256` after a successful install (CPU torch, `requirements.txt`, `-e backend`). On the next run the same hash is compared; a match prints `requirements.txt unchanged; skipping pip install`. A missing marker or a different digest runs the installs and rewrites the marker. A brand-new `.venv` has no marker, so it still installs.
+
+```
+bash -n up.sh
+bash-n-ok
+
+PASS marker path
+PASS hash requirements.txt
+PASS skip message
+PASS write marker after install
+PASS still installs torch
+PASS still -e backend
+requirements.txt sha256 99bd3a76e5b810b47f533de4b478591176d32e1421c4677168a03031c8862da7
+```
+
+Skip pip when requirements.txt hash matches
+validated: bash -n ok; 6/6 contract checks passed
+
+Review:
+Commit:
+
+---
+
+Date: 2026-09-04
+Prompt id: p-down-readme
+Prompt:
+down.sh. read the pids from .run, stop them (term, then kill after 5 seconds), clean up the folder, exit 0 even if nothing was running.
+
+and also make an :
+README.md. a short description, the mermaid diagram from the hld, quickstart (python 3.11+, node 20+, git, on windows use git bash, then ./up.sh, then the two urls), how to run the tests, how to run ingest / index / eval by hand, how to run the experiments script, one line per break/fix scenario linking to the log, a deviations section (write none if none), and links to all the docs. leave a line "fresh clone timing: ____" for me to fill
+Model: Cursor Grok 4.6
+Files: down.sh, README.md, docs/codex_log.md
+What came back:
+`down.sh` reads `.run/*.pid`, sends TERM, waits up to 5 seconds, then KILL, removes `.run`, and exits 0 if nothing was running. No `pkill`. Same `cd` + `set -euo pipefail` pattern as `up.sh`.
+
+`README.md` has a short description, the HLD overview mermaid, `fresh clone timing: ____`, Git Bash quickstart (`./up.sh` plus the two URLs), pytest / frontend build, hand ingest/index/eval, `./scripts/run_experiments.sh`, one line each for break/fix A/B/C linking to `docs/break_fix_log.md`, Deviations: None, and links to every doc under `docs/`.
+
+```
+bash -n down.sh
+bash-n-ok
+empty_exit:0
+run_absent_ok
+two_sleeps_exit:0
+p1_dead
+p2_dead
+folder_removed
+stubborn_exit:0
+stubborn_dead
+stubborn_seconds:6
+stubborn_folder_removed
+waited_at_least_5s
+```
+
+Add down.sh and reviewer README
+validated: bash -n ok; empty exit 0; TERM stops two sleeps; KILL after 5s; .run removed
+
+Review:
+Commit:
+
+---
+
 
