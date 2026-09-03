@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import sqlite3
 from pathlib import Path
 
 import pytest
@@ -10,6 +11,8 @@ from app.api.main import create_app
 from app.config import load_config
 from app.index.__main__ import build_indexes
 from app.ingest.writer import Doc, write_jsonl
+from app.storage.db import connect
+from app.storage.repo import select_feedback
 
 
 @pytest.fixture
@@ -27,6 +30,14 @@ def client(
     app = create_app(search_service=service)
     with TestClient(app) as test_client:
         yield test_client
+
+
+def _feedback_rows(request_id: str | None = None) -> list[sqlite3.Row]:
+    conn = connect(load_config().sqlite_path)
+    try:
+        return select_feedback(conn, request_id=request_id)
+    finally:
+        conn.close()
 
 
 def test_health_has_version_and_commit(client: TestClient) -> None:
@@ -67,6 +78,54 @@ def test_alpha_extremes_give_different_orders(client: TestClient) -> None:
     assert bm25_order != vector_order
 
 
-def test_bad_request_fails_validation(client: TestClient) -> None:
-    resp = client.post("/search", json={"query": ""})
+@pytest.mark.parametrize(
+    ("payload", "field"),
+    [
+        ({"query": ""}, "query"),
+        ({"query": "x" * 501}, "query"),
+        ({"query": "q", "top_k": 0}, "top_k"),
+        ({"query": "q", "top_k": 51}, "top_k"),
+        ({"query": "q", "alpha": -0.1}, "alpha"),
+        ({"query": "q", "alpha": 1.1}, "alpha"),
+        ({"query": "q", "normalization": "foo"}, "normalization"),
+        ({"query": "q", "filters": {"created_from": "not-a-date"}}, "created_from"),
+    ],
+)
+def test_search_validation_errors(
+    client: TestClient, payload: dict[str, object], field: str
+) -> None:
+    resp = client.post("/search", json=payload)
     assert resp.status_code == 422
+    assert field in resp.text
+
+
+def test_feedback_stores_row(client: TestClient) -> None:
+    resp = client.post(
+        "/feedback",
+        json={
+            "request_id": "req-1",
+            "doc_id": "doc-001",
+            "relevant": True,
+            "comment": "good hit",
+        },
+    )
+    assert resp.status_code == 200
+    assert resp.json() == {"ok": True}
+    rows = _feedback_rows(request_id="req-1")
+    assert len(rows) == 1
+    assert rows[0]["doc_id"] == "doc-001"
+    assert rows[0]["relevant"] == 1
+
+
+def test_feedback_unknown_doc_is_404(client: TestClient) -> None:
+    resp = client.post(
+        "/feedback",
+        json={
+            "request_id": "req-1",
+            "doc_id": "doc-missing",
+            "relevant": False,
+        },
+    )
+    assert resp.status_code == 404
+    rows = _feedback_rows()
+    assert rows == []
