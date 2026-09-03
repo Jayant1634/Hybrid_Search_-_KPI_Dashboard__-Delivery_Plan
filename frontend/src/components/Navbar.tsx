@@ -1,0 +1,43 @@
+type Page = 'home' | 'search' | 'health'
+
+interface Props {
+  current: Page
+  onNavigate: (p: Page) => void
+}
+
+export default function Navbar({ current, onNavigate }: Props) {
+  return (
+    <nav className="navbar">
+      <div className="navbar-inner">
+        <button className="navbar-brand" onClick={() => onNavigate('home')}>
+          <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+            <rect width="20" height="20" rx="3" fill="#7823DC" />
+            <circle cx="10" cy="10" r="4" stroke="#fff" strokeWidth="1.5" />
+            <circle cx="10" cy="10" r="1.5" fill="#fff" />
+          </svg>
+          <span className="navbar-brand-text">Search Intelligence</span>
+        </button>
+
+        <div className="navbar-links">
+          {([
+            ['home', 'Home'],
+            ['search', 'Search'],
+            ['health', 'System'],
+          ] as [Page, string][]).map(([page, label]) => (
+            <button
+              key={page}
+              className={`navbar-link ${current === page ? 'active' : ''}`}
+              onClick={() => onNavigate(page)}
+            >
+              {label}
+            </button>
+          ))}
+        </div>
+
+        <div className="navbar-right">
+          <span className="navbar-tag">v0.1.0</span>
+        </div>
+      </div>
+    </nav>
+  )
+}
