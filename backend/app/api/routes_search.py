@@ -1,11 +1,14 @@
-"""HTTP routes: ``GET /health``, ``POST /search``, and ``POST /feedback``.
+"""HTTP routes: ``GET /health``, ``POST /search``, ``GET /documents/{id}``,
+and ``POST /feedback``.
 
 ``/search`` maps the validated request onto the loaded ``HybridSearcher``,
 translates the API-facing ``normalization``/``filters`` into the search layer's
 vocabulary, and returns each hit's full score breakdown and snippet plus a
-``request_id`` and ``took_ms``. ``/feedback`` stores a relevance signal for a
-known ``doc_id`` (404 otherwise). ``/health`` reports liveness, build info, and
-the built index's metadata.
+``request_id`` and ``took_ms``. ``GET /documents/{doc_id}`` returns the stored
+document (title, source, full text) plus optional query-term occurrences and
+highlighted body when ``q`` is passed. ``/feedback`` stores a relevance signal
+for a known ``doc_id`` (404 otherwise). ``/health`` reports liveness, build
+info, and the built index's metadata.
 """
 
 from __future__ import annotations
@@ -24,6 +27,8 @@ from app.config import load_config
 from app.index.metadata import IndexMetadata
 from app.observability.metrics import render as render_metrics
 from app.search.filters import SearchFilters
+from app.search.highlight import count_occurrences, highlight_containing
+from app.search.tokenize import tokenize
 from app.storage.repo import insert_feedback
 
 router = APIRouter()
@@ -76,6 +81,25 @@ class FeedbackResponse(BaseModel):
     """Acknowledgement that a feedback signal was stored."""
 
     ok: bool = True
+
+
+class TermCount(BaseModel):
+    """How many document words contain one query term."""
+
+    term: str
+    count: int
+
+
+class DocumentDetail(BaseModel):
+    """Full stored document plus optional query-term highlighting."""
+
+    doc_id: str
+    title: str
+    source: str
+    created_at: str
+    text: str
+    highlighted_text: str
+    occurrences: list[TermCount]
 
 
 def _get_service(request: Request) -> SearchService:
@@ -151,6 +175,29 @@ def search(payload: SearchRequest, request: Request) -> SearchResponse:
         request_id=uuid.uuid4().hex,
         took_ms=took_ms,
         results=results,
+    )
+
+
+@router.get("/documents/{doc_id}", response_model=DocumentDetail)
+def get_document(doc_id: str, request: Request, q: str = "") -> DocumentDetail:
+    """Return one corpus document, with query-term highlights when ``q`` is set."""
+    service = _get_service(request)
+    doc = service.docs_by_id.get(doc_id)
+    if doc is None:
+        raise HTTPException(status_code=404, detail="document not found")
+
+    terms = tokenize(q) if q.strip() else []
+    return DocumentDetail(
+        doc_id=doc["doc_id"],
+        title=doc.get("title", ""),
+        source=doc.get("source", ""),
+        created_at=doc.get("created_at", ""),
+        text=doc.get("text", ""),
+        highlighted_text=highlight_containing(doc.get("text", ""), terms),
+        occurrences=[
+            TermCount(term=term, count=count)
+            for term, count in count_occurrences(doc.get("text", ""), terms)
+        ],
     )
 
 

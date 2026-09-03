@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-09-03T17:33:12Z",
+  "generated_at": "2026-09-03T18:24:45Z",
   "files": {
     "roots": [
       "backend/app/__init__.py",
@@ -7,12 +7,14 @@
       "backend/app/api/ratelimit.py",
       "backend/app/callgraph/__init__.py",
       "backend/app/callgraph/__main__.py",
+      "backend/app/eval/__main__.py",
       "backend/app/index/__main__.py",
       "backend/app/ingest/__main__.py",
       "backend/app/observability/logging.py",
       "frontend/src/main.tsx",
       "scripts/_check_titles.py",
-      "scripts/fetch_until_done.py"
+      "scripts/fetch_until_done.py",
+      "scripts/qrels_helper.py"
     ],
     "layers": [
       [
@@ -21,12 +23,14 @@
         "backend/app/api/ratelimit.py",
         "backend/app/callgraph/__init__.py",
         "backend/app/callgraph/__main__.py",
+        "backend/app/eval/__main__.py",
         "backend/app/index/__main__.py",
         "backend/app/ingest/__main__.py",
         "backend/app/observability/logging.py",
         "frontend/src/main.tsx",
         "scripts/_check_titles.py",
-        "scripts/fetch_until_done.py"
+        "scripts/fetch_until_done.py",
+        "scripts/qrels_helper.py"
       ],
       [
         "backend/app/api/deps.py",
@@ -36,6 +40,7 @@
         "backend/app/search/embedder.py",
         "backend/app/storage/db.py",
         "backend/app/callgraph/analyze.py",
+        "backend/app/eval/runner.py",
         "backend/app/index/metadata.py",
         "backend/app/ingest/writer.py",
         "backend/app/search/bm25.py",
@@ -84,6 +89,18 @@
         "to": "backend/app/callgraph/analyze.py"
       },
       {
+        "from": "backend/app/eval/__main__.py",
+        "to": "backend/app/config.py"
+      },
+      {
+        "from": "backend/app/eval/__main__.py",
+        "to": "backend/app/eval/runner.py"
+      },
+      {
+        "from": "backend/app/eval/__main__.py",
+        "to": "backend/app/index/metadata.py"
+      },
+      {
         "from": "backend/app/index/__main__.py",
         "to": "backend/app/config.py"
       },
@@ -162,6 +179,18 @@
         "to": "backend/app/callgraph/analyze.py"
       },
       {
+        "from": "backend/app/eval/__main__.py",
+        "to": "backend/app/config.py"
+      },
+      {
+        "from": "backend/app/eval/__main__.py",
+        "to": "backend/app/eval/runner.py"
+      },
+      {
+        "from": "backend/app/eval/__main__.py",
+        "to": "backend/app/index/metadata.py"
+      },
+      {
         "from": "backend/app/index/__main__.py",
         "to": "backend/app/config.py"
       },
@@ -208,17 +237,20 @@
       "backend/app/api/ratelimit.py",
       "backend/app/callgraph/__init__.py",
       "backend/app/callgraph/__main__.py",
+      "backend/app/eval/__main__.py",
       "backend/app/index/__main__.py",
       "backend/app/ingest/__main__.py",
       "backend/app/observability/logging.py",
       "frontend/src/main.tsx",
       "scripts/_check_titles.py",
       "scripts/fetch_until_done.py",
+      "scripts/qrels_helper.py",
       "backend/app/api/deps.py",
       "backend/app/api/middleware.py",
       "backend/app/api/routes_search.py",
       "backend/app/storage/db.py",
       "backend/app/callgraph/analyze.py",
+      "backend/app/eval/runner.py",
       "backend/app/config.py",
       "backend/app/index/metadata.py",
       "backend/app/ingest/writer.py",
@@ -236,12 +268,14 @@
       "backend/app/api/ratelimit.py",
       "backend/app/callgraph/__init__.py",
       "backend/app/callgraph/__main__.py",
+      "backend/app/eval/__main__.py",
       "backend/app/index/__main__.py",
       "backend/app/ingest/__main__.py",
       "backend/app/observability/logging.py",
       "frontend/src/main.tsx",
       "scripts/_check_titles.py",
       "scripts/fetch_until_done.py",
+      "scripts/qrels_helper.py",
       "backend/app/api/deps.py",
       "backend/app/api/middleware.py",
       "backend/app/api/routes_search.py",
@@ -249,6 +283,7 @@
       "backend/app/search/embedder.py",
       "backend/app/storage/db.py",
       "backend/app/callgraph/analyze.py",
+      "backend/app/eval/runner.py",
       "backend/app/index/metadata.py",
       "backend/app/ingest/writer.py",
       "backend/app/search/bm25.py",
@@ -269,6 +304,7 @@
       "backend/app/api/ratelimit.py::RateLimiter.allow",
       "backend/app/api/ratelimit.py::rate_limit",
       "backend/app/api/routes_search.py::feedback",
+      "backend/app/api/routes_search.py::get_document",
       "backend/app/api/routes_search.py::health",
       "backend/app/api/routes_search.py::metrics",
       "backend/app/api/routes_search.py::search",
@@ -278,6 +314,7 @@
       "backend/app/callgraph/__main__.py::main",
       "backend/app/callgraph/analyze.py::_CallCollector.__init__",
       "backend/app/callgraph/analyze.py::_CallCollector.visit_Call",
+      "backend/app/eval/__main__.py::main",
       "backend/app/index/__main__.py::main",
       "backend/app/index/metadata.py::IndexMetadata.save",
       "backend/app/ingest/__init__.py::main",
@@ -313,9 +350,14 @@
       "frontend/src/api.ts::getZeroResultQueries",
       "frontend/src/components/CallGraphView.tsx::resetView",
       "frontend/src/components/CallGraphView.tsx::shortFile",
+      "frontend/src/components/ResultCard.tsx::onKey",
+      "frontend/src/highlight.ts::escapeHtml",
+      "frontend/src/highlight.ts::queryTerms",
+      "frontend/src/highlight.ts::termMatchesWord",
       "frontend/src/pages/SearchPage.tsx::handleClear",
       "frontend/src/pages/SearchPage.tsx::handleKeyDown",
-      "scripts/fetch_until_done.py::main"
+      "scripts/fetch_until_done.py::main",
+      "scripts/qrels_helper.py::main"
     ],
     "layers": [
       [
@@ -327,6 +369,7 @@
         "backend/app/api/ratelimit.py::RateLimiter.allow",
         "backend/app/api/ratelimit.py::rate_limit",
         "backend/app/api/routes_search.py::feedback",
+        "backend/app/api/routes_search.py::get_document",
         "backend/app/api/routes_search.py::health",
         "backend/app/api/routes_search.py::metrics",
         "backend/app/api/routes_search.py::search",
@@ -336,6 +379,7 @@
         "backend/app/callgraph/__main__.py::main",
         "backend/app/callgraph/analyze.py::_CallCollector.__init__",
         "backend/app/callgraph/analyze.py::_CallCollector.visit_Call",
+        "backend/app/eval/__main__.py::main",
         "backend/app/index/__main__.py::main",
         "backend/app/index/metadata.py::IndexMetadata.save",
         "backend/app/ingest/__init__.py::main",
@@ -371,9 +415,14 @@
         "frontend/src/api.ts::getZeroResultQueries",
         "frontend/src/components/CallGraphView.tsx::resetView",
         "frontend/src/components/CallGraphView.tsx::shortFile",
+        "frontend/src/components/ResultCard.tsx::onKey",
+        "frontend/src/highlight.ts::escapeHtml",
+        "frontend/src/highlight.ts::queryTerms",
+        "frontend/src/highlight.ts::termMatchesWord",
         "frontend/src/pages/SearchPage.tsx::handleClear",
         "frontend/src/pages/SearchPage.tsx::handleKeyDown",
-        "scripts/fetch_until_done.py::main"
+        "scripts/fetch_until_done.py::main",
+        "scripts/qrels_helper.py::main"
       ],
       [
         "backend/app/api/deps.py::SearchService.load",
@@ -388,6 +437,9 @@
         "backend/app/api/ratelimit.py::RateLimiter.take",
         "backend/app/api/routes_search.py::_get_service",
         "backend/app/storage/repo.py::insert_feedback",
+        "backend/app/search/tokenize.py::tokenize",
+        "backend/app/search/highlight.py::highlight_containing",
+        "backend/app/search/highlight.py::count_occurrences",
         "backend/app/api/deps.py::get_version",
         "backend/app/api/deps.py::get_commit",
         "backend/app/api/routes_search.py::_index_metadata",
@@ -395,6 +447,15 @@
         "backend/app/callgraph/analyze.py::find_repo_root",
         "backend/app/callgraph/analyze.py::write_callgraph_json",
         "backend/app/callgraph/analyze.py::_call_name",
+        "backend/app/eval/__main__.py::_build_parser",
+        "backend/app/eval/__main__.py::check_model",
+        "backend/app/eval/__main__.py::_search_normalization",
+        "backend/app/eval/__main__.py::_resolve_path",
+        "backend/app/eval/runner.py::load_queries",
+        "backend/app/eval/runner.py::load_qrels",
+        "backend/app/eval/runner.py::run_eval",
+        "backend/app/eval/__main__.py::_commit",
+        "backend/app/eval/runner.py::append_experiment",
         "backend/app/index/__main__.py::_build_parser",
         "backend/app/index/__main__.py::_resolve_path",
         "backend/app/ingest/writer.py::read_jsonl",
@@ -406,7 +467,6 @@
         "backend/app/ingest/__init__.py::ingest",
         "backend/app/storage/repo.py::insert_log",
         "backend/app/observability/logging.py::_find_flagged",
-        "backend/app/search/tokenize.py::tokenize",
         "backend/app/search/filters.py::apply",
         "backend/app/search/normalize.py::normalize",
         "backend/app/search/highlight.py::make_snippet",
@@ -417,12 +477,15 @@
         "frontend/src/pages/SearchPage.tsx::SearchPage",
         "frontend/src/pages/HealthPage.tsx::HealthPage",
         "frontend/src/pages/SettingsPage.tsx::SettingsPage",
+        "frontend/src/components/ResultCard.tsx::closeModal",
         "scripts/fetch_until_done.py::parse_args",
         "scripts/fetch_corpus.py::repo_root",
         "scripts/fetch_corpus.py::read_seed",
         "scripts/fetch_corpus.py::pending_rows",
         "scripts/fetch_corpus.py::write_attribution",
-        "scripts/fetch_corpus.py::main"
+        "scripts/fetch_corpus.py::main",
+        "scripts/qrels_helper.py::label_queries",
+        "scripts/qrels_helper.py::read_queries"
       ]
     ],
     "edges": [
@@ -483,6 +546,22 @@
         "to": "backend/app/storage/repo.py::insert_feedback"
       },
       {
+        "from": "backend/app/api/routes_search.py::get_document",
+        "to": "backend/app/api/routes_search.py::_get_service"
+      },
+      {
+        "from": "backend/app/api/routes_search.py::get_document",
+        "to": "backend/app/search/tokenize.py::tokenize"
+      },
+      {
+        "from": "backend/app/api/routes_search.py::get_document",
+        "to": "backend/app/search/highlight.py::highlight_containing"
+      },
+      {
+        "from": "backend/app/api/routes_search.py::get_document",
+        "to": "backend/app/search/highlight.py::count_occurrences"
+      },
+      {
         "from": "backend/app/api/routes_search.py::health",
         "to": "backend/app/api/deps.py::get_version"
       },
@@ -521,6 +600,46 @@
       {
         "from": "backend/app/callgraph/analyze.py::_CallCollector.visit_Call",
         "to": "backend/app/callgraph/analyze.py::_call_name"
+      },
+      {
+        "from": "backend/app/eval/__main__.py::main",
+        "to": "backend/app/config.py::load_config"
+      },
+      {
+        "from": "backend/app/eval/__main__.py::main",
+        "to": "backend/app/eval/__main__.py::_build_parser"
+      },
+      {
+        "from": "backend/app/eval/__main__.py::main",
+        "to": "backend/app/eval/__main__.py::check_model"
+      },
+      {
+        "from": "backend/app/eval/__main__.py::main",
+        "to": "backend/app/eval/__main__.py::_search_normalization"
+      },
+      {
+        "from": "backend/app/eval/__main__.py::main",
+        "to": "backend/app/eval/__main__.py::_resolve_path"
+      },
+      {
+        "from": "backend/app/eval/__main__.py::main",
+        "to": "backend/app/eval/runner.py::load_queries"
+      },
+      {
+        "from": "backend/app/eval/__main__.py::main",
+        "to": "backend/app/eval/runner.py::load_qrels"
+      },
+      {
+        "from": "backend/app/eval/__main__.py::main",
+        "to": "backend/app/eval/runner.py::run_eval"
+      },
+      {
+        "from": "backend/app/eval/__main__.py::main",
+        "to": "backend/app/eval/__main__.py::_commit"
+      },
+      {
+        "from": "backend/app/eval/__main__.py::main",
+        "to": "backend/app/eval/runner.py::append_experiment"
       },
       {
         "from": "backend/app/index/__main__.py::main",
@@ -631,6 +750,10 @@
         "to": "frontend/src/pages/SettingsPage.tsx::SettingsPage"
       },
       {
+        "from": "frontend/src/components/ResultCard.tsx::onKey",
+        "to": "frontend/src/components/ResultCard.tsx::closeModal"
+      },
+      {
         "from": "scripts/fetch_until_done.py::main",
         "to": "scripts/fetch_until_done.py::parse_args"
       },
@@ -653,6 +776,14 @@
       {
         "from": "scripts/fetch_until_done.py::main",
         "to": "scripts/fetch_corpus.py::main"
+      },
+      {
+        "from": "scripts/qrels_helper.py::main",
+        "to": "scripts/qrels_helper.py::label_queries"
+      },
+      {
+        "from": "scripts/qrels_helper.py::main",
+        "to": "scripts/qrels_helper.py::read_queries"
       }
     ],
     "hops": [
@@ -713,6 +844,22 @@
         "to": "backend/app/storage/repo.py::insert_feedback"
       },
       {
+        "from": "backend/app/api/routes_search.py::get_document",
+        "to": "backend/app/api/routes_search.py::_get_service"
+      },
+      {
+        "from": "backend/app/api/routes_search.py::get_document",
+        "to": "backend/app/search/tokenize.py::tokenize"
+      },
+      {
+        "from": "backend/app/api/routes_search.py::get_document",
+        "to": "backend/app/search/highlight.py::highlight_containing"
+      },
+      {
+        "from": "backend/app/api/routes_search.py::get_document",
+        "to": "backend/app/search/highlight.py::count_occurrences"
+      },
+      {
         "from": "backend/app/api/routes_search.py::health",
         "to": "backend/app/api/deps.py::get_version"
       },
@@ -751,6 +898,46 @@
       {
         "from": "backend/app/callgraph/analyze.py::_CallCollector.visit_Call",
         "to": "backend/app/callgraph/analyze.py::_call_name"
+      },
+      {
+        "from": "backend/app/eval/__main__.py::main",
+        "to": "backend/app/config.py::load_config"
+      },
+      {
+        "from": "backend/app/eval/__main__.py::main",
+        "to": "backend/app/eval/__main__.py::_build_parser"
+      },
+      {
+        "from": "backend/app/eval/__main__.py::main",
+        "to": "backend/app/eval/__main__.py::check_model"
+      },
+      {
+        "from": "backend/app/eval/__main__.py::main",
+        "to": "backend/app/eval/__main__.py::_search_normalization"
+      },
+      {
+        "from": "backend/app/eval/__main__.py::main",
+        "to": "backend/app/eval/__main__.py::_resolve_path"
+      },
+      {
+        "from": "backend/app/eval/__main__.py::main",
+        "to": "backend/app/eval/runner.py::load_queries"
+      },
+      {
+        "from": "backend/app/eval/__main__.py::main",
+        "to": "backend/app/eval/runner.py::load_qrels"
+      },
+      {
+        "from": "backend/app/eval/__main__.py::main",
+        "to": "backend/app/eval/runner.py::run_eval"
+      },
+      {
+        "from": "backend/app/eval/__main__.py::main",
+        "to": "backend/app/eval/__main__.py::_commit"
+      },
+      {
+        "from": "backend/app/eval/__main__.py::main",
+        "to": "backend/app/eval/runner.py::append_experiment"
       },
       {
         "from": "backend/app/index/__main__.py::main",
@@ -861,6 +1048,10 @@
         "to": "frontend/src/pages/SettingsPage.tsx::SettingsPage"
       },
       {
+        "from": "frontend/src/components/ResultCard.tsx::onKey",
+        "to": "frontend/src/components/ResultCard.tsx::closeModal"
+      },
+      {
         "from": "scripts/fetch_until_done.py::main",
         "to": "scripts/fetch_until_done.py::parse_args"
       },
@@ -883,6 +1074,14 @@
       {
         "from": "scripts/fetch_until_done.py::main",
         "to": "scripts/fetch_corpus.py::main"
+      },
+      {
+        "from": "scripts/qrels_helper.py::main",
+        "to": "scripts/qrels_helper.py::label_queries"
+      },
+      {
+        "from": "scripts/qrels_helper.py::main",
+        "to": "scripts/qrels_helper.py::read_queries"
       }
     ],
     "topo": [
@@ -894,6 +1093,7 @@
       "backend/app/api/ratelimit.py::RateLimiter.allow",
       "backend/app/api/ratelimit.py::rate_limit",
       "backend/app/api/routes_search.py::feedback",
+      "backend/app/api/routes_search.py::get_document",
       "backend/app/api/routes_search.py::health",
       "backend/app/api/routes_search.py::metrics",
       "backend/app/api/routes_search.py::search",
@@ -903,6 +1103,7 @@
       "backend/app/callgraph/__main__.py::main",
       "backend/app/callgraph/analyze.py::_CallCollector.__init__",
       "backend/app/callgraph/analyze.py::_CallCollector.visit_Call",
+      "backend/app/eval/__main__.py::main",
       "backend/app/index/__main__.py::main",
       "backend/app/index/metadata.py::IndexMetadata.save",
       "backend/app/ingest/__init__.py::main",
@@ -938,9 +1139,14 @@
       "frontend/src/api.ts::getZeroResultQueries",
       "frontend/src/components/CallGraphView.tsx::resetView",
       "frontend/src/components/CallGraphView.tsx::shortFile",
+      "frontend/src/components/ResultCard.tsx::onKey",
+      "frontend/src/highlight.ts::escapeHtml",
+      "frontend/src/highlight.ts::queryTerms",
+      "frontend/src/highlight.ts::termMatchesWord",
       "frontend/src/pages/SearchPage.tsx::handleClear",
       "frontend/src/pages/SearchPage.tsx::handleKeyDown",
       "scripts/fetch_until_done.py::main",
+      "scripts/qrels_helper.py::main",
       "backend/app/api/deps.py::SearchService.load",
       "backend/app/storage/db.py::connect",
       "backend/app/storage/db.py::init_schema",
@@ -951,6 +1157,8 @@
       "backend/app/observability/metrics.py::record_search_latency",
       "backend/app/api/ratelimit.py::RateLimiter.take",
       "backend/app/storage/repo.py::insert_feedback",
+      "backend/app/search/highlight.py::count_occurrences",
+      "backend/app/search/highlight.py::highlight_containing",
       "backend/app/api/deps.py::get_commit",
       "backend/app/api/deps.py::get_version",
       "backend/app/api/routes_search.py::_index_metadata",
@@ -959,6 +1167,15 @@
       "backend/app/callgraph/analyze.py::find_repo_root",
       "backend/app/callgraph/analyze.py::write_callgraph_json",
       "backend/app/callgraph/analyze.py::_call_name",
+      "backend/app/eval/__main__.py::_build_parser",
+      "backend/app/eval/__main__.py::_commit",
+      "backend/app/eval/__main__.py::_resolve_path",
+      "backend/app/eval/__main__.py::_search_normalization",
+      "backend/app/eval/__main__.py::check_model",
+      "backend/app/eval/runner.py::append_experiment",
+      "backend/app/eval/runner.py::load_qrels",
+      "backend/app/eval/runner.py::load_queries",
+      "backend/app/eval/runner.py::run_eval",
       "backend/app/index/__main__.py::_build_parser",
       "backend/app/index/__main__.py::_resolve_path",
       "backend/app/index/__main__.py::build_indexes",
@@ -982,12 +1199,15 @@
       "frontend/src/pages/HomePage.tsx::HomePage",
       "frontend/src/pages/SearchPage.tsx::SearchPage",
       "frontend/src/pages/SettingsPage.tsx::SettingsPage",
+      "frontend/src/components/ResultCard.tsx::closeModal",
       "scripts/fetch_corpus.py::main",
       "scripts/fetch_corpus.py::pending_rows",
       "scripts/fetch_corpus.py::read_seed",
       "scripts/fetch_corpus.py::repo_root",
       "scripts/fetch_corpus.py::write_attribution",
-      "scripts/fetch_until_done.py::parse_args"
+      "scripts/fetch_until_done.py::parse_args",
+      "scripts/qrels_helper.py::label_queries",
+      "scripts/qrels_helper.py::read_queries"
     ],
     "nodes": [
       "backend/app/api/deps.py::SearchService.__init__",
@@ -998,6 +1218,7 @@
       "backend/app/api/ratelimit.py::RateLimiter.allow",
       "backend/app/api/ratelimit.py::rate_limit",
       "backend/app/api/routes_search.py::feedback",
+      "backend/app/api/routes_search.py::get_document",
       "backend/app/api/routes_search.py::health",
       "backend/app/api/routes_search.py::metrics",
       "backend/app/api/routes_search.py::search",
@@ -1007,6 +1228,7 @@
       "backend/app/callgraph/__main__.py::main",
       "backend/app/callgraph/analyze.py::_CallCollector.__init__",
       "backend/app/callgraph/analyze.py::_CallCollector.visit_Call",
+      "backend/app/eval/__main__.py::main",
       "backend/app/index/__main__.py::main",
       "backend/app/index/metadata.py::IndexMetadata.save",
       "backend/app/ingest/__init__.py::main",
@@ -1042,9 +1264,14 @@
       "frontend/src/api.ts::getZeroResultQueries",
       "frontend/src/components/CallGraphView.tsx::resetView",
       "frontend/src/components/CallGraphView.tsx::shortFile",
+      "frontend/src/components/ResultCard.tsx::onKey",
+      "frontend/src/highlight.ts::escapeHtml",
+      "frontend/src/highlight.ts::queryTerms",
+      "frontend/src/highlight.ts::termMatchesWord",
       "frontend/src/pages/SearchPage.tsx::handleClear",
       "frontend/src/pages/SearchPage.tsx::handleKeyDown",
       "scripts/fetch_until_done.py::main",
+      "scripts/qrels_helper.py::main",
       "backend/app/api/deps.py::SearchService.load",
       "backend/app/storage/db.py::connect",
       "backend/app/config.py::load_config",
@@ -1057,6 +1284,9 @@
       "backend/app/api/ratelimit.py::RateLimiter.take",
       "backend/app/api/routes_search.py::_get_service",
       "backend/app/storage/repo.py::insert_feedback",
+      "backend/app/search/tokenize.py::tokenize",
+      "backend/app/search/highlight.py::highlight_containing",
+      "backend/app/search/highlight.py::count_occurrences",
       "backend/app/api/deps.py::get_version",
       "backend/app/api/deps.py::get_commit",
       "backend/app/api/routes_search.py::_index_metadata",
@@ -1064,6 +1294,15 @@
       "backend/app/callgraph/analyze.py::find_repo_root",
       "backend/app/callgraph/analyze.py::write_callgraph_json",
       "backend/app/callgraph/analyze.py::_call_name",
+      "backend/app/eval/__main__.py::_build_parser",
+      "backend/app/eval/__main__.py::check_model",
+      "backend/app/eval/__main__.py::_search_normalization",
+      "backend/app/eval/__main__.py::_resolve_path",
+      "backend/app/eval/runner.py::load_queries",
+      "backend/app/eval/runner.py::load_qrels",
+      "backend/app/eval/runner.py::run_eval",
+      "backend/app/eval/__main__.py::_commit",
+      "backend/app/eval/runner.py::append_experiment",
       "backend/app/index/__main__.py::_build_parser",
       "backend/app/index/__main__.py::_resolve_path",
       "backend/app/ingest/writer.py::read_jsonl",
@@ -1075,7 +1314,6 @@
       "backend/app/ingest/__init__.py::ingest",
       "backend/app/storage/repo.py::insert_log",
       "backend/app/observability/logging.py::_find_flagged",
-      "backend/app/search/tokenize.py::tokenize",
       "backend/app/search/filters.py::apply",
       "backend/app/search/normalize.py::normalize",
       "backend/app/search/highlight.py::make_snippet",
@@ -1086,12 +1324,15 @@
       "frontend/src/pages/SearchPage.tsx::SearchPage",
       "frontend/src/pages/HealthPage.tsx::HealthPage",
       "frontend/src/pages/SettingsPage.tsx::SettingsPage",
+      "frontend/src/components/ResultCard.tsx::closeModal",
       "scripts/fetch_until_done.py::parse_args",
       "scripts/fetch_corpus.py::repo_root",
       "scripts/fetch_corpus.py::read_seed",
       "scripts/fetch_corpus.py::pending_rows",
       "scripts/fetch_corpus.py::write_attribution",
-      "scripts/fetch_corpus.py::main"
+      "scripts/fetch_corpus.py::main",
+      "scripts/qrels_helper.py::label_queries",
+      "scripts/qrels_helper.py::read_queries"
     ]
   }
 }

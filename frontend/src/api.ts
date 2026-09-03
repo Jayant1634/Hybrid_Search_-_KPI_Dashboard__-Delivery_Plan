@@ -109,12 +109,39 @@ async function _fetch<T>(url: string, init?: RequestInit): Promise<T> {
   return res.json() as Promise<T>;
 }
 
+export interface TermOccurrence {
+  term: string;
+  count: number;
+}
+
+export interface DocumentDetail {
+  doc_id: string;
+  title: string;
+  source: string;
+  created_at: string;
+  text: string;
+  highlighted_text: string;
+  occurrences: TermOccurrence[];
+}
+
 export async function search(req: SearchRequest): Promise<SearchResponse> {
   return _fetch<SearchResponse>("/search", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(req),
   });
+}
+
+export async function getDocument(
+  docId: string,
+  query?: string,
+): Promise<DocumentDetail> {
+  const params = new URLSearchParams();
+  if (query?.trim()) params.set("q", query.trim());
+  const qs = params.toString();
+  return _fetch<DocumentDetail>(
+    `/documents/${encodeURIComponent(docId)}${qs ? `?${qs}` : ""}`,
+  );
 }
 
 export async function submitFeedback(req: FeedbackRequest): Promise<FeedbackResponse> {

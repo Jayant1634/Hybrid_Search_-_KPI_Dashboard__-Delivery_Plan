@@ -1770,6 +1770,230 @@ validated: no new tests; prior 7 passed with Python 3.12
 Review:
 Commit:
 
+---
+
+Date: 2026-09-03
+Prompt id: p-eval-metrics
+Prompt:
+backend/app/eval/metrics.py: ndcg_at_k, recall_at_k, mrr_at_k over a ranked list of ids and a dict of relevant ids, k defaults to 10. standard dcg with log2(i+1). tests with hand computed numbers, and put the working in a comment so i can check it. perfect ranking is 1.0 on all three, one relevant doc at rank 3 is mrr 1/3, that kind of thing.
+Model: Cursor Grok 4.6
+Files: backend/app/eval/metrics.py, backend/tests/test_eval_metrics.py, docs/codex_log.md
+What came back:
+`ndcg_at_k`, `recall_at_k`, and `mrr_at_k` are in `backend/app/eval/metrics.py`. Each takes a ranked list of ids, a `doc_id -> gain` dict, and `k` (default 10).
+
+DCG is the standard form: `gain / log2(i + 1)` with 1-based ranks (rank 1 is `log2(2) = 1`, no discount). nDCG divides by the ideal DCG of the gains sorted descending. Recall and MRR treat any gain > 0 as relevant. Empty ranked/relevant, or a cutoff that misses every hit, is 0.0.
+
+Hand-worked cases in `backend/tests/test_eval_metrics.py` (working is in the comments):
+
+- Perfect ranking `[a, b, c]` with all three relevant → **1.0** on nDCG, Recall, and MRR.
+- One relevant at rank 3 → nDCG **0.5** (`1/log2(4) = 1/2`, IDCG `1`), Recall **1.0**, MRR **1/3**.
+- Same list with `k=2` → all three **0** (the hit is outside the window).
+- Two relevants at ranks 1 and 3: DCG `1.5`, IDCG `1 + 1/log2(3)`, Recall 1, MRR 1.
+- Graded `{a:3, c:1}` with `a` first: DCG `3.5`, IDCG `3 + 1/log2(3)`.
+
+```
+============================= test session starts =============================
+platform win32 -- Python 3.12.3, pytest-9.1.1, pluggy-1.6.0 -- C:\Python312\python.exe
+cachedir: .pytest_cache
+rootdir: D:\Kearney\backend
+configfile: pyproject.toml
+plugins: anyio-4.12.0
+collecting ... collected 6 items
+
+tests/test_eval_metrics.py::test_perfect_ranking_is_one_on_all_three PASSED [ 16%]
+tests/test_eval_metrics.py::test_one_relevant_at_rank_3 PASSED           [ 33%]
+tests/test_eval_metrics.py::test_two_relevant_at_ranks_1_and_3 PASSED    [ 50%]
+tests/test_eval_metrics.py::test_k_cuts_off_a_hit_at_rank_3 PASSED       [ 66%]
+tests/test_eval_metrics.py::test_graded_ndcg_high_then_low PASSED        [ 83%]
+tests/test_eval_metrics.py::test_empty_inputs_are_zero PASSED            [100%]
+
+============================== 6 passed in 0.11s ==============================
+```
+
+Regenerated `frontend/public/callgraph/*.json` after adding the eval module.
+
+Add nDCG, Recall, and MRR at k for eval
+validated: 6 passed in 0.11s
+
+Review:
+Commit:
+
+---
+
+Date: 2026-09-03
+Prompt id: p-qrels-helper
+Prompt:
+a tiny helper for labelling, scripts/qrels_helper.py. load the SearchService, read queries one per line from a text file, print the top 20 doc ids and titles for each one. thats it, i pick the relevant ones by hand.
+Model: Cursor Grok 4.6
+Files: scripts/qrels_helper.py, backend/tests/test_qrels_helper.py, docs/codex_log.md
+What came back:
+`scripts/qrels_helper.py` loads `SearchService`, reads one query per line, and prints the top 20 `doc_id` + title rows. Nothing is written; you pick the relevant docs by hand.
+
+```
+python scripts/qrels_helper.py data/eval/queries.txt
+```
+
+Output per query:
+
+```
+=== volcano lava ===
+1. doc-001	Volcanoes
+2. doc-004	The Moon
+```
+
+Blank lines are skipped. A missing queries file exits 1. `app` is imported only when `main()` runs so the helper can be imported without the search stack.
+
+```
+============================= test session starts =============================
+platform win32 -- Python 3.12.3, pytest-9.1.1, pluggy-1.6.0 -- C:\Python312\python.exe
+cachedir: .pytest_cache
+rootdir: D:\Kearney\backend
+configfile: pyproject.toml
+plugins: anyio-4.12.0
+collecting ... collected 3 items
+
+tests/test_qrels_helper.py::test_read_queries_skips_blank_lines PASSED   [ 33%]
+tests/test_qrels_helper.py::test_label_queries_prints_ids_and_titles PASSED [ 66%]
+tests/test_qrels_helper.py::test_main_missing_file_is_one PASSED         [100%]
+
+============================== 3 passed in 0.24s ==============================
+```
+
+Regenerated `frontend/public/callgraph/*.json` after adding the script.
+
+Add hand-labelling helper that prints top-20 search hits
+validated: 3 passed in 0.24s
+
+Review:
+Commit:
+
+---
+
+Date: 2026-09-03
+Prompt id: p-search-result-modal
+Prompt:
+check the codebase and fix the Ui of the search page, the results it shows,
+the whole box should be clickable , when clciked a modal should open showing all the details, file name, the occurances of the words, realted KPI,
+and a section showind what's written in the file,
+highlight the one which i searched, check the codebase and do it
+Model: Cursor Grok 4.6
+Files: backend/app/search/highlight.py, backend/tests/test_highlight.py, backend/app/api/routes_search.py, backend/tests/test_api_search.py, frontend/src/api.ts, frontend/src/highlight.ts, frontend/src/components/ResultCard.tsx, frontend/src/pages/SearchPage.tsx, frontend/src/App.css, frontend/vite.config.ts, frontend/public/callgraph/*.json, docs/codex_log.md
+What came back:
+Each search result card is now clickable. Clicking it opens a document modal with the file name (title + source), word-occurrence counts for the query, related scoring KPIs (rank, hybrid, BM25, vector), and the full file text. Query terms are highlighted in the result list, the modal title, and the file body. Yes/No feedback still works without opening the modal.
+
+A new `GET /documents/{doc_id}?q=` endpoint returns the stored document plus highlighted HTML and occurrence counts. Highlighting matches exact tokens, substrings of 3+ characters, and a shared 3-character stem, so a typed fragment like `chec` lights up `Chemical`.
+
+```
+tests/test_highlight.py  19 passed in 0.14s
+tests/test_api_search.py 17 passed in 3.20s
+frontend tsc -b --noEmit  exit 0
+```
+
+API smoke test against the running server: search `chec` returned Calcium / Carbon / Chemical element; `GET /documents/a011f403c2f8?q=chec` had 9 occurrences and `<em>` highlights.
+
+I could not click through the Search page in a browser: the Vite dev server is not up (native binding error). Restart the frontend after this change so the new `/documents` proxy is picked up.
+
+Add clickable search-result modal with query highlighting
+validated: highlight 19 passed; api search 17 passed; tsc ok
+
+Review:
+Commit:
+
+---
+
+Date: 2026-09-03
+Prompt id: p-eval-runner
+Prompt:
+backend/app/eval/runner.py: load the queries jsonl and the qrels json, run_eval(service, queries, qrels, alpha, normalization) returning the three means plus per query numbers, warn and skip queries that have no qrels. and append_experiment(csv_path, row) that writes the header only once. tests with the fake service.
+Model: Cursor Grok 4.6
+Files: backend/app/eval/runner.py, backend/tests/test_eval_runner.py, docs/codex_log.md
+What came back:
+`backend/app/eval/runner.py` loads eval data, scores a service, and appends CSV rows.
+
+- `load_queries(path)` — JSONL of `{query_id, query}`, blank lines skipped.
+- `load_qrels(path)` — JSON `{query_id: {doc_id: gain}}`.
+- `run_eval(service, queries, qrels, alpha, normalization)` — searches each query at k=10 with those fusion params, scores nDCG@10 / Recall@10 / MRR@10, and returns the three means plus a `per_query` tuple. Missing or empty qrels emit `UserWarning` (`skipping query 'q3': no qrels`) and that query is not searched. All skipped → means 0.0.
+- `append_experiment(csv_path, row)` — creates parent dirs, writes the header from the row keys only when the file is missing or empty, then appends.
+
+Tests use a fake `service.searcher.search` (no indexes / real model). Hand-worked q2: relevant at rank 2 of 2 labels → nDCG `(1/log2(3)) / (1 + 1/log2(3))`, Recall 1/2, MRR 1/2; means are the average of q1 (all 1.0) and q2.
+
+```
+============================= test session starts =============================
+platform win32 -- Python 3.12.3, pytest-9.1.1, pluggy-1.6.0 -- C:\Python312\python.exe
+cachedir: .pytest_cache
+rootdir: D:\Kearney\backend
+configfile: pyproject.toml
+plugins: anyio-4.12.0
+collecting ... collected 5 items
+
+tests/test_eval_runner.py::test_load_queries_and_qrels PASSED            [ 20%]
+tests/test_eval_runner.py::test_run_eval_means_and_per_query PASSED      [ 40%]
+tests/test_eval_runner.py::test_run_eval_warns_and_skips_missing_qrels PASSED [ 60%]
+tests/test_eval_runner.py::test_append_experiment_writes_header_once PASSED [ 80%]
+tests/test_eval_runner.py::test_run_eval_empty_after_skips_is_zero PASSED [100%]
+
+============================== 5 passed in 0.25s ==============================
+```
+
+Regenerated `frontend/public/callgraph/*.json` after adding the runner.
+
+Add eval runner that scores queries and appends experiment CSV
+validated: 5 passed in 0.25s
+
+Review:
+Commit:
+
+---
+
+Date: 2026-09-03
+Prompt id: p-eval-cli
+Prompt:
+the cli, backend/app/eval/__main__.py:
+
+python -m app.eval --queries data/eval/queries.jsonl --qrels data/eval/qrels.json
+
+flags for alpha, normalization, model, preprocessing (just a label), tag. if --model is not what the index metadata says, refuse and print the rebuild command. append a row to data/metrics/experiments.csv: timestamp, commit, tag, alpha, normalization, model, preprocessing, ndcg10, recall10, mrr10, n_queries. test that it writes a row.
+Model: Cursor Grok 4.6
+Files: backend/app/eval/__main__.py, backend/tests/test_eval.py, docs/codex_log.md
+What came back:
+`python -m app.eval` is in `backend/app/eval/__main__.py`.
+
+```
+python -m app.eval --queries data/eval/queries.jsonl --qrels data/eval/qrels.json
+```
+
+Flags: `--alpha`, `--normalization` (minmax/zscore, also min_max/z_score), `--model`, `--preprocessing` (label only), `--tag`. Defaults come from config (alpha, normalisation, embedding model). Queries/qrels default to `data/eval/queries.jsonl` and `data/eval/qrels.json`.
+
+If `--model` does not match `IndexMetadata.model` (or metadata is missing), the CLI exits 1 and prints `python -m app.index --force`. No CSV row is written.
+
+A successful run appends one row to `data/metrics/experiments.csv`:
+
+`timestamp,commit,tag,alpha,normalization,model,preprocessing,ndcg10,recall10,mrr10,n_queries`
+
+`n_queries` is the number of queries that had qrels and were scored. Tests inject a fake service (perfect hit on `doc-a`) so the real embedder is not loaded.
+
+```
+============================= test session starts =============================
+platform win32 -- Python 3.12.3, pytest-9.1.1, pluggy-1.6.0 -- C:\Python312\python.exe
+cachedir: .pytest_cache
+rootdir: D:\Kearney\backend
+configfile: pyproject.toml
+plugins: anyio-4.12.0
+collecting ... collected 2 items
+
+tests/test_eval.py::test_eval_cli_writes_a_row PASSED                    [ 50%]
+tests/test_eval.py::test_eval_cli_refuses_model_mismatch PASSED          [100%]
+
+============================== 2 passed in 0.23s ==============================
+```
+
+Regenerated `frontend/public/callgraph/*.json` after adding the CLI.
+
+Add eval CLI that appends a scored experiments.csv row
+validated: 2 passed in 0.23s
+
+Review:
+Commit:
 
 
 

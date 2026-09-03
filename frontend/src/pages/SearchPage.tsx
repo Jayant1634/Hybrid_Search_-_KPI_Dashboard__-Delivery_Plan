@@ -181,7 +181,13 @@ export default function SearchPage() {
       {results.length > 0 && (
         <div className="results-list">
           {results.map((r, i) => (
-            <ResultCard key={r.doc_id} result={r} requestId={requestId} rank={i + 1} />
+            <ResultCard
+              key={r.doc_id}
+              result={r}
+              requestId={requestId}
+              rank={i + 1}
+              query={query}
+            />
           ))}
         </div>
       )}

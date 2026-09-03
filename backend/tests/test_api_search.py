@@ -117,6 +117,35 @@ def test_feedback_stores_row(client: TestClient) -> None:
     assert rows[0]["relevant"] == 1
 
 
+def test_get_document_returns_text_and_occurrences(client: TestClient) -> None:
+    resp = client.get("/documents/doc-001", params={"q": "lava"})
+    assert resp.status_code == 200
+    body = resp.json()
+    assert body["doc_id"] == "doc-001"
+    assert body["title"] == "Volcanoes"
+    assert body["source"] == "sample"
+    assert "lava" in body["text"]
+    assert "<em>lava</em>" in body["highlighted_text"]
+    by_term = {row["term"]: row["count"] for row in body["occurrences"]}
+    assert by_term["lava"] == 1
+
+
+def test_get_document_unknown_id_is_404(client: TestClient) -> None:
+    resp = client.get("/documents/doc-missing")
+    assert resp.status_code == 404
+
+
+def test_get_document_without_query_has_no_occurrences(
+    client: TestClient,
+) -> None:
+    resp = client.get("/documents/doc-001")
+    assert resp.status_code == 200
+    body = resp.json()
+    assert body["occurrences"] == []
+    assert "<em>" not in body["highlighted_text"]
+    assert "lava" in body["text"]
+
+
 def test_feedback_unknown_doc_is_404(client: TestClient) -> None:
     resp = client.post(
         "/feedback",
