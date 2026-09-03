@@ -61,6 +61,8 @@ class SearchResultItem(BaseModel):
 
     doc_id: str
     title: str
+    source: str
+    created_at: str
     bm25_score: float
     vector_score: float
     bm25_norm: float
@@ -161,6 +163,8 @@ def search(payload: SearchRequest, request: Request) -> SearchResponse:
         SearchResultItem(
             doc_id=hit.doc_id,
             title=hit.title,
+            source=hit.source,
+            created_at=hit.created_at,
             bm25_score=hit.bm25_raw,
             vector_score=hit.vector_raw,
             bm25_norm=hit.bm25_norm,

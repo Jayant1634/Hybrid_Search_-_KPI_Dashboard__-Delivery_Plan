@@ -15,6 +15,7 @@ from fastapi import FastAPI
 
 from app.api.deps import SearchService
 from app.api.middleware import RequestContextMiddleware
+from app.api.routes_dashboard import router as dashboard_router
 from app.api.routes_search import router
 from app.config import load_config
 from app.search.embedder import Embedder
@@ -50,4 +51,5 @@ def create_app(
     app = FastAPI(title="Hybrid Search API", lifespan=lifespan)
     app.add_middleware(RequestContextMiddleware)
     app.include_router(router)
+    app.include_router(dashboard_router)
     return app

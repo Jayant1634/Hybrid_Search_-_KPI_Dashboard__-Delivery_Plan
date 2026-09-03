@@ -1,9 +1,18 @@
-type Page = 'home' | 'search' | 'health'
+import type { Page } from '../App'
 
 interface Props {
-  current: Page
-  onNavigate: (p: Page) => void
+  current: string
+  onNavigate(p: Page): void
 }
+
+const LINKS: [Page, string][] = [
+  ['home', 'Home'],
+  ['search', 'Search'],
+  ['kpis', 'KPIs'],
+  ['evaluation', 'Evaluation'],
+  ['debug', 'Debug'],
+  ['health', 'System'],
+]
 
 export default function Navbar({ current, onNavigate }: Props) {
   return (
@@ -19,11 +28,7 @@ export default function Navbar({ current, onNavigate }: Props) {
         </button>
 
         <div className="navbar-links">
-          {([
-            ['home', 'Home'],
-            ['search', 'Search'],
-            ['health', 'System'],
-          ] as [Page, string][]).map(([page, label]) => (
+          {LINKS.map(([page, label]) => (
             <button
               key={page}
               className={`navbar-link ${current === page ? 'active' : ''}`}
@@ -32,10 +37,6 @@ export default function Navbar({ current, onNavigate }: Props) {
               {label}
             </button>
           ))}
-        </div>
-
-        <div className="navbar-right">
-          <span className="navbar-tag">v0.1.0</span>
         </div>
       </div>
     </nav>

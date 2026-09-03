@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-09-03T18:24:45Z",
+  "generated_at": "2026-09-03T23:27:20Z",
   "files": {
     "backend/app/__init__.py": {
       "language": "python",
@@ -51,6 +51,7 @@
       "imports": [
         "backend/app/api/deps.py",
         "backend/app/api/middleware.py",
+        "backend/app/api/routes_dashboard.py",
         "backend/app/api/routes_search.py",
         "backend/app/config.py",
         "backend/app/search/embedder.py",
@@ -60,6 +61,7 @@
       "calls": [
         "backend/app/api/deps.py",
         "backend/app/api/middleware.py",
+        "backend/app/api/routes_dashboard.py",
         "backend/app/api/routes_search.py",
         "backend/app/config.py",
         "backend/app/search/embedder.py",
@@ -107,6 +109,36 @@
         "backend/app/config.py"
       ],
       "called_by": []
+    },
+    "backend/app/api/routes_dashboard.py": {
+      "language": "python",
+      "functions": [
+        "backend/app/api/routes_dashboard.py::parse_window",
+        "backend/app/api/routes_dashboard.py::_db",
+        "backend/app/api/routes_dashboard.py::_read_experiments",
+        "backend/app/api/routes_dashboard.py::dashboard_kpi_summary",
+        "backend/app/api/routes_dashboard.py::dashboard_kpi_volume",
+        "backend/app/api/routes_dashboard.py::dashboard_kpi_top_queries",
+        "backend/app/api/routes_dashboard.py::dashboard_kpi_zero_results",
+        "backend/app/api/routes_dashboard.py::dashboard_experiments",
+        "backend/app/api/routes_dashboard.py::dashboard_logs"
+      ],
+      "imports": [
+        "backend/app/config.py",
+        "backend/app/storage/db.py",
+        "backend/app/storage/repo.py"
+      ],
+      "imported_by": [
+        "backend/app/api/main.py"
+      ],
+      "calls": [
+        "backend/app/config.py",
+        "backend/app/storage/db.py",
+        "backend/app/storage/repo.py"
+      ],
+      "called_by": [
+        "backend/app/api/main.py"
+      ]
     },
     "backend/app/api/routes_search.py": {
       "language": "python",
@@ -244,6 +276,7 @@
         "backend/app/api/deps.py",
         "backend/app/api/main.py",
         "backend/app/api/ratelimit.py",
+        "backend/app/api/routes_dashboard.py",
         "backend/app/api/routes_search.py",
         "backend/app/api/schemas.py",
         "backend/app/eval/__main__.py",
@@ -256,6 +289,7 @@
         "backend/app/api/deps.py",
         "backend/app/api/main.py",
         "backend/app/api/ratelimit.py",
+        "backend/app/api/routes_dashboard.py",
         "backend/app/api/routes_search.py",
         "backend/app/api/schemas.py",
         "backend/app/eval/__main__.py",
@@ -518,12 +552,14 @@
       "imports": [],
       "imported_by": [
         "backend/app/api/middleware.py",
-        "backend/app/api/routes_search.py"
+        "backend/app/api/routes_search.py",
+        "backend/app/storage/repo.py"
       ],
       "calls": [],
       "called_by": [
         "backend/app/api/middleware.py",
-        "backend/app/api/routes_search.py"
+        "backend/app/api/routes_search.py",
+        "backend/app/storage/repo.py"
       ]
     },
     "backend/app/search/bm25.py": {
@@ -715,33 +751,46 @@
       ],
       "imports": [],
       "imported_by": [
-        "backend/app/api/main.py"
+        "backend/app/api/main.py",
+        "backend/app/api/routes_dashboard.py"
       ],
       "calls": [],
       "called_by": [
-        "backend/app/api/main.py"
+        "backend/app/api/main.py",
+        "backend/app/api/routes_dashboard.py"
       ]
     },
     "backend/app/storage/repo.py": {
       "language": "python",
       "functions": [
         "backend/app/storage/repo.py::_now",
+        "backend/app/storage/repo.py::_bucket_sql",
         "backend/app/storage/repo.py::insert_request",
         "backend/app/storage/repo.py::insert_feedback",
         "backend/app/storage/repo.py::insert_log",
         "backend/app/storage/repo.py::select_requests",
         "backend/app/storage/repo.py::select_feedback",
-        "backend/app/storage/repo.py::select_logs"
+        "backend/app/storage/repo.py::select_logs",
+        "backend/app/storage/repo.py::kpi_summary",
+        "backend/app/storage/repo.py::request_volume",
+        "backend/app/storage/repo.py::top_queries",
+        "backend/app/storage/repo.py::zero_result_queries"
       ],
-      "imports": [],
+      "imports": [
+        "backend/app/observability/metrics.py"
+      ],
       "imported_by": [
         "backend/app/api/middleware.py",
+        "backend/app/api/routes_dashboard.py",
         "backend/app/api/routes_search.py",
         "backend/app/observability/logging.py"
       ],
-      "calls": [],
+      "calls": [
+        "backend/app/observability/metrics.py"
+      ],
       "called_by": [
         "backend/app/api/middleware.py",
+        "backend/app/api/routes_dashboard.py",
         "backend/app/api/routes_search.py",
         "backend/app/observability/logging.py"
       ]
@@ -836,6 +885,7 @@
       ],
       "imports": [],
       "imported_by": [
+        "frontend/src/App.tsx",
         "frontend/src/components/HealthGrid.tsx",
         "frontend/src/components/ResultCard.tsx",
         "frontend/src/pages/HealthPage.tsx",
@@ -843,6 +893,7 @@
       ],
       "calls": [],
       "called_by": [
+        "frontend/src/App.tsx",
         "frontend/src/components/HealthGrid.tsx",
         "frontend/src/components/ResultCard.tsx",
         "frontend/src/pages/HealthPage.tsx",
@@ -856,23 +907,35 @@
         "frontend/src/App.tsx::App"
       ],
       "imports": [
+        "frontend/src/api.ts",
         "frontend/src/components/Sidebar.tsx",
         "frontend/src/pages/HomePage.tsx",
         "frontend/src/pages/SearchPage.tsx",
         "frontend/src/pages/HealthPage.tsx",
-        "frontend/src/pages/SettingsPage.tsx"
+        "frontend/src/pages/SettingsPage.tsx",
+        "frontend/src/pages/KpisPage.tsx",
+        "frontend/src/pages/EvaluationPage.tsx",
+        "frontend/src/pages/DebugPage.tsx"
       ],
       "imported_by": [
+        "frontend/src/components/Navbar.tsx",
+        "frontend/src/components/Sidebar.tsx",
         "frontend/src/main.tsx"
       ],
       "calls": [
+        "frontend/src/api.ts",
         "frontend/src/components/Sidebar.tsx",
+        "frontend/src/pages/DebugPage.tsx",
+        "frontend/src/pages/EvaluationPage.tsx",
         "frontend/src/pages/HealthPage.tsx",
         "frontend/src/pages/HomePage.tsx",
+        "frontend/src/pages/KpisPage.tsx",
         "frontend/src/pages/SearchPage.tsx",
         "frontend/src/pages/SettingsPage.tsx"
       ],
       "called_by": [
+        "frontend/src/components/Navbar.tsx",
+        "frontend/src/components/Sidebar.tsx",
         "frontend/src/main.tsx"
       ]
     },
@@ -940,11 +1003,15 @@
       "functions": [
         "frontend/src/components/Navbar.tsx::Navbar"
       ],
-      "imports": [],
+      "imports": [
+        "frontend/src/App.tsx"
+      ],
       "imported_by": [
         "frontend/src/pages/HomePage.tsx"
       ],
-      "calls": [],
+      "calls": [
+        "frontend/src/App.tsx"
+      ],
       "called_by": [
         "frontend/src/pages/HomePage.tsx"
       ]
@@ -953,6 +1020,8 @@
       "language": "typescript",
       "functions": [
         "frontend/src/components/ResultCard.tsx::Highlighted",
+        "frontend/src/components/ResultCard.tsx::looksLikeUrl",
+        "frontend/src/components/ResultCard.tsx::formatCreatedAt",
         "frontend/src/components/ResultCard.tsx::ResultCard",
         "frontend/src/components/ResultCard.tsx::handleFeedback",
         "frontend/src/components/ResultCard.tsx::openModal",
@@ -996,12 +1065,14 @@
         "frontend/src/components/Sidebar.tsx::Sidebar"
       ],
       "imports": [
+        "frontend/src/App.tsx",
         "frontend/src/components/ThemeToggle.tsx"
       ],
       "imported_by": [
         "frontend/src/App.tsx"
       ],
       "calls": [
+        "frontend/src/App.tsx",
         "frontend/src/components/ThemeToggle.tsx"
       ],
       "called_by": [
@@ -1066,6 +1137,34 @@
       ],
       "called_by": []
     },
+    "frontend/src/pages/DebugPage.tsx": {
+      "language": "typescript",
+      "functions": [
+        "frontend/src/pages/DebugPage.tsx::DebugPage"
+      ],
+      "imports": [],
+      "imported_by": [
+        "frontend/src/App.tsx"
+      ],
+      "calls": [],
+      "called_by": [
+        "frontend/src/App.tsx"
+      ]
+    },
+    "frontend/src/pages/EvaluationPage.tsx": {
+      "language": "typescript",
+      "functions": [
+        "frontend/src/pages/EvaluationPage.tsx::EvaluationPage"
+      ],
+      "imports": [],
+      "imported_by": [
+        "frontend/src/App.tsx"
+      ],
+      "calls": [],
+      "called_by": [
+        "frontend/src/App.tsx"
+      ]
+    },
     "frontend/src/pages/HealthPage.tsx": {
       "language": "typescript",
       "functions": [
@@ -1102,6 +1201,20 @@
         "frontend/src/components/Navbar.tsx",
         "frontend/src/components/VantaHero.tsx"
       ],
+      "called_by": [
+        "frontend/src/App.tsx"
+      ]
+    },
+    "frontend/src/pages/KpisPage.tsx": {
+      "language": "typescript",
+      "functions": [
+        "frontend/src/pages/KpisPage.tsx::KpisPage"
+      ],
+      "imports": [],
+      "imported_by": [
+        "frontend/src/App.tsx"
+      ],
+      "calls": [],
       "called_by": [
         "frontend/src/App.tsx"
       ]

@@ -58,8 +58,17 @@ def test_search_returns_score_breakdown_and_snippet(client: TestClient) -> None:
     assert isinstance(body["took_ms"], (int, float))
     assert body["results"]
     first = body["results"][0]
-    for field in ("bm25_score", "vector_score", "hybrid_score", "snippet"):
+    for field in (
+        "bm25_score",
+        "vector_score",
+        "hybrid_score",
+        "snippet",
+        "source",
+        "created_at",
+    ):
         assert field in first
+    assert first["source"] == "sample"
+    assert first["created_at"]
 
 
 def test_top_k_is_respected(client: TestClient) -> None:

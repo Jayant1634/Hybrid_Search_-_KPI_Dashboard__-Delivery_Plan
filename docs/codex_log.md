@@ -1995,5 +1995,268 @@ validated: 2 passed in 0.23s
 Review:
 Commit:
 
+---
+
+Date: 2026-09-04
+Prompt id: p-run-experiments
+Prompt:
+scripts/run_experiments.sh, bash. same venv python detection i will use in up.sh (.venv/bin/python or .venv/Scripts/python.exe). runs: alpha 0, .3, .5, .7, 1 with minmax; alpha .5 with zscore; rebuild the index with paraphrase-albert-small-v2, eval with it, rebuild with the default model again; re-ingest with --sentence-split, rebuild, eval, then restore the normal ingest and index. a banner before each step. set -euo pipefail.
+Model: Cursor Grok 4.6
+Files: scripts/run_experiments.sh, backend/tests/test_run_experiments.py, docs/codex_log.md
+What came back:
+`scripts/run_experiments.sh` is a bash runner with `set -euo pipefail`. It cds to the repo root from its own path, then picks the venv interpreter the same way `up.sh` will: `.venv/bin/python` if that file is executable, else `.venv/Scripts/python.exe`. Missing both is exit 1.
+
+Each step prints a `========` banner first. Sequence:
+
+1. `python -m app.eval` for alpha 0, 0.3, 0.5, 0.7, 1 with minmax (`--preprocessing none`, tags `alpha-*`)
+2. alpha 0.5 with zscore (`tag zscore-0.5`)
+3. rebuild the index with `HSS_EMBEDDING_MODEL=paraphrase-albert-small-v2` and `--force`, then eval that model (env + `--model` so the embedder matches the index)
+4. rebuild with the default model (`HSS_EMBEDDING_MODEL` or `all-MiniLM-L6-v2`)
+5. `python -m app.ingest --sentence-split`, rebuild, eval (`--preprocessing sentence-split`)
+6. `python -m app.ingest` without the flag, then `--force` rebuild to put the normal corpus and index back
+
+Matching test is `backend/tests/test_run_experiments.py` (LF, venv order, `bash -n`, missing-venv exit 1, stub-python command sequence). Callgraph skipped: the new file is `.sh`, not a scanned `scripts/*.py`.
+
+```
+============================= test session starts =============================
+platform win32 -- Python 3.12.3, pytest-9.1.1, pluggy-1.6.0 -- D:\Kearney\.venv\Scripts\python.exe
+cachedir: .pytest_cache
+rootdir: D:\Kearney\backend
+configfile: pyproject.toml
+plugins: anyio-4.15.0
+collecting ... collected 7 items
+
+backend\tests\test_run_experiments.py::test_script_uses_strict_bash_and_venv_detection PASSED [ 14%]
+backend\tests\test_run_experiments.py::test_script_is_lf PASSED          [ 28%]
+backend\tests\test_run_experiments.py::test_script_covers_required_experiments PASSED [ 42%]
+backend\tests\test_run_experiments.py::test_script_syntax PASSED         [ 57%]
+backend\tests\test_run_experiments.py::test_missing_venv_exits_one PASSED [ 71%]
+backend\tests\test_run_experiments.py::test_run_sequence_with_stub_python PASSED [ 85%]
+backend\tests\test_run_experiments.py::test_prefers_unix_venv_python PASSED [100%]
+
+============================== 7 passed in 6.70s ==============================
+```
+
+Add bash experiment runner with venv python detection
+validated: 7 passed in 6.70s
+
+Review:
+Commit:
+
+---
+
+Date: 2026-09-04
+Prompt id: p-dashboard-repo
+Prompt:
+queries for the dashboard, add them to repo.py: a kpi summary since a timestamp (p50, p95, total, zero result count, error count), volume per hour or per day, top queries with count and avg latency, zero result queries, and logs filtered by level and time range. percentiles in python are fine. tests with a dozen inserted rows with known values.
+Model: Cursor Grok 4.6
+Files: backend/app/storage/repo.py, backend/tests/test_repo.py, frontend/public/callgraph/*.json, docs/codex_log.md
+What came back:
+Dashboard reads live in `backend/app/storage/repo.py`. Percentiles reuse `app.observability.metrics.percentile` (linear interpolation).
+
+- `kpi_summary(conn, since=)` — `total`, `p50`, `p95`, `zero_result_count`, `error_count` for `requests` with `created_at >= since`. Empty window is all zeros.
+- `request_volume(conn, since=, granularity="hour"|"day")` — counts bucketed by `substr` of the ISO timestamp (`YYYY-MM-DDTHH:00:00` or `YYYY-MM-DD`).
+- `top_queries(conn, since=, limit=10)` — `query`, `count`, `avg_latency_ms`, ordered by count then query name.
+- `zero_result_queries(conn, since=, limit=10)` — `result_count = 0` groups with `count` and `last_seen`.
+- `select_logs` now also takes `level` (alias of `severity`), `since`, and `until` (inclusive). Existing `severity=` callers still work.
+
+Tests seed 12 request rows. Row 12 (`old`, 1000 ms, 2026-09-01) is before `SINCE` and is ignored. The other 11 latencies are 10..110: p50 rank 5.0 → 60, p95 rank 9.5 → 105. Four zero-result rows, two errors. Hour buckets 2/2/3/2/2, day buckets 7 and 4. Volcano is the top query (3, avg 20). Logs: ERROR between 2026-09-04T00:00 and T12:00 is only `boom`.
+
+```
+============================= test session starts =============================
+platform win32 -- Python 3.12.3, pytest-9.1.1, pluggy-1.6.0 -- D:\Kearney\.venv\Scripts\python.exe
+cachedir: .pytest_cache
+rootdir: D:\Kearney\backend
+configfile: pyproject.toml
+plugins: anyio-4.15.0
+collecting ... collected 12 items
+
+backend\tests\test_repo.py::test_insert_and_select_request PASSED        [  8%]
+backend\tests\test_repo.py::test_select_requests_newest_first PASSED     [ 16%]
+backend\tests\test_repo.py::test_insert_and_select_feedback PASSED       [ 25%]
+backend\tests\test_repo.py::test_insert_and_select_logs PASSED           [ 33%]
+backend\tests\test_repo.py::test_inserts_are_parameterised PASSED        [ 41%]
+backend\tests\test_repo.py::test_kpi_summary_since_timestamp PASSED      [ 50%]
+backend\tests\test_repo.py::test_kpi_summary_empty_window PASSED         [ 58%]
+backend\tests\test_repo.py::test_volume_per_hour_and_day PASSED          [ 66%]
+backend\tests\test_repo.py::test_volume_rejects_unknown_granularity PASSED [ 75%]
+backend\tests\test_repo.py::test_top_queries_count_and_avg_latency PASSED [ 83%]
+backend\tests\test_repo.py::test_zero_result_queries PASSED              [ 91%]
+backend\tests\test_repo.py::test_logs_filtered_by_level_and_time_range PASSED [100%]
+
+============================= 12 passed in 0.21s ==============================
+```
+
+Regenerated `frontend/public/callgraph/*.json` after changing `repo.py`.
+
+Add dashboard KPI volume top-query and log reads to repo
+validated: 12 passed in 0.21s
+
+Review:
+Commit:
+
+---
+
+Date: 2026-09-04
+Prompt id: p-dashboard-routes
+Prompt:
+backend/app/api/routes_dashboard.py under /api/dashboard: kpi/summary, kpi/volume, kpi/top-queries, kpi/zero-results, experiments (the rows of experiments.csv, empty list if the file isnt there), logs. a window param like 24h or 7d, limit capped at 100. register it in create_app. tests that each returns 200 with the keys we expect.
+Model: Cursor Grok 4.6
+Files: backend/app/api/routes_dashboard.py, backend/app/api/main.py, backend/tests/test_api_dashboard.py, frontend/public/callgraph/*.json, docs/codex_log.md
+What came back:
+`/api/dashboard` is in `backend/app/api/routes_dashboard.py` and registered from `create_app`.
+
+- `GET /api/dashboard/kpi/summary?window=24h` — `{total, p50, p95, zero_result_count, error_count}`
+- `GET /api/dashboard/kpi/volume?window=24h` — `[{bucket, count}]`; `24h` buckets by hour, `7d` by day
+- `GET /api/dashboard/kpi/top-queries?window=7d&limit=10` — `[{query, count, avg_latency_ms}]`
+- `GET /api/dashboard/kpi/zero-results?window=24h` — `[{query, count, last_seen}]`
+- `GET /api/dashboard/experiments` — rows of `data/metrics/experiments.csv`, or `[]` if the file is missing
+- `GET /api/dashboard/logs?window=24h&level=ERROR&limit=50` — `[{created_at, severity, message, request_id}]`
+
+`window` is `Nh` / `Nd` (default `24h`); anything else is 422. `limit` is 1..100 (422 above 100). Handlers open their own SQLite connection so they are not tied to the lifespan thread.
+
+```
+============================= test session starts =============================
+platform win32 -- Python 3.12.3, pytest-9.1.1, pluggy-1.6.0 -- D:\Kearney\.venv\Scripts\python.exe
+cachedir: .pytest_cache
+rootdir: D:\Kearney\backend
+configfile: pyproject.toml
+plugins: anyio-4.15.0
+collecting ... collected 9 items
+
+backend\tests\test_api_dashboard.py::test_kpi_summary_returns_expected_keys PASSED [ 11%]
+backend\tests\test_api_dashboard.py::test_kpi_volume_returns_expected_keys PASSED [ 22%]
+backend\tests\test_api_dashboard.py::test_kpi_top_queries_returns_expected_keys PASSED [ 33%]
+backend\tests\test_api_dashboard.py::test_kpi_zero_results_returns_expected_keys PASSED [ 44%]
+backend\tests\test_api_dashboard.py::test_experiments_empty_when_csv_missing PASSED [ 55%]
+backend\tests\test_api_dashboard.py::test_experiments_returns_csv_row_keys PASSED [ 66%]
+backend\tests\test_api_dashboard.py::test_logs_returns_expected_keys PASSED [ 77%]
+backend\tests\test_api_dashboard.py::test_bad_window_is_422 PASSED       [ 88%]
+backend\tests\test_api_dashboard.py::test_limit_over_100_is_422 PASSED   [100%]
+
+======================== 9 passed, 2 warnings in 7.33s ========================
+```
+
+Regenerated `frontend/public/callgraph/*.json` after adding the dashboard routes.
+
+Add /api/dashboard KPI volume experiments and logs routes
+validated: 9 passed in 7.33s
+
+Review:
+Commit:
+
+---
+
+Date: 2026-09-04
+Prompt id: p-search-result-meta
+Prompt:
+backend/app/search/hybrid.py: put source and created_at on SearchResult (they are already on docs_by_id). backend/app/api/routes_search.py SearchResultItem and the mapping in search(): add source and created_at. matching test in backend/tests/test_api_search.py (and hybrid if the dataclass test needs it).
+
+frontend/src/api.ts: add source and created_at to SearchResult.
+
+frontend/src/components/ResultCard.tsx: each result shows the title as a link to source (new tab if it looks like a url), the date (created_at), the snippet with <em> via innerHTML as now. keep the modal and feedback.
+
+frontend/src/components/ScoreBar.tsx plus the breakdown in ResultCard: three bars, not two — bm25_norm, vector_norm, hybrid_score. fixed track, a minimum fill width so tiny values are still visible, print the number next to each bar, raw values (bm25_score / vector_score / hybrid_score) on hover. plain css in frontend/src/App.css. no ui library.
+
+check the codebase and do it
+Model: Cursor Grok 4.6
+Files: backend/app/search/hybrid.py, backend/app/api/routes_search.py, backend/tests/test_api_search.py, backend/tests/test_hybrid.py, frontend/src/api.ts, frontend/src/components/ResultCard.tsx, frontend/src/components/ScoreBar.tsx, frontend/src/App.css, frontend/public/callgraph/*.json, docs/codex_log.md
+What came back:
+Search results now carry `source` and `created_at` from `docs_by_id` through `SearchResult` → `/search` → the result card. Each card links the title to `source` (new tab when it looks like `http(s)://`), shows the date, keeps the snippet `<em>` highlighting, and still opens the document modal / Yes-No feedback. The score breakdown is three bars: `bm25_norm`, `vector_norm`, and `hybrid_score`.
+
+**Backend.** `SearchResult` in `hybrid.py` copies `source` and `created_at` off the doc map. `SearchResultItem` and the `search()` mapping in `routes_search.py` expose the same fields. `test_search_returns_score_breakdown_and_snippet` asserts both keys and that sample hits have `source == "sample"`. `test_result_carries_raw_and_normalised` covers the dataclass.
+
+**Frontend.** `SearchResult` in `api.ts` includes the two fields. The title is an `<a href={source}>`; `target="_blank"` + `rel="noopener noreferrer"` only when the source looks like a URL. Clicking the title does not open the modal. `created_at` is shown as a formatted `<time>`. Snippet highlighting is unchanged (`dangerouslySetInnerHTML`).
+
+**Score bars.** `ScoreBar` takes the normalised `value` for fill and the raw score for the hover `title`. The track is a fixed 160px. Non-zero fills are clamped to at least 6% / 6px so tiny values stay visible. The printed number sits next to each bar. Third fill color is `--info`. No UI library.
+
+```
+.......................                                                  [100%]
+============================== warnings summary ===============================
+.venv\Lib\site-packages\fastapi\testclient.py:1
+  D:\Kearney\backend\.venv\Lib\site-packages\fastapi\testclient.py:1: StarletteDeprecationWarning: Using `httpx` with `starlette.testclient` is deprecated; install `httpx2` instead.
+    from starlette.testclient import TestClient as TestClient  # noqa
+
+.venv\Lib\site-packages\starlette\testclient.py:53
+  D:\Kearney\backend\.venv\Lib\site-packages\starlette\testclient.py:53: DeprecationWarning: The anyio.abc.BlockingPortal alias is deprecated, use anyio.from_thread.BlockingPortal instead.
+    _PortalFactoryType = Callable[[], AbstractContextManager[anyio.abc.BlockingPortal]]
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+23 passed, 2 warnings in 4.36s
+```
+
+Regenerated `frontend/public/callgraph/*.json`. No browser tools were available, so the card/bar UI was not exercised in a browser.
+
+Expose source and created_at on search results
+validated: 23 passed in 4.36s
+
+Review:
+Commit:
+
+---
+
+Date: 2026-09-04
+Prompt id: p-nav-placeholder-pages
+Prompt:
+frontend/src/App.tsx and frontend/src/components/Sidebar.tsx (and Navbar.tsx if the home header needs the same links): keep Home / System / Settings if they are already there. add Search, KPIs, Evaluation, Debug to the nav. new placeholder pages frontend/src/pages/KpisPage.tsx, frontend/src/pages/EvaluationPage.tsx, frontend/src/pages/DebugPage.tsx, title plus one line, do not wire the dashboard api yet.
+
+footer on the app shell (not a hardcoded v0.1.0): fetch GET /health once and show version and commit. npm run build must pass. do not bring back the vite template.
+
+named files only. tests for the backend field change; show the output. npm run build must pass; show the output.
+Model: Cursor Grok 4.6
+Files: frontend/src/App.tsx, frontend/src/components/Sidebar.tsx, frontend/src/components/Navbar.tsx, frontend/src/pages/KpisPage.tsx, frontend/src/pages/EvaluationPage.tsx, frontend/src/pages/DebugPage.tsx, frontend/public/callgraph/*.json, docs/codex_log.md
+What came back:
+The app shell nav now has Home, Search, KPIs, Evaluation, Debug, System, and Settings. KPIs / Evaluation / Debug are title-plus-one-line placeholders; the dashboard API is not wired. The shell footer fetches `GET /health` once and shows `version` and `commit` instead of a hardcoded `v0.1.0`.
+
+**Nav.** Sidebar keeps Home, Search, System, and Settings, and adds KPIs, Evaluation, and Debug. The home header (`Navbar.tsx`) gets the same new links (Home, Search, KPIs, Evaluation, Debug, System). Settings stays in the sidebar bottom. The hardcoded sidebar/navbar `v0.1.0` tags are gone.
+
+**Pages.** `KpisPage`, `EvaluationPage`, and `DebugPage` each render an existing `page-title` plus one `page-desc` line. No dashboard fetch.
+
+**Footer.** `App` calls `getHealth()` once on mount. When the shell is showing, a `home-footer` prints version · commit. If `/health` fails, the footer stays empty.
+
+**Backend field tests** (`source` / `created_at` on search results):
+
+```
+.......................                                                  [100%]
+============================== warnings summary ===============================
+.venv\Lib\site-packages\fastapi\testclient.py:1
+  D:\Kearney\backend\.venv\Lib\site-packages\fastapi\testclient.py:1: StarletteDeprecationWarning: Using `httpx` with `starlette.testclient` is deprecated; install `httpx2` instead.
+    from starlette.testclient import TestClient as TestClient  # noqa
+
+.venv\Lib\site-packages\starlette\testclient.py:53
+  D:\Kearney\backend\.venv\Lib\site-packages\starlette\testclient.py:53: DeprecationWarning: The anyio.abc.BlockingPortal alias is deprecated, use anyio.from_thread.BlockingPortal instead.
+    _PortalFactoryType = Callable[[], AbstractContextManager[anyio.abc.BlockingPortal]]
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+23 passed, 2 warnings in 3.53s
+```
+
+**npm run build:**
+
+```
+> frontend@0.0.0 build
+> tsc -b && vite build
+
+vite v8.2.2 building client environment for production...
+transforming...
+✓ 36 modules transformed.
+rendering chunks...
+computing gzip size...
+dist/index.html                   0.66 kB │ gzip:  0.38 kB
+dist/assets/index-B37WhxAx.css   25.36 kB │ gzip:  5.42 kB
+dist/assets/index-B2FVsbCo.js   241.40 kB │ gzip: 74.86 kB
+
+✓ built in 6.01s
+```
+
+Regenerated `frontend/public/callgraph/*.json`. No browser tools were available, so the new nav and footer were not clicked in a browser.
+
+Add KPIs Evaluation Debug nav placeholders
+validated: 23 passed in 3.53s; npm run build passed
+
+Review:
+Commit:
+
+---
 
 

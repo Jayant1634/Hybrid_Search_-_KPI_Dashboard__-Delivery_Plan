@@ -17,6 +17,8 @@ export interface SearchRequest {
 export interface SearchResult {
   doc_id: string;
   title: string;
+  source: string;
+  created_at: string;
   bm25_score: number;
   vector_score: number;
   bm25_norm: number;
