@@ -1,14 +1,42 @@
-"""Shared fake docs and tmp-repo fixtures."""
+"""Shared fake docs, embedder, and tmp-repo fixtures."""
 
 from __future__ import annotations
 
+import hashlib
 import json
 from collections.abc import Iterator
 from pathlib import Path
 
+import numpy as np
 import pytest
+from numpy.typing import NDArray
 
 from app.config import load_config
+
+
+class FakeEmbedder:
+    """Deterministic Embedder: hash each text to seed a unit vector of dim 8."""
+
+    dimension = 8
+
+    def encode(self, texts: list[str]) -> NDArray[np.float32]:
+        if not texts:
+            return np.zeros((0, self.dimension), dtype=np.float32)
+        rows = np.stack([self._vector(text) for text in texts])
+        return np.asarray(rows, dtype=np.float32)
+
+    def _vector(self, text: str) -> NDArray[np.float64]:
+        digest = hashlib.sha256(text.encode("utf-8")).digest()
+        seed = int.from_bytes(digest[:8], "little")
+        rng = np.random.default_rng(seed)
+        vec = rng.standard_normal(self.dimension)
+        norm = float(np.linalg.norm(vec))
+        if norm == 0.0:
+            vec = np.zeros(self.dimension, dtype=np.float64)
+            vec[0] = 1.0
+        else:
+            vec = vec / norm
+        return vec
 
 SAMPLE_DOCS: list[dict[str, str]] = [
     {
@@ -56,6 +84,11 @@ SAMPLE_DOCS: list[dict[str, str]] = [
 ]
 
 _DATA_FOLDERS = ("raw", "processed", "index", "eval", "metrics")
+
+
+@pytest.fixture
+def fake_embedder() -> FakeEmbedder:
+    return FakeEmbedder()
 
 
 @pytest.fixture
