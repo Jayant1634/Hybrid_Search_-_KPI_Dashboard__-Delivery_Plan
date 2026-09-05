@@ -44,6 +44,24 @@ def test_save_load_roundtrip(
     assert loaded.query(query_vec, k=3) == index.query(query_vec, k=3)
 
 
+def test_repeated_doc_ids_collapse_to_best_chunk(
+    fake_embedder: FakeEmbedder,
+) -> None:
+    # Two chunks share one doc_id; the query equals the second chunk's text.
+    chunk_texts = ["a volcano erupts", "bread and yeast dough", "the moon at night"]
+    doc_ids = ["doc-a", "doc-a", "doc-b"]
+    index = VectorIndex.build(doc_ids, fake_embedder.encode(chunk_texts))
+
+    results = index.query(fake_embedder.encode(["bread and yeast dough"])[0], k=5)
+
+    # doc-a appears exactly once, scored by its best-matching chunk (~1.0).
+    returned_ids = [doc_id for doc_id, _ in results]
+    assert returned_ids.count("doc-a") == 1
+    assert set(returned_ids) == {"doc-a", "doc-b"}
+    doc_a_score = next(score for doc_id, score in results if doc_id == "doc-a")
+    assert doc_a_score == pytest.approx(1.0, abs=1e-5)
+
+
 def test_query_wrong_dimension_raises(fake_embedder: FakeEmbedder) -> None:
     index = _build_index(fake_embedder)
     bad_vector = np.ones(3, dtype=np.float32)

@@ -8,6 +8,8 @@ from app.config import load_config
 _HSS_KEYS = (
     "HSS_REPO_ROOT",
     "HSS_EMBEDDING_MODEL",
+    "HSS_MAX_SEQ_LENGTH",
+    "HSS_INDEX_GRANULARITY",
     "HSS_DEFAULT_ALPHA",
     "HSS_NORMALISATION",
     "HSS_API_PORT",
@@ -41,6 +43,8 @@ def test_repo_root_resolves(monkeypatch: pytest.MonkeyPatch) -> None:
     assert settings.metrics_dir == expected / "data" / "metrics"
     assert settings.sqlite_path == expected / "data" / "hss.sqlite"
     assert settings.embedding_model == "all-MiniLM-L6-v2"
+    assert settings.max_seq_length == 512
+    assert settings.index_granularity == "document"
     assert settings.default_alpha == 0.3
     assert settings.normalisation == "minmax"
     assert settings.api_port == 8000
@@ -67,3 +71,21 @@ def test_env_override(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
     assert settings.embedding_model == "other-model"
     assert settings.default_alpha == 0.7
     assert settings.api_port == 9000
+
+
+def test_granularity_env_override(monkeypatch: pytest.MonkeyPatch) -> None:
+    _clear_hss(monkeypatch)
+    monkeypatch.setenv("HSS_INDEX_GRANULARITY", "SENTENCE")
+    monkeypatch.setenv("HSS_MAX_SEQ_LENGTH", "256")
+    settings = load_config()
+    assert settings.index_granularity == "sentence"
+    assert settings.max_seq_length == 256
+
+
+def test_granularity_invalid_falls_back_to_document(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    _clear_hss(monkeypatch)
+    monkeypatch.setenv("HSS_INDEX_GRANULARITY", "paragraph")
+    settings = load_config()
+    assert settings.index_granularity == "document"

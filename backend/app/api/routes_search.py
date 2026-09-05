@@ -13,6 +13,7 @@ info, and the built index's metadata.
 
 from __future__ import annotations
 
+import threading
 import time
 import uuid
 from dataclasses import asdict
@@ -21,10 +22,13 @@ from fastapi import APIRouter, HTTPException, Request
 from fastapi.responses import PlainTextResponse
 from pydantic import BaseModel
 
-from app.api.deps import SearchService, get_commit, get_version
-from app.api.schemas import FeedbackRequest, SearchRequest
+from app.api.deps import SearchService, get_commit, get_commit_message, get_version
+from app.api.schemas import FeedbackRequest, ReindexRequest, SearchRequest
 from app.config import load_config
+from app.index.__main__ import build_indexes
 from app.index.metadata import IndexMetadata
+from app.index.progress import fail, finishing, finish, snapshot, try_start, update
+from app.ingest.writer import read_jsonl
 from app.observability.metrics import render as render_metrics
 from app.search.filters import SearchFilters
 from app.search.highlight import (
@@ -49,6 +53,8 @@ class IndexMeta(BaseModel):
     corpus_hash: str
     doc_count: int
     built_at: str
+    granularity: str = "document"
+    vector_count: int = 0
 
 
 class HealthResponse(BaseModel):
@@ -57,6 +63,7 @@ class HealthResponse(BaseModel):
     status: str
     version: str
     commit: str
+    commit_message: str = ""
     index: IndexMeta | None
 
 
@@ -81,6 +88,26 @@ class SearchResponse(BaseModel):
     request_id: str
     took_ms: float
     results: list[SearchResultItem]
+
+
+class ReindexProgress(BaseModel):
+    """Live encode progress for an in-flight ``POST /reindex``."""
+
+    running: bool
+    granularity: str | None
+    done: int
+    total: int
+    percent: float
+    phase: str
+    error: str | None = None
+
+
+class ReindexResponse(BaseModel):
+    """Acknowledgement that a rebuild was started in the background."""
+
+    started: bool
+    already_running: bool
+    progress: ReindexProgress
 
 
 class FeedbackResponse(BaseModel):
@@ -136,6 +163,7 @@ def health() -> HealthResponse:
         status="ok",
         version=get_version(),
         commit=get_commit(),
+        commit_message=get_commit_message(),
         index=_index_metadata(),
     )
 
@@ -196,6 +224,92 @@ def search(payload: SearchRequest, request: Request) -> SearchResponse:
         took_ms=took_ms,
         results=results,
     )
+
+
+def _progress_model() -> ReindexProgress:
+    status = snapshot()
+    return ReindexProgress(
+        running=status.running,
+        granularity=status.granularity,
+        done=status.done,
+        total=status.total,
+        percent=status.percent,
+        phase=status.phase,
+        error=status.error,
+    )
+
+
+def _run_reindex(
+    app: object,
+    granularity: str,
+    embedder: object,
+    docs: object,
+    settings: object,
+) -> None:
+    """Encode + reload the search service; always clears the running flag."""
+    try:
+        build_indexes(
+            docs,
+            settings.index_dir,
+            embedder,
+            settings.embedding_model,
+            granularity=granularity,
+            on_progress=update,
+        )
+        finishing()
+        app.state.search_service = SearchService.load(embedder, settings)  # type: ignore[attr-defined]
+        finish()
+    except Exception as exc:
+        fail(str(exc))
+
+
+@router.post("/reindex", response_model=ReindexResponse, status_code=202)
+def reindex(payload: ReindexRequest, request: Request) -> ReindexResponse:
+    """Start a background rebuild at ``granularity`` and return immediately.
+
+    Poll ``GET /reindex/progress`` for the live percent. A second start while
+    one is running is rejected with 409.
+    """
+    service = _get_service(request)
+    settings = load_config()
+
+    docs_path = settings.processed_dir / "docs.jsonl"
+    if not docs_path.is_file():
+        raise HTTPException(
+            status_code=409,
+            detail=f"corpus not found at {docs_path}; ingest first",
+        )
+    docs = read_jsonl(docs_path)
+    if not docs:
+        raise HTTPException(status_code=409, detail="corpus is empty; ingest first")
+
+    if not try_start(payload.granularity):
+        raise HTTPException(status_code=409, detail="a reindex is already running")
+
+    worker = threading.Thread(
+        target=_run_reindex,
+        args=(
+            request.app,
+            payload.granularity,
+            service.searcher.embedder,
+            docs,
+            settings,
+        ),
+        name="hss-reindex",
+        daemon=True,
+    )
+    worker.start()
+    return ReindexResponse(
+        started=True,
+        already_running=False,
+        progress=_progress_model(),
+    )
+
+
+@router.get("/reindex/progress", response_model=ReindexProgress)
+def reindex_progress() -> ReindexProgress:
+    """Return the latest encode-batch snapshot for a live rebuild."""
+    return _progress_model()
 
 
 @router.get("/documents/{doc_id}", response_model=DocumentDetail)

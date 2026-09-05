@@ -71,6 +71,14 @@ class SearchRequest(BaseModel):
         return self
 
 
+class ReindexRequest(BaseModel):
+    """Ask the server to rebuild the vector index at a given granularity."""
+
+    model_config = ConfigDict(extra="forbid")
+
+    granularity: Literal["document", "sentence"]
+
+
 class SearchResultItem(BaseModel):
     """A single ranked hit with its full, explainable score breakdown."""
 

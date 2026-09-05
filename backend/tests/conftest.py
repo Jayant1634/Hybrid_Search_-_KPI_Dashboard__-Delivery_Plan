@@ -19,10 +19,16 @@ class FakeEmbedder:
 
     dimension = 8
 
-    def encode(self, texts: list[str]) -> NDArray[np.float32]:
+    def encode(
+        self,
+        texts: list[str],
+        on_progress: object | None = None,
+    ) -> NDArray[np.float32]:
         if not texts:
             return np.zeros((0, self.dimension), dtype=np.float32)
         rows = np.stack([self._vector(text) for text in texts])
+        if on_progress is not None:
+            on_progress(len(texts), len(texts))  # type: ignore[operator]
         return np.asarray(rows, dtype=np.float32)
 
     def _vector(self, text: str) -> NDArray[np.float64]:

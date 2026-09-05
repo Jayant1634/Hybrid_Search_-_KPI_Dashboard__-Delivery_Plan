@@ -29,7 +29,11 @@ class VectorIndex:
 
     @classmethod
     def build(cls, doc_ids: list[str], vectors: NDArray[np.float32]) -> VectorIndex:
-        """Build an index from ``doc_ids`` and a matching ``(n, dim)`` matrix."""
+        """Build an index from ``doc_ids`` and a matching ``(n, dim)`` matrix.
+
+        ``doc_ids`` may repeat: sentence granularity stores several chunk
+        vectors under the same document id, and :meth:`query` collapses them.
+        """
         matrix = np.asarray(vectors, dtype=np.float32)
         if matrix.ndim != 2:
             raise ValueError(f"vectors must be 2-D, got {matrix.ndim} dimensions")
@@ -47,21 +51,32 @@ class VectorIndex:
     def query(
         self, vector: NDArray[np.float32], k: int
     ) -> list[tuple[str, float]]:
-        """Return ``(doc_id, score)`` for the ``k`` nearest docs, score desc."""
+        """Return ``(doc_id, score)`` for the ``k`` best-scoring docs, desc.
+
+        When a document has several vectors (sentence granularity), it is scored
+        by its single best-matching chunk (max cosine) so one document appears
+        once. With unique doc ids this is the plain top-``k``.
+        """
         row = np.asarray(vector, dtype=np.float32).reshape(1, -1)
         if row.shape[1] != self.dimension:
             raise ValueError(
                 f"query vector dimension {row.shape[1]} "
                 f"does not match index dimension {self.dimension}"
             )
-        k = min(k, len(self._doc_ids))
-        scores, indices = self._index.search(row, k)
-        results: list[tuple[str, float]] = []
+        total = len(self._doc_ids)
+        if total == 0:
+            return []
+        scores, indices = self._index.search(row, total)
+        best: dict[str, float] = {}
         for score, idx in zip(scores[0], indices[0]):
             if idx < 0:
                 continue
-            results.append((self._doc_ids[idx], float(score)))
-        return results
+            doc_id = self._doc_ids[idx]
+            value = float(score)
+            if doc_id not in best or value > best[doc_id]:
+                best[doc_id] = value
+        ranked = sorted(best.items(), key=lambda pair: (-pair[1], pair[0]))
+        return ranked[: max(0, k)]
 
     def save(self, folder: Path | str) -> None:
         """Write the faiss index and doc ids into ``folder``."""

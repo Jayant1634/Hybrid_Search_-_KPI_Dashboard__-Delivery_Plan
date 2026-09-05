@@ -18,6 +18,8 @@ class Settings:
     metrics_dir: Path
     sqlite_path: Path
     embedding_model: str
+    max_seq_length: int
+    index_granularity: str
     default_alpha: float
     normalisation: str
     api_port: int
@@ -74,6 +76,14 @@ def _env_float(key: str, default: float) -> float:
     return float(value)
 
 
+_GRANULARITIES = frozenset({"document", "sentence"})
+
+
+def _env_granularity(key: str, default: str) -> str:
+    value = _env_str(key, default).strip().lower()
+    return value if value in _GRANULARITIES else default
+
+
 @lru_cache
 def load_config() -> Settings:
     repo_root = find_repo_root()
@@ -87,6 +97,8 @@ def load_config() -> Settings:
         metrics_dir=data_dir / "metrics",
         sqlite_path=data_dir / "hss.sqlite",
         embedding_model=_env_str("HSS_EMBEDDING_MODEL", "all-MiniLM-L6-v2"),
+        max_seq_length=_env_int("HSS_MAX_SEQ_LENGTH", 512),
+        index_granularity=_env_granularity("HSS_INDEX_GRANULARITY", "document"),
         default_alpha=_env_float("HSS_DEFAULT_ALPHA", 0.3),
         normalisation=_env_str("HSS_NORMALISATION", "minmax"),
         api_port=_env_int("HSS_API_PORT", 8000),
