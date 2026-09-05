@@ -3266,3 +3266,53 @@ Review:
 Commit:
 
 ---
+
+Date: 2026-09-05
+Prompt id: p-sqlite-migrations
+Prompt:
+i added a NOT NULL column to the requests table and the insert, restarted against the
+existing db, and every search now logs this:
+
+<error: sqlite3.OperationalError: table requests has no column named client_id>
+
+create-if-not-exists cant deal with this. lets do real migrations but keep them simple: a
+migrations folder next to db.py with numbered sql files, 001 is the current v1 schema, 002
+adds client_id with a default. a schema_version table, and a migrate() that applies whatever
+is above the current version, each file in its own transaction. init_schema just calls
+migrate. tests: a fresh db ends at version 2 with the column, a db built from 001 only
+upgrades and takes an insert, running migrate twice does nothing.
+
+check the codebase and fix this
+Model: Claude Opus 4.8
+Files: backend/app/storage/db.py, backend/app/storage/migrations/001_initial.sql, backend/app/storage/migrations/002_add_client_id.sql, backend/tests/test_db.py, frontend/public/callgraph/*.json, docs/codex_log.md
+What came back:
+Replaced the `CREATE TABLE IF NOT EXISTS` block in `db.py` with numbered SQL migrations. `_SCHEMA` is gone; `db.py` now discovers `migrations/NNN_*.sql`, tracks a `schema_version` table, and applies each pending file in its own transaction.
+
+New `backend/app/storage/migrations/`:
+- `001_initial.sql` — the v1 schema (the three original tables; `requests` without `client_id`), still `CREATE TABLE IF NOT EXISTS` so it is a no-op on the already-created production tables.
+- `002_add_client_id.sql` — `ALTER TABLE requests ADD COLUMN client_id TEXT NOT NULL DEFAULT ''` (a default is required for a NOT NULL add).
+
+`db.py`:
+- `migrate(conn, migrations_dir=None)` — creates `schema_version(version, applied_at)` if missing, reads the current max version, then applies every discovered file whose number is higher. It flips `isolation_level` to `None` and wraps each file in an explicit `BEGIN … COMMIT` (so DDL is included), `ROLLBACK` on error, and records the version in the same transaction. Returns the resulting version.
+- `init_schema(conn)` now just calls `migrate(conn)`, so `main.py`'s lifespan is unchanged and existing callers keep working.
+
+Applied to the live `data/hss.sqlite` (the reloading server had already run it via lifespan): `client_id` present, `schema_version` at 2, all 175 rows preserved, second `migrate()` a no-op.
+
+Live re-check: `POST /search` → 200 and the row now persists (175 → 176); `POST /api/dashboard/kpi/load-test` → 200 (was 500).
+
+Tests (`tests/test_db.py`, `tests/test_repo.py`):
+
+```
+============================= 19 passed in 0.29s ==============================
+```
+
+The three requested cases: `test_fresh_db_migrates_to_version_2_with_client_id`, `test_db_built_from_001_only_upgrades_and_takes_insert`, `test_migrate_twice_is_a_noop`.
+
+Full suite: 327 passed, 8 xfailed. Callgraph regenerated. Did not touch `docs/break_fix_log.md` (not named this turn; Scenario B still records the break).
+
+break: fix... — see commit line below.
+validated: 19 passed in 0.29s (3 new); full suite 327 passed, 8 xfailed; live /search persists (175->176) and KPI load-test 200; callgraph rewritten
+Review:
+Commit:
+
+---
