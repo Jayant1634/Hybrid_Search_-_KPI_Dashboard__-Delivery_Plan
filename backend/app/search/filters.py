@@ -1,16 +1,21 @@
 """Pre-ranking filters over document metadata.
 
 ``SearchFilters`` captures the optional constraints a caller can put on the
-candidate set before scoring: a substring the ``source`` must contain and an
-inclusive ``created_at`` range. ``apply`` keeps only the docs that satisfy every
-set constraint. Timestamps are compared lexically, which is correct for the
-ISO-8601 ``created_at`` values we store.
+candidate set before scoring: a named ``dataset``, a substring the ``source``
+must contain, and an inclusive ``created_at`` range. ``apply`` keeps only the
+docs that satisfy every set constraint. Timestamps are compared lexically,
+which is correct for the ISO-8601 ``created_at`` values we store.
 """
 
 from __future__ import annotations
 
 from collections.abc import Iterable, Mapping
 from dataclasses import dataclass
+
+DATASET_MARKERS: dict[str, tuple[str, ...]] = {
+    "wikipedia": ("wikipedia.org",),
+    "contracts": ("kearney-contracts",),
+}
 
 
 @dataclass(frozen=True)
@@ -20,11 +25,17 @@ class SearchFilters:
     source_contains: str | None = None
     created_from: str | None = None
     created_to: str | None = None
+    dataset: str | None = None
 
     def matches(self, doc: Mapping[str, str]) -> bool:
         """Return whether ``doc`` satisfies every set constraint."""
+        source = doc.get("source", "")
+        if self.dataset:
+            markers = DATASET_MARKERS.get(self.dataset, (self.dataset,))
+            if not any(marker in source for marker in markers):
+                return False
         if self.source_contains:
-            if self.source_contains not in doc.get("source", ""):
+            if self.source_contains not in source:
                 return False
         created_at = doc.get("created_at", "")
         if self.created_from and created_at < self.created_from:

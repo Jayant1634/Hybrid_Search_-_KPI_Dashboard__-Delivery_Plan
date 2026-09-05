@@ -161,3 +161,65 @@ def test_bad_window_is_422(client: TestClient) -> None:
 def test_limit_over_100_is_422(client: TestClient) -> None:
     resp = client.get("/api/dashboard/logs", params={"limit": 101})
     assert resp.status_code == 422
+
+
+def test_kpi_load_test_fires_concurrent_searches(client: TestClient) -> None:
+    from app.loadtest.burst import run_search_burst
+
+    direct = run_search_burst(
+        client.app.state.search_service.searcher,
+        None,
+        query="volcano",
+        count=4,
+        top_k=5,
+    )
+    assert direct.sent == 4
+    assert direct.ok == 4
+
+
+def test_kpi_load_test_endpoint_persists_rows(client: TestClient) -> None:
+    before = client.get("/api/dashboard/kpi/summary", params={"window": "24h"})
+    assert before.status_code == 200
+    prior_total = before.json()["total"]
+
+    resp = client.post(
+        "/api/dashboard/kpi/load-test",
+        json={"query": "volcano", "count": 4, "top_k": 5},
+    )
+    assert resp.status_code == 200
+    body = resp.json()
+    assert set(body) == {
+        "sent",
+        "ok",
+        "failed",
+        "wall_ms",
+        "p50",
+        "p95",
+        "avg_ms",
+        "min_ms",
+        "max_ms",
+    }
+    assert body["sent"] == 4
+    assert body["ok"] == 4
+    assert body["failed"] == 0
+    assert body["p50"] > 0.0
+
+    after = client.get("/api/dashboard/kpi/summary", params={"window": "24h"})
+    assert after.status_code == 200
+    assert after.json()["total"] == prior_total + 4
+
+
+def test_kpi_load_test_rejects_count_of_one(client: TestClient) -> None:
+    resp = client.post(
+        "/api/dashboard/kpi/load-test",
+        json={"query": "volcano", "count": 1},
+    )
+    assert resp.status_code == 422
+
+
+def test_kpi_load_test_rejects_count_over_two_hundred(client: TestClient) -> None:
+    resp = client.post(
+        "/api/dashboard/kpi/load-test",
+        json={"query": "volcano", "count": 201},
+    )
+    assert resp.status_code == 422

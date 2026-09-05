@@ -75,6 +75,68 @@ def test_filtered_search_excludes_and_highlights(searcher: HybridSearcher) -> No
     assert "<em>" in by_id["doc-001"].snippet
 
 
+def test_dataset_filter_keeps_matching_source(searcher: HybridSearcher) -> None:
+    results = searcher.search(
+        _QUERY,
+        top_k=len(SAMPLE_DOCS),
+        filters=SearchFilters(dataset="contracts"),
+    )
+    assert results == []
+
+
+def test_dataset_filter_keeps_contract_docs(fake_embedder: FakeEmbedder) -> None:
+    docs = [
+        {
+            **SAMPLE_DOCS[0],
+            "source": "https://simple.wikipedia.org/wiki/Volcano",
+        },
+        {
+            "doc_id": "doc-c1",
+            "title": "Limitation of liability",
+            "text": (
+                "This master services agreement limits Kearney aggregate liability "
+                "for the consulting engagement and names a change-order cap."
+            ),
+            "source": "kearney-contracts/msa/acme-2024-0001",
+            "created_at": "2024-06-01T00:00:00Z",
+        },
+    ]
+    searcher = HybridSearcher(
+        BM25Index.build(docs),
+        VectorIndex.build(
+            [doc["doc_id"] for doc in docs],
+            fake_embedder.encode([doc["text"] for doc in docs]),
+        ),
+        fake_embedder,
+        {doc["doc_id"]: doc for doc in docs},
+    )
+    wiki = searcher.search("volcano lava", top_k=2, filters=SearchFilters(dataset="wikipedia"))
+    contracts = searcher.search(
+        "limitation of liability",
+        top_k=2,
+        filters=SearchFilters(dataset="contracts"),
+    )
+    assert _ids(wiki) == ["doc-001"]
+    assert _ids(contracts) == ["doc-c1"]
+
+
+def test_min_vector_score_keeps_only_confident_hits(
+    searcher: HybridSearcher,
+) -> None:
+    ungated = searcher.search(_QUERY, top_k=len(SAMPLE_DOCS), min_vector_score=0.0)
+    assert ungated
+    ceiling = max(result.vector_raw for result in ungated)
+    kept = searcher.search(
+        _QUERY, top_k=len(SAMPLE_DOCS), min_vector_score=ceiling
+    )
+    assert kept
+    assert all(result.vector_raw >= ceiling for result in kept)
+    empty = searcher.search(
+        _QUERY, top_k=len(SAMPLE_DOCS), min_vector_score=ceiling + 0.01
+    )
+    assert empty == []
+
+
 def test_result_carries_raw_and_normalised(searcher: HybridSearcher) -> None:
     results = searcher.search(_QUERY, top_k=1, alpha=0.5)
     top = results[0]

@@ -1,8 +1,9 @@
 """Dashboard reads under ``/api/dashboard``.
 
 KPI endpoints take a ``window`` like ``24h`` or ``7d``. List endpoints take
-``limit``, capped at 100. ``GET /experiments`` returns the rows of
-``experiments.csv``, or an empty list if the file is missing.
+``limit``, capped at 100. ``POST /kpi/load-test`` fires concurrent
+``/search`` hits for the KPI latency drawer. ``GET /experiments`` returns
+the rows of ``experiments.csv``, or an empty list if the file is missing.
 """
 
 from __future__ import annotations
@@ -14,10 +15,17 @@ from contextlib import contextmanager
 from datetime import datetime, timedelta, timezone
 from typing import Annotated, Literal
 
-from fastapi import APIRouter, HTTPException, Query
-from pydantic import BaseModel
+from fastapi import APIRouter, HTTPException, Query, Request
+from pydantic import BaseModel, Field
 
 from app.config import load_config
+from app.loadtest.burst import (
+    DEFAULT_COUNT,
+    DEFAULT_QUERY,
+    MAX_COUNT,
+    MIN_COUNT,
+    run_search_burst,
+)
 from app.storage.db import connect
 from app.storage.repo import (
     kpi_summary,
@@ -65,6 +73,26 @@ class LogEntry(BaseModel):
     severity: str
     message: str
     request_id: str | None
+
+
+class LoadTestRequest(BaseModel):
+    query: str = Field(default=DEFAULT_QUERY, min_length=1, max_length=500)
+    count: int = Field(default=DEFAULT_COUNT, ge=MIN_COUNT, le=MAX_COUNT)
+    top_k: int = Field(default=10, ge=1, le=50)
+    alpha: float | None = Field(default=None, ge=0.0, le=1.0)
+    dataset: Literal["wikipedia", "contracts"] | None = None
+
+
+class LoadTestResponse(BaseModel):
+    sent: int
+    ok: int
+    failed: int
+    wall_ms: float
+    p50: float
+    p95: float
+    avg_ms: float
+    min_ms: float
+    max_ms: float
 
 
 def parse_window(window: str) -> tuple[str, Literal["hour", "day"]]:
@@ -147,6 +175,36 @@ def dashboard_kpi_top_queries(
         )
         for row in rows
     ]
+
+
+@router.post("/kpi/load-test", response_model=LoadTestResponse)
+def dashboard_kpi_load_test(
+    payload: LoadTestRequest, request: Request
+) -> LoadTestResponse:
+    """Fire ``count`` concurrent searches and return burst latency."""
+
+    service = request.app.state.search_service
+    with _db() as conn:
+        result = run_search_burst(
+            service.searcher,
+            conn,
+            query=payload.query,
+            count=payload.count,
+            top_k=payload.top_k,
+            alpha=payload.alpha,
+            dataset=payload.dataset,
+        )
+    return LoadTestResponse(
+        sent=result.sent,
+        ok=result.ok,
+        failed=result.failed,
+        wall_ms=result.wall_ms,
+        p50=result.p50,
+        p95=result.p95,
+        avg_ms=result.avg_ms,
+        min_ms=result.min_ms,
+        max_ms=result.max_ms,
+    )
 
 
 @router.get("/kpi/zero-results", response_model=list[ZeroResultQuery])

@@ -35,16 +35,7 @@ export function decodeSnippet(snippet: string): string {
 function termMatchesWord(term: string, word: string): boolean {
   if (!term || !word) return false
   if (word === term) return true
-  if (term.length >= 3 && (word.includes(term) || word.startsWith(term))) return true
-  if (word.length >= 3 && term.startsWith(word)) return true
-  if (term.length < 3) return false
-  let shared = 0
-  const n = Math.min(term.length, word.length)
-  for (let i = 0; i < n; i += 1) {
-    if (term[i] !== word[i]) break
-    shared += 1
-  }
-  return shared >= 3
+  return term.length >= 3 && word.includes(term)
 }
 
 export function highlightContaining(text: string, query: string): string {

@@ -36,6 +36,7 @@ class SearchFiltersModel(BaseModel):
     source_contains: str | None = None
     created_from: str | None = None
     created_to: str | None = None
+    dataset: Literal["wikipedia", "contracts"] | None = None
 
     @field_validator("created_from", "created_to")
     @classmethod
@@ -59,6 +60,7 @@ class SearchRequest(BaseModel):
     top_k: int = Field(default=10, ge=1, le=50)
     alpha: float = Field(default_factory=_default_alpha, ge=0.0, le=1.0)
     normalization: Normalization = Field(default_factory=_default_normalization)
+    min_vector_score: float = Field(default=0.2, ge=0.0, le=1.0)
     filters: SearchFiltersModel | None = None
 
 

@@ -1,9 +1,12 @@
 export type Normalization = "minmax" | "zscore";
 
+export type DatasetName = "wikipedia" | "contracts";
+
 export interface SearchFilters {
   source_contains?: string | null;
   created_from?: string | null;
   created_to?: string | null;
+  dataset?: DatasetName | null;
 }
 
 export interface SearchRequest {
@@ -11,6 +14,7 @@ export interface SearchRequest {
   top_k?: number;
   alpha?: number;
   normalization?: Normalization;
+  min_vector_score?: number;
   filters?: SearchFilters | null;
 }
 
@@ -116,6 +120,12 @@ export interface TermOccurrence {
   count: number;
 }
 
+export interface ClosestWord {
+  term: string;
+  count: number;
+  score: number;
+}
+
 export interface DocumentDetail {
   doc_id: string;
   title: string;
@@ -124,6 +134,7 @@ export interface DocumentDetail {
   text: string;
   highlighted_text: string;
   occurrences: TermOccurrence[];
+  closest: ClosestWord[];
 }
 
 export async function search(req: SearchRequest): Promise<SearchResponse> {

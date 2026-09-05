@@ -27,7 +27,11 @@ from app.config import load_config
 from app.index.metadata import IndexMetadata
 from app.observability.metrics import render as render_metrics
 from app.search.filters import SearchFilters
-from app.search.highlight import count_occurrences, highlight_containing
+from app.search.highlight import (
+    closest_document_words,
+    count_occurrences,
+    highlight_document,
+)
 from app.search.tokenize import tokenize
 from app.storage.repo import insert_feedback
 
@@ -92,6 +96,14 @@ class TermCount(BaseModel):
     count: int
 
 
+class ClosestWord(BaseModel):
+    """A document token nearest the query embedding, plus how often it appears."""
+
+    term: str
+    count: int
+    score: float
+
+
 class DocumentDetail(BaseModel):
     """Full stored document plus optional query-term highlighting."""
 
@@ -102,6 +114,7 @@ class DocumentDetail(BaseModel):
     text: str
     highlighted_text: str
     occurrences: list[TermCount]
+    closest: list[ClosestWord]
 
 
 def _get_service(request: Request) -> SearchService:
@@ -147,6 +160,7 @@ def search(payload: SearchRequest, request: Request) -> SearchResponse:
             source_contains=payload.filters.source_contains,
             created_from=payload.filters.created_from,
             created_to=payload.filters.created_to,
+            dataset=payload.filters.dataset,
         )
 
     start = time.perf_counter()
@@ -156,6 +170,7 @@ def search(payload: SearchRequest, request: Request) -> SearchResponse:
         alpha=payload.alpha,
         normalization=_NORMALIZATION[payload.normalization],
         filters=filters,
+        min_vector_score=payload.min_vector_score,
     )
     took_ms = (time.perf_counter() - start) * 1000.0
 
@@ -191,16 +206,28 @@ def get_document(doc_id: str, request: Request, q: str = "") -> DocumentDetail:
         raise HTTPException(status_code=404, detail="document not found")
 
     terms = tokenize(q) if q.strip() else []
+    body = doc.get("text", "")
+    closest = (
+        closest_document_words(body, q, service.searcher.embedder)
+        if terms
+        else []
+    )
     return DocumentDetail(
         doc_id=doc["doc_id"],
         title=doc.get("title", ""),
         source=doc.get("source", ""),
         created_at=doc.get("created_at", ""),
-        text=doc.get("text", ""),
-        highlighted_text=highlight_containing(doc.get("text", ""), terms),
+        text=body,
+        highlighted_text=highlight_document(
+            body, terms, [row[0] for row in closest]
+        ),
         occurrences=[
             TermCount(term=term, count=count)
-            for term, count in count_occurrences(doc.get("text", ""), terms)
+            for term, count in count_occurrences(body, terms)
+        ],
+        closest=[
+            ClosestWord(term=term, count=count, score=score)
+            for term, count, score in closest
         ],
     )
 

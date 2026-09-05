@@ -51,7 +51,9 @@ def test_health_has_version_and_commit(client: TestClient) -> None:
 
 
 def test_search_returns_score_breakdown_and_snippet(client: TestClient) -> None:
-    resp = client.post("/search", json={"query": "volcano erupts lava"})
+    resp = client.post(
+        "/search", json={"query": "volcano erupts lava", "min_vector_score": 0}
+    )
     assert resp.status_code == 200
     body = resp.json()
     assert "request_id" in body
@@ -72,13 +74,19 @@ def test_search_returns_score_breakdown_and_snippet(client: TestClient) -> None:
 
 
 def test_top_k_is_respected(client: TestClient) -> None:
-    resp = client.post("/search", json={"query": "volcano", "top_k": 2})
+    resp = client.post(
+        "/search", json={"query": "volcano", "top_k": 2, "min_vector_score": 0}
+    )
     assert resp.status_code == 200
     assert len(resp.json()["results"]) == 2
 
 
 def test_alpha_extremes_give_different_orders(client: TestClient) -> None:
-    query = {"query": "bread flour water yeast crust", "top_k": 6}
+    query = {
+        "query": "bread flour water yeast crust",
+        "top_k": 6,
+        "min_vector_score": 0,
+    }
     bm25_only = client.post("/search", json={**query, "alpha": 1.0}).json()
     vector_only = client.post("/search", json={**query, "alpha": 0.0}).json()
 
@@ -96,8 +104,11 @@ def test_alpha_extremes_give_different_orders(client: TestClient) -> None:
         ({"query": "q", "top_k": 51}, "top_k"),
         ({"query": "q", "alpha": -0.1}, "alpha"),
         ({"query": "q", "alpha": 1.1}, "alpha"),
+        ({"query": "q", "min_vector_score": -0.1}, "min_vector_score"),
+        ({"query": "q", "min_vector_score": 1.1}, "min_vector_score"),
         ({"query": "q", "normalization": "foo"}, "normalization"),
         ({"query": "q", "filters": {"created_from": "not-a-date"}}, "created_from"),
+        ({"query": "q", "filters": {"dataset": "patents"}}, "dataset"),
     ],
 )
 def test_search_validation_errors(
@@ -106,6 +117,34 @@ def test_search_validation_errors(
     resp = client.post("/search", json=payload)
     assert resp.status_code == 422
     assert field in resp.text
+
+
+def test_min_vector_score_can_empty_results(client: TestClient) -> None:
+    ungated = client.post(
+        "/search", json={"query": "volcano", "min_vector_score": 0}
+    )
+    assert ungated.status_code == 200
+    assert ungated.json()["results"]
+
+    gated = client.post("/search", json={"query": "volcano"})
+    assert gated.status_code == 200
+    assert all(row["vector_score"] >= 0.2 for row in gated.json()["results"])
+    assert len(gated.json()["results"]) <= len(ungated.json()["results"])
+
+    blocked = client.post(
+        "/search", json={"query": "volcano", "min_vector_score": 1.0}
+    )
+    assert blocked.status_code == 200
+    assert blocked.json()["results"] == []
+
+
+def test_dataset_contracts_on_sample_is_empty(client: TestClient) -> None:
+    resp = client.post(
+        "/search",
+        json={"query": "volcano", "filters": {"dataset": "contracts"}},
+    )
+    assert resp.status_code == 200
+    assert resp.json()["results"] == []
 
 
 def test_feedback_stores_row(client: TestClient) -> None:
@@ -137,6 +176,22 @@ def test_get_document_returns_text_and_occurrences(client: TestClient) -> None:
     assert "<em>lava</em>" in body["highlighted_text"]
     by_term = {row["term"]: row["count"] for row in body["occurrences"]}
     assert by_term["lava"] == 1
+    assert "closest" in body
+    assert isinstance(body["closest"], list)
+
+
+def test_get_document_closest_word_is_not_the_query(
+    client: TestClient,
+) -> None:
+    resp = client.get("/documents/doc-001", params={"q": "lava"})
+    assert resp.status_code == 200
+    closest = resp.json()["closest"]
+    assert all(row["term"] != "lava" for row in closest)
+    if closest:
+        top = closest[0]
+        assert top["count"] >= 1
+        assert top["score"] >= 0.2
+        assert f'<em class="sem">{top["term"]}</em>' in resp.json()["highlighted_text"]
 
 
 def test_get_document_unknown_id_is_404(client: TestClient) -> None:
@@ -151,6 +206,7 @@ def test_get_document_without_query_has_no_occurrences(
     assert resp.status_code == 200
     body = resp.json()
     assert body["occurrences"] == []
+    assert body["closest"] == []
     assert "<em>" not in body["highlighted_text"]
     assert "lava" in body["text"]
 

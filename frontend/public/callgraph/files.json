@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-09-03T23:46:45Z",
+  "generated_at": "2026-09-05T06:59:10Z",
   "files": {
     "backend/app/__init__.py": {
       "language": "python",
@@ -7,6 +7,18 @@
       "imports": [],
       "imported_by": [],
       "calls": [],
+      "called_by": []
+    },
+    "backend/app/__main__.py": {
+      "language": "python",
+      "functions": [],
+      "imports": [
+        "backend/app/run.py"
+      ],
+      "imported_by": [],
+      "calls": [
+        "backend/app/run.py"
+      ],
       "called_by": []
     },
     "backend/app/api/deps.py": {
@@ -119,12 +131,14 @@
         "backend/app/api/routes_dashboard.py::dashboard_kpi_summary",
         "backend/app/api/routes_dashboard.py::dashboard_kpi_volume",
         "backend/app/api/routes_dashboard.py::dashboard_kpi_top_queries",
+        "backend/app/api/routes_dashboard.py::dashboard_kpi_load_test",
         "backend/app/api/routes_dashboard.py::dashboard_kpi_zero_results",
         "backend/app/api/routes_dashboard.py::dashboard_experiments",
         "backend/app/api/routes_dashboard.py::dashboard_logs"
       ],
       "imports": [
         "backend/app/config.py",
+        "backend/app/loadtest/burst.py",
         "backend/app/storage/db.py",
         "backend/app/storage/repo.py"
       ],
@@ -133,6 +147,7 @@
       ],
       "calls": [
         "backend/app/config.py",
+        "backend/app/loadtest/burst.py",
         "backend/app/storage/db.py",
         "backend/app/storage/repo.py"
       ],
@@ -282,6 +297,8 @@
         "backend/app/eval/__main__.py",
         "backend/app/index/__main__.py",
         "backend/app/ingest/__init__.py",
+        "backend/app/loadtest/burst.py",
+        "backend/app/run.py",
         "backend/app/search/embedder.py"
       ],
       "calls": [],
@@ -295,6 +312,8 @@
         "backend/app/eval/__main__.py",
         "backend/app/index/__main__.py",
         "backend/app/ingest/__init__.py",
+        "backend/app/loadtest/burst.py",
+        "backend/app/run.py",
         "backend/app/search/embedder.py"
       ]
     },
@@ -521,6 +540,64 @@
         "backend/app/ingest/__init__.py"
       ]
     },
+    "backend/app/loadtest/__init__.py": {
+      "language": "python",
+      "functions": [],
+      "imports": [
+        "backend/app/loadtest/burst.py"
+      ],
+      "imported_by": [],
+      "calls": [
+        "backend/app/loadtest/burst.py"
+      ],
+      "called_by": []
+    },
+    "backend/app/loadtest/burst.py": {
+      "language": "python",
+      "functions": [
+        "backend/app/loadtest/burst.py::_summarise",
+        "backend/app/loadtest/burst.py::_one_search",
+        "backend/app/loadtest/burst.py::run_search_burst"
+      ],
+      "imports": [
+        "backend/app/config.py",
+        "backend/app/observability/metrics.py",
+        "backend/app/search/filters.py",
+        "backend/app/search/hybrid.py",
+        "backend/app/storage/repo.py"
+      ],
+      "imported_by": [
+        "backend/app/api/routes_dashboard.py",
+        "backend/app/loadtest/__init__.py",
+        "backend/app/loadtest/locustfile.py"
+      ],
+      "calls": [
+        "backend/app/config.py",
+        "backend/app/observability/metrics.py",
+        "backend/app/search/filters.py",
+        "backend/app/search/hybrid.py",
+        "backend/app/storage/repo.py"
+      ],
+      "called_by": [
+        "backend/app/api/routes_dashboard.py",
+        "backend/app/loadtest/__init__.py",
+        "backend/app/loadtest/locustfile.py"
+      ]
+    },
+    "backend/app/loadtest/locustfile.py": {
+      "language": "python",
+      "functions": [
+        "backend/app/loadtest/locustfile.py::SearchUser.search"
+      ],
+      "imports": [
+        "backend/app/loadtest/burst.py"
+      ],
+      "imported_by": [],
+      "calls": [
+        "backend/app/loadtest/burst.py"
+      ],
+      "called_by": []
+    },
     "backend/app/observability/logging.py": {
       "language": "python",
       "functions": [
@@ -553,13 +630,37 @@
       "imported_by": [
         "backend/app/api/middleware.py",
         "backend/app/api/routes_search.py",
+        "backend/app/loadtest/burst.py",
         "backend/app/storage/repo.py"
       ],
       "calls": [],
       "called_by": [
         "backend/app/api/middleware.py",
         "backend/app/api/routes_search.py",
+        "backend/app/loadtest/burst.py",
         "backend/app/storage/repo.py"
+      ]
+    },
+    "backend/app/run.py": {
+      "language": "python",
+      "functions": [
+        "backend/app/run.py::_venv_python",
+        "backend/app/run.py::_same_interpreter",
+        "backend/app/run.py::_uvicorn_available",
+        "backend/app/run.py::ensure_venv",
+        "backend/app/run.py::main"
+      ],
+      "imports": [
+        "backend/app/config.py"
+      ],
+      "imported_by": [
+        "backend/app/__main__.py"
+      ],
+      "calls": [
+        "backend/app/config.py"
+      ],
+      "called_by": [
+        "backend/app/__main__.py"
       ]
     },
     "backend/app/search/bm25.py": {
@@ -604,6 +705,7 @@
         "backend/app/api/deps.py",
         "backend/app/api/main.py",
         "backend/app/index/__main__.py",
+        "backend/app/search/highlight.py",
         "backend/app/search/hybrid.py"
       ],
       "calls": [
@@ -613,6 +715,7 @@
         "backend/app/api/deps.py",
         "backend/app/api/main.py",
         "backend/app/index/__main__.py",
+        "backend/app/search/highlight.py",
         "backend/app/search/hybrid.py"
       ]
     },
@@ -625,11 +728,13 @@
       "imports": [],
       "imported_by": [
         "backend/app/api/routes_search.py",
+        "backend/app/loadtest/burst.py",
         "backend/app/search/hybrid.py"
       ],
       "calls": [],
       "called_by": [
         "backend/app/api/routes_search.py",
+        "backend/app/loadtest/burst.py",
         "backend/app/search/hybrid.py"
       ]
     },
@@ -642,14 +747,22 @@
         "backend/app/search/highlight.py::unique_terms",
         "backend/app/search/highlight.py::term_matches_word",
         "backend/app/search/highlight.py::count_occurrences",
-        "backend/app/search/highlight.py::highlight_containing"
+        "backend/app/search/highlight.py::highlight_containing",
+        "backend/app/search/highlight.py::highlight_document",
+        "backend/app/search/highlight.py::closest_document_words"
       ],
-      "imports": [],
+      "imports": [
+        "backend/app/search/embedder.py",
+        "backend/app/search/tokenize.py"
+      ],
       "imported_by": [
         "backend/app/api/routes_search.py",
         "backend/app/search/hybrid.py"
       ],
-      "calls": [],
+      "calls": [
+        "backend/app/search/embedder.py",
+        "backend/app/search/tokenize.py"
+      ],
       "called_by": [
         "backend/app/api/routes_search.py",
         "backend/app/search/hybrid.py"
@@ -659,6 +772,7 @@
       "language": "python",
       "functions": [
         "backend/app/search/hybrid.py::HybridSearcher.__init__",
+        "backend/app/search/hybrid.py::HybridSearcher.embedder",
         "backend/app/search/hybrid.py::HybridSearcher.search"
       ],
       "imports": [
@@ -671,7 +785,8 @@
         "backend/app/search/vector.py"
       ],
       "imported_by": [
-        "backend/app/api/deps.py"
+        "backend/app/api/deps.py",
+        "backend/app/loadtest/burst.py"
       ],
       "calls": [
         "backend/app/search/bm25.py",
@@ -683,7 +798,8 @@
         "backend/app/search/vector.py"
       ],
       "called_by": [
-        "backend/app/api/deps.py"
+        "backend/app/api/deps.py",
+        "backend/app/loadtest/burst.py"
       ]
     },
     "backend/app/search/normalize.py": {
@@ -711,12 +827,14 @@
       "imported_by": [
         "backend/app/api/routes_search.py",
         "backend/app/search/bm25.py",
+        "backend/app/search/highlight.py",
         "backend/app/search/hybrid.py"
       ],
       "calls": [],
       "called_by": [
         "backend/app/api/routes_search.py",
         "backend/app/search/bm25.py",
+        "backend/app/search/highlight.py",
         "backend/app/search/hybrid.py"
       ]
     },
@@ -783,6 +901,7 @@
         "backend/app/api/middleware.py",
         "backend/app/api/routes_dashboard.py",
         "backend/app/api/routes_search.py",
+        "backend/app/loadtest/burst.py",
         "backend/app/observability/logging.py"
       ],
       "calls": [
@@ -792,6 +911,7 @@
         "backend/app/api/middleware.py",
         "backend/app/api/routes_dashboard.py",
         "backend/app/api/routes_search.py",
+        "backend/app/loadtest/burst.py",
         "backend/app/observability/logging.py"
       ]
     },
@@ -852,6 +972,36 @@
       "calls": [
         "scripts/fetch_corpus.py"
       ],
+      "called_by": []
+    },
+    "scripts/generate_contracts.py": {
+      "language": "python",
+      "functions": [
+        "scripts/generate_contracts.py::repo_root",
+        "scripts/generate_contracts.py::today_iso",
+        "scripts/generate_contracts.py::slugify",
+        "scripts/generate_contracts.py::_yaml_quote",
+        "scripts/generate_contracts.py::_pick",
+        "scripts/generate_contracts.py::build_spec",
+        "scripts/generate_contracts.py::title_for",
+        "scripts/generate_contracts.py::source_for",
+        "scripts/generate_contracts.py::filename_for",
+        "scripts/generate_contracts.py::created_at_for",
+        "scripts/generate_contracts.py::_paragraphs",
+        "scripts/generate_contracts.py::_schedule_a",
+        "scripts/generate_contracts.py::_schedule_b",
+        "scripts/generate_contracts.py::_schedule_c",
+        "scripts/generate_contracts.py::_signature_block",
+        "scripts/generate_contracts.py::render_body",
+        "scripts/generate_contracts.py::render_markdown",
+        "scripts/generate_contracts.py::generate_specs",
+        "scripts/generate_contracts.py::write_contracts",
+        "scripts/generate_contracts.py::parse_args",
+        "scripts/generate_contracts.py::main"
+      ],
+      "imports": [],
+      "imported_by": [],
+      "calls": [],
       "called_by": []
     },
     "scripts/qrels_helper.py": {
@@ -1230,12 +1380,17 @@
       "functions": [
         "frontend/src/pages/KpisPage.tsx::fetchJson",
         "frontend/src/pages/KpisPage.tsx::loadKpis",
+        "frontend/src/pages/KpisPage.tsx::runLoadTest",
         "frontend/src/pages/KpisPage.tsx::formatMs",
         "frontend/src/pages/KpisPage.tsx::parseBucket",
         "frontend/src/pages/KpisPage.tsx::formatBucket",
         "frontend/src/pages/KpisPage.tsx::formatSeen",
+        "frontend/src/pages/KpisPage.tsx::clampCount",
         "frontend/src/pages/KpisPage.tsx::KpisPage",
-        "frontend/src/pages/KpisPage.tsx::run"
+        "frontend/src/pages/KpisPage.tsx::run",
+        "frontend/src/pages/KpisPage.tsx::onKey",
+        "frontend/src/pages/KpisPage.tsx::refreshQuietly",
+        "frontend/src/pages/KpisPage.tsx::fireBurst"
       ],
       "imports": [],
       "imported_by": [
@@ -1249,6 +1404,7 @@
     "frontend/src/pages/SearchPage.tsx": {
       "language": "typescript",
       "functions": [
+        "frontend/src/pages/SearchPage.tsx::localDateToIso",
         "frontend/src/pages/SearchPage.tsx::SearchPage",
         "frontend/src/pages/SearchPage.tsx::handleKeyDown",
         "frontend/src/pages/SearchPage.tsx::handleClear"

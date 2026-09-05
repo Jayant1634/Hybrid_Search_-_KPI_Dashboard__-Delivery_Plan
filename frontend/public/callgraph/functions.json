@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-09-03T23:46:45Z",
+  "generated_at": "2026-09-05T06:59:10Z",
   "functions": {
     "backend/app/api/deps.py::_pyproject_path": {
       "file": "backend/app/api/deps.py",
@@ -170,7 +170,7 @@
       "file": "backend/app/api/routes_dashboard.py",
       "name": "parse_window",
       "qualname": "parse_window",
-      "lineno": 70,
+      "lineno": 98,
       "calls": [],
       "called_by": [
         "backend/app/api/routes_dashboard.py::dashboard_kpi_summary",
@@ -184,7 +184,7 @@
       "file": "backend/app/api/routes_dashboard.py",
       "name": "_db",
       "qualname": "_db",
-      "lineno": 94,
+      "lineno": 122,
       "calls": [
         "backend/app/storage/db.py::connect",
         "backend/app/config.py::load_config"
@@ -193,6 +193,7 @@
         "backend/app/api/routes_dashboard.py::dashboard_kpi_summary",
         "backend/app/api/routes_dashboard.py::dashboard_kpi_volume",
         "backend/app/api/routes_dashboard.py::dashboard_kpi_top_queries",
+        "backend/app/api/routes_dashboard.py::dashboard_kpi_load_test",
         "backend/app/api/routes_dashboard.py::dashboard_kpi_zero_results",
         "backend/app/api/routes_dashboard.py::dashboard_logs"
       ]
@@ -201,7 +202,7 @@
       "file": "backend/app/api/routes_dashboard.py",
       "name": "_read_experiments",
       "qualname": "_read_experiments",
-      "lineno": 104,
+      "lineno": 132,
       "calls": [
         "backend/app/config.py::load_config"
       ],
@@ -213,7 +214,7 @@
       "file": "backend/app/api/routes_dashboard.py",
       "name": "dashboard_kpi_summary",
       "qualname": "dashboard_kpi_summary",
-      "lineno": 113,
+      "lineno": 141,
       "calls": [
         "backend/app/api/routes_dashboard.py::parse_window",
         "backend/app/api/routes_dashboard.py::_db",
@@ -225,7 +226,7 @@
       "file": "backend/app/api/routes_dashboard.py",
       "name": "dashboard_kpi_volume",
       "qualname": "dashboard_kpi_volume",
-      "lineno": 127,
+      "lineno": 155,
       "calls": [
         "backend/app/api/routes_dashboard.py::parse_window",
         "backend/app/api/routes_dashboard.py::_db",
@@ -237,7 +238,7 @@
       "file": "backend/app/api/routes_dashboard.py",
       "name": "dashboard_kpi_top_queries",
       "qualname": "dashboard_kpi_top_queries",
-      "lineno": 135,
+      "lineno": 163,
       "calls": [
         "backend/app/api/routes_dashboard.py::parse_window",
         "backend/app/api/routes_dashboard.py::_db",
@@ -245,11 +246,22 @@
       ],
       "called_by": []
     },
+    "backend/app/api/routes_dashboard.py::dashboard_kpi_load_test": {
+      "file": "backend/app/api/routes_dashboard.py",
+      "name": "dashboard_kpi_load_test",
+      "qualname": "dashboard_kpi_load_test",
+      "lineno": 181,
+      "calls": [
+        "backend/app/api/routes_dashboard.py::_db",
+        "backend/app/loadtest/burst.py::run_search_burst"
+      ],
+      "called_by": []
+    },
     "backend/app/api/routes_dashboard.py::dashboard_kpi_zero_results": {
       "file": "backend/app/api/routes_dashboard.py",
       "name": "dashboard_kpi_zero_results",
       "qualname": "dashboard_kpi_zero_results",
-      "lineno": 153,
+      "lineno": 211,
       "calls": [
         "backend/app/api/routes_dashboard.py::parse_window",
         "backend/app/api/routes_dashboard.py::_db",
@@ -261,7 +273,7 @@
       "file": "backend/app/api/routes_dashboard.py",
       "name": "dashboard_experiments",
       "qualname": "dashboard_experiments",
-      "lineno": 171,
+      "lineno": 229,
       "calls": [
         "backend/app/api/routes_dashboard.py::_read_experiments"
       ],
@@ -271,7 +283,7 @@
       "file": "backend/app/api/routes_dashboard.py",
       "name": "dashboard_logs",
       "qualname": "dashboard_logs",
-      "lineno": 176,
+      "lineno": 234,
       "calls": [
         "backend/app/api/routes_dashboard.py::parse_window",
         "backend/app/api/routes_dashboard.py::_db",
@@ -283,7 +295,7 @@
       "file": "backend/app/api/routes_search.py",
       "name": "_get_service",
       "qualname": "_get_service",
-      "lineno": 107,
+      "lineno": 120,
       "calls": [],
       "called_by": [
         "backend/app/api/routes_search.py::search",
@@ -295,7 +307,7 @@
       "file": "backend/app/api/routes_search.py",
       "name": "_index_metadata",
       "qualname": "_index_metadata",
-      "lineno": 111,
+      "lineno": 124,
       "calls": [
         "backend/app/index/metadata.py::IndexMetadata.load",
         "backend/app/config.py::load_config"
@@ -308,7 +320,7 @@
       "file": "backend/app/api/routes_search.py",
       "name": "health",
       "qualname": "health",
-      "lineno": 120,
+      "lineno": 133,
       "calls": [
         "backend/app/api/deps.py::get_version",
         "backend/app/api/deps.py::get_commit",
@@ -320,7 +332,7 @@
       "file": "backend/app/api/routes_search.py",
       "name": "metrics",
       "qualname": "metrics",
-      "lineno": 131,
+      "lineno": 144,
       "calls": [
         "backend/app/observability/metrics.py::render"
       ],
@@ -330,7 +342,7 @@
       "file": "backend/app/api/routes_search.py",
       "name": "search",
       "qualname": "search",
-      "lineno": 140,
+      "lineno": 153,
       "calls": [
         "backend/app/api/routes_search.py::_get_service"
       ],
@@ -340,11 +352,12 @@
       "file": "backend/app/api/routes_search.py",
       "name": "get_document",
       "qualname": "get_document",
-      "lineno": 186,
+      "lineno": 201,
       "calls": [
         "backend/app/api/routes_search.py::_get_service",
         "backend/app/search/tokenize.py::tokenize",
-        "backend/app/search/highlight.py::highlight_containing",
+        "backend/app/search/highlight.py::closest_document_words",
+        "backend/app/search/highlight.py::highlight_document",
         "backend/app/search/highlight.py::count_occurrences"
       ],
       "called_by": []
@@ -353,7 +366,7 @@
       "file": "backend/app/api/routes_search.py",
       "name": "feedback",
       "qualname": "feedback",
-      "lineno": 209,
+      "lineno": 236,
       "calls": [
         "backend/app/api/routes_search.py::_get_service",
         "backend/app/storage/repo.py::insert_feedback"
@@ -384,7 +397,7 @@
       "file": "backend/app/api/schemas.py",
       "name": "_must_be_iso8601",
       "qualname": "SearchFiltersModel._must_be_iso8601",
-      "lineno": 42,
+      "lineno": 43,
       "calls": [],
       "called_by": []
     },
@@ -643,7 +656,8 @@
         "backend/app/config.py::_walk_up"
       ],
       "called_by": [
-        "backend/app/config.py::load_config"
+        "backend/app/config.py::load_config",
+        "backend/app/run.py::ensure_venv"
       ]
     },
     "backend/app/config.py::_env_str": {
@@ -699,6 +713,8 @@
         "backend/app/eval/__main__.py::main",
         "backend/app/index/__main__.py::main",
         "backend/app/ingest/__init__.py::main",
+        "backend/app/loadtest/burst.py::run_search_burst",
+        "backend/app/run.py::main",
         "backend/app/search/embedder.py::SentenceTransformerEmbedder.__init__"
       ]
     },
@@ -1297,6 +1313,48 @@
         "backend/app/ingest/__init__.py::ingest"
       ]
     },
+    "backend/app/loadtest/burst.py::_summarise": {
+      "file": "backend/app/loadtest/burst.py",
+      "name": "_summarise",
+      "qualname": "_summarise",
+      "lineno": 52,
+      "calls": [
+        "backend/app/observability/metrics.py::percentile"
+      ],
+      "called_by": [
+        "backend/app/loadtest/burst.py::run_search_burst"
+      ]
+    },
+    "backend/app/loadtest/burst.py::_one_search": {
+      "file": "backend/app/loadtest/burst.py",
+      "name": "_one_search",
+      "qualname": "_one_search",
+      "lineno": 68,
+      "calls": [],
+      "called_by": []
+    },
+    "backend/app/loadtest/burst.py::run_search_burst": {
+      "file": "backend/app/loadtest/burst.py",
+      "name": "run_search_burst",
+      "qualname": "run_search_burst",
+      "lineno": 105,
+      "calls": [
+        "backend/app/config.py::load_config",
+        "backend/app/storage/repo.py::insert_request",
+        "backend/app/loadtest/burst.py::_summarise"
+      ],
+      "called_by": [
+        "backend/app/api/routes_dashboard.py::dashboard_kpi_load_test"
+      ]
+    },
+    "backend/app/loadtest/locustfile.py::SearchUser.search": {
+      "file": "backend/app/loadtest/locustfile.py",
+      "name": "search",
+      "qualname": "SearchUser.search",
+      "lineno": 25,
+      "calls": [],
+      "called_by": []
+    },
     "backend/app/observability/logging.py::JsonFormatter.format": {
       "file": "backend/app/observability/logging.py",
       "name": "format",
@@ -1378,6 +1436,7 @@
       "lineno": 53,
       "calls": [],
       "called_by": [
+        "backend/app/loadtest/burst.py::_summarise",
         "backend/app/observability/metrics.py::snapshot",
         "backend/app/storage/repo.py::kpi_summary"
       ]
@@ -1405,6 +1464,62 @@
       "called_by": [
         "backend/app/api/routes_search.py::metrics"
       ]
+    },
+    "backend/app/run.py::_venv_python": {
+      "file": "backend/app/run.py",
+      "name": "_venv_python",
+      "qualname": "_venv_python",
+      "lineno": 15,
+      "calls": [],
+      "called_by": [
+        "backend/app/run.py::ensure_venv"
+      ]
+    },
+    "backend/app/run.py::_same_interpreter": {
+      "file": "backend/app/run.py",
+      "name": "_same_interpreter",
+      "qualname": "_same_interpreter",
+      "lineno": 23,
+      "calls": [],
+      "called_by": [
+        "backend/app/run.py::ensure_venv"
+      ]
+    },
+    "backend/app/run.py::_uvicorn_available": {
+      "file": "backend/app/run.py",
+      "name": "_uvicorn_available",
+      "qualname": "_uvicorn_available",
+      "lineno": 30,
+      "calls": [],
+      "called_by": [
+        "backend/app/run.py::ensure_venv"
+      ]
+    },
+    "backend/app/run.py::ensure_venv": {
+      "file": "backend/app/run.py",
+      "name": "ensure_venv",
+      "qualname": "ensure_venv",
+      "lineno": 38,
+      "calls": [
+        "backend/app/run.py::_uvicorn_available",
+        "backend/app/run.py::_venv_python",
+        "backend/app/config.py::find_repo_root",
+        "backend/app/run.py::_same_interpreter"
+      ],
+      "called_by": [
+        "backend/app/run.py::main"
+      ]
+    },
+    "backend/app/run.py::main": {
+      "file": "backend/app/run.py",
+      "name": "main",
+      "qualname": "main",
+      "lineno": 51,
+      "calls": [
+        "backend/app/run.py::ensure_venv",
+        "backend/app/config.py::load_config"
+      ],
+      "called_by": []
     },
     "backend/app/search/bm25.py::BM25Index.__init__": {
       "file": "backend/app/search/bm25.py",
@@ -1506,7 +1621,7 @@
       "file": "backend/app/search/filters.py",
       "name": "matches",
       "qualname": "SearchFilters.matches",
-      "lineno": 24,
+      "lineno": 30,
       "calls": [],
       "called_by": [
         "backend/app/search/filters.py::apply"
@@ -1516,7 +1631,7 @@
       "file": "backend/app/search/filters.py",
       "name": "apply",
       "qualname": "apply",
-      "lineno": 37,
+      "lineno": 48,
       "calls": [
         "backend/app/search/filters.py::SearchFilters.matches"
       ],
@@ -1528,7 +1643,7 @@
       "file": "backend/app/search/highlight.py",
       "name": "_clip_end",
       "qualname": "_clip_end",
-      "lineno": 19,
+      "lineno": 24,
       "calls": [],
       "called_by": [
         "backend/app/search/highlight.py::make_snippet"
@@ -1538,7 +1653,7 @@
       "file": "backend/app/search/highlight.py",
       "name": "_snap_start",
       "qualname": "_snap_start",
-      "lineno": 35,
+      "lineno": 40,
       "calls": [],
       "called_by": [
         "backend/app/search/highlight.py::make_snippet"
@@ -1548,7 +1663,7 @@
       "file": "backend/app/search/highlight.py",
       "name": "make_snippet",
       "qualname": "make_snippet",
-      "lineno": 51,
+      "lineno": 56,
       "calls": [
         "backend/app/search/highlight.py::_clip_end",
         "backend/app/search/highlight.py::_snap_start"
@@ -1561,29 +1676,31 @@
       "file": "backend/app/search/highlight.py",
       "name": "unique_terms",
       "qualname": "unique_terms",
-      "lineno": 120,
+      "lineno": 125,
       "calls": [],
       "called_by": [
         "backend/app/search/highlight.py::count_occurrences",
-        "backend/app/search/highlight.py::highlight_containing"
+        "backend/app/search/highlight.py::highlight_document",
+        "backend/app/search/highlight.py::closest_document_words"
       ]
     },
     "backend/app/search/highlight.py::term_matches_word": {
       "file": "backend/app/search/highlight.py",
       "name": "term_matches_word",
       "qualname": "term_matches_word",
-      "lineno": 133,
+      "lineno": 138,
       "calls": [],
       "called_by": [
         "backend/app/search/highlight.py::count_occurrences",
-        "backend/app/search/highlight.py::highlight_containing"
+        "backend/app/search/highlight.py::highlight_document",
+        "backend/app/search/highlight.py::closest_document_words"
       ]
     },
     "backend/app/search/highlight.py::count_occurrences": {
       "file": "backend/app/search/highlight.py",
       "name": "count_occurrences",
       "qualname": "count_occurrences",
-      "lineno": 158,
+      "lineno": 153,
       "calls": [
         "backend/app/search/highlight.py::unique_terms",
         "backend/app/search/highlight.py::term_matches_word"
@@ -1596,9 +1713,34 @@
       "file": "backend/app/search/highlight.py",
       "name": "highlight_containing",
       "qualname": "highlight_containing",
-      "lineno": 168,
+      "lineno": 163,
+      "calls": [
+        "backend/app/search/highlight.py::highlight_document"
+      ],
+      "called_by": []
+    },
+    "backend/app/search/highlight.py::highlight_document": {
+      "file": "backend/app/search/highlight.py",
+      "name": "highlight_document",
+      "qualname": "highlight_document",
+      "lineno": 173,
       "calls": [
         "backend/app/search/highlight.py::unique_terms",
+        "backend/app/search/highlight.py::term_matches_word"
+      ],
+      "called_by": [
+        "backend/app/api/routes_search.py::get_document",
+        "backend/app/search/highlight.py::highlight_containing"
+      ]
+    },
+    "backend/app/search/highlight.py::closest_document_words": {
+      "file": "backend/app/search/highlight.py",
+      "name": "closest_document_words",
+      "qualname": "closest_document_words",
+      "lineno": 211,
+      "calls": [
+        "backend/app/search/highlight.py::unique_terms",
+        "backend/app/search/tokenize.py::tokenize",
         "backend/app/search/highlight.py::term_matches_word"
       ],
       "called_by": [
@@ -1613,11 +1755,19 @@
       "calls": [],
       "called_by": []
     },
+    "backend/app/search/hybrid.py::HybridSearcher.embedder": {
+      "file": "backend/app/search/hybrid.py",
+      "name": "embedder",
+      "qualname": "HybridSearcher.embedder",
+      "lineno": 57,
+      "calls": [],
+      "called_by": []
+    },
     "backend/app/search/hybrid.py::HybridSearcher.search": {
       "file": "backend/app/search/hybrid.py",
       "name": "search",
       "qualname": "HybridSearcher.search",
-      "lineno": 56,
+      "lineno": 60,
       "calls": [
         "backend/app/search/filters.py::apply",
         "backend/app/search/normalize.py::normalize",
@@ -1667,6 +1817,7 @@
         "backend/app/search/bm25.py::BM25Index._doc_tokens",
         "backend/app/search/bm25.py::BM25Index.query",
         "backend/app/search/bm25.py::BM25Index.scores_for_all",
+        "backend/app/search/highlight.py::closest_document_words",
         "backend/app/search/hybrid.py::HybridSearcher.search"
       ]
     },
@@ -1774,7 +1925,8 @@
         "backend/app/storage/repo.py::_now"
       ],
       "called_by": [
-        "backend/app/api/middleware.py::_persist_search"
+        "backend/app/api/middleware.py::_persist_search",
+        "backend/app/loadtest/burst.py::run_search_burst"
       ]
     },
     "backend/app/storage/repo.py::insert_feedback": {
@@ -2164,6 +2316,242 @@
       ],
       "called_by": []
     },
+    "scripts/generate_contracts.py::repo_root": {
+      "file": "scripts/generate_contracts.py",
+      "name": "repo_root",
+      "qualname": "repo_root",
+      "lineno": 146,
+      "calls": [],
+      "called_by": [
+        "scripts/generate_contracts.py::main"
+      ]
+    },
+    "scripts/generate_contracts.py::today_iso": {
+      "file": "scripts/generate_contracts.py",
+      "name": "today_iso",
+      "qualname": "today_iso",
+      "lineno": 150,
+      "calls": [],
+      "called_by": [
+        "scripts/generate_contracts.py::write_contracts"
+      ]
+    },
+    "scripts/generate_contracts.py::slugify": {
+      "file": "scripts/generate_contracts.py",
+      "name": "slugify",
+      "qualname": "slugify",
+      "lineno": 154,
+      "calls": [],
+      "called_by": [
+        "scripts/generate_contracts.py::source_for",
+        "scripts/generate_contracts.py::filename_for"
+      ]
+    },
+    "scripts/generate_contracts.py::_yaml_quote": {
+      "file": "scripts/generate_contracts.py",
+      "name": "_yaml_quote",
+      "qualname": "_yaml_quote",
+      "lineno": 161,
+      "calls": [],
+      "called_by": [
+        "scripts/generate_contracts.py::render_markdown"
+      ]
+    },
+    "scripts/generate_contracts.py::_pick": {
+      "file": "scripts/generate_contracts.py",
+      "name": "_pick",
+      "qualname": "_pick",
+      "lineno": 166,
+      "calls": [],
+      "called_by": [
+        "scripts/generate_contracts.py::build_spec"
+      ]
+    },
+    "scripts/generate_contracts.py::build_spec": {
+      "file": "scripts/generate_contracts.py",
+      "name": "build_spec",
+      "qualname": "build_spec",
+      "lineno": 170,
+      "calls": [
+        "scripts/generate_contracts.py::_pick"
+      ],
+      "called_by": [
+        "scripts/generate_contracts.py::generate_specs"
+      ]
+    },
+    "scripts/generate_contracts.py::title_for": {
+      "file": "scripts/generate_contracts.py",
+      "name": "title_for",
+      "qualname": "title_for",
+      "lineno": 207,
+      "calls": [],
+      "called_by": [
+        "scripts/generate_contracts.py::render_markdown"
+      ]
+    },
+    "scripts/generate_contracts.py::source_for": {
+      "file": "scripts/generate_contracts.py",
+      "name": "source_for",
+      "qualname": "source_for",
+      "lineno": 214,
+      "calls": [
+        "scripts/generate_contracts.py::slugify"
+      ],
+      "called_by": [
+        "scripts/generate_contracts.py::render_markdown"
+      ]
+    },
+    "scripts/generate_contracts.py::filename_for": {
+      "file": "scripts/generate_contracts.py",
+      "name": "filename_for",
+      "qualname": "filename_for",
+      "lineno": 219,
+      "calls": [
+        "scripts/generate_contracts.py::slugify"
+      ],
+      "called_by": [
+        "scripts/generate_contracts.py::write_contracts"
+      ]
+    },
+    "scripts/generate_contracts.py::created_at_for": {
+      "file": "scripts/generate_contracts.py",
+      "name": "created_at_for",
+      "qualname": "created_at_for",
+      "lineno": 223,
+      "calls": [],
+      "called_by": []
+    },
+    "scripts/generate_contracts.py::_paragraphs": {
+      "file": "scripts/generate_contracts.py",
+      "name": "_paragraphs",
+      "qualname": "_paragraphs",
+      "lineno": 227,
+      "calls": [
+        "scripts/generate_contracts.py::_schedule_a",
+        "scripts/generate_contracts.py::_schedule_b",
+        "scripts/generate_contracts.py::_schedule_c",
+        "scripts/generate_contracts.py::_signature_block"
+      ],
+      "called_by": [
+        "scripts/generate_contracts.py::render_body"
+      ]
+    },
+    "scripts/generate_contracts.py::_schedule_a": {
+      "file": "scripts/generate_contracts.py",
+      "name": "_schedule_a",
+      "qualname": "_schedule_a",
+      "lineno": 398,
+      "calls": [],
+      "called_by": [
+        "scripts/generate_contracts.py::_paragraphs"
+      ]
+    },
+    "scripts/generate_contracts.py::_schedule_b": {
+      "file": "scripts/generate_contracts.py",
+      "name": "_schedule_b",
+      "qualname": "_schedule_b",
+      "lineno": 418,
+      "calls": [],
+      "called_by": [
+        "scripts/generate_contracts.py::_paragraphs"
+      ]
+    },
+    "scripts/generate_contracts.py::_schedule_c": {
+      "file": "scripts/generate_contracts.py",
+      "name": "_schedule_c",
+      "qualname": "_schedule_c",
+      "lineno": 435,
+      "calls": [],
+      "called_by": [
+        "scripts/generate_contracts.py::_paragraphs"
+      ]
+    },
+    "scripts/generate_contracts.py::_signature_block": {
+      "file": "scripts/generate_contracts.py",
+      "name": "_signature_block",
+      "qualname": "_signature_block",
+      "lineno": 453,
+      "calls": [],
+      "called_by": [
+        "scripts/generate_contracts.py::_paragraphs"
+      ]
+    },
+    "scripts/generate_contracts.py::render_body": {
+      "file": "scripts/generate_contracts.py",
+      "name": "render_body",
+      "qualname": "render_body",
+      "lineno": 464,
+      "calls": [
+        "scripts/generate_contracts.py::_paragraphs"
+      ],
+      "called_by": [
+        "scripts/generate_contracts.py::render_markdown"
+      ]
+    },
+    "scripts/generate_contracts.py::render_markdown": {
+      "file": "scripts/generate_contracts.py",
+      "name": "render_markdown",
+      "qualname": "render_markdown",
+      "lineno": 488,
+      "calls": [
+        "scripts/generate_contracts.py::_yaml_quote",
+        "scripts/generate_contracts.py::title_for",
+        "scripts/generate_contracts.py::source_for",
+        "scripts/generate_contracts.py::render_body"
+      ],
+      "called_by": [
+        "scripts/generate_contracts.py::write_contracts"
+      ]
+    },
+    "scripts/generate_contracts.py::generate_specs": {
+      "file": "scripts/generate_contracts.py",
+      "name": "generate_specs",
+      "qualname": "generate_specs",
+      "lineno": 503,
+      "calls": [
+        "scripts/generate_contracts.py::build_spec"
+      ],
+      "called_by": [
+        "scripts/generate_contracts.py::main"
+      ]
+    },
+    "scripts/generate_contracts.py::write_contracts": {
+      "file": "scripts/generate_contracts.py",
+      "name": "write_contracts",
+      "qualname": "write_contracts",
+      "lineno": 510,
+      "calls": [
+        "scripts/generate_contracts.py::today_iso",
+        "scripts/generate_contracts.py::filename_for",
+        "scripts/generate_contracts.py::render_markdown"
+      ],
+      "called_by": [
+        "scripts/generate_contracts.py::main"
+      ]
+    },
+    "scripts/generate_contracts.py::parse_args": {
+      "file": "scripts/generate_contracts.py",
+      "name": "parse_args",
+      "qualname": "parse_args",
+      "lineno": 531,
+      "calls": [],
+      "called_by": [
+        "scripts/generate_contracts.py::main"
+      ]
+    },
+    "scripts/generate_contracts.py::main": {
+      "file": "scripts/generate_contracts.py",
+      "name": "main",
+      "qualname": "main",
+      "lineno": 556,
+      "calls": [
+        "scripts/generate_contracts.py::parse_args",
+        "scripts/generate_contracts.py::repo_root",
+        "scripts/generate_contracts.py::generate_specs",
+        "scripts/generate_contracts.py::write_contracts"
+      ],
+      "called_by": []
+    },
     "scripts/qrels_helper.py::Searcher.search": {
       "file": "scripts/qrels_helper.py",
       "name": "search",
@@ -2222,7 +2610,7 @@
       "file": "frontend/src/api.ts",
       "name": "_fetch",
       "qualname": "_fetch",
-      "lineno": 105,
+      "lineno": 109,
       "calls": [],
       "called_by": []
     },
@@ -2230,7 +2618,7 @@
       "file": "frontend/src/api.ts",
       "name": "search",
       "qualname": "search",
-      "lineno": 129,
+      "lineno": 140,
       "calls": [],
       "called_by": [
         "frontend/src/pages/SearchPage.tsx::SearchPage"
@@ -2240,7 +2628,7 @@
       "file": "frontend/src/api.ts",
       "name": "getDocument",
       "qualname": "getDocument",
-      "lineno": 137,
+      "lineno": 148,
       "calls": [],
       "called_by": [
         "frontend/src/components/ResultCard.tsx::ResultCard"
@@ -2250,7 +2638,7 @@
       "file": "frontend/src/api.ts",
       "name": "submitFeedback",
       "qualname": "submitFeedback",
-      "lineno": 149,
+      "lineno": 160,
       "calls": [],
       "called_by": [
         "frontend/src/components/ResultCard.tsx::ResultCard",
@@ -2261,7 +2649,7 @@
       "file": "frontend/src/api.ts",
       "name": "getHealth",
       "qualname": "getHealth",
-      "lineno": 157,
+      "lineno": 168,
       "calls": [],
       "called_by": [
         "frontend/src/App.tsx::App",
@@ -2272,7 +2660,7 @@
       "file": "frontend/src/api.ts",
       "name": "getKpiSummary",
       "qualname": "getKpiSummary",
-      "lineno": 161,
+      "lineno": 172,
       "calls": [],
       "called_by": []
     },
@@ -2280,7 +2668,7 @@
       "file": "frontend/src/api.ts",
       "name": "getKpiVolume",
       "qualname": "getKpiVolume",
-      "lineno": 165,
+      "lineno": 176,
       "calls": [],
       "called_by": []
     },
@@ -2288,7 +2676,7 @@
       "file": "frontend/src/api.ts",
       "name": "getTopQueries",
       "qualname": "getTopQueries",
-      "lineno": 169,
+      "lineno": 180,
       "calls": [],
       "called_by": []
     },
@@ -2296,7 +2684,7 @@
       "file": "frontend/src/api.ts",
       "name": "getZeroResultQueries",
       "qualname": "getZeroResultQueries",
-      "lineno": 175,
+      "lineno": 186,
       "calls": [],
       "called_by": []
     },
@@ -2304,7 +2692,7 @@
       "file": "frontend/src/api.ts",
       "name": "getExperiments",
       "qualname": "getExperiments",
-      "lineno": 181,
+      "lineno": 192,
       "calls": [],
       "called_by": []
     },
@@ -2312,7 +2700,7 @@
       "file": "frontend/src/api.ts",
       "name": "getLogs",
       "qualname": "getLogs",
-      "lineno": 185,
+      "lineno": 196,
       "calls": [],
       "called_by": []
     },
@@ -2652,7 +3040,7 @@
       "file": "frontend/src/highlight.ts",
       "name": "highlightContaining",
       "qualname": "highlightContaining",
-      "lineno": 50,
+      "lineno": 41,
       "calls": [],
       "called_by": [
         "frontend/src/components/ResultCard.tsx::ResultCard"
@@ -2912,7 +3300,7 @@
       "file": "frontend/src/pages/KpisPage.tsx",
       "name": "fetchJson",
       "qualname": "fetchJson",
-      "lineno": 50,
+      "lineno": 67,
       "calls": [],
       "called_by": []
     },
@@ -2920,18 +3308,30 @@
       "file": "frontend/src/pages/KpisPage.tsx",
       "name": "loadKpis",
       "qualname": "loadKpis",
-      "lineno": 59,
+      "lineno": 76,
       "calls": [],
       "called_by": [
         "frontend/src/pages/KpisPage.tsx::KpisPage",
-        "frontend/src/pages/KpisPage.tsx::run"
+        "frontend/src/pages/KpisPage.tsx::run",
+        "frontend/src/pages/KpisPage.tsx::refreshQuietly"
+      ]
+    },
+    "frontend/src/pages/KpisPage.tsx::runLoadTest": {
+      "file": "frontend/src/pages/KpisPage.tsx",
+      "name": "runLoadTest",
+      "qualname": "runLoadTest",
+      "lineno": 87,
+      "calls": [],
+      "called_by": [
+        "frontend/src/pages/KpisPage.tsx::KpisPage",
+        "frontend/src/pages/KpisPage.tsx::fireBurst"
       ]
     },
     "frontend/src/pages/KpisPage.tsx::formatMs": {
       "file": "frontend/src/pages/KpisPage.tsx",
       "name": "formatMs",
       "qualname": "formatMs",
-      "lineno": 70,
+      "lineno": 105,
       "calls": [],
       "called_by": [
         "frontend/src/pages/KpisPage.tsx::KpisPage"
@@ -2941,7 +3341,7 @@
       "file": "frontend/src/pages/KpisPage.tsx",
       "name": "parseBucket",
       "qualname": "parseBucket",
-      "lineno": 74,
+      "lineno": 109,
       "calls": [],
       "called_by": []
     },
@@ -2949,7 +3349,7 @@
       "file": "frontend/src/pages/KpisPage.tsx",
       "name": "formatBucket",
       "qualname": "formatBucket",
-      "lineno": 84,
+      "lineno": 119,
       "calls": [],
       "called_by": [
         "frontend/src/pages/KpisPage.tsx::KpisPage"
@@ -2959,23 +3359,38 @@
       "file": "frontend/src/pages/KpisPage.tsx",
       "name": "formatSeen",
       "qualname": "formatSeen",
-      "lineno": 98,
+      "lineno": 133,
       "calls": [],
       "called_by": [
         "frontend/src/pages/KpisPage.tsx::KpisPage"
+      ]
+    },
+    "frontend/src/pages/KpisPage.tsx::clampCount": {
+      "file": "frontend/src/pages/KpisPage.tsx",
+      "name": "clampCount",
+      "qualname": "clampCount",
+      "lineno": 139,
+      "calls": [],
+      "called_by": [
+        "frontend/src/pages/KpisPage.tsx::KpisPage",
+        "frontend/src/pages/KpisPage.tsx::fireBurst"
       ]
     },
     "frontend/src/pages/KpisPage.tsx::KpisPage": {
       "file": "frontend/src/pages/KpisPage.tsx",
       "name": "KpisPage",
       "qualname": "KpisPage",
-      "lineno": 104,
+      "lineno": 144,
       "calls": [
         "frontend/src/pages/KpisPage.tsx::loadKpis",
         "frontend/src/pages/KpisPage.tsx::run",
+        "frontend/src/pages/KpisPage.tsx::runLoadTest",
+        "frontend/src/pages/KpisPage.tsx::clampCount",
+        "frontend/src/pages/KpisPage.tsx::refreshQuietly",
         "frontend/src/pages/KpisPage.tsx::formatBucket",
         "frontend/src/pages/KpisPage.tsx::formatMs",
-        "frontend/src/pages/KpisPage.tsx::formatSeen"
+        "frontend/src/pages/KpisPage.tsx::formatSeen",
+        "frontend/src/pages/KpisPage.tsx::fireBurst"
       ],
       "called_by": [
         "frontend/src/App.tsx::App"
@@ -2985,7 +3400,7 @@
       "file": "frontend/src/pages/KpisPage.tsx",
       "name": "run",
       "qualname": "run",
-      "lineno": 114,
+      "lineno": 161,
       "calls": [
         "frontend/src/pages/KpisPage.tsx::loadKpis"
       ],
@@ -2993,12 +3408,58 @@
         "frontend/src/pages/KpisPage.tsx::KpisPage"
       ]
     },
+    "frontend/src/pages/KpisPage.tsx::onKey": {
+      "file": "frontend/src/pages/KpisPage.tsx",
+      "name": "onKey",
+      "qualname": "onKey",
+      "lineno": 191,
+      "calls": [],
+      "called_by": []
+    },
+    "frontend/src/pages/KpisPage.tsx::refreshQuietly": {
+      "file": "frontend/src/pages/KpisPage.tsx",
+      "name": "refreshQuietly",
+      "qualname": "refreshQuietly",
+      "lineno": 198,
+      "calls": [
+        "frontend/src/pages/KpisPage.tsx::loadKpis"
+      ],
+      "called_by": [
+        "frontend/src/pages/KpisPage.tsx::KpisPage",
+        "frontend/src/pages/KpisPage.tsx::fireBurst"
+      ]
+    },
+    "frontend/src/pages/KpisPage.tsx::fireBurst": {
+      "file": "frontend/src/pages/KpisPage.tsx",
+      "name": "fireBurst",
+      "qualname": "fireBurst",
+      "lineno": 209,
+      "calls": [
+        "frontend/src/pages/KpisPage.tsx::runLoadTest",
+        "frontend/src/pages/KpisPage.tsx::clampCount",
+        "frontend/src/pages/KpisPage.tsx::refreshQuietly"
+      ],
+      "called_by": [
+        "frontend/src/pages/KpisPage.tsx::KpisPage"
+      ]
+    },
+    "frontend/src/pages/SearchPage.tsx::localDateToIso": {
+      "file": "frontend/src/pages/SearchPage.tsx",
+      "name": "localDateToIso",
+      "qualname": "localDateToIso",
+      "lineno": 5,
+      "calls": [],
+      "called_by": [
+        "frontend/src/pages/SearchPage.tsx::SearchPage"
+      ]
+    },
     "frontend/src/pages/SearchPage.tsx::SearchPage": {
       "file": "frontend/src/pages/SearchPage.tsx",
       "name": "SearchPage",
       "qualname": "SearchPage",
-      "lineno": 5,
+      "lineno": 10,
       "calls": [
+        "frontend/src/pages/SearchPage.tsx::localDateToIso",
         "frontend/src/api.ts::search",
         "frontend/src/components/ResultCard.tsx::ResultCard"
       ],
@@ -3010,7 +3471,7 @@
       "file": "frontend/src/pages/SearchPage.tsx",
       "name": "handleKeyDown",
       "qualname": "handleKeyDown",
-      "lineno": 45,
+      "lineno": 62,
       "calls": [],
       "called_by": []
     },
@@ -3018,7 +3479,7 @@
       "file": "frontend/src/pages/SearchPage.tsx",
       "name": "handleClear",
       "qualname": "handleClear",
-      "lineno": 49,
+      "lineno": 66,
       "calls": [],
       "called_by": []
     },

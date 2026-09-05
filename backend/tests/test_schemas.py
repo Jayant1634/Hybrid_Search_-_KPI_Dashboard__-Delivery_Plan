@@ -16,6 +16,7 @@ def test_defaults_come_from_config() -> None:
     assert req.top_k == 10
     assert req.alpha == cfg.default_alpha
     assert req.normalization == "minmax"
+    assert req.min_vector_score == 0.2
     assert req.filters is None
 
 
@@ -25,12 +26,13 @@ def test_valid_request_with_filters() -> None:
         top_k=5,
         alpha=0.3,
         normalization="zscore",
-        filters={"source_contains": "wiki"},
+        filters={"source_contains": "wiki", "dataset": "contracts"},
     )
     assert req.alpha == 0.3
     assert req.normalization == "zscore"
     assert req.filters is not None
     assert req.filters.source_contains == "wiki"
+    assert req.filters.dataset == "contracts"
 
 
 @pytest.mark.parametrize(
@@ -42,9 +44,12 @@ def test_valid_request_with_filters() -> None:
         {"query": "q", "top_k": 51},  # above range
         {"query": "q", "alpha": -0.1},  # below range
         {"query": "q", "alpha": 1.1},  # above range
+        {"query": "q", "min_vector_score": -0.1},
+        {"query": "q", "min_vector_score": 1.1},
         {"query": "q", "normalization": "softmax"},  # not allowed
         {"top_k": 5},  # missing query
         {"query": "q", "unknown": 1},  # extra field forbidden
+        {"query": "q", "filters": {"dataset": "patents"}},
     ],
 )
 def test_bad_search_requests_fail_validation(payload: dict) -> None:

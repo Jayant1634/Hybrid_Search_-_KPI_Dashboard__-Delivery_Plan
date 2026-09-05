@@ -53,6 +53,10 @@ class HybridSearcher:
         self._embedder = embedder
         self._docs_by_id = docs_by_id
 
+    @property
+    def embedder(self) -> Embedder:
+        return self._embedder
+
     def search(
         self,
         query: str,
@@ -60,18 +64,21 @@ class HybridSearcher:
         alpha: float = 0.5,
         normalization: str = "min_max",
         filters: SearchFilters | None = None,
+        min_vector_score: float = 0.0,
     ) -> list[SearchResult]:
         """Return the ``top_k`` hits ranked by the hybrid score.
 
         Takes the top candidates from each side, unions them (a document
         missing on one side scores 0 there), drops any that fail ``filters``,
+        drops any whose raw vector score is below ``min_vector_score``,
         normalises each side over the surviving candidates with
         ``normalization``, then blends with ``alpha``. Each result carries a
         snippet highlighting the query tokens.
         """
-        bm25_raw = dict(self._bm25.query(query, top_k=_CANDIDATE_POOL))
+        pool = len(self._docs_by_id) if filters is not None else _CANDIDATE_POOL
+        bm25_raw = dict(self._bm25.query(query, top_k=pool))
         query_vector = self._embedder.encode([query])[0]
-        vector_raw = dict(self._vector.query(query_vector, k=_CANDIDATE_POOL))
+        vector_raw = dict(self._vector.query(query_vector, k=pool))
 
         doc_ids = list(bm25_raw.keys() | vector_raw.keys())
         if filters is not None:
@@ -84,6 +91,14 @@ class HybridSearcher:
 
         bm25_union = {doc_id: bm25_raw.get(doc_id, 0.0) for doc_id in doc_ids}
         vector_union = {doc_id: vector_raw.get(doc_id, 0.0) for doc_id in doc_ids}
+        if min_vector_score > 0.0:
+            doc_ids = [
+                doc_id
+                for doc_id in doc_ids
+                if vector_union[doc_id] >= min_vector_score
+            ]
+            bm25_union = {doc_id: bm25_union[doc_id] for doc_id in doc_ids}
+            vector_union = {doc_id: vector_union[doc_id] for doc_id in doc_ids}
 
         bm25_norm = normalize(normalization, bm25_union)
         vector_norm = normalize(normalization, vector_union)

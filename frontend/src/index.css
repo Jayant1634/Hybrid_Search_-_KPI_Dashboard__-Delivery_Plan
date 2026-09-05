@@ -9,6 +9,10 @@
   --purple-dark:  #5E18B5;
   --purple-light: #AF7DEA;
   --purple-tint:  rgba(120, 35, 220, 0.08);
+  --hl-lex-bg:    rgba(120, 35, 220, 0.18);
+  --hl-lex-fg:    #4A148C;
+  --hl-sem-bg:    rgba(196, 122, 0, 0.22);
+  --hl-sem-fg:    #8A5500;
 
   /* Semantic */
   --success: #16834B;
@@ -68,6 +72,10 @@
   --c-muted:    #7A7A7A;
 
   --purple-tint: rgba(175, 125, 234, 0.12);
+  --hl-lex-bg:   rgba(175, 125, 234, 0.45);
+  --hl-lex-fg:   #F6ECFF;
+  --hl-sem-bg:   rgba(255, 196, 80, 0.42);
+  --hl-sem-fg:   #FFE7A3;
 
   --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.4);
   --shadow-md: 0 2px 8px rgba(0, 0, 0, 0.5);
