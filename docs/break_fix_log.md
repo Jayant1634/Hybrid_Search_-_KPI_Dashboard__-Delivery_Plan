@@ -92,10 +92,8 @@ with `python -m app.index`, or start with `HSS_INDEX_ON_MISMATCH=rebuild`.
 
 ### Commits
 
-- `break: reproduce semantic index mismatch (albert vs MiniLM) -> 500 on /search`
-- `fix: catch embedder/index mismatch at startup via HSS_INDEX_ON_MISMATCH`
-
-(commit SHAs pending; not yet committed)
+- break was env-only (`HSS_EMBEDDING_MODEL` in `backend/.env`); not a git commit
+- `fa2cbe7` `fix: catch embedding model mismatch at startup`
 
 ## Scenario B: Schema migration break (s9.2)
 
@@ -329,7 +327,4 @@ fix prompt.
 
 ### Commits
 
-- `break: drop min_max equal-score guard (NaN on constant BM25)`
-- `fix: map constant scores to 0 and clamp non-finite hybrid norms`
-
-(commit SHAs pending; not yet committed)
+- `605369d` `break: drop min_max equal-score guard (NaN on constant BM25), fix: map constant scores to 0 and clamp non-finite hybrid norms`
