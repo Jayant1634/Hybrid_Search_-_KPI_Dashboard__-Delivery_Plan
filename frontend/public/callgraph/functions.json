@@ -1,11 +1,11 @@
 {
-  "generated_at": "2026-09-05T06:59:10Z",
+  "generated_at": "2026-09-05T08:46:10Z",
   "functions": {
     "backend/app/api/deps.py::_pyproject_path": {
       "file": "backend/app/api/deps.py",
       "name": "_pyproject_path",
       "qualname": "_pyproject_path",
-      "lineno": 31,
+      "lineno": 33,
       "calls": [],
       "called_by": [
         "backend/app/api/deps.py::get_version"
@@ -15,7 +15,7 @@
       "file": "backend/app/api/deps.py",
       "name": "get_version",
       "qualname": "get_version",
-      "lineno": 36,
+      "lineno": 38,
       "calls": [
         "backend/app/api/deps.py::_pyproject_path",
         "backend/app/api/deps.py::SearchService.load"
@@ -28,7 +28,7 @@
       "file": "backend/app/api/deps.py",
       "name": "get_commit",
       "qualname": "get_commit",
-      "lineno": 43,
+      "lineno": 45,
       "calls": [],
       "called_by": [
         "backend/app/api/routes_search.py::health"
@@ -38,7 +38,7 @@
       "file": "backend/app/api/deps.py",
       "name": "__init__",
       "qualname": "SearchService.__init__",
-      "lineno": 71,
+      "lineno": 73,
       "calls": [],
       "called_by": []
     },
@@ -46,16 +46,30 @@
       "file": "backend/app/api/deps.py",
       "name": "load",
       "qualname": "SearchService.load",
-      "lineno": 78,
+      "lineno": 80,
       "calls": [
         "backend/app/config.py::load_config",
         "backend/app/ingest/writer.py::read_jsonl",
+        "backend/app/index/metadata.py::IndexMetadata.load",
+        "backend/app/api/deps.py::_reconcile_index",
         "backend/app/search/bm25.py::BM25Index.load",
         "backend/app/search/vector.py::VectorIndex.load"
       ],
       "called_by": [
         "backend/app/api/deps.py::get_version",
         "backend/app/api/main.py::create_app"
+      ]
+    },
+    "backend/app/api/deps.py::_reconcile_index": {
+      "file": "backend/app/api/deps.py",
+      "name": "_reconcile_index",
+      "qualname": "_reconcile_index",
+      "lineno": 132,
+      "calls": [
+        "backend/app/index/__main__.py::build_indexes"
+      ],
+      "called_by": [
+        "backend/app/api/deps.py::SearchService.load"
       ]
     },
     "backend/app/api/main.py::create_app": {
@@ -629,7 +643,7 @@
       "file": "backend/app/config.py",
       "name": "_is_repo_root",
       "qualname": "_is_repo_root",
-      "lineno": 29,
+      "lineno": 30,
       "calls": [],
       "called_by": [
         "backend/app/config.py::_walk_up"
@@ -639,7 +653,7 @@
       "file": "backend/app/config.py",
       "name": "_walk_up",
       "qualname": "_walk_up",
-      "lineno": 33,
+      "lineno": 34,
       "calls": [
         "backend/app/config.py::_is_repo_root"
       ],
@@ -651,12 +665,13 @@
       "file": "backend/app/config.py",
       "name": "find_repo_root",
       "qualname": "find_repo_root",
-      "lineno": 41,
+      "lineno": 42,
       "calls": [
         "backend/app/config.py::_walk_up"
       ],
       "called_by": [
         "backend/app/config.py::load_config",
+        "backend/app/run.py::load_dotenv",
         "backend/app/run.py::ensure_venv"
       ]
     },
@@ -664,7 +679,7 @@
       "file": "backend/app/config.py",
       "name": "_env_str",
       "qualname": "_env_str",
-      "lineno": 55,
+      "lineno": 56,
       "calls": [],
       "called_by": [
         "backend/app/config.py::load_config"
@@ -674,7 +689,7 @@
       "file": "backend/app/config.py",
       "name": "_env_int",
       "qualname": "_env_int",
-      "lineno": 62,
+      "lineno": 63,
       "calls": [],
       "called_by": [
         "backend/app/config.py::load_config"
@@ -684,7 +699,7 @@
       "file": "backend/app/config.py",
       "name": "_env_float",
       "qualname": "_env_float",
-      "lineno": 69,
+      "lineno": 70,
       "calls": [],
       "called_by": [
         "backend/app/config.py::load_config"
@@ -694,7 +709,7 @@
       "file": "backend/app/config.py",
       "name": "load_config",
       "qualname": "load_config",
-      "lineno": 77,
+      "lineno": 78,
       "calls": [
         "backend/app/config.py::find_repo_root",
         "backend/app/config.py::_env_str",
@@ -967,6 +982,7 @@
         "backend/app/ingest/writer.py::corpus_hash"
       ],
       "called_by": [
+        "backend/app/api/deps.py::_reconcile_index",
         "backend/app/index/__main__.py::main"
       ]
     },
@@ -1021,6 +1037,7 @@
       "lineno": 55,
       "calls": [],
       "called_by": [
+        "backend/app/api/deps.py::SearchService.load",
         "backend/app/api/routes_search.py::_index_metadata",
         "backend/app/eval/__main__.py::check_model",
         "backend/app/index/metadata.py::is_up_to_date"
@@ -1465,11 +1482,46 @@
         "backend/app/api/routes_search.py::metrics"
       ]
     },
+    "backend/app/run.py::_parse_env_line": {
+      "file": "backend/app/run.py",
+      "name": "_parse_env_line",
+      "qualname": "_parse_env_line",
+      "lineno": 16,
+      "calls": [],
+      "called_by": [
+        "backend/app/run.py::_iter_env_file"
+      ]
+    },
+    "backend/app/run.py::_iter_env_file": {
+      "file": "backend/app/run.py",
+      "name": "_iter_env_file",
+      "qualname": "_iter_env_file",
+      "lineno": 34,
+      "calls": [
+        "backend/app/run.py::_parse_env_line"
+      ],
+      "called_by": [
+        "backend/app/run.py::load_dotenv"
+      ]
+    },
+    "backend/app/run.py::load_dotenv": {
+      "file": "backend/app/run.py",
+      "name": "load_dotenv",
+      "qualname": "load_dotenv",
+      "lineno": 41,
+      "calls": [
+        "backend/app/config.py::find_repo_root",
+        "backend/app/run.py::_iter_env_file"
+      ],
+      "called_by": [
+        "backend/app/run.py::main"
+      ]
+    },
     "backend/app/run.py::_venv_python": {
       "file": "backend/app/run.py",
       "name": "_venv_python",
       "qualname": "_venv_python",
-      "lineno": 15,
+      "lineno": 53,
       "calls": [],
       "called_by": [
         "backend/app/run.py::ensure_venv"
@@ -1479,7 +1531,7 @@
       "file": "backend/app/run.py",
       "name": "_same_interpreter",
       "qualname": "_same_interpreter",
-      "lineno": 23,
+      "lineno": 61,
       "calls": [],
       "called_by": [
         "backend/app/run.py::ensure_venv"
@@ -1489,7 +1541,7 @@
       "file": "backend/app/run.py",
       "name": "_uvicorn_available",
       "qualname": "_uvicorn_available",
-      "lineno": 30,
+      "lineno": 68,
       "calls": [],
       "called_by": [
         "backend/app/run.py::ensure_venv"
@@ -1499,7 +1551,7 @@
       "file": "backend/app/run.py",
       "name": "ensure_venv",
       "qualname": "ensure_venv",
-      "lineno": 38,
+      "lineno": 76,
       "calls": [
         "backend/app/run.py::_uvicorn_available",
         "backend/app/run.py::_venv_python",
@@ -1514,10 +1566,11 @@
       "file": "backend/app/run.py",
       "name": "main",
       "qualname": "main",
-      "lineno": 51,
+      "lineno": 89,
       "calls": [
-        "backend/app/run.py::ensure_venv",
-        "backend/app/config.py::load_config"
+        "backend/app/run.py::load_dotenv",
+        "backend/app/config.py::load_config",
+        "backend/app/run.py::ensure_venv"
       ],
       "called_by": []
     },
