@@ -6,7 +6,13 @@ Full picture: [high-level design](design/high_level_design.md).
 
 ## SQLite
 
-Copied from [low-level design](design/low_level_design.md).
+Copied from [low-level design](design/low_level_design.md). Schema is no longer
+a `CREATE TABLE IF NOT EXISTS` block in `db.py`. Numbered `.sql` files live in
+`backend/app/storage/migrations/`: `001_initial.sql` is the v1 schema below,
+`002_add_client_id.sql` adds `requests.client_id TEXT NOT NULL DEFAULT ''`.
+`db.py` keeps a `schema_version` table and `migrate()` applies every file
+above the current version, each in its own transaction. `init_schema()` just
+calls `migrate()`.
 
 ```sql
 CREATE TABLE IF NOT EXISTS requests (
