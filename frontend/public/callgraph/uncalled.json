@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-09-05T09:20:20Z",
+  "generated_at": "2026-09-05T12:04:24Z",
   "files": [
     "backend/app/__init__.py",
     "backend/app/__main__.py",
@@ -11,7 +11,6 @@
     "backend/app/ingest/__main__.py",
     "backend/app/loadtest/__init__.py",
     "backend/app/loadtest/locustfile.py",
-    "backend/app/observability/logging.py",
     "frontend/src/main.tsx",
     "scripts/_check_titles.py",
     "scripts/fetch_until_done.py",
@@ -39,6 +38,7 @@
     "backend/app/api/routes_search.py::metrics",
     "backend/app/api/routes_search.py::search",
     "backend/app/api/schemas.py::SearchFiltersModel._must_be_iso8601",
+    "backend/app/api/schemas.py::SearchRequest._rrf_k_required_for_rrf",
     "backend/app/api/schemas.py::_default_alpha",
     "backend/app/api/schemas.py::_default_normalization",
     "backend/app/callgraph/__main__.py::main",
@@ -53,7 +53,6 @@
     "backend/app/observability/logging.py::JsonFormatter.format",
     "backend/app/observability/logging.py::SqliteLogHandler.__init__",
     "backend/app/observability/logging.py::SqliteLogHandler.emit",
-    "backend/app/observability/logging.py::configure",
     "backend/app/observability/metrics.py::reset",
     "backend/app/run.py::main",
     "backend/app/search/bm25.py::BM25Index.__init__",
@@ -94,7 +93,6 @@
     "frontend/src/pages/DebugPage.tsx::levelParam",
     "frontend/src/pages/DebugPage.tsx::parseTs",
     "frontend/src/pages/DebugPage.tsx::severityClass",
-    "frontend/src/pages/DebugPage.tsx::windowFromSince",
     "frontend/src/pages/KpisPage.tsx::fetchJson",
     "frontend/src/pages/KpisPage.tsx::onKey",
     "frontend/src/pages/KpisPage.tsx::parseBucket",

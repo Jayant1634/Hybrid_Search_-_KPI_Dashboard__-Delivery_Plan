@@ -153,6 +153,35 @@ def test_logs_returns_expected_keys(client: TestClient) -> None:
     assert body[0]["message"] == "boom"
 
 
+def test_logs_without_level_include_info_and_error(client: TestClient) -> None:
+    health = client.get("/health")
+    assert health.status_code == 200
+    resp = client.get("/api/dashboard/logs")
+    assert resp.status_code == 200
+    rows = resp.json()
+    severities = {row["severity"] for row in rows}
+    assert "ERROR" in severities
+    assert "INFO" in severities
+    assert any(row["message"] == "api started" for row in rows)
+    assert any(row["message"] == "request" for row in rows)
+    assert any(row["message"] == "boom" for row in rows)
+
+
+def test_logs_accept_from_and_to(client: TestClient) -> None:
+    resp = client.get(
+        "/api/dashboard/logs",
+        params={
+            "from": "2000-01-01T00:00:00+00:00",
+            "to": "2099-01-01T00:00:00+00:00",
+            "level": "ERROR",
+        },
+    )
+    assert resp.status_code == 200
+    body = resp.json()
+    assert body
+    assert body[0]["message"] == "boom"
+
+
 def test_bad_window_is_422(client: TestClient) -> None:
     resp = client.get("/api/dashboard/kpi/summary", params={"window": "yesterday"})
     assert resp.status_code == 422

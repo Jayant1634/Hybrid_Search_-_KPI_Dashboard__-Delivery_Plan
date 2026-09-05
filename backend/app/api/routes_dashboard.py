@@ -1,9 +1,11 @@
 """Dashboard reads under ``/api/dashboard``.
 
 KPI endpoints take a ``window`` like ``24h`` or ``7d``. List endpoints take
-``limit``, capped at 100. ``POST /kpi/load-test`` fires concurrent
-``/search`` hits for the KPI latency drawer. ``GET /experiments`` returns
-the rows of ``experiments.csv``, or an empty list if the file is missing.
+``limit``, capped at 100. ``GET /logs`` takes optional ``window``, ``level``,
+``from``, and ``to``; omit them to return every stored severity. ``POST
+/kpi/load-test`` fires concurrent ``/search`` hits for the KPI latency
+drawer. ``GET /experiments`` returns the rows of ``experiments.csv``, or an
+empty list if the file is missing.
 """
 
 from __future__ import annotations
@@ -232,13 +234,17 @@ def dashboard_experiments() -> list[dict[str, str]]:
 
 @router.get("/logs", response_model=list[LogEntry])
 def dashboard_logs(
-    window: str = "24h",
+    window: str | None = None,
     level: str | None = None,
+    from_: Annotated[str | None, Query(alias="from")] = None,
+    to: str | None = None,
     limit: Limit = 100,
 ) -> list[LogEntry]:
-    since, _granularity = parse_window(window)
+    since = from_
+    if since is None and window:
+        since, _granularity = parse_window(window)
     with _db() as conn:
-        rows = select_logs(conn, level=level, since=since, limit=limit)
+        rows = select_logs(conn, level=level, since=since, until=to, limit=limit)
     return [
         LogEntry(
             created_at=str(row["created_at"]),

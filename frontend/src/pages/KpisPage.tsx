@@ -420,7 +420,14 @@ export default function KpisPage() {
       <div className="page-header page-header-row">
         <div>
           <div className="page-eyebrow">Observability</div>
-          <h1 className="page-title">KPIs</h1>
+          <div className="page-title-row">
+            <span className="page-title-icon" aria-hidden="true">
+              <svg width="20" height="20" viewBox="0 0 16 16" fill="none">
+                <path d="M3 12V8M8 12V4M13 12V6" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" />
+              </svg>
+            </span>
+            <h1 className="page-title">KPIs</h1>
+          </div>
           <p className="page-desc">
             Query volume, latency, and zero-result rates for the selected window.
           </p>
@@ -459,24 +466,56 @@ export default function KpisPage() {
         <>
           <div className="health-grid">
             <div className="health-card">
-              <div className="hc-eyebrow">p50 latency</div>
+              <div className="hc-head">
+                <span className="hc-icon" aria-hidden="true">
+                  <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                    <circle cx="8" cy="8" r="5.5" stroke="currentColor" strokeWidth="1.4" />
+                    <path d="M8 5v3.2L10 10" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round" />
+                  </svg>
+                </span>
+                <div className="hc-eyebrow">p50 latency</div>
+              </div>
               <div className="hc-metric">{formatMs(data.summary.p50)}</div>
             </div>
             <div className="health-card">
-              <div className="hc-eyebrow">p95 latency</div>
+              <div className="hc-head">
+                <span className="hc-icon" aria-hidden="true">
+                  <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                    <path d="M2.5 10.5A5.5 5.5 0 1 1 13.5 10.5" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" />
+                    <path d="M8 8l2.2-1.4" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" />
+                    <path d="M4 13h8" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" />
+                  </svg>
+                </span>
+                <div className="hc-eyebrow">p95 latency</div>
+              </div>
               <div className="hc-metric">{formatMs(data.summary.p95)}</div>
             </div>
             <div className="health-card">
-              <div className="hc-eyebrow">Total requests</div>
+              <div className="hc-head">
+                <span className="hc-icon" aria-hidden="true">
+                  <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                    <path d="M3 12V8M8 12V4M13 12V6" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" />
+                  </svg>
+                </span>
+                <div className="hc-eyebrow">Total requests</div>
+              </div>
               <div className="hc-metric">{data.summary.total.toLocaleString()}</div>
             </div>
             <div className="health-card">
-              <div className="hc-eyebrow">Zero results</div>
+              <div className="hc-head">
+                <span className="hc-icon" aria-hidden="true">
+                  <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                    <circle cx="8" cy="8" r="5.5" stroke="currentColor" strokeWidth="1.4" />
+                    <path d="M4.2 4.2l7.6 7.6" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" />
+                  </svg>
+                </span>
+                <div className="hc-eyebrow">Zero results</div>
+              </div>
               <div className="hc-metric">{data.summary.zero_result_count.toLocaleString()}</div>
             </div>
           </div>
 
-          <section className="kpi-dash-panel">
+          {/* <section className="kpi-dash-panel">
             <div className="kpi-latency-row">
               <div className="kpi-latency-copy">
                 <h2>Latency load test</h2>
@@ -491,7 +530,7 @@ export default function KpisPage() {
                 Open test
               </button>
             </div>
-          </section>
+          </section> */}
 
           <section className="kpi-dash-panel">
             <h2>Volume per bucket</h2>

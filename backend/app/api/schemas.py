@@ -12,11 +12,11 @@ from __future__ import annotations
 from datetime import datetime
 from typing import Literal
 
-from pydantic import BaseModel, ConfigDict, Field, field_validator
+from pydantic import BaseModel, ConfigDict, Field, field_validator, model_validator
 
 from app.config import load_config
 
-Normalization = Literal["minmax", "zscore"]
+Normalization = Literal["minmax", "zscore", "rrf"]
 
 
 def _default_alpha() -> float:
@@ -25,7 +25,7 @@ def _default_alpha() -> float:
 
 def _default_normalization() -> Normalization:
     name = load_config().normalisation
-    return name if name in ("minmax", "zscore") else "minmax"
+    return name if name in ("minmax", "zscore", "rrf") else "minmax"
 
 
 class SearchFiltersModel(BaseModel):
@@ -61,7 +61,14 @@ class SearchRequest(BaseModel):
     alpha: float = Field(default_factory=_default_alpha, ge=0.0, le=1.0)
     normalization: Normalization = Field(default_factory=_default_normalization)
     min_vector_score: float = Field(default=0.2, ge=0.0, le=1.0)
+    rrf_k: int | None = Field(default=None, ge=0, le=10000)
     filters: SearchFiltersModel | None = None
+
+    @model_validator(mode="after")
+    def _rrf_k_required_for_rrf(self) -> SearchRequest:
+        if self.normalization == "rrf" and self.rrf_k is None:
+            raise ValueError("rrf_k is required when normalization is rrf")
+        return self
 
 
 class SearchResultItem(BaseModel):

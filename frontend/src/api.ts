@@ -1,4 +1,4 @@
-export type Normalization = "minmax" | "zscore";
+export type Normalization = "minmax" | "zscore" | "rrf";
 
 export type DatasetName = "wikipedia" | "contracts";
 
@@ -15,6 +15,7 @@ export interface SearchRequest {
   alpha?: number;
   normalization?: Normalization;
   min_vector_score?: number;
+  rrf_k?: number;
   filters?: SearchFilters | null;
 }
 
@@ -100,8 +101,8 @@ export interface ExperimentRow {
 }
 
 export interface LogEntry {
-  ts: string;
-  level: string;
+  created_at: string;
+  severity: string;
   message: string;
   request_id?: string | null;
 }
@@ -197,12 +198,14 @@ export async function getLogs(params: {
   level?: string;
   from?: string;
   to?: string;
+  window?: string;
   limit?: number;
 }): Promise<LogEntry[]> {
   const p = new URLSearchParams();
   if (params.level) p.set("level", params.level);
   if (params.from) p.set("from", params.from);
   if (params.to) p.set("to", params.to);
+  if (params.window) p.set("window", params.window);
   if (params.limit !== undefined) p.set("limit", String(params.limit));
-  return _fetch<LogEntry[]>(`/api/logs?${p}`);
+  return _fetch<LogEntry[]>(`/api/dashboard/logs?${p}`);
 }

@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-09-05T09:20:20Z",
+  "generated_at": "2026-09-05T12:04:24Z",
   "files": {
     "backend/app/__init__.py": {
       "language": "python",
@@ -71,6 +71,7 @@
         "backend/app/api/routes_dashboard.py",
         "backend/app/api/routes_search.py",
         "backend/app/config.py",
+        "backend/app/observability/logging.py",
         "backend/app/search/embedder.py",
         "backend/app/storage/db.py"
       ],
@@ -81,6 +82,7 @@
         "backend/app/api/routes_dashboard.py",
         "backend/app/api/routes_search.py",
         "backend/app/config.py",
+        "backend/app/observability/logging.py",
         "backend/app/search/embedder.py",
         "backend/app/storage/db.py"
       ],
@@ -205,7 +207,8 @@
       "functions": [
         "backend/app/api/schemas.py::_default_alpha",
         "backend/app/api/schemas.py::_default_normalization",
-        "backend/app/api/schemas.py::SearchFiltersModel._must_be_iso8601"
+        "backend/app/api/schemas.py::SearchFiltersModel._must_be_iso8601",
+        "backend/app/api/schemas.py::SearchRequest._rrf_k_required_for_rrf"
       ],
       "imports": [
         "backend/app/config.py"
@@ -621,11 +624,15 @@
       "imports": [
         "backend/app/storage/repo.py"
       ],
-      "imported_by": [],
+      "imported_by": [
+        "backend/app/api/main.py"
+      ],
       "calls": [
         "backend/app/storage/repo.py"
       ],
-      "called_by": []
+      "called_by": [
+        "backend/app/api/main.py"
+      ]
     },
     "backend/app/observability/metrics.py": {
       "language": "python",
@@ -821,6 +828,7 @@
       "functions": [
         "backend/app/search/normalize.py::min_max",
         "backend/app/search/normalize.py::z_score",
+        "backend/app/search/normalize.py::rrf",
         "backend/app/search/normalize.py::normalize"
       ],
       "imports": [],
@@ -1057,6 +1065,7 @@
         "frontend/src/App.tsx",
         "frontend/src/components/HealthGrid.tsx",
         "frontend/src/components/ResultCard.tsx",
+        "frontend/src/pages/DebugPage.tsx",
         "frontend/src/pages/HealthPage.tsx",
         "frontend/src/pages/SearchPage.tsx"
       ],
@@ -1065,6 +1074,7 @@
         "frontend/src/App.tsx",
         "frontend/src/components/HealthGrid.tsx",
         "frontend/src/components/ResultCard.tsx",
+        "frontend/src/pages/DebugPage.tsx",
         "frontend/src/pages/HealthPage.tsx",
         "frontend/src/pages/SearchPage.tsx"
       ]
@@ -1311,7 +1321,6 @@
       "functions": [
         "frontend/src/pages/DebugPage.tsx::clampLimit",
         "frontend/src/pages/DebugPage.tsx::levelParam",
-        "frontend/src/pages/DebugPage.tsx::windowFromSince",
         "frontend/src/pages/DebugPage.tsx::parseTs",
         "frontend/src/pages/DebugPage.tsx::inRange",
         "frontend/src/pages/DebugPage.tsx::fetchLogs",
@@ -1324,11 +1333,15 @@
         "frontend/src/pages/DebugPage.tsx::reset",
         "frontend/src/pages/DebugPage.tsx::LogRows"
       ],
-      "imports": [],
+      "imports": [
+        "frontend/src/api.ts"
+      ],
       "imported_by": [
         "frontend/src/App.tsx"
       ],
-      "calls": [],
+      "calls": [
+        "frontend/src/api.ts"
+      ],
       "called_by": [
         "frontend/src/App.tsx"
       ]

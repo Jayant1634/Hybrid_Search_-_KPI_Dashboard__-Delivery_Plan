@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-09-05T09:20:20Z",
+  "generated_at": "2026-09-05T12:04:24Z",
   "files": [
     {
       "from": "backend/app/__main__.py",
@@ -24,6 +24,10 @@
     {
       "from": "backend/app/api/main.py",
       "to": "backend/app/config.py"
+    },
+    {
+      "from": "backend/app/api/main.py",
+      "to": "backend/app/observability/logging.py"
     },
     {
       "from": "backend/app/api/main.py",
@@ -70,10 +74,6 @@
       "to": "backend/app/loadtest/burst.py"
     },
     {
-      "from": "backend/app/observability/logging.py",
-      "to": "backend/app/storage/repo.py"
-    },
-    {
       "from": "frontend/src/main.tsx",
       "to": "frontend/src/App.tsx"
     },
@@ -98,6 +98,10 @@
     {
       "from": "backend/app/api/main.py::create_app",
       "to": "backend/app/storage/db.py::init_schema"
+    },
+    {
+      "from": "backend/app/api/main.py::create_app",
+      "to": "backend/app/observability/logging.py::configure"
     },
     {
       "from": "backend/app/api/middleware.py::RequestContextMiddleware.dispatch",
@@ -358,10 +362,6 @@
     {
       "from": "backend/app/observability/logging.py::SqliteLogHandler.emit",
       "to": "backend/app/storage/repo.py::insert_log"
-    },
-    {
-      "from": "backend/app/observability/logging.py::configure",
-      "to": "backend/app/observability/logging.py::_find_flagged"
     },
     {
       "from": "backend/app/run.py::main",

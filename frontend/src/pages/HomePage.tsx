@@ -19,7 +19,7 @@ const FEATURES = [
   },
   {
     title: 'Tunable at Query Time',
-    body: 'Adjust α, top-k, and normalisation strategy (min-max or z-score) per request. No reindex required.',
+    body: 'Adjust α, top-k, and normalisation strategy (min-max, z-score, or RRF) per request. No reindex required.',
   },
   {
     title: 'Relevance Feedback',

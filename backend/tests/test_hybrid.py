@@ -122,21 +122,38 @@ def test_dataset_filter_keeps_contract_docs(fake_embedder: FakeEmbedder) -> None
     assert _ids(contracts) == ["doc-c1"]
 
 
-def test_min_vector_score_keeps_only_confident_hits(
+def test_min_vector_score_gates_vector_only_hits(
     searcher: HybridSearcher,
 ) -> None:
+    # For _QUERY only doc-001 is a lexical match; the rest are vector-only
+    # candidates the floor is allowed to veto.
     ungated = searcher.search(_QUERY, top_k=len(SAMPLE_DOCS), min_vector_score=0.0)
     assert ungated
-    ceiling = max(result.vector_raw for result in ungated)
-    kept = searcher.search(
-        _QUERY, top_k=len(SAMPLE_DOCS), min_vector_score=ceiling
-    )
-    assert kept
-    assert all(result.vector_raw >= ceiling for result in kept)
-    empty = searcher.search(
+    vector_only = [result for result in ungated if result.bm25_raw == 0.0]
+    assert vector_only  # there are vector-only candidates to gate
+    ceiling = max(result.vector_raw for result in vector_only)
+    gated = searcher.search(
         _QUERY, top_k=len(SAMPLE_DOCS), min_vector_score=ceiling + 0.01
     )
-    assert empty == []
+    # Every vector-only candidate below the floor is dropped ...
+    assert not any(result.bm25_raw == 0.0 for result in gated)
+    # ... but the genuine lexical match survives the floor.
+    assert "doc-001" in {result.doc_id for result in gated}
+
+
+def test_lexical_match_survives_every_vector_floor(
+    searcher: HybridSearcher,
+) -> None:
+    # Regression: a genuine BM25 (exact-word) hit must never be erased by the
+    # semantic floor, at any min_vector_score in [0.0, 1.0]. doc-001 matches
+    # "volcano" and "lava" lexically.
+    for floor in (0.0, 0.2, 0.25, 0.3, 0.5, 0.9, 1.0):
+        results = searcher.search(
+            "volcano lava", top_k=len(SAMPLE_DOCS), min_vector_score=floor
+        )
+        assert "doc-001" in {result.doc_id for result in results}, (
+            f"lexical hit vetoed at min_vector_score={floor}"
+        )
 
 
 def test_no_overlap_query_never_produces_non_finite_score(

@@ -25,7 +25,14 @@ const COLUMNS = [
   { key: 'n_queries', label: 'n' },
 ] as const
 
+const CHART_METRICS = [
+  { key: 'ndcg', label: 'nDCG@10' },
+  { key: 'recall', label: 'Recall@10' },
+  { key: 'mrr', label: 'MRR@10' },
+] as const
+
 type ColumnKey = (typeof COLUMNS)[number]['key']
+type ChartMetric = (typeof CHART_METRICS)[number]['key']
 type SortDir = 'asc' | 'desc'
 
 const NUMERIC = new Set<ColumnKey>([
@@ -52,6 +59,8 @@ interface ExperimentRow {
 
 interface ChartPoint extends ExperimentRow {
   ndcg: number
+  recall: number
+  mrr: number
   label: string
 }
 
@@ -106,15 +115,28 @@ function compareRows(
 function ExperimentTooltip({
   active,
   payload,
+  metric,
 }: {
   active?: boolean
   payload?: ReadonlyArray<{ payload: ChartPoint }>
+  metric: ChartMetric
 }) {
   if (!active || !payload?.length) return null
   const row = payload[0].payload
   return (
     <div className="eval-tooltip">
-      <div className="eval-tooltip-metric">nDCG@10 {row.ndcg.toFixed(4)}</div>
+      {CHART_METRICS.map(item => (
+        <div
+          key={item.key}
+          className={
+            item.key === metric
+              ? 'eval-tooltip-metric eval-tooltip-metric-active'
+              : 'eval-tooltip-metric'
+          }
+        >
+          {item.label} {row[item.key].toFixed(4)}
+        </div>
+      ))}
       <div><span>tag</span> {row.tag}</div>
       <div><span>alpha</span> {row.alpha}</div>
       <div><span>normalization</span> {row.normalization}</div>
@@ -130,6 +152,9 @@ export default function EvaluationPage() {
   const [error, setError] = useState<string | null>(null)
   const [sortKey, setSortKey] = useState<ColumnKey>('timestamp')
   const [sortDir, setSortDir] = useState<SortDir>('asc')
+  const [chartMetric, setChartMetric] = useState<ChartMetric>('ndcg')
+  const selectedMetric =
+    CHART_METRICS.find(item => item.key === chartMetric) ?? CHART_METRICS[0]
 
   useEffect(() => {
     let cancelled = false
@@ -159,6 +184,8 @@ export default function EvaluationPage() {
       .map(row => ({
         ...row,
         ndcg: Number(row.ndcg10),
+        recall: Number(row.recall10),
+        mrr: Number(row.mrr10),
         label: formatTime(row.timestamp),
       }))
   }, [rows])
@@ -192,6 +219,27 @@ export default function EvaluationPage() {
           color: var(--c-heading);
           margin-bottom: 14px;
         }
+        .eval-panel-head {
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          gap: 12px;
+          margin-bottom: 14px;
+        }
+        .eval-panel-head h2 { margin-bottom: 0; }
+        .eval-metric-field {
+          display: flex;
+          align-items: center;
+          gap: 8px;
+        }
+        .eval-metric-field label {
+          font-size: 11px;
+          font-weight: 600;
+          letter-spacing: 0.06em;
+          text-transform: uppercase;
+          color: var(--c-muted);
+        }
+        .eval-tooltip-metric-active { color: var(--purple); }
         .eval-plot { width: 100%; height: 280px; }
         .eval-table-wrap { overflow-x: auto; }
         .eval-table { width: 100%; border-collapse: collapse; min-width: 920px; }
@@ -257,7 +305,7 @@ export default function EvaluationPage() {
         <div className="page-eyebrow">Offline eval</div>
         <h1 className="page-title">Evaluation</h1>
         <p className="page-desc">
-          nDCG@10 across experiment runs, plus the full scored table.
+          nDCG@10, Recall@10, and MRR@10 across experiment runs, plus the full scored table.
         </p>
       </div>
 
@@ -275,7 +323,7 @@ export default function EvaluationPage() {
           <p className="empty-title">No experiment runs</p>
           <p className="empty-desc">
             There are no rows in experiments.csv yet. Score a query set with the
-            eval CLI to plot nDCG@10 here.
+            eval CLI to plot nDCG@10, Recall@10, and MRR@10 here.
           </p>
         </div>
       )}
@@ -283,7 +331,24 @@ export default function EvaluationPage() {
       {rows !== null && rows.length > 0 && (
         <>
           <section className="eval-panel">
-            <h2>nDCG@10 across runs</h2>
+            <div className="eval-panel-head">
+              <h2>{selectedMetric.label} across runs</h2>
+              <div className="eval-metric-field">
+                <label htmlFor="eval-chart-metric">Metric</label>
+                <select
+                  id="eval-chart-metric"
+                  className="param-select"
+                  value={chartMetric}
+                  onChange={event => setChartMetric(event.target.value as ChartMetric)}
+                >
+                  {CHART_METRICS.map(item => (
+                    <option key={item.key} value={item.key}>
+                      {item.label}
+                    </option>
+                  ))}
+                </select>
+              </div>
+            </div>
             <div className="eval-plot">
               <ResponsiveContainer width="100%" height="100%">
                 <LineChart data={chartData} margin={{ top: 8, right: 12, left: 8, bottom: 0 }}>
@@ -302,11 +367,13 @@ export default function EvaluationPage() {
                     axisLine={{ stroke: 'var(--c-border)' }}
                     width={44}
                   />
-                  <Tooltip content={<ExperimentTooltip />} />
+                  <Tooltip
+                    content={<ExperimentTooltip metric={chartMetric} />}
+                  />
                   <Line
                     type="monotone"
-                    dataKey="ndcg"
-                    name="nDCG@10"
+                    dataKey={selectedMetric.key}
+                    name={selectedMetric.label}
                     stroke={PURPLE}
                     strokeWidth={2}
                     dot={{ r: 3, fill: PURPLE }}

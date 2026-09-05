@@ -98,6 +98,7 @@ def run_eval(
     qrels: Mapping[str, Mapping[str, float]],
     alpha: float,
     normalization: str,
+    rrf_k: int | None = None,
 ) -> EvalResult:
     """Score ``queries`` with ``service``; skip any query that has no qrels."""
     per_query: list[QueryScores] = []
@@ -111,12 +112,21 @@ def run_eval(
                 stacklevel=2,
             )
             continue
-        hits = service.searcher.search(
-            query.query,
-            top_k=DEFAULT_K,
-            alpha=alpha,
-            normalization=normalization,
-        )
+        if rrf_k is None:
+            hits = service.searcher.search(
+                query.query,
+                top_k=DEFAULT_K,
+                alpha=alpha,
+                normalization=normalization,
+            )
+        else:
+            hits = service.searcher.search(
+                query.query,
+                top_k=DEFAULT_K,
+                alpha=alpha,
+                normalization=normalization,
+                rrf_k=rrf_k,
+            )
         ranked = [hit.doc_id for hit in hits]
         per_query.append(
             QueryScores(

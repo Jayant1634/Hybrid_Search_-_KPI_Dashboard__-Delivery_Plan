@@ -60,14 +60,21 @@ export default function App() {
         {page === 'kpis' && <KpisPage />}
         {page === 'evaluation' && <EvaluationPage />}
         {page === 'debug' && <DebugPage />}
-        <footer className="home-footer">
-          {build && (
-            <>
-              <span>{build.version}</span>
-              <span className="footer-sep">·</span>
-              <span>{build.commit}</span>
-            </>
-          )}
+        <footer className="app-footer">
+          <div className="app-footer-inner">
+            <span className="app-footer-brand">Kearney Search Intelligence</span>
+            <div className="app-footer-meta">
+              {build ? (
+                <>
+                  <span>{build.version}</span>
+                  <span className="footer-sep">·</span>
+                  <span>{build.commit}</span>
+                </>
+              ) : (
+                <span>CPU-only · Python 3.11+</span>
+              )}
+            </div>
+          </div>
         </footer>
       </main>
     </div>

@@ -3427,3 +3427,293 @@ docs: fill last-check review/commit lines, README timing, and break/fix SHAs
 validated: 97/97 log entries have Review+Commit; break_fix A/B/C complete; README s11 headings + timing; tags scenario-a/b/c; origin/main already 27 commits
 Review: Accepted; last-check items filled in the named docs; local main pointer updated to origin/main; tags are local until pushed.
 Commit:
+
+---
+
+Date: 2026-09-05
+Prompt id: p-eval-chart-dropdown
+Prompt:
+check the codebase and add these things also in the evaluation page :
+	nDCG@10	Recall@10	MRR@10, dropdown for the graph shown, so fix this
+Model: Cursor Grok 4.6
+Files: frontend/src/pages/EvaluationPage.tsx, frontend/public/callgraph/*.json, docs/codex_log.md
+What came back:
+The Evaluation page already stored nDCG@10, Recall@10, and MRR@10 in the table. The chart was nDCG-only, with no way to switch.
+
+The chart now has a Metric dropdown: nDCG@10, Recall@10, MRR@10. The line, heading, and highlighted tooltip row follow the selected metric. Hover still shows all three scores plus tag, alpha, normalization, model, and commit. Table columns are unchanged.
+
+There is no frontend test runner. Matching coverage is the dashboard experiments tests (the CSV already includes all three keys):
+
+```
+..                                                                       [100%]
+2 passed, 2 warnings in 12.79s
+```
+
+`npm run build` passed (`tsc -b && vite build`, 609 modules). Regenerated `frontend/public/callgraph/*.json`.
+
+A live `GET /api/dashboard/experiments` returned 10 rows, each with `ndcg10`, `recall10`, and `mrr10`. No browser tools in this session, so the dropdown was not clicked in the UI; Vite on :5173 should hot-reload the change.
+
+Add evaluation chart metric dropdown
+validated: 2 passed in 12.79s; npm run build passed
+Review:
+Commit:
+
+---
+
+Date: 2026-09-05
+Prompt id: p-eval-chart-dropdown-notify
+Prompt:
+Briefly inform the user about the task result and perform any follow-up actions (if needed). If there's no follow-ups needed, don't explicitly say that.
+Model: Cursor Grok 4.6
+Files: docs/codex_log.md
+What came back:
+The earlier test run failed on system Python (no FastAPI). It was rerun with the project venv and passed: 2 experiments API tests in 12.79s. The evaluation page change is already in place — Metric dropdown for nDCG@10, Recall@10, and MRR@10.
+
+Confirm eval chart dropdown after background tests
+validated: already done; 2 passed in 12.79s
+Review:
+Commit:
+
+---
+
+Date: 2026-09-05
+Prompt id: p-layout-width-kpi-footer
+Prompt:
+cehck the codebase and update the layout of the pages width, cehck the codebase and fix this, add icons on the KPI and heading, 
+and fix the footer, fix this
+Model: Cursor Grok 4.6
+Files: frontend/src/App.css, frontend/src/App.tsx, frontend/src/pages/KpisPage.tsx, frontend/public/callgraph/*.json, docs/codex_log.md
+What came back:
+Search and Health were capped at 1000px while KPIs / Evaluation / Debug used 1360px, so the inner pages did not line up. The shell footer was also an empty strip until `/health` returned.
+
+**Width.** `.page-container` is now 1360px and grows with the main column, so Search, Health, KPIs, Evaluation, Debug, and Settings share the same content width. Descriptions can use more of that width.
+
+**KPI icons.** The KPIs heading has the bar-chart icon. The four tiles (p50, p95, total requests, zero results) each have a matching icon next to the label.
+
+**Footer.** Inner pages always show a footer: brand on the left, version · commit on the right when `/health` is up, otherwise `CPU-only · Python 3.11+`. The inner row uses the same 1360px / 48px padding as the pages, so it lines up with the content.
+
+There is no frontend test runner. Matching coverage is the health payload the footer reads:
+
+```
+.                                                                        [100%]
+1 passed, 2 warnings in 4.35s
+```
+
+`npm run build` passed (`tsc -b && vite build`, 609 modules). Regenerated `frontend/public/callgraph/*.json`. No browser tools in this session; Vite on :5173 should hot-reload the change.
+
+Widen pages, add KPI icons, fix shell footer
+validated: 1 passed in 4.35s; npm run build passed
+Review:
+Commit:
+
+---
+
+Date: 2026-09-05
+Prompt id: p-min-vector-score-bug
+Prompt:
+ok so check this bug, if i set the min vector cap to 0.25, it shows only one search output, like i search for fire, it shows the gunpowder file, 
+but when i set it to 0.20, it shows 8 file, exact fire word is there, but still why this happens ?
+and if increasing it to 0.3 or more, it shows no results, even though fire word is there in the data, cehck the codebase and find what causing this ?
+Model: Cursor Grok 4.6
+Files: docs/codex_log.md
+What came back:
+Not a bug — it is exactly what `min_vector_score` is defined to do.
+
+**What the knob filters.** In `hybrid.py` (lines 96-104), after BM25 and vector candidates are unioned, `min_vector_score` drops documents by their **raw cosine vector score** before fusion. `vector_union` is the raw cosine, with `0.0` for any doc the vector index did not return (line 96). So the floor is applied to semantic cosine similarity only; BM25 (the exact-word side) is ignored by this filter.
+
+**Why "fire" behaves like that.** There is one embedding per whole document (`"{title} {text}"`, mean-pooled into a 384-d vector). A one-word query like `fire` gets its own vector and cosine is measured against the whole document's meaning, not whether the word "fire" appears. For a single short word vs a full document, those cosines are naturally low (~0.15-0.30):
+- 0.20 -> 8 docs clear the floor.
+- 0.25 -> only the gunpowder doc clears it; its overall meaning is semantically closest to "fire", higher than a doc that literally contains "fire" once in a long article.
+- 0.30+ -> nothing clears it; no full-document vector is that close to a bare one-word query. The doc that literally says "fire" is dropped even though BM25 would score it perfectly.
+
+**Crux.** `min_vector_score` throws away strong exact-word matches because it only looks at the vector score. A doc that BM25 matched but that is not in the vector top-k gets `vector_union = 0.0`, so any `min_vector_score > 0` removes it. The default `0.2` in `schemas.py` (line 63) already does this silently.
+
+**Summary.** Counts flip 8 -> 1 -> 0 as the threshold crosses the narrow low cosine band; "exact word present but no results" happens because the floor filters on semantic score, not lexical, and can override a perfect BM25 match; gunpowder wins at 0.25 because document-level embeddings rank by overall meaning, not word presence.
+
+Offered (not applied, no file named): only apply `min_vector_score` to docs with no BM25 score, or lower the default.
+
+Explain min_vector_score result-count behavior
+validated: n/a (diagnosis only)
+Review:
+Commit:
+
+---
+
+Date: 2026-09-05
+Prompt id: p-min-vector-score-fix
+Prompt:
+fix this : [minimal-patch bypass so a BM25 lexical hit is never vetoed by the semantic
+min_vector_score floor; user chose fix #1 and asked to ship it with a regression test]
+Model: Cursor Grok 4.6
+Files: backend/app/search/hybrid.py, backend/tests/test_hybrid.py, frontend/public/callgraph/*.json, docs/codex_log.md
+What came back:
+Applied fix #1 (the minimal bypass) to `hybrid.py`. The floor filter now keeps a
+document when it clears the vector threshold **or** it has a genuine BM25 match:
+
+```
+if min_vector_score > 0.0:
+    doc_ids = [
+        doc_id
+        for doc_id in doc_ids
+        if vector_union[doc_id] >= min_vector_score
+        or bm25_union[doc_id] > 0.0
+    ]
+```
+
+Rationale: `vector_union.get(doc_id, 0.0)` conflates "measured as unrelated" with
+"never surfaced by the vector top-k, so unmeasured". Defaulting an unmeasured doc to
+0.0 and then comparing it against the floor let the semantic floor silently erase real
+lexical matches. The bypass restores the correct invariant: a semantic floor never
+vetoes a genuine lexical hit. `min_vector_score` still trims vector-only noise. Left
+`schemas.py` default at 0.2 (it now only gates vector-only candidates, which is right).
+Did not implement RRF; flagged as a separate follow-up as the user suggested.
+
+Updated the matching test `test_hybrid.py`:
+- replaced `test_min_vector_score_keeps_only_confident_hits` with
+  `test_min_vector_score_gates_vector_only_hits` (floor still drops vector-only docs
+  below it, but keeps the lexical match doc-001).
+- added `test_lexical_match_survives_every_vector_floor` (regression: query
+  "volcano lava" keeps doc-001 at every floor from 0.0 to 1.0).
+
+Test output (project venv):
+
+```
+tests/test_hybrid.py ...........                                          [100%]
+11 passed in 0.18s
+```
+
+Regenerated `frontend/public/callgraph/*.json`.
+
+Two other tests then failed on the wider run; neither is fixed here:
+1. `test_api_search.py::test_min_vector_score_can_empty_results` — asserts that
+   `min_vector_score=1.0` for "volcano" returns `[]`. That encodes the OLD buggy
+   behavior; doc-001 is a lexical match and now (correctly) survives. This file was
+   NOT named in the prompt, so per the working rules I did not edit it. It needs its
+   final assertion changed from `== []` to expecting the lexical hit to remain (e.g.
+   assert the results are exactly the lexically-matched docs). Awaiting go-ahead.
+2. `test_search_edgecases.py::test_normalize_single_score_is_one` — PRE-EXISTING and
+   unrelated: `z_score({"a": 3.5})` returns `{"a": 0.0}` (std==0 branch), test expects
+   1.0. `normalize.py` was already modified before this turn; not touched here.
+
+Bypass BM25 lexical hits past the min_vector_score floor
+validated: 11 passed in 0.18s (tests/test_hybrid.py)
+Review:
+Commit:
+
+---
+
+Date: 2026-09-05
+Prompt id: p-fix-zscore-zero-std
+Prompt:
+whats the error in zscore, fix that as well
+Model: Cursor Grok 4.6
+Files: backend/app/search/normalize.py, backend/tests/test_normalize.py, frontend/public/callgraph/*.json, docs/codex_log.md
+What came back:
+The error was the `std == 0.0` shortcut in `z_score`. That function is defined as
+"standardise, then squash through `min_max`". When every score is the same
+(including a single-doc pool like `{"a": 3.5}`), std is 0, so the old branch
+returned `{doc_id: 0.0}` and never called `min_max`. That treated a tied winner
+as the worst score.
+
+Meanwhile `min_max` already maps zero-spread to `1.0` (every tied doc is equally
+the best of the pool). So `test_search_edgecases.py::test_normalize_single_score_is_one`
+failed: `z_score({"a": 3.5})` was `{"a": 0.0}`, expected `{"a": 1.0}`.
+
+Fix: on zero std, emit a constant-zero standardised vector and still pass it
+through `min_max`, which now returns `1.0` for every doc. Updated the `z_score`
+and `min_max` docstrings to say zero-spread / zero-std maps to `1.0`. Matching
+test `test_normalize.py` now expects ones for a constant pair and a single score.
+
+Test output (project venv):
+
+```
+tests/test_normalize.py ........                                         [ 38%]
+tests/test_search_edgecases.py::test_normalize_single_score_is_one PASSED
+tests/test_hybrid.py ...........                                         [100%]
+21 passed, 2 warnings in 1.03s
+```
+
+Regenerated `frontend/public/callgraph/*.json`.
+
+`docs/decision_log.md` still says "z_score stays 0.0 on constant input"; that file
+is not editable per working rules. `test_api_search.py::test_min_vector_score_can_empty_results`
+is still stale from the earlier lexical-bypass fix (not named, not edited).
+
+Map z_score zero-std pool to 1.0 via min_max
+validated: 21 passed in 1.03s
+Review:
+Commit:
+
+---
+
+Date: 2026-09-05
+Prompt id: p-add-rrf-normalization
+Prompt:
+add RRF also as a methodology of normalisation, cehck the codebase and add it
+Model: Cursor Grok 4.6
+Files: backend/app/search/normalize.py, backend/tests/test_normalize.py, backend/app/api/schemas.py, backend/app/api/routes_search.py, backend/app/eval/__main__.py, backend/app/loadtest/burst.py, frontend/src/api.ts, frontend/src/pages/SearchPage.tsx, frontend/src/pages/HomePage.tsx, backend/tests/test_search_edgecases.py, backend/tests/test_schemas.py, frontend/public/callgraph/*.json, docs/codex_log.md
+What came back:
+RRF is now a third normalisation method, next to min-max and z-score.
+
+How it works: each retriever list is converted to dense ranks (highest raw score is rank 1; ties share a rank) and scored as `1 / (60 + rank)`. That is the Cormack / Clarke / Buettcher constant. Magnitudes are ignored — a 1000 vs 10 gap ranks the same as 2 vs 1 — so a single huge BM25 hit cannot flatten the rest of the list. Scores already sit in `(0, 1/61]`, so they stay inside `0..1` without a second rescale. Hybrid still blends the two sides with alpha: `hybrid = alpha * rrf_bm25 + (1 - alpha) * rrf_vector`.
+
+Names:
+- Search layer / eval internals: `rrf`
+- API, Search dropdown, eval CLI (`--normalization rrf`): `rrf`
+
+Wired through `normalize()` dispatcher, `POST /search`, eval CLI, KPI burst mapping, and the Search page Normalisation select (Min-Max / Z-Score / RRF). Default is still min-max.
+
+Tests (`49 passed in 0.97s`):
+
+```
+tests/test_normalize.py ................                                 [ 32%]
+tests/test_schemas.py ...                                                [ 38%]
+tests/test_search_edgecases.py::test_normalize_negative_bm25_values_stay_in_unit_range PASSED
+tests/test_search_edgecases.py::test_hybrid_minmax_and_zscore_keep_same_top_doc PASSED
+tests/test_search_edgecases.py::test_api_zscore_and_minmax_both_200 PASSED
+tests/test_hybrid.py ...........                                         [ 69%]
+tests/test_eval.py ..                                                    [ 73%]
+49 passed, 2 warnings in 0.97s
+```
+
+The live API process is still the old one: `normalization=rrf` currently 422s with "Input should be 'minmax' or 'zscore'". Restart `up.sh` to pick this up. No browser tools were available, so the Search dropdown was not clicked end-to-end; the TestClient contract (`minmax` / `zscore` / `rrf` all 200) covers the API path.
+
+`docs/decision_log.md` still treats RRF as the unused option 3; that file is not editable here. README still says `minmax|zscore` only.
+
+Add RRF as a third score-normalisation strategy
+validated: 49 passed in 0.97s
+Review:
+Commit:
+
+---
+
+Date: 2026-09-05
+Prompt id: p-zscore-rrf-single-one
+Prompt:
+fix this same for the z score also, it is also give norm as 0, if only 1 file there, with a certain cap, fix this
+check for RRF as well
+Model: Cursor Grok 4.6
+Files: backend/app/search/normalize.py, backend/tests/test_normalize.py, frontend/public/callgraph/*.json, docs/codex_log.md
+What came back:
+When a filter or the min-vector cap leaves **one file** (or every score is tied), all three normalisers now map that pool to **1.0**.
+
+**Z-score.** A single score has standard deviation 0. That used to return 0.0. It now returns 1.0, same as min-max: the only doc is the best of the pool. After that, a real spread still goes through min-max so the result stays in 0..1.
+
+**RRF.** Rank 1 is `1 / (60 + 1) ≈ 0.016`. With the k=60 cap that looks like 0 on the score bars, especially when only one file survives. If every doc shares rank 1 (one file or a constant set), RRF now returns 1.0. Lists with more than one distinct rank are unchanged: still `1 / (60 + rank)`.
+
+```
+..................................................................xxxxxx [ 84%]
+xx...........                                                            [100%]
+77 passed, 8 xfailed, 2 warnings in 1.81s
+```
+
+(`test_normalize.py` + `test_search_edgecases.py` + `test_hybrid.py`.) Regenerated `frontend/public/callgraph/*.json`.
+
+`docs/decision_log.md` still says z-score stays 0 on a constant set. That file is yours; say if you want that entry updated.
+
+Map z-score and RRF single-file pools to 1
+validated: 77 passed, 8 xfailed in 1.81s
+Review:
+Commit:
+
+---

@@ -1,6 +1,6 @@
 import { useState, useCallback } from 'react'
 import ResultCard from '../components/ResultCard'
-import { search, type DatasetName, type SearchFilters, type SearchResult } from '../api'
+import { search, type DatasetName, type Normalization, type SearchFilters, type SearchResult } from '../api'
 
 function localDateToIso(value: string, endOfDay: boolean): string {
   if (!value) return ''
@@ -11,7 +11,8 @@ export default function SearchPage() {
   const [query, setQuery] = useState('')
   const [topK, setTopK] = useState(10)
   const [alpha, setAlpha] = useState(0.5)
-  const [normalization, setNormalization] = useState<'minmax' | 'zscore'>('minmax')
+  const [normalization, setNormalization] = useState<Normalization>('minmax')
+  const [rrfK, setRrfK] = useState('')
   const [minVectorScore, setMinVectorScore] = useState(0.2)
   const [dataset, setDataset] = useState<'' | DatasetName>('')
   const [sourceFilter, setSourceFilter] = useState('')
@@ -25,6 +26,9 @@ export default function SearchPage() {
   const [requestId, setRequestId] = useState('')
   const [tookMs, setTookMs] = useState<number | null>(null)
   const [searched, setSearched] = useState(false)
+  const rrfKReady =
+    normalization !== 'rrf' ||
+    (rrfK.trim() !== '' && Number.isInteger(Number(rrfK)) && Number(rrfK) >= 0)
 
   const handleSearch = useCallback(async () => {
     const q = query.trim()
@@ -39,13 +43,24 @@ export default function SearchPage() {
     if (createdTo) filters.created_to = localDateToIso(createdTo, true)
     const hasFilters = Object.keys(filters).length > 0
 
+    if (normalization === 'rrf') {
+      const parsed = Number(rrfK)
+      if (rrfK.trim() === '' || !Number.isInteger(parsed) || parsed < 0) {
+        setError('RRF needs k: the smoothing constant in 1/(k + rank). Enter an integer ≥ 0.')
+        setLoading(false)
+        return
+      }
+    }
+
     try {
+      const parsedK = Number(rrfK)
       const resp = await search({
         query: q,
         top_k: topK,
         alpha,
         normalization,
         min_vector_score: minVectorScore,
+        ...(normalization === 'rrf' ? { rrf_k: parsedK } : {}),
         filters: hasFilters ? filters : null,
       })
       setResults(resp.results)
@@ -57,7 +72,7 @@ export default function SearchPage() {
     } finally {
       setLoading(false)
     }
-  }, [query, topK, alpha, normalization, minVectorScore, dataset, sourceFilter, createdFrom, createdTo])
+  }, [query, topK, alpha, normalization, rrfK, minVectorScore, dataset, sourceFilter, createdFrom, createdTo])
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === 'Enter') handleSearch()
@@ -109,7 +124,7 @@ export default function SearchPage() {
           <button
             className="btn-primary search-go"
             onClick={handleSearch}
-            disabled={loading || !query.trim()}
+            disabled={loading || !query.trim() || !rrfKReady}
           >
             {loading ? <span className="spinner" /> : 'Search'}
           </button>
@@ -181,12 +196,39 @@ export default function SearchPage() {
             <select
               className="param-select"
               value={normalization}
-              onChange={e => setNormalization(e.target.value as 'minmax' | 'zscore')}
+              onChange={e => setNormalization(e.target.value as Normalization)}
             >
               <option value="minmax">Min-Max</option>
               <option value="zscore">Z-Score</option>
+              <option value="rrf">RRF</option>
             </select>
           </div>
+
+          {normalization === 'rrf' && (
+            <div className="param-group param-alpha">
+              <label className="param-label">
+                RRF k
+                {rrfK.trim() !== '' && (
+                  <span className="param-value-badge">{rrfK}</span>
+                )}
+              </label>
+              <input
+                type="number"
+                className="param-input"
+                min={0}
+                max={10000}
+                step={1}
+                placeholder="enter k"
+                value={rrfK}
+                onChange={e => setRrfK(e.target.value)}
+              />
+              <span className="empty-desc">
+                Score is 1/(k + rank). You type k; nothing is pre-filled.
+                Small k favours the top ranks (0 is 1/rank). Large k flattens
+                the gaps so mid-ranks stay competitive.
+              </span>
+            </div>
+          )}
 
           <button
             className="btn-ghost filter-toggle-btn"

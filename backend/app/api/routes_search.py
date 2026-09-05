@@ -38,7 +38,7 @@ from app.storage.repo import insert_feedback
 router = APIRouter()
 
 # API normalization names -> search-layer normaliser keys.
-_NORMALIZATION = {"minmax": "min_max", "zscore": "z_score"}
+_NORMALIZATION = {"minmax": "min_max", "zscore": "z_score", "rrf": "rrf"}
 
 
 class IndexMeta(BaseModel):
@@ -171,6 +171,7 @@ def search(payload: SearchRequest, request: Request) -> SearchResponse:
         normalization=_NORMALIZATION[payload.normalization],
         filters=filters,
         min_vector_score=payload.min_vector_score,
+        rrf_k=payload.rrf_k,
     )
     took_ms = (time.perf_counter() - start) * 1000.0
 

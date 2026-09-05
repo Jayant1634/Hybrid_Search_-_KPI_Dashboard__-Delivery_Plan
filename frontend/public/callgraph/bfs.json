@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-09-05T09:20:20Z",
+  "generated_at": "2026-09-05T12:04:24Z",
   "files": {
     "roots": [
       "backend/app/__init__.py",
@@ -12,7 +12,6 @@
       "backend/app/ingest/__main__.py",
       "backend/app/loadtest/__init__.py",
       "backend/app/loadtest/locustfile.py",
-      "backend/app/observability/logging.py",
       "frontend/src/main.tsx",
       "scripts/_check_titles.py",
       "scripts/fetch_until_done.py",
@@ -31,7 +30,6 @@
         "backend/app/ingest/__main__.py",
         "backend/app/loadtest/__init__.py",
         "backend/app/loadtest/locustfile.py",
-        "backend/app/observability/logging.py",
         "frontend/src/main.tsx",
         "scripts/_check_titles.py",
         "scripts/fetch_until_done.py",
@@ -45,6 +43,7 @@
         "backend/app/api/routes_dashboard.py",
         "backend/app/api/routes_search.py",
         "backend/app/config.py",
+        "backend/app/observability/logging.py",
         "backend/app/search/embedder.py",
         "backend/app/storage/db.py",
         "backend/app/callgraph/analyze.py",
@@ -52,7 +51,6 @@
         "backend/app/index/metadata.py",
         "backend/app/ingest/__init__.py",
         "backend/app/loadtest/burst.py",
-        "backend/app/storage/repo.py",
         "frontend/src/App.tsx",
         "scripts/fetch_corpus.py"
       ]
@@ -81,6 +79,10 @@
       {
         "from": "backend/app/api/main.py",
         "to": "backend/app/config.py"
+      },
+      {
+        "from": "backend/app/api/main.py",
+        "to": "backend/app/observability/logging.py"
       },
       {
         "from": "backend/app/api/main.py",
@@ -125,10 +127,6 @@
       {
         "from": "backend/app/loadtest/locustfile.py",
         "to": "backend/app/loadtest/burst.py"
-      },
-      {
-        "from": "backend/app/observability/logging.py",
-        "to": "backend/app/storage/repo.py"
       },
       {
         "from": "frontend/src/main.tsx",
@@ -166,6 +164,10 @@
       },
       {
         "from": "backend/app/api/main.py",
+        "to": "backend/app/observability/logging.py"
+      },
+      {
+        "from": "backend/app/api/main.py",
         "to": "backend/app/search/embedder.py"
       },
       {
@@ -209,10 +211,6 @@
         "to": "backend/app/loadtest/burst.py"
       },
       {
-        "from": "backend/app/observability/logging.py",
-        "to": "backend/app/storage/repo.py"
-      },
-      {
         "from": "frontend/src/main.tsx",
         "to": "frontend/src/App.tsx"
       },
@@ -232,7 +230,6 @@
       "backend/app/ingest/__main__.py",
       "backend/app/loadtest/__init__.py",
       "backend/app/loadtest/locustfile.py",
-      "backend/app/observability/logging.py",
       "frontend/src/main.tsx",
       "scripts/_check_titles.py",
       "scripts/fetch_until_done.py",
@@ -243,6 +240,7 @@
       "backend/app/api/middleware.py",
       "backend/app/api/routes_dashboard.py",
       "backend/app/api/routes_search.py",
+      "backend/app/observability/logging.py",
       "backend/app/search/embedder.py",
       "backend/app/storage/db.py",
       "backend/app/callgraph/analyze.py",
@@ -251,7 +249,6 @@
       "backend/app/index/metadata.py",
       "backend/app/ingest/__init__.py",
       "backend/app/loadtest/burst.py",
-      "backend/app/storage/repo.py",
       "frontend/src/App.tsx",
       "scripts/fetch_corpus.py"
     ],
@@ -266,7 +263,6 @@
       "backend/app/ingest/__main__.py",
       "backend/app/loadtest/__init__.py",
       "backend/app/loadtest/locustfile.py",
-      "backend/app/observability/logging.py",
       "frontend/src/main.tsx",
       "scripts/_check_titles.py",
       "scripts/fetch_until_done.py",
@@ -278,6 +274,7 @@
       "backend/app/api/routes_dashboard.py",
       "backend/app/api/routes_search.py",
       "backend/app/config.py",
+      "backend/app/observability/logging.py",
       "backend/app/search/embedder.py",
       "backend/app/storage/db.py",
       "backend/app/callgraph/analyze.py",
@@ -285,7 +282,6 @@
       "backend/app/index/metadata.py",
       "backend/app/ingest/__init__.py",
       "backend/app/loadtest/burst.py",
-      "backend/app/storage/repo.py",
       "frontend/src/App.tsx",
       "scripts/fetch_corpus.py"
     ]
@@ -312,6 +308,7 @@
       "backend/app/api/routes_search.py::metrics",
       "backend/app/api/routes_search.py::search",
       "backend/app/api/schemas.py::SearchFiltersModel._must_be_iso8601",
+      "backend/app/api/schemas.py::SearchRequest._rrf_k_required_for_rrf",
       "backend/app/api/schemas.py::_default_alpha",
       "backend/app/api/schemas.py::_default_normalization",
       "backend/app/callgraph/__main__.py::main",
@@ -326,7 +323,6 @@
       "backend/app/observability/logging.py::JsonFormatter.format",
       "backend/app/observability/logging.py::SqliteLogHandler.__init__",
       "backend/app/observability/logging.py::SqliteLogHandler.emit",
-      "backend/app/observability/logging.py::configure",
       "backend/app/observability/metrics.py::reset",
       "backend/app/run.py::main",
       "backend/app/search/bm25.py::BM25Index.__init__",
@@ -367,7 +363,6 @@
       "frontend/src/pages/DebugPage.tsx::levelParam",
       "frontend/src/pages/DebugPage.tsx::parseTs",
       "frontend/src/pages/DebugPage.tsx::severityClass",
-      "frontend/src/pages/DebugPage.tsx::windowFromSince",
       "frontend/src/pages/KpisPage.tsx::fetchJson",
       "frontend/src/pages/KpisPage.tsx::onKey",
       "frontend/src/pages/KpisPage.tsx::parseBucket",
@@ -400,6 +395,7 @@
         "backend/app/api/routes_search.py::metrics",
         "backend/app/api/routes_search.py::search",
         "backend/app/api/schemas.py::SearchFiltersModel._must_be_iso8601",
+        "backend/app/api/schemas.py::SearchRequest._rrf_k_required_for_rrf",
         "backend/app/api/schemas.py::_default_alpha",
         "backend/app/api/schemas.py::_default_normalization",
         "backend/app/callgraph/__main__.py::main",
@@ -414,7 +410,6 @@
         "backend/app/observability/logging.py::JsonFormatter.format",
         "backend/app/observability/logging.py::SqliteLogHandler.__init__",
         "backend/app/observability/logging.py::SqliteLogHandler.emit",
-        "backend/app/observability/logging.py::configure",
         "backend/app/observability/metrics.py::reset",
         "backend/app/run.py::main",
         "backend/app/search/bm25.py::BM25Index.__init__",
@@ -455,7 +450,6 @@
         "frontend/src/pages/DebugPage.tsx::levelParam",
         "frontend/src/pages/DebugPage.tsx::parseTs",
         "frontend/src/pages/DebugPage.tsx::severityClass",
-        "frontend/src/pages/DebugPage.tsx::windowFromSince",
         "frontend/src/pages/KpisPage.tsx::fetchJson",
         "frontend/src/pages/KpisPage.tsx::onKey",
         "frontend/src/pages/KpisPage.tsx::parseBucket",
@@ -471,6 +465,7 @@
         "backend/app/storage/db.py::connect",
         "backend/app/config.py::load_config",
         "backend/app/storage/db.py::init_schema",
+        "backend/app/observability/logging.py::configure",
         "backend/app/api/middleware.py::_read_search_params",
         "backend/app/api/middleware.py::_persist_search",
         "backend/app/observability/metrics.py::record_search_latency",
@@ -518,7 +513,6 @@
         "backend/app/ingest/__init__.py::_resolve_path",
         "backend/app/ingest/__init__.py::ingest",
         "backend/app/storage/repo.py::insert_log",
-        "backend/app/observability/logging.py::_find_flagged",
         "backend/app/run.py::load_dotenv",
         "backend/app/run.py::ensure_venv",
         "backend/app/search/filters.py::apply",
@@ -568,6 +562,10 @@
         "to": "backend/app/storage/db.py::init_schema"
       },
       {
+        "from": "backend/app/api/main.py::create_app",
+        "to": "backend/app/observability/logging.py::configure"
+      },
+      {
         "from": "backend/app/api/middleware.py::RequestContextMiddleware.dispatch",
         "to": "backend/app/api/middleware.py::_read_search_params"
       },
@@ -826,10 +824,6 @@
       {
         "from": "backend/app/observability/logging.py::SqliteLogHandler.emit",
         "to": "backend/app/storage/repo.py::insert_log"
-      },
-      {
-        "from": "backend/app/observability/logging.py::configure",
-        "to": "backend/app/observability/logging.py::_find_flagged"
       },
       {
         "from": "backend/app/run.py::main",
@@ -990,6 +984,10 @@
         "to": "backend/app/storage/db.py::init_schema"
       },
       {
+        "from": "backend/app/api/main.py::create_app",
+        "to": "backend/app/observability/logging.py::configure"
+      },
+      {
         "from": "backend/app/api/middleware.py::RequestContextMiddleware.dispatch",
         "to": "backend/app/api/middleware.py::_read_search_params"
       },
@@ -1248,10 +1246,6 @@
       {
         "from": "backend/app/observability/logging.py::SqliteLogHandler.emit",
         "to": "backend/app/storage/repo.py::insert_log"
-      },
-      {
-        "from": "backend/app/observability/logging.py::configure",
-        "to": "backend/app/observability/logging.py::_find_flagged"
       },
       {
         "from": "backend/app/run.py::main",
@@ -1415,6 +1409,7 @@
       "backend/app/api/routes_search.py::metrics",
       "backend/app/api/routes_search.py::search",
       "backend/app/api/schemas.py::SearchFiltersModel._must_be_iso8601",
+      "backend/app/api/schemas.py::SearchRequest._rrf_k_required_for_rrf",
       "backend/app/api/schemas.py::_default_alpha",
       "backend/app/api/schemas.py::_default_normalization",
       "backend/app/callgraph/__main__.py::main",
@@ -1429,7 +1424,6 @@
       "backend/app/observability/logging.py::JsonFormatter.format",
       "backend/app/observability/logging.py::SqliteLogHandler.__init__",
       "backend/app/observability/logging.py::SqliteLogHandler.emit",
-      "backend/app/observability/logging.py::configure",
       "backend/app/observability/metrics.py::reset",
       "backend/app/run.py::main",
       "backend/app/search/bm25.py::BM25Index.__init__",
@@ -1470,7 +1464,6 @@
       "frontend/src/pages/DebugPage.tsx::levelParam",
       "frontend/src/pages/DebugPage.tsx::parseTs",
       "frontend/src/pages/DebugPage.tsx::severityClass",
-      "frontend/src/pages/DebugPage.tsx::windowFromSince",
       "frontend/src/pages/KpisPage.tsx::fetchJson",
       "frontend/src/pages/KpisPage.tsx::onKey",
       "frontend/src/pages/KpisPage.tsx::parseBucket",
@@ -1481,6 +1474,7 @@
       "scripts/generate_contracts.py::main",
       "scripts/qrels_helper.py::main",
       "backend/app/api/deps.py::SearchService.load",
+      "backend/app/observability/logging.py::configure",
       "backend/app/storage/db.py::connect",
       "backend/app/storage/db.py::init_schema",
       "backend/app/api/middleware.py::_capture_result_count",
@@ -1528,7 +1522,6 @@
       "backend/app/ingest/__init__.py::_resolve_path",
       "backend/app/ingest/__init__.py::ingest",
       "backend/app/storage/repo.py::insert_log",
-      "backend/app/observability/logging.py::_find_flagged",
       "backend/app/run.py::ensure_venv",
       "backend/app/run.py::load_dotenv",
       "backend/app/config.py::load_config",
@@ -1583,6 +1576,7 @@
       "backend/app/api/routes_search.py::metrics",
       "backend/app/api/routes_search.py::search",
       "backend/app/api/schemas.py::SearchFiltersModel._must_be_iso8601",
+      "backend/app/api/schemas.py::SearchRequest._rrf_k_required_for_rrf",
       "backend/app/api/schemas.py::_default_alpha",
       "backend/app/api/schemas.py::_default_normalization",
       "backend/app/callgraph/__main__.py::main",
@@ -1597,7 +1591,6 @@
       "backend/app/observability/logging.py::JsonFormatter.format",
       "backend/app/observability/logging.py::SqliteLogHandler.__init__",
       "backend/app/observability/logging.py::SqliteLogHandler.emit",
-      "backend/app/observability/logging.py::configure",
       "backend/app/observability/metrics.py::reset",
       "backend/app/run.py::main",
       "backend/app/search/bm25.py::BM25Index.__init__",
@@ -1638,7 +1631,6 @@
       "frontend/src/pages/DebugPage.tsx::levelParam",
       "frontend/src/pages/DebugPage.tsx::parseTs",
       "frontend/src/pages/DebugPage.tsx::severityClass",
-      "frontend/src/pages/DebugPage.tsx::windowFromSince",
       "frontend/src/pages/KpisPage.tsx::fetchJson",
       "frontend/src/pages/KpisPage.tsx::onKey",
       "frontend/src/pages/KpisPage.tsx::parseBucket",
@@ -1652,6 +1644,7 @@
       "backend/app/storage/db.py::connect",
       "backend/app/config.py::load_config",
       "backend/app/storage/db.py::init_schema",
+      "backend/app/observability/logging.py::configure",
       "backend/app/api/middleware.py::_read_search_params",
       "backend/app/api/middleware.py::_persist_search",
       "backend/app/observability/metrics.py::record_search_latency",
@@ -1699,7 +1692,6 @@
       "backend/app/ingest/__init__.py::_resolve_path",
       "backend/app/ingest/__init__.py::ingest",
       "backend/app/storage/repo.py::insert_log",
-      "backend/app/observability/logging.py::_find_flagged",
       "backend/app/run.py::load_dotenv",
       "backend/app/run.py::ensure_venv",
       "backend/app/search/filters.py::apply",

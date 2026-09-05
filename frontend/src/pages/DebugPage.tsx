@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useState } from 'react'
+import { getLogs, type LogEntry } from '../api'
 
-type SeverityFilter = 'all' | 'warning' | 'error'
+type SeverityFilter = 'all' | 'debug' | 'info' | 'warning' | 'error'
 
 interface Filters {
   severity: SeverityFilter
@@ -9,13 +10,7 @@ interface Filters {
   limit: number
 }
 
-interface LogRow {
-  created_at: string
-  severity: string
-  message: string
-  request_id: string | null
-  [key: string]: unknown
-}
+type LogRow = LogEntry & Record<string, unknown>
 
 const DEFAULTS: Filters = {
   severity: 'all',
@@ -32,17 +27,8 @@ function clampLimit(value: number): number {
 }
 
 function levelParam(severity: SeverityFilter): string | undefined {
-  if (severity === 'warning') return 'WARNING'
-  if (severity === 'error') return 'ERROR'
-  return undefined
-}
-
-function windowFromSince(fromLocal: string): string {
-  if (!fromLocal) return '24h'
-  const start = new Date(fromLocal).getTime()
-  if (Number.isNaN(start)) return '24h'
-  const hours = Math.max(1, Math.ceil((Date.now() - start) / 3_600_000) + 1)
-  return `${hours}h`
+  if (severity === 'all') return undefined
+  return severity.toUpperCase()
 }
 
 function parseTs(value: string): number {
@@ -64,25 +50,14 @@ function inRange(row: LogRow, fromLocal: string, toLocal: string): boolean {
 }
 
 async function fetchLogs(filters: Filters): Promise<LogRow[]> {
-  const params = new URLSearchParams()
-  params.set('window', windowFromSince(filters.from))
-  params.set('limit', String(filters.limit))
-  const level = levelParam(filters.severity)
-  if (level) params.set('level', level)
-  if (filters.from) {
-    const start = new Date(filters.from)
-    if (!Number.isNaN(start.getTime())) params.set('from', start.toISOString())
-  }
-  if (filters.to) {
-    const end = new Date(filters.to)
-    if (!Number.isNaN(end.getTime())) params.set('to', end.toISOString())
-  }
-  const res = await fetch(`/api/dashboard/logs?${params}`)
-  if (!res.ok) {
-    const body = await res.text()
-    throw new Error(`HTTP ${res.status}: ${body}`)
-  }
-  const rows = (await res.json()) as LogRow[]
+  const fromIso = filters.from ? new Date(filters.from) : null
+  const toIso = filters.to ? new Date(filters.to) : null
+  const rows = (await getLogs({
+    level: levelParam(filters.severity),
+    from: fromIso && !Number.isNaN(fromIso.getTime()) ? fromIso.toISOString() : undefined,
+    to: toIso && !Number.isNaN(toIso.getTime()) ? toIso.toISOString() : undefined,
+    limit: filters.limit,
+  })) as LogRow[]
   return rows.filter(row => inRange(row, filters.from, filters.to))
 }
 
@@ -227,7 +202,7 @@ export default function DebugPage() {
         <div className="page-eyebrow">Observability</div>
         <h1 className="page-title">Debug</h1>
         <p className="page-desc">
-          Structured logs filtered by severity and time range.
+          Structured logs. Choose all to show every level, not just errors.
         </p>
       </div>
 
@@ -241,7 +216,9 @@ export default function DebugPage() {
               value={draft.severity}
               onChange={e => setDraft(f => ({ ...f, severity: e.target.value as SeverityFilter }))}
             >
-              <option value="all">all</option>
+              <option value="all">all (every level)</option>
+              <option value="debug">debug</option>
+              <option value="info">info</option>
               <option value="warning">warning</option>
               <option value="error">error</option>
             </select>
