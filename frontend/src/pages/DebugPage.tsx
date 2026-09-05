@@ -1,6 +1,9 @@
 import { useCallback, useEffect, useState } from 'react'
+import InfoTip, { InfoLabel } from '../components/InfoTip'
+import { INFO_TIPS } from '../infoTips'
+import { getLogs, type LogEntry } from '../api'
 
-type SeverityFilter = 'all' | 'warning' | 'error'
+type SeverityFilter = 'all' | 'debug' | 'info' | 'warning' | 'error'
 
 interface Filters {
   severity: SeverityFilter
@@ -9,13 +12,7 @@ interface Filters {
   limit: number
 }
 
-interface LogRow {
-  created_at: string
-  severity: string
-  message: string
-  request_id: string | null
-  [key: string]: unknown
-}
+type LogRow = LogEntry & Record<string, unknown>
 
 const DEFAULTS: Filters = {
   severity: 'all',
@@ -25,6 +22,63 @@ const DEFAULTS: Filters = {
 }
 
 const TABLE_KEYS = new Set(['created_at', 'severity', 'message'])
+const PAGE_SIZE = 10
+
+function clampPage(page: number, total: number, size: number): number {
+  const pages = Math.max(1, Math.ceil(total / size))
+  return Math.min(pages, Math.max(1, page))
+}
+
+function pageItems<T>(items: T[], page: number, size: number): T[] {
+  const start = (page - 1) * size
+  return items.slice(start, start + size)
+}
+
+function TablePager({
+  page,
+  total,
+  pageSize,
+  onPage,
+}: {
+  page: number
+  total: number
+  pageSize: number
+  onPage: (page: number) => void
+}) {
+  if (total <= pageSize) return null
+  const pages = Math.ceil(total / pageSize)
+  const from = (page - 1) * pageSize + 1
+  const to = Math.min(total, page * pageSize)
+  const windowStart = Math.max(1, Math.min(page - 2, pages - 4))
+  const windowEnd = Math.min(pages, windowStart + 4)
+  const nums: number[] = []
+  for (let n = windowStart; n <= windowEnd; n += 1) nums.push(n)
+  return (
+    <nav className="table-pager" aria-label="Log pages">
+      <span className="table-pager-meta">
+        {from}–{to} of {total}
+      </span>
+      <div className="table-pager-btns">
+        <button type="button" disabled={page <= 1} onClick={() => onPage(page - 1)}>
+          Prev
+        </button>
+        {nums.map(n => (
+          <button
+            key={n}
+            type="button"
+            aria-current={n === page ? 'page' : undefined}
+            onClick={() => onPage(n)}
+          >
+            {n}
+          </button>
+        ))}
+        <button type="button" disabled={page >= pages} onClick={() => onPage(page + 1)}>
+          Next
+        </button>
+      </div>
+    </nav>
+  )
+}
 
 function clampLimit(value: number): number {
   if (!Number.isFinite(value)) return DEFAULTS.limit
@@ -32,17 +86,8 @@ function clampLimit(value: number): number {
 }
 
 function levelParam(severity: SeverityFilter): string | undefined {
-  if (severity === 'warning') return 'WARNING'
-  if (severity === 'error') return 'ERROR'
-  return undefined
-}
-
-function windowFromSince(fromLocal: string): string {
-  if (!fromLocal) return '24h'
-  const start = new Date(fromLocal).getTime()
-  if (Number.isNaN(start)) return '24h'
-  const hours = Math.max(1, Math.ceil((Date.now() - start) / 3_600_000) + 1)
-  return `${hours}h`
+  if (severity === 'all') return undefined
+  return severity.toUpperCase()
 }
 
 function parseTs(value: string): number {
@@ -64,25 +109,14 @@ function inRange(row: LogRow, fromLocal: string, toLocal: string): boolean {
 }
 
 async function fetchLogs(filters: Filters): Promise<LogRow[]> {
-  const params = new URLSearchParams()
-  params.set('window', windowFromSince(filters.from))
-  params.set('limit', String(filters.limit))
-  const level = levelParam(filters.severity)
-  if (level) params.set('level', level)
-  if (filters.from) {
-    const start = new Date(filters.from)
-    if (!Number.isNaN(start.getTime())) params.set('from', start.toISOString())
-  }
-  if (filters.to) {
-    const end = new Date(filters.to)
-    if (!Number.isNaN(end.getTime())) params.set('to', end.toISOString())
-  }
-  const res = await fetch(`/api/dashboard/logs?${params}`)
-  if (!res.ok) {
-    const body = await res.text()
-    throw new Error(`HTTP ${res.status}: ${body}`)
-  }
-  const rows = (await res.json()) as LogRow[]
+  const fromIso = filters.from ? new Date(filters.from) : null
+  const toIso = filters.to ? new Date(filters.to) : null
+  const rows = (await getLogs({
+    level: levelParam(filters.severity),
+    from: fromIso && !Number.isNaN(fromIso.getTime()) ? fromIso.toISOString() : undefined,
+    to: toIso && !Number.isNaN(toIso.getTime()) ? toIso.toISOString() : undefined,
+    limit: filters.limit,
+  })) as LogRow[]
   return rows.filter(row => inRange(row, filters.from, filters.to))
 }
 
@@ -118,11 +152,13 @@ export default function DebugPage() {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [open, setOpen] = useState<string | null>(null)
+  const [page, setPage] = useState(1)
 
   const load = useCallback(async (filters: Filters) => {
     setLoading(true)
     setError(null)
     setOpen(null)
+    setPage(1)
     try {
       const next = await fetchLogs(filters)
       setRows(next)
@@ -155,11 +191,14 @@ export default function DebugPage() {
       <style>{`
         .debug-dt { width: 210px; }
         .debug-actions { display: flex; gap: 10px; align-items: flex-end; }
+        .page-container { gap: 16px; padding-top: 28px; }
+        .page-title { font-size: 26px; }
+        .page-desc { font-size: 13px; }
         .debug-panel {
           background: var(--c-surface);
           border: 1px solid var(--c-border);
           border-radius: 8px;
-          padding: 20px 22px;
+          padding: 14px 16px;
           box-shadow: var(--shadow-sm);
         }
         .debug-table-wrap { overflow-x: auto; }
@@ -171,16 +210,44 @@ export default function DebugPage() {
           letter-spacing: 0.06em;
           text-transform: uppercase;
           color: var(--c-muted);
-          padding: 0 12px 10px 0;
+          padding: 0 10px 8px 0;
           border-bottom: 1px solid var(--c-border);
           white-space: nowrap;
         }
         .debug-table td {
-          padding: 10px 12px 10px 0;
-          font-size: 13px;
+          padding: 7px 10px 7px 0;
+          font-size: 12px;
           color: var(--c-text);
           border-bottom: 1px solid var(--c-border);
           vertical-align: top;
+        }
+        .table-pager {
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          gap: 12px;
+          margin-top: 10px;
+          padding-top: 10px;
+          border-top: 1px solid var(--c-border);
+          font-size: 12px;
+          color: var(--c-muted);
+        }
+        .table-pager-btns { display: flex; gap: 4px; }
+        .table-pager button {
+          min-width: 28px;
+          height: 28px;
+          padding: 0 8px;
+          border: 1px solid var(--c-border);
+          background: var(--c-surface);
+          color: var(--c-text);
+          border-radius: 4px;
+          font-size: 12px;
+        }
+        .table-pager button:disabled { opacity: 0.45; }
+        .table-pager button[aria-current='page'] {
+          border-color: var(--purple);
+          color: var(--purple);
+          background: var(--purple-tint);
         }
         .debug-table tr:last-child td { border-bottom: none; }
         .debug-table .debug-expand-row td { border-bottom: 1px solid var(--c-border); }
@@ -227,27 +294,33 @@ export default function DebugPage() {
         <div className="page-eyebrow">Observability</div>
         <h1 className="page-title">Debug</h1>
         <p className="page-desc">
-          Structured logs filtered by severity and time range.
+          Structured logs. Choose all to show every level, not just errors.
         </p>
       </div>
 
       <div className="search-panel">
         <div className="search-params" style={{ borderTop: 'none', paddingTop: 0 }}>
-          <div className="param-group">
-            <label className="param-label" htmlFor="debug-severity">Severity</label>
+          <InfoTip className="param-group" label="Severity" hint={INFO_TIPS.severity}>
+            <label className="param-label" htmlFor="debug-severity">
+              <InfoLabel text="Severity" />
+            </label>
             <select
               id="debug-severity"
               className="param-select"
               value={draft.severity}
               onChange={e => setDraft(f => ({ ...f, severity: e.target.value as SeverityFilter }))}
             >
-              <option value="all">all</option>
+              <option value="all">all (every level)</option>
+              <option value="debug">debug</option>
+              <option value="info">info</option>
               <option value="warning">warning</option>
               <option value="error">error</option>
             </select>
-          </div>
-          <div className="param-group">
-            <label className="param-label" htmlFor="debug-from">From</label>
+          </InfoTip>
+          <InfoTip className="param-group" label="From" hint={INFO_TIPS.logFrom}>
+            <label className="param-label" htmlFor="debug-from">
+              <InfoLabel text="From" />
+            </label>
             <input
               id="debug-from"
               type="datetime-local"
@@ -255,9 +328,11 @@ export default function DebugPage() {
               value={draft.from}
               onChange={e => setDraft(f => ({ ...f, from: e.target.value }))}
             />
-          </div>
-          <div className="param-group">
-            <label className="param-label" htmlFor="debug-to">To</label>
+          </InfoTip>
+          <InfoTip className="param-group" label="To" hint={INFO_TIPS.logTo}>
+            <label className="param-label" htmlFor="debug-to">
+              <InfoLabel text="To" />
+            </label>
             <input
               id="debug-to"
               type="datetime-local"
@@ -265,9 +340,11 @@ export default function DebugPage() {
               value={draft.to}
               onChange={e => setDraft(f => ({ ...f, to: e.target.value }))}
             />
-          </div>
-          <div className="param-group">
-            <label className="param-label" htmlFor="debug-limit">Limit</label>
+          </InfoTip>
+          <InfoTip className="param-group" label="Limit" hint={INFO_TIPS.logLimit}>
+            <label className="param-label" htmlFor="debug-limit">
+              <InfoLabel text="Limit" />
+            </label>
             <input
               id="debug-limit"
               type="number"
@@ -277,7 +354,7 @@ export default function DebugPage() {
               value={draft.limit}
               onChange={e => setDraft(f => ({ ...f, limit: clampLimit(Number(e.target.value)) }))}
             />
-          </div>
+          </InfoTip>
           <div className="debug-actions">
             <button type="button" className="btn-primary" onClick={apply} disabled={loading}>
               Apply
@@ -308,38 +385,48 @@ export default function DebugPage() {
         </div>
       )}
 
-      {rows !== null && rows.length > 0 && (
-        <section className="debug-panel">
-          <div className="debug-table-wrap">
-            <table className="debug-table">
-              <thead>
-                <tr>
-                  <th aria-hidden="true" />
-                  <th>Time</th>
-                  <th>Severity</th>
-                  <th>Message</th>
-                  <th>Request</th>
-                </tr>
-              </thead>
-              <tbody>
-                {rows.map((row, index) => {
-                  const key = rowKey(row, index)
-                  const expanded = open === key
-                  return (
-                    <LogRows
-                      key={key}
-                      row={row}
-                      rowId={key}
-                      expanded={expanded}
-                      onToggle={() => setOpen(expanded ? null : key)}
-                    />
-                  )
-                })}
-              </tbody>
-            </table>
-          </div>
-        </section>
-      )}
+      {rows !== null && rows.length > 0 && (() => {
+        const safePage = clampPage(page, rows.length, PAGE_SIZE)
+        const start = (safePage - 1) * PAGE_SIZE
+        return (
+          <section className="debug-panel">
+            <div className="debug-table-wrap">
+              <table className="debug-table">
+                <thead>
+                  <tr>
+                    <th aria-hidden="true" />
+                    <th>Time</th>
+                    <th>Severity</th>
+                    <th>Message</th>
+                    <th>Request</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {pageItems(rows, safePage, PAGE_SIZE).map((row, index) => {
+                    const key = rowKey(row, start + index)
+                    const expanded = open === key
+                    return (
+                      <LogRows
+                        key={key}
+                        row={row}
+                        rowId={key}
+                        expanded={expanded}
+                        onToggle={() => setOpen(expanded ? null : key)}
+                      />
+                    )
+                  })}
+                </tbody>
+              </table>
+            </div>
+            <TablePager
+              page={safePage}
+              total={rows.length}
+              pageSize={PAGE_SIZE}
+              onPage={setPage}
+            />
+          </section>
+        )
+      })()}
     </div>
   )
 }

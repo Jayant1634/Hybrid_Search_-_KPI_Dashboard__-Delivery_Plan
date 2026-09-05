@@ -1,5 +1,7 @@
 import { useEffect, useState } from 'react'
 import { createPortal } from 'react-dom'
+import { INFO_TIPS } from '../infoTips'
+import InfoTip, { InfoLabel } from './InfoTip'
 import ScoreBar from './ScoreBar'
 import {
   getDocument,
@@ -151,18 +153,18 @@ export default function ResultCard({ result, requestId, rank, query }: Props) {
           </p>
 
           <div className="score-breakdown">
-            <div className="score-row">
-              <span className="score-label">BM25</span>
+            <InfoTip className="score-row" label="BM25" hint={INFO_TIPS.bm25}>
+              <span className="score-label"><InfoLabel text="BM25" /></span>
               <ScoreBar value={result.bm25_norm} raw={result.bm25_score} color="neutral" />
-            </div>
-            <div className="score-row">
-              <span className="score-label">Vector</span>
+            </InfoTip>
+            <InfoTip className="score-row" label="Vector" hint={INFO_TIPS.vector}>
+              <span className="score-label"><InfoLabel text="Vector" /></span>
               <ScoreBar value={result.vector_norm} raw={result.vector_score} color="purple" />
-            </div>
-            <div className="score-row">
-              <span className="score-label">Hybrid</span>
+            </InfoTip>
+            <InfoTip className="score-row" label="Hybrid" hint={INFO_TIPS.hybrid}>
+              <span className="score-label"><InfoLabel text="Hybrid" /></span>
               <ScoreBar value={result.hybrid_score} raw={result.hybrid_score} color="hybrid" />
-            </div>
+            </InfoTip>
           </div>
 
           <div className="result-footer">
@@ -271,26 +273,26 @@ export default function ResultCard({ result, requestId, rank, query }: Props) {
               <section className="doc-modal-section">
                 <h3 className="doc-modal-label">Related KPIs</h3>
                 <div className="kpi-grid">
-                  <div className="kpi-tile">
-                    <span className="kpi-tile-label">Rank</span>
+                  <InfoTip className="kpi-tile" label="Rank" hint={INFO_TIPS.rank}>
+                    <span className="kpi-tile-label"><InfoLabel text="Rank" /></span>
                     <span className="kpi-tile-value">{rank}</span>
-                  </div>
-                  <div className="kpi-tile">
-                    <span className="kpi-tile-label">Hybrid</span>
+                  </InfoTip>
+                  <InfoTip className="kpi-tile" label="Hybrid" hint={INFO_TIPS.hybrid}>
+                    <span className="kpi-tile-label"><InfoLabel text="Hybrid" /></span>
                     <span className="kpi-tile-value">{result.hybrid_score.toFixed(4)}</span>
-                  </div>
-                  <div className="kpi-tile">
-                    <span className="kpi-tile-label">BM25</span>
+                  </InfoTip>
+                  <InfoTip className="kpi-tile" label="BM25" hint={INFO_TIPS.bm25}>
+                    <span className="kpi-tile-label"><InfoLabel text="BM25" /></span>
                     <span className="kpi-tile-value">{result.bm25_score.toFixed(3)}</span>
                     <span className="kpi-tile-sub">norm {result.bm25_norm.toFixed(3)}</span>
-                  </div>
-                  <div className="kpi-tile">
-                    <span className="kpi-tile-label">Vector</span>
+                  </InfoTip>
+                  <InfoTip className="kpi-tile" label="Vector" hint={INFO_TIPS.vector}>
+                    <span className="kpi-tile-label"><InfoLabel text="Vector" /></span>
                     <span className="kpi-tile-value">{result.vector_score.toFixed(3)}</span>
                     <span className="kpi-tile-sub">norm {result.vector_norm.toFixed(3)}</span>
-                  </div>
-                  <div className="kpi-tile">
-                    <span className="kpi-tile-label">Closest</span>
+                  </InfoTip>
+                  <InfoTip className="kpi-tile" label="Closest" hint={INFO_TIPS.closest}>
+                    <span className="kpi-tile-label"><InfoLabel text="Closest" /></span>
                     <span className="kpi-tile-value kpi-tile-word">
                       {closest[0]?.term ?? '—'}
                     </span>
@@ -301,7 +303,7 @@ export default function ResultCard({ result, requestId, rank, query }: Props) {
                           ? '…'
                           : 'no neighbour ≥ 0.2'}
                     </span>
-                  </div>
+                  </InfoTip>
                 </div>
               </section>
 

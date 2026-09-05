@@ -23,6 +23,8 @@ class _FakeSentenceTransformer:
         self.encode_kwargs: dict[str, Any] | None = None
         type(self).last = self
 
+    max_seq_length = 256
+
     def get_embedding_dimension(self) -> int:
         return 4
 
@@ -74,6 +76,29 @@ def test_uses_model_name_from_config(
     assert isinstance(embedder, Embedder)
 
 
+def test_default_lifts_max_seq_length(
+    fake_st: type[_FakeSentenceTransformer],
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    monkeypatch.delenv("HSS_MAX_SEQ_LENGTH", raising=False)
+    load_config.cache_clear()
+    SentenceTransformerEmbedder()
+    assert fake_st.last is not None
+    # Default HSS_MAX_SEQ_LENGTH is 512, lifting MiniLM's 256 window.
+    assert fake_st.last.max_seq_length == 512
+
+
+def test_env_sets_max_seq_length(
+    fake_st: type[_FakeSentenceTransformer],
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    monkeypatch.setenv("HSS_MAX_SEQ_LENGTH", "384")
+    load_config.cache_clear()
+    SentenceTransformerEmbedder()
+    assert fake_st.last is not None
+    assert fake_st.last.max_seq_length == 384
+
+
 def test_encode_returns_normalised_float32(
     fake_st: type[_FakeSentenceTransformer],
 ) -> None:
@@ -87,6 +112,16 @@ def test_encode_returns_normalised_float32(
     assert fake_st.last.encode_kwargs is not None
     assert fake_st.last.encode_kwargs["batch_size"] == 32
     assert fake_st.last.encode_kwargs["normalize_embeddings"] is True
+
+
+def test_encode_reports_batch_progress(
+    fake_st: type[_FakeSentenceTransformer],
+) -> None:
+    embedder = SentenceTransformerEmbedder()
+    seen: list[tuple[int, int]] = []
+    texts = [f"text-{i}" for i in range(40)]
+    embedder.encode(texts, on_progress=lambda done, total: seen.append((done, total)))
+    assert seen == [(32, 40), (40, 40)]
 
 
 def test_encode_empty_list_has_zero_rows(

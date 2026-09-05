@@ -1,17 +1,78 @@
 import { useState, useCallback } from 'react'
+import InfoTip, { InfoLabel } from '../components/InfoTip'
 import ResultCard from '../components/ResultCard'
-import { search, type DatasetName, type SearchFilters, type SearchResult } from '../api'
+import { INFO_TIPS } from '../infoTips'
+import { search, type DatasetName, type Normalization, type SearchFilters, type SearchResult } from '../api'
+
+const PAGE_SIZE = 5
 
 function localDateToIso(value: string, endOfDay: boolean): string {
   if (!value) return ''
   return endOfDay ? `${value}T23:59:59` : `${value}T00:00:00`
 }
 
+function clampPage(page: number, total: number, size: number): number {
+  const pages = Math.max(1, Math.ceil(total / size))
+  return Math.min(pages, Math.max(1, page))
+}
+
+function pageItems<T>(items: T[], page: number, size: number): T[] {
+  const start = (page - 1) * size
+  return items.slice(start, start + size)
+}
+
+function TablePager({
+  page,
+  total,
+  pageSize,
+  onPage,
+}: {
+  page: number
+  total: number
+  pageSize: number
+  onPage: (page: number) => void
+}) {
+  if (total <= pageSize) return null
+  const pages = Math.ceil(total / pageSize)
+  const from = (page - 1) * pageSize + 1
+  const to = Math.min(total, page * pageSize)
+  const windowStart = Math.max(1, Math.min(page - 2, pages - 4))
+  const windowEnd = Math.min(pages, windowStart + 4)
+  const nums: number[] = []
+  for (let n = windowStart; n <= windowEnd; n += 1) nums.push(n)
+  return (
+    <nav className="table-pager" aria-label="Result pages">
+      <span className="table-pager-meta">
+        {from}–{to} of {total}
+      </span>
+      <div className="table-pager-btns">
+        <button type="button" disabled={page <= 1} onClick={() => onPage(page - 1)}>
+          Prev
+        </button>
+        {nums.map(n => (
+          <button
+            key={n}
+            type="button"
+            aria-current={n === page ? 'page' : undefined}
+            onClick={() => onPage(n)}
+          >
+            {n}
+          </button>
+        ))}
+        <button type="button" disabled={page >= pages} onClick={() => onPage(page + 1)}>
+          Next
+        </button>
+      </div>
+    </nav>
+  )
+}
+
 export default function SearchPage() {
   const [query, setQuery] = useState('')
   const [topK, setTopK] = useState(10)
   const [alpha, setAlpha] = useState(0.5)
-  const [normalization, setNormalization] = useState<'minmax' | 'zscore'>('minmax')
+  const [normalization, setNormalization] = useState<Normalization>('minmax')
+  const [rrfK, setRrfK] = useState('')
   const [minVectorScore, setMinVectorScore] = useState(0.2)
   const [dataset, setDataset] = useState<'' | DatasetName>('')
   const [sourceFilter, setSourceFilter] = useState('')
@@ -25,6 +86,10 @@ export default function SearchPage() {
   const [requestId, setRequestId] = useState('')
   const [tookMs, setTookMs] = useState<number | null>(null)
   const [searched, setSearched] = useState(false)
+  const [page, setPage] = useState(1)
+  const rrfKReady =
+    normalization !== 'rrf' ||
+    (rrfK.trim() !== '' && Number.isInteger(Number(rrfK)) && Number(rrfK) >= 0)
 
   const handleSearch = useCallback(async () => {
     const q = query.trim()
@@ -32,6 +97,7 @@ export default function SearchPage() {
     setLoading(true)
     setError(null)
     setSearched(true)
+    setPage(1)
     const filters: SearchFilters = {}
     if (dataset) filters.dataset = dataset
     if (sourceFilter.trim()) filters.source_contains = sourceFilter.trim()
@@ -39,13 +105,24 @@ export default function SearchPage() {
     if (createdTo) filters.created_to = localDateToIso(createdTo, true)
     const hasFilters = Object.keys(filters).length > 0
 
+    if (normalization === 'rrf') {
+      const parsed = Number(rrfK)
+      if (rrfK.trim() === '' || !Number.isInteger(parsed) || parsed < 0) {
+        setError('RRF needs k: the smoothing constant in 1/(k + rank). Enter an integer ≥ 0.')
+        setLoading(false)
+        return
+      }
+    }
+
     try {
+      const parsedK = Number(rrfK)
       const resp = await search({
         query: q,
         top_k: topK,
         alpha,
         normalization,
         min_vector_score: minVectorScore,
+        ...(normalization === 'rrf' ? { rrf_k: parsedK } : {}),
         filters: hasFilters ? filters : null,
       })
       setResults(resp.results)
@@ -57,7 +134,7 @@ export default function SearchPage() {
     } finally {
       setLoading(false)
     }
-  }, [query, topK, alpha, normalization, minVectorScore, dataset, sourceFilter, createdFrom, createdTo])
+  }, [query, topK, alpha, normalization, rrfK, minVectorScore, dataset, sourceFilter, createdFrom, createdTo])
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === 'Enter') handleSearch()
@@ -69,10 +146,50 @@ export default function SearchPage() {
     setTookMs(null)
     setSearched(false)
     setError(null)
+    setPage(1)
   }
+
+  const safePage = clampPage(page, results.length, PAGE_SIZE)
+  const visible = pageItems(results, safePage, PAGE_SIZE)
+  const rankOffset = (safePage - 1) * PAGE_SIZE
 
   return (
     <div className="page-container">
+      <style>{`
+        .page-container { gap: 16px; padding-top: 28px; }
+        .page-title { font-size: 26px; }
+        .page-desc { font-size: 13px; }
+        .search-panel { padding: 16px 18px; gap: 14px; }
+        .results-list { gap: 8px; }
+        .table-pager {
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          gap: 12px;
+          margin-top: 4px;
+          padding-top: 10px;
+          border-top: 1px solid var(--c-border);
+          font-size: 12px;
+          color: var(--c-muted);
+        }
+        .table-pager-btns { display: flex; gap: 4px; }
+        .table-pager button {
+          min-width: 28px;
+          height: 28px;
+          padding: 0 8px;
+          border: 1px solid var(--c-border);
+          background: var(--c-surface);
+          color: var(--c-text);
+          border-radius: 4px;
+          font-size: 12px;
+        }
+        .table-pager button:disabled { opacity: 0.45; }
+        .table-pager button[aria-current='page'] {
+          border-color: var(--purple);
+          color: var(--purple);
+          background: var(--purple-tint);
+        }
+      `}</style>
       <div className="page-header">
         <div className="page-eyebrow">Hybrid Search</div>
         <h1 className="page-title">Search Documents</h1>
@@ -109,15 +226,15 @@ export default function SearchPage() {
           <button
             className="btn-primary search-go"
             onClick={handleSearch}
-            disabled={loading || !query.trim()}
+            disabled={loading || !query.trim() || !rrfKReady}
           >
             {loading ? <span className="spinner" /> : 'Search'}
           </button>
         </div>
 
         <div className="search-params">
-          <div className="param-group">
-            <label className="param-label">Top K</label>
+          <InfoTip className="param-group" label="Top K" hint={INFO_TIPS.topK}>
+            <label className="param-label"><InfoLabel text="Top K" /></label>
             <input
               type="number"
               className="param-input"
@@ -125,11 +242,11 @@ export default function SearchPage() {
               value={topK}
               onChange={e => setTopK(Math.min(50, Math.max(1, Number(e.target.value))))}
             />
-          </div>
+          </InfoTip>
 
-          <div className="param-group param-alpha">
+          <InfoTip className="param-group param-alpha" label="Alpha" hint={INFO_TIPS.alpha}>
             <label className="param-label">
-              Alpha
+              <InfoLabel text="Alpha" />
               <span className="param-value-badge">{alpha.toFixed(2)}</span>
             </label>
             <div className="alpha-range-row">
@@ -143,11 +260,11 @@ export default function SearchPage() {
               />
               <span className="range-end-label">Vector</span>
             </div>
-          </div>
+          </InfoTip>
 
-          <div className="param-group param-alpha">
+          <InfoTip className="param-group param-alpha" label="Min vector" hint={INFO_TIPS.minVector}>
             <label className="param-label">
-              Min vector
+              <InfoLabel text="Min vector" />
               <span className="param-value-badge">{minVectorScore.toFixed(2)}</span>
             </label>
             <div className="alpha-range-row">
@@ -161,10 +278,10 @@ export default function SearchPage() {
               />
               <span className="range-end-label">1.00</span>
             </div>
-          </div>
+          </InfoTip>
 
-          <div className="param-group">
-            <label className="param-label">Dataset</label>
+          <InfoTip className="param-group" label="Dataset" hint={INFO_TIPS.dataset}>
+            <label className="param-label"><InfoLabel text="Dataset" /></label>
             <select
               className="param-select"
               value={dataset}
@@ -174,19 +291,41 @@ export default function SearchPage() {
               <option value="wikipedia">Wikipedia</option>
               <option value="contracts">Kearney Contracts</option>
             </select>
-          </div>
+          </InfoTip>
 
-          <div className="param-group">
-            <label className="param-label">Normalisation</label>
+          <InfoTip className="param-group" label="Normalisation" hint={INFO_TIPS.normalisation}>
+            <label className="param-label"><InfoLabel text="Normalisation" /></label>
             <select
               className="param-select"
               value={normalization}
-              onChange={e => setNormalization(e.target.value as 'minmax' | 'zscore')}
+              onChange={e => setNormalization(e.target.value as Normalization)}
             >
               <option value="minmax">Min-Max</option>
               <option value="zscore">Z-Score</option>
+              <option value="rrf">RRF</option>
             </select>
-          </div>
+          </InfoTip>
+
+          {normalization === 'rrf' && (
+            <InfoTip className="param-group param-alpha" label="RRF k" hint={INFO_TIPS.rrfK}>
+              <label className="param-label">
+                <InfoLabel text="RRF k" />
+                {rrfK.trim() !== '' && (
+                  <span className="param-value-badge">{rrfK}</span>
+                )}
+              </label>
+              <input
+                type="number"
+                className="param-input"
+                min={0}
+                max={10000}
+                step={1}
+                placeholder="enter k"
+                value={rrfK}
+                onChange={e => setRrfK(e.target.value)}
+              />
+            </InfoTip>
+          )}
 
           <button
             className="btn-ghost filter-toggle-btn"
@@ -201,28 +340,34 @@ export default function SearchPage() {
 
         {showFilters && (
           <div className="filter-row">
-            <label className="param-label">Source contains</label>
-            <input
-              type="text"
-              className="param-input filter-input"
-              placeholder="e.g. wikipedia or msa"
-              value={sourceFilter}
-              onChange={e => setSourceFilter(e.target.value)}
-            />
-            <label className="param-label">Created from</label>
-            <input
-              type="date"
-              className="param-input filter-input"
-              value={createdFrom}
-              onChange={e => setCreatedFrom(e.target.value)}
-            />
-            <label className="param-label">Created to</label>
-            <input
-              type="date"
-              className="param-input filter-input"
-              value={createdTo}
-              onChange={e => setCreatedTo(e.target.value)}
-            />
+            <InfoTip className="param-group" label="Source contains" hint={INFO_TIPS.sourceContains}>
+              <label className="param-label"><InfoLabel text="Source contains" /></label>
+              <input
+                type="text"
+                className="param-input filter-input"
+                placeholder="e.g. wikipedia or msa"
+                value={sourceFilter}
+                onChange={e => setSourceFilter(e.target.value)}
+              />
+            </InfoTip>
+            <InfoTip className="param-group" label="Created from" hint={INFO_TIPS.createdFrom}>
+              <label className="param-label"><InfoLabel text="Created from" /></label>
+              <input
+                type="date"
+                className="param-input filter-input"
+                value={createdFrom}
+                onChange={e => setCreatedFrom(e.target.value)}
+              />
+            </InfoTip>
+            <InfoTip className="param-group" label="Created to" hint={INFO_TIPS.createdTo}>
+              <label className="param-label"><InfoLabel text="Created to" /></label>
+              <input
+                type="date"
+                className="param-input filter-input"
+                value={createdTo}
+                onChange={e => setCreatedTo(e.target.value)}
+              />
+            </InfoTip>
           </div>
         )}
       </div>
@@ -243,15 +388,21 @@ export default function SearchPage() {
 
       {results.length > 0 && (
         <div className="results-list">
-          {results.map((r, i) => (
+          {visible.map((r, i) => (
             <ResultCard
               key={r.doc_id}
               result={r}
               requestId={requestId}
-              rank={i + 1}
+              rank={rankOffset + i + 1}
               query={query}
             />
           ))}
+          <TablePager
+            page={safePage}
+            total={results.length}
+            pageSize={PAGE_SIZE}
+            onPage={setPage}
+          />
         </div>
       )}
 

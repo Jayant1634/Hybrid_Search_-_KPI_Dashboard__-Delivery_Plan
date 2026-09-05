@@ -205,8 +205,8 @@ def test_normalize_single_score_is_one() -> None:
 
 def test_normalize_negative_bm25_values_stay_in_unit_range() -> None:
     raw = {"a": -0.3, "b": 0.0, "c": 1.2}
-    for name in ("min_max", "z_score"):
-        scaled = normalize(name, raw)
+    for name in ("min_max", "z_score", "rrf"):
+        scaled = normalize(name, raw, k=60 if name == "rrf" else None)
         assert set(scaled) == set(raw)
         assert all(0.0 <= value <= 1.0 for value in scaled.values())
         assert scaled["c"] > scaled["a"]
@@ -316,6 +316,11 @@ def test_hybrid_unknown_normalization_raises(searcher: HybridSearcher) -> None:
         searcher.search(_QUERY, normalization="softmax")
 
 
+def test_hybrid_rrf_requires_k(searcher: HybridSearcher) -> None:
+    with pytest.raises(ValueError, match="rrf requires rrf_k"):
+        searcher.search(_QUERY, normalization="rrf")
+
+
 def test_hybrid_filter_can_return_zero_hits(searcher: HybridSearcher) -> None:
     results = searcher.search(
         _QUERY,
@@ -401,7 +406,8 @@ def test_hybrid_minmax_and_zscore_keep_same_top_doc(
 ) -> None:
     minmax = searcher.search(_QUERY, top_k=1, normalization="min_max")
     zscored = searcher.search(_QUERY, top_k=1, normalization="z_score")
-    assert minmax[0].doc_id == zscored[0].doc_id == "doc-001"
+    fused = searcher.search(_QUERY, top_k=1, normalization="rrf", rrf_k=60)
+    assert minmax[0].doc_id == zscored[0].doc_id == fused[0].doc_id == "doc-001"
 
 
 # ---------------------------------------------------------------------------
@@ -507,15 +513,18 @@ def test_api_created_range_keeps_early_docs(client: TestClient) -> None:
 
 
 def test_api_zscore_and_minmax_both_200(client: TestClient) -> None:
-    for name in ("minmax", "zscore"):
+    for name in ("minmax", "zscore", "rrf"):
+        payload: dict[str, object] = {
+            "query": "lava",
+            "top_k": 3,
+            "normalization": name,
+            "min_vector_score": 0,
+        }
+        if name == "rrf":
+            payload["rrf_k"] = 60
         resp = client.post(
             "/search",
-            json={
-                "query": "lava",
-                "top_k": 3,
-                "normalization": name,
-                "min_vector_score": 0,
-            },
+            json=payload,
         )
         assert resp.status_code == 200
         assert len(resp.json()["results"]) == 3

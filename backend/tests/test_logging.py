@@ -47,19 +47,16 @@ def test_one_json_object_per_line() -> None:
     json.loads(line)
 
 
-def test_configure_is_safe_to_call_twice() -> None:
+def test_configure_is_safe_to_call_twice(
+    _isolate_root_handlers: None,
+) -> None:
     root = logging.getLogger()
     before = list(root.handlers)
-    try:
-        configure(logging.DEBUG)
-        configure(logging.INFO)
-        added = [h for h in root.handlers if h not in before]
-        assert len(added) == 1
-        assert added[0].level == logging.INFO
-    finally:
-        for handler in root.handlers:
-            if handler not in before:
-                root.removeHandler(handler)
+    configure(logging.DEBUG)
+    configure(logging.INFO)
+    added = [h for h in root.handlers if h not in before]
+    assert len(added) == 1
+    assert added[0].level == logging.INFO
 
 
 @pytest.fixture
@@ -74,7 +71,7 @@ def _isolate_root_handlers() -> Iterator[None]:
                 root.removeHandler(handler)
 
 
-def test_warnings_and_errors_land_in_logs_table(
+def test_info_and_above_land_in_logs_table(
     _isolate_root_handlers: None,
 ) -> None:
     conn = connect(":memory:")
@@ -82,16 +79,19 @@ def test_warnings_and_errors_land_in_logs_table(
     try:
         configure(logging.INFO, db=conn)
         logger = logging.getLogger("svc")
-        logger.info("ignored, below threshold")
+        logger.debug("too quiet for INFO root")
+        logger.info("hello")
         logger.warning("careful now")
         logger.error("boom", extra={"request_id": "r1"})
 
         rows = select_logs(conn)
         severities = {row["severity"] for row in rows}
-        assert severities == {"WARNING", "ERROR"}
+        assert severities == {"INFO", "WARNING", "ERROR"}
         error_row = next(r for r in rows if r["severity"] == "ERROR")
         assert error_row["message"] == "boom"
         assert error_row["request_id"] == "r1"
+        info_row = next(r for r in rows if r["severity"] == "INFO")
+        assert info_row["message"] == "hello"
     finally:
         conn.close()
 

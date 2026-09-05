@@ -8,6 +8,7 @@ the real sentence-transformers embedder is used.
 
 from __future__ import annotations
 
+import logging
 from collections.abc import AsyncIterator
 from contextlib import asynccontextmanager
 
@@ -18,6 +19,7 @@ from app.api.middleware import RequestContextMiddleware
 from app.api.routes_dashboard import router as dashboard_router
 from app.api.routes_search import router
 from app.config import load_config
+from app.observability.logging import configure
 from app.search.embedder import Embedder
 from app.storage.db import connect, init_schema
 
@@ -43,6 +45,8 @@ def create_app(
         conn = connect(load_config().sqlite_path)
         init_schema(conn)
         app.state.db = conn
+        configure(db=conn)
+        logging.getLogger("app.api").info("api started")
         try:
             yield
         finally:

@@ -8,25 +8,92 @@ import {
   XAxis,
   YAxis,
 } from 'recharts'
+import InfoTip, { InfoLabel, InfoMark } from '../components/InfoTip'
+import { INFO_TIPS } from '../infoTips'
 
 const PURPLE = '#7823DC'
 
 const COLUMNS = [
-  { key: 'timestamp', label: 'Timestamp' },
-  { key: 'commit', label: 'Commit' },
-  { key: 'tag', label: 'Tag' },
-  { key: 'alpha', label: 'Alpha' },
-  { key: 'normalization', label: 'Normalization' },
-  { key: 'model', label: 'Model' },
-  { key: 'preprocessing', label: 'Preprocessing' },
-  { key: 'ndcg10', label: 'nDCG@10' },
-  { key: 'recall10', label: 'Recall@10' },
-  { key: 'mrr10', label: 'MRR@10' },
-  { key: 'n_queries', label: 'n' },
+  { key: 'timestamp', label: 'Timestamp', hint: INFO_TIPS.evalTimestamp },
+  { key: 'commit', label: 'Commit', hint: INFO_TIPS.evalCommit },
+  { key: 'tag', label: 'Tag', hint: INFO_TIPS.evalTag },
+  { key: 'alpha', label: 'Alpha', hint: INFO_TIPS.evalAlpha },
+  { key: 'normalization', label: 'Normalization', hint: INFO_TIPS.evalNorm },
+  { key: 'model', label: 'Model', hint: INFO_TIPS.evalModel },
+  { key: 'preprocessing', label: 'Preprocessing', hint: INFO_TIPS.evalPreprocess },
+  { key: 'ndcg10', label: 'nDCG@10', hint: INFO_TIPS.ndcg10 },
+  { key: 'recall10', label: 'Recall@10', hint: INFO_TIPS.recall10 },
+  { key: 'mrr10', label: 'MRR@10', hint: INFO_TIPS.mrr10 },
+  { key: 'n_queries', label: 'n', hint: INFO_TIPS.evalN },
+] as const
+
+const CHART_METRICS = [
+  { key: 'ndcg', label: 'nDCG@10' },
+  { key: 'recall', label: 'Recall@10' },
+  { key: 'mrr', label: 'MRR@10' },
 ] as const
 
 type ColumnKey = (typeof COLUMNS)[number]['key']
+type ChartMetric = (typeof CHART_METRICS)[number]['key']
 type SortDir = 'asc' | 'desc'
+
+const PAGE_SIZE = 8
+
+function clampPage(page: number, total: number, size: number): number {
+  const pages = Math.max(1, Math.ceil(total / size))
+  return Math.min(pages, Math.max(1, page))
+}
+
+function pageItems<T>(items: T[], page: number, size: number): T[] {
+  const start = (page - 1) * size
+  return items.slice(start, start + size)
+}
+
+function TablePager({
+  page,
+  total,
+  pageSize,
+  onPage,
+}: {
+  page: number
+  total: number
+  pageSize: number
+  onPage: (page: number) => void
+}) {
+  if (total <= pageSize) return null
+  const pages = Math.ceil(total / pageSize)
+  const from = (page - 1) * pageSize + 1
+  const to = Math.min(total, page * pageSize)
+  const windowStart = Math.max(1, Math.min(page - 2, pages - 4))
+  const windowEnd = Math.min(pages, windowStart + 4)
+  const nums: number[] = []
+  for (let n = windowStart; n <= windowEnd; n += 1) nums.push(n)
+  return (
+    <nav className="table-pager" aria-label="Experiment pages">
+      <span className="table-pager-meta">
+        {from}–{to} of {total}
+      </span>
+      <div className="table-pager-btns">
+        <button type="button" disabled={page <= 1} onClick={() => onPage(page - 1)}>
+          Prev
+        </button>
+        {nums.map(n => (
+          <button
+            key={n}
+            type="button"
+            aria-current={n === page ? 'page' : undefined}
+            onClick={() => onPage(n)}
+          >
+            {n}
+          </button>
+        ))}
+        <button type="button" disabled={page >= pages} onClick={() => onPage(page + 1)}>
+          Next
+        </button>
+      </div>
+    </nav>
+  )
+}
 
 const NUMERIC = new Set<ColumnKey>([
   'alpha',
@@ -52,6 +119,8 @@ interface ExperimentRow {
 
 interface ChartPoint extends ExperimentRow {
   ndcg: number
+  recall: number
+  mrr: number
   label: string
 }
 
@@ -106,15 +175,28 @@ function compareRows(
 function ExperimentTooltip({
   active,
   payload,
+  metric,
 }: {
   active?: boolean
   payload?: ReadonlyArray<{ payload: ChartPoint }>
+  metric: ChartMetric
 }) {
   if (!active || !payload?.length) return null
   const row = payload[0].payload
   return (
     <div className="eval-tooltip">
-      <div className="eval-tooltip-metric">nDCG@10 {row.ndcg.toFixed(4)}</div>
+      {CHART_METRICS.map(item => (
+        <div
+          key={item.key}
+          className={
+            item.key === metric
+              ? 'eval-tooltip-metric eval-tooltip-metric-active'
+              : 'eval-tooltip-metric'
+          }
+        >
+          {item.label} {row[item.key].toFixed(4)}
+        </div>
+      ))}
       <div><span>tag</span> {row.tag}</div>
       <div><span>alpha</span> {row.alpha}</div>
       <div><span>normalization</span> {row.normalization}</div>
@@ -130,6 +212,10 @@ export default function EvaluationPage() {
   const [error, setError] = useState<string | null>(null)
   const [sortKey, setSortKey] = useState<ColumnKey>('timestamp')
   const [sortDir, setSortDir] = useState<SortDir>('asc')
+  const [chartMetric, setChartMetric] = useState<ChartMetric>('ndcg')
+  const [page, setPage] = useState(1)
+  const selectedMetric =
+    CHART_METRICS.find(item => item.key === chartMetric) ?? CHART_METRICS[0]
 
   useEffect(() => {
     let cancelled = false
@@ -159,6 +245,8 @@ export default function EvaluationPage() {
       .map(row => ({
         ...row,
         ndcg: Number(row.ndcg10),
+        recall: Number(row.recall10),
+        mrr: Number(row.mrr10),
         label: formatTime(row.timestamp),
       }))
   }, [rows])
@@ -168,6 +256,7 @@ export default function EvaluationPage() {
   }, [rows, sortKey, sortDir])
 
   function onSort(key: ColumnKey) {
+    setPage(1)
     if (key === sortKey) {
       setSortDir(dir => (dir === 'asc' ? 'desc' : 'asc'))
       return
@@ -176,14 +265,20 @@ export default function EvaluationPage() {
     setSortDir(NUMERIC.has(key) ? 'desc' : 'asc')
   }
 
+  const safePage = clampPage(page, tableRows.length, PAGE_SIZE)
+  const visibleRows = pageItems(tableRows, safePage, PAGE_SIZE)
+
   return (
     <div className="page-container page-container-wide">
       <style>{`
+        .page-container { gap: 16px; padding-top: 28px; }
+        .page-title { font-size: 26px; }
+        .page-desc { font-size: 13px; }
         .eval-panel {
           background: var(--c-surface);
           border: 1px solid var(--c-border);
           border-radius: 8px;
-          padding: 20px 22px;
+          padding: 14px 16px;
           box-shadow: var(--shadow-sm);
         }
         .eval-panel h2 {
@@ -192,12 +287,33 @@ export default function EvaluationPage() {
           color: var(--c-heading);
           margin-bottom: 14px;
         }
-        .eval-plot { width: 100%; height: 280px; }
+        .eval-panel-head {
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          gap: 12px;
+          margin-bottom: 14px;
+        }
+        .eval-panel-head h2 { margin-bottom: 0; }
+        .eval-metric-field {
+          display: flex;
+          align-items: center;
+          gap: 8px;
+        }
+        .eval-metric-field label {
+          font-size: 11px;
+          font-weight: 600;
+          letter-spacing: 0.06em;
+          text-transform: uppercase;
+          color: var(--c-muted);
+        }
+        .eval-tooltip-metric-active { color: var(--purple); }
+        .eval-plot { width: 100%; height: 220px; }
         .eval-table-wrap { overflow-x: auto; }
         .eval-table { width: 100%; border-collapse: collapse; min-width: 920px; }
         .eval-table th {
           text-align: left;
-          padding: 0 10px 10px 0;
+          padding: 0 8px 8px 0;
           border-bottom: 1px solid var(--c-border);
           white-space: nowrap;
         }
@@ -220,12 +336,45 @@ export default function EvaluationPage() {
         .eval-th:hover { color: var(--c-heading); }
         .eval-th.active { color: var(--purple); }
         .eval-caret { font-size: 10px; }
+        .eval-th-tip {
+          display: inline-flex;
+          align-items: center;
+          gap: 4px;
+        }
         .eval-table td {
-          padding: 10px 10px 10px 0;
-          font-size: 13px;
+          padding: 7px 8px 7px 0;
+          font-size: 12px;
           color: var(--c-text);
           border-bottom: 1px solid var(--c-border);
           vertical-align: top;
+        }
+        .table-pager {
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          gap: 12px;
+          margin-top: 10px;
+          padding-top: 10px;
+          border-top: 1px solid var(--c-border);
+          font-size: 12px;
+          color: var(--c-muted);
+        }
+        .table-pager-btns { display: flex; gap: 4px; }
+        .table-pager button {
+          min-width: 28px;
+          height: 28px;
+          padding: 0 8px;
+          border: 1px solid var(--c-border);
+          background: var(--c-surface);
+          color: var(--c-text);
+          border-radius: 4px;
+          font-size: 12px;
+        }
+        .table-pager button:disabled { opacity: 0.45; }
+        .table-pager button[aria-current='page'] {
+          border-color: var(--purple);
+          color: var(--purple);
+          background: var(--purple-tint);
         }
         .eval-table tr:last-child td { border-bottom: none; }
         .eval-num { font-family: var(--mono); font-variant-numeric: tabular-nums; }
@@ -257,7 +406,7 @@ export default function EvaluationPage() {
         <div className="page-eyebrow">Offline eval</div>
         <h1 className="page-title">Evaluation</h1>
         <p className="page-desc">
-          nDCG@10 across experiment runs, plus the full scored table.
+          nDCG@10, Recall@10, and MRR@10 across experiment runs, plus the full scored table.
         </p>
       </div>
 
@@ -275,7 +424,7 @@ export default function EvaluationPage() {
           <p className="empty-title">No experiment runs</p>
           <p className="empty-desc">
             There are no rows in experiments.csv yet. Score a query set with the
-            eval CLI to plot nDCG@10 here.
+            eval CLI to plot nDCG@10, Recall@10, and MRR@10 here.
           </p>
         </div>
       )}
@@ -283,7 +432,24 @@ export default function EvaluationPage() {
       {rows !== null && rows.length > 0 && (
         <>
           <section className="eval-panel">
-            <h2>nDCG@10 across runs</h2>
+            <div className="eval-panel-head">
+              <h2>{selectedMetric.label} across runs</h2>
+              <InfoTip className="eval-metric-field" label="Metric" hint={INFO_TIPS.evalMetric}>
+                <label htmlFor="eval-chart-metric"><InfoLabel text="Metric" /></label>
+                <select
+                  id="eval-chart-metric"
+                  className="param-select"
+                  value={chartMetric}
+                  onChange={event => setChartMetric(event.target.value as ChartMetric)}
+                >
+                  {CHART_METRICS.map(item => (
+                    <option key={item.key} value={item.key}>
+                      {item.label}
+                    </option>
+                  ))}
+                </select>
+              </InfoTip>
+            </div>
             <div className="eval-plot">
               <ResponsiveContainer width="100%" height="100%">
                 <LineChart data={chartData} margin={{ top: 8, right: 12, left: 8, bottom: 0 }}>
@@ -302,11 +468,13 @@ export default function EvaluationPage() {
                     axisLine={{ stroke: 'var(--c-border)' }}
                     width={44}
                   />
-                  <Tooltip content={<ExperimentTooltip />} />
+                  <Tooltip
+                    content={<ExperimentTooltip metric={chartMetric} />}
+                  />
                   <Line
                     type="monotone"
-                    dataKey="ndcg"
-                    name="nDCG@10"
+                    dataKey={selectedMetric.key}
+                    name={selectedMetric.label}
                     stroke={PURPLE}
                     strokeWidth={2}
                     dot={{ r: 3, fill: PURPLE }}
@@ -336,28 +504,33 @@ export default function EvaluationPage() {
                               : 'none'
                           }
                         >
-                          <button
-                            type="button"
-                            className={active ? 'eval-th active' : 'eval-th'}
-                            onClick={() => onSort(col.key)}
-                          >
-                            {col.label}
-                            {active && (
-                              <span className="eval-caret" aria-hidden="true">
-                                {sortDir === 'asc' ? '↑' : '↓'}
-                              </span>
-                            )}
-                          </button>
+                          <InfoTip className="eval-th-tip" label={col.label} hint={col.hint}>
+                            <button
+                              type="button"
+                              className={active ? 'eval-th active' : 'eval-th'}
+                              onClick={() => onSort(col.key)}
+                            >
+                              {col.label}
+                              {active && (
+                                <span className="eval-caret" aria-hidden="true">
+                                  {sortDir === 'asc' ? '↑' : '↓'}
+                                </span>
+                              )}
+                            </button>
+                            <InfoMark label={col.label} />
+                          </InfoTip>
                         </th>
                       )
                     })}
                   </tr>
                 </thead>
                 <tbody>
-                  {tableRows.map((row, index) => (
+                  {visibleRows.map((row, index) => (
                     <tr key={`${row.timestamp}-${row.tag}-${index}`}>
                       <td className="eval-num">{formatTime(row.timestamp)}</td>
-                      <td className="eval-mono">{row.commit}</td>
+                      <td className="eval-mono" title={row.commit}>
+                        {row.commit.length > 7 ? row.commit.slice(0, 7) : row.commit}
+                      </td>
                       <td>{row.tag}</td>
                       <td className="eval-num">{row.alpha}</td>
                       <td>{row.normalization}</td>
@@ -372,6 +545,12 @@ export default function EvaluationPage() {
                 </tbody>
               </table>
             </div>
+            <TablePager
+              page={safePage}
+              total={tableRows.length}
+              pageSize={PAGE_SIZE}
+              onPage={setPage}
+            />
           </section>
         </>
       )}

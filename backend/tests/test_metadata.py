@@ -48,3 +48,47 @@ def test_stale_when_corpus_hash_differs(tmp_path: Path) -> None:
 def test_stale_when_model_differs(tmp_path: Path) -> None:
     _meta().save(tmp_path)
     assert is_up_to_date(tmp_path, HASH, "other-model") is False
+
+
+def test_granularity_defaults_and_roundtrips(tmp_path: Path) -> None:
+    meta = IndexMetadata.create(
+        MODEL, 384, HASH, doc_count=6, granularity="sentence", vector_count=42
+    )
+    assert meta.granularity == "sentence"
+    assert meta.vector_count == 42
+    meta.save(tmp_path)
+    assert IndexMetadata.load(tmp_path) == meta
+
+
+def test_vector_count_defaults_to_doc_count(tmp_path: Path) -> None:
+    meta = IndexMetadata.create(MODEL, 384, HASH, doc_count=6)
+    assert meta.granularity == "document"
+    assert meta.vector_count == 6
+
+
+def test_load_tolerates_legacy_metadata_without_granularity(tmp_path: Path) -> None:
+    import json
+
+    (tmp_path / "metadata.json").write_text(
+        json.dumps(
+            {
+                "model": MODEL,
+                "dimension": 384,
+                "corpus_hash": HASH,
+                "doc_count": 6,
+                "built_at": "2026-09-03T00:00:00+00:00",
+            }
+        ),
+        encoding="utf-8",
+    )
+    meta = IndexMetadata.load(tmp_path)
+    assert meta.granularity == "document"
+    assert meta.vector_count == 6
+
+
+def test_stale_when_granularity_differs(tmp_path: Path) -> None:
+    IndexMetadata.create(
+        MODEL, 384, HASH, doc_count=6, granularity="document"
+    ).save(tmp_path)
+    assert is_up_to_date(tmp_path, HASH, MODEL, granularity="document") is True
+    assert is_up_to_date(tmp_path, HASH, MODEL, granularity="sentence") is False

@@ -25,6 +25,7 @@ _NORMALIZATION = {
     "min_max": "min_max",
     "zscore": "z_score",
     "z_score": "z_score",
+    "rrf": "rrf",
 }
 
 
@@ -94,7 +95,13 @@ def _build_parser(settings_queries: Path, settings_qrels: Path) -> argparse.Argu
     parser.add_argument(
         "--normalization",
         default=None,
-        help="minmax or zscore (also accepts min_max / z_score)",
+        help="minmax, zscore, or rrf (also accepts min_max / z_score)",
+    )
+    parser.add_argument(
+        "--rrf-k",
+        type=int,
+        default=None,
+        help="RRF rank-smoothing k in 1/(k+rank); required when --normalization is rrf",
     )
     parser.add_argument("--model", default=None, help="embedding model; must match the index")
     parser.add_argument(
@@ -132,6 +139,15 @@ def main(argv: list[str] | None = None, *, service: Service | None = None) -> in
         print(str(exc), file=sys.stderr)
         return 1
 
+    rrf_k = args.rrf_k
+    if search_norm == "rrf":
+        if rrf_k is None:
+            print("rrf requires --rrf-k (rank-smoothing k in 1/(k+rank))", file=sys.stderr)
+            return 1
+        if rrf_k < 0:
+            print("--rrf-k must be >= 0", file=sys.stderr)
+            return 1
+
     queries_path = _resolve_path(args.queries, repo_root=settings.repo_root)
     qrels_path = _resolve_path(args.qrels, repo_root=settings.repo_root)
     queries = load_queries(queries_path)
@@ -143,7 +159,7 @@ def main(argv: list[str] | None = None, *, service: Service | None = None) -> in
 
         service = SearchService.load(SentenceTransformerEmbedder())
 
-    result = run_eval(service, queries, qrels, alpha, search_norm)
+    result = run_eval(service, queries, qrels, alpha, search_norm, rrf_k=rrf_k)
     row = {
         "timestamp": datetime.now(timezone.utc).isoformat(),
         "commit": _commit(),

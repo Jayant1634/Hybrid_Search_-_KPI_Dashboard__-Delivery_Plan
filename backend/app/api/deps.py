@@ -2,9 +2,11 @@
 
 ``get_version`` reads the package version from ``pyproject.toml``; ``get_commit``
 reports the current git short SHA (falling back to ``HSS_COMMIT`` then
-``"unknown"``) and never raises. ``SearchService`` loads the processed corpus and
-both indexes exactly once at startup and holds a ready ``HybridSearcher``; if any
-piece is missing it raises with the exact command needed to build it.
+``"unknown"``) and never raises. ``get_commit_message`` reports the current
+commit subject (falling back to ``HSS_COMMIT_MESSAGE`` then ``""``).
+``SearchService`` loads the processed corpus and both indexes exactly once at
+startup and holds a ready ``HybridSearcher``; if any piece is missing it raises
+with the exact command needed to build it.
 """
 
 from __future__ import annotations
@@ -65,6 +67,28 @@ def get_commit() -> str:
     if env_commit:
         return env_commit
     return "unknown"
+
+
+def get_commit_message() -> str:
+    """Return the git commit subject, else ``HSS_COMMIT_MESSAGE``, else ``""``.
+
+    Never raises: any git failure or missing binary falls through to the
+    environment override and finally an empty string.
+    """
+    try:
+        result = subprocess.run(
+            ["git", "log", "-1", "--format=%s"],
+            capture_output=True,
+            text=True,
+            check=True,
+            cwd=Path(__file__).resolve().parent,
+        )
+        message = result.stdout.strip()
+        if message:
+            return message
+    except Exception:
+        pass
+    return os.environ.get("HSS_COMMIT_MESSAGE", "").strip()
 
 
 class SearchService:
@@ -150,7 +174,13 @@ def _reconcile_index(
         return
 
     if settings.index_on_mismatch.strip().lower() == "rebuild":
-        build_indexes(docs, settings.index_dir, embedder, current_model)
+        build_indexes(
+            docs,
+            settings.index_dir,
+            embedder,
+            current_model,
+            granularity=settings.index_granularity,
+        )
         return
 
     raise RuntimeError(

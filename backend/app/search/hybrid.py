@@ -68,15 +68,24 @@ class HybridSearcher:
         normalization: str = "min_max",
         filters: SearchFilters | None = None,
         min_vector_score: float = 0.0,
+        rrf_k: int | None = None,
     ) -> list[SearchResult]:
         """Return the ``top_k`` hits ranked by the hybrid score.
 
         Takes the top candidates from each side, unions them (a document
         missing on one side scores 0 there), drops any that fail ``filters``,
-        drops any whose raw vector score is below ``min_vector_score``,
-        normalises each side over the surviving candidates with
-        ``normalization``, then blends with ``alpha``. Each result carries a
-        snippet highlighting the query tokens.
+        drops any whose raw vector score is below ``min_vector_score`` unless
+        it has a genuine BM25 (lexical) match, normalises each side over the
+        surviving candidates with ``normalization``, then blends with
+        ``alpha``. When ``normalization`` is ``rrf``, ``rrf_k`` is required
+        (the ``k`` in ``1 / (k + rank)``). Each result carries a snippet
+        highlighting the query tokens.
+
+        The ``min_vector_score`` floor only vetoes vector-only candidates: a
+        document the vector index surfaced purely on weak semantic proximity.
+        A document BM25 matched on the actual query terms is never erased by
+        the semantic floor, because ``vector_union`` defaults an unranked
+        document to ``0.0`` (an unmeasured score, not a measured "unrelated").
         """
         pool = len(self._docs_by_id) if filters is not None else _CANDIDATE_POOL
         bm25_raw = dict(self._bm25.query(query, top_k=pool))
@@ -99,12 +108,15 @@ class HybridSearcher:
                 doc_id
                 for doc_id in doc_ids
                 if vector_union[doc_id] >= min_vector_score
+                or bm25_union[doc_id] > 0.0
             ]
             bm25_union = {doc_id: bm25_union[doc_id] for doc_id in doc_ids}
             vector_union = {doc_id: vector_union[doc_id] for doc_id in doc_ids}
 
-        bm25_norm = normalize(normalization, bm25_union)
-        vector_norm = normalize(normalization, vector_union)
+        if normalization == "rrf" and rrf_k is None:
+            raise ValueError("rrf requires rrf_k")
+        bm25_norm = normalize(normalization, bm25_union, k=rrf_k)
+        vector_norm = normalize(normalization, vector_union, k=rrf_k)
         if any(
             not math.isfinite(value)
             for value in (*bm25_norm.values(), *vector_norm.values())

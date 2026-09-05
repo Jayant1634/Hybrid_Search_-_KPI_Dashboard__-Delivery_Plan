@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import sqlite3
+import time
 from pathlib import Path
 
 import pytest
@@ -47,6 +48,7 @@ def test_health_has_version_and_commit(client: TestClient) -> None:
     assert body["status"] == "ok"
     assert body["version"]
     assert body["commit"]
+    assert isinstance(body["commit_message"], str)
     assert body["index"]["doc_count"] == 6
 
 
@@ -136,6 +138,65 @@ def test_min_vector_score_can_empty_results(client: TestClient) -> None:
     )
     assert blocked.status_code == 200
     assert blocked.json()["results"] == []
+
+
+def _wait_reindex_idle(client: TestClient, timeout: float = 5.0) -> dict[str, object]:
+    deadline = time.monotonic() + timeout
+    last: dict[str, object] = {}
+    while time.monotonic() < deadline:
+        last = client.get("/reindex/progress").json()
+        if not last["running"]:
+            return last
+        time.sleep(0.01)
+    raise AssertionError(f"reindex still running: {last}")
+
+
+def test_reindex_switches_granularity_and_persists(client: TestClient) -> None:
+    before = client.get("/health").json()["index"]
+    assert before["granularity"] == "document"
+
+    resp = client.post("/reindex", json={"granularity": "sentence"})
+    assert resp.status_code == 202
+    body = resp.json()
+    assert body["started"] is True
+    assert body["progress"]["running"] is True
+
+    done = _wait_reindex_idle(client)
+    assert done["percent"] == 100.0
+    assert done["error"] in (None, "")
+
+    # Health now reports the rebuilt granularity, and search still works.
+    assert client.get("/health").json()["index"]["granularity"] == "sentence"
+    hits = client.post("/search", json={"query": "volcano", "min_vector_score": 0})
+    assert hits.status_code == 200
+    assert hits.json()["results"]
+
+    # Switching back is also honoured.
+    back = client.post("/reindex", json={"granularity": "document"})
+    assert back.status_code == 202
+    _wait_reindex_idle(client)
+    assert client.get("/health").json()["index"]["granularity"] == "document"
+
+
+def test_reindex_rejects_unknown_granularity(client: TestClient) -> None:
+    resp = client.post("/reindex", json={"granularity": "paragraph"})
+    assert resp.status_code == 422
+
+
+def test_reindex_progress_idle_then_complete(client: TestClient) -> None:
+    idle = client.get("/reindex/progress")
+    assert idle.status_code == 200
+    body = idle.json()
+    assert body["running"] is False
+    assert "percent" in body
+
+    rebuild = client.post("/reindex", json={"granularity": "sentence"})
+    assert rebuild.status_code == 202
+    done = _wait_reindex_idle(client)
+    assert done["running"] is False
+    assert done["percent"] == 100.0
+    assert done["granularity"] == "sentence"
+    assert done["phase"] == "idle"
 
 
 def test_dataset_contracts_on_sample_is_empty(client: TestClient) -> None:

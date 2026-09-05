@@ -6,6 +6,9 @@ interface Props {
   onNavigate: (p: Page) => void
   dark: boolean
   onToggleTheme: () => void
+  indexing?: boolean
+  indexingPercent?: number
+  indexingGranularity?: string | null
 }
 
 const NAV: { page: Page; label: string; icon: React.ReactNode }[] = [
@@ -69,7 +72,15 @@ const NAV: { page: Page; label: string; icon: React.ReactNode }[] = [
   },
 ]
 
-export default function Sidebar({ current, onNavigate, dark, onToggleTheme }: Props) {
+export default function Sidebar({
+  current,
+  onNavigate,
+  dark,
+  onToggleTheme,
+  indexing = false,
+  indexingPercent = 0,
+  indexingGranularity = null,
+}: Props) {
   return (
     <aside className="sidebar">
       <div className="sidebar-logo">
@@ -94,9 +105,19 @@ export default function Sidebar({ current, onNavigate, dark, onToggleTheme }: Pr
           >
             <span className="sidebar-nav-icon">{icon}</span>
             {label}
+            {page === 'health' && indexing && (
+              <span className="sidebar-running-badge">
+                Running {Math.round(indexingPercent)}%
+              </span>
+            )}
             {current === page && <span className="sidebar-active-indicator" />}
           </button>
         ))}
+        {indexing && (
+          <div className="sidebar-indexing-note" role="status">
+            Indexing {indexingGranularity ?? 'corpus'} · {Math.round(indexingPercent)}%
+          </div>
+        )}
       </nav>
 
       <div className="sidebar-bottom">

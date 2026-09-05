@@ -8,6 +8,8 @@ import {
   XAxis,
   YAxis,
 } from 'recharts'
+import InfoTip, { InfoLabel } from '../components/InfoTip'
+import { INFO_TIPS } from '../infoTips'
 
 type TimeWindow = '1h' | '24h' | '7d'
 type DatasetName = 'wikipedia' | 'contracts'
@@ -19,6 +21,65 @@ const DEFAULT_QUERY = 'volcano'
 const MIN_COUNT = 2
 const MAX_COUNT = 200
 const DEFAULT_COUNT = 20
+const PAGE_SIZE = 8
+
+function clampPage(page: number, total: number, size: number): number {
+  const pages = Math.max(1, Math.ceil(total / size))
+  return Math.min(pages, Math.max(1, page))
+}
+
+function pageItems<T>(items: T[], page: number, size: number): T[] {
+  const start = (page - 1) * size
+  return items.slice(start, start + size)
+}
+
+function TablePager({
+  page,
+  total,
+  pageSize,
+  onPage,
+  label,
+}: {
+  page: number
+  total: number
+  pageSize: number
+  onPage: (page: number) => void
+  label: string
+}) {
+  if (total <= pageSize) return null
+  const pages = Math.ceil(total / pageSize)
+  const from = (page - 1) * pageSize + 1
+  const to = Math.min(total, page * pageSize)
+  const windowStart = Math.max(1, Math.min(page - 2, pages - 4))
+  const windowEnd = Math.min(pages, windowStart + 4)
+  const nums: number[] = []
+  for (let n = windowStart; n <= windowEnd; n += 1) nums.push(n)
+  return (
+    <nav className="table-pager" aria-label={label}>
+      <span className="table-pager-meta">
+        {from}–{to} of {total}
+      </span>
+      <div className="table-pager-btns">
+        <button type="button" disabled={page <= 1} onClick={() => onPage(page - 1)}>
+          Prev
+        </button>
+        {nums.map(n => (
+          <button
+            key={n}
+            type="button"
+            aria-current={n === page ? 'page' : undefined}
+            onClick={() => onPage(n)}
+          >
+            {n}
+          </button>
+        ))}
+        <button type="button" disabled={page >= pages} onClick={() => onPage(page + 1)}>
+          Next
+        </button>
+      </div>
+    </nav>
+  )
+}
 
 interface KpiSummary {
   total: number
@@ -78,8 +139,8 @@ async function loadKpis(range: TimeWindow): Promise<KpiData> {
   const [summary, volume, topQueries, zeroQueries] = await Promise.all([
     fetchJson<KpiSummary>(`/api/dashboard/kpi/summary?${q}`),
     fetchJson<VolumePoint[]>(`/api/dashboard/kpi/volume?${q}`),
-    fetchJson<TopQuery[]>(`/api/dashboard/kpi/top-queries?${q}&limit=10`),
-    fetchJson<ZeroResultQuery[]>(`/api/dashboard/kpi/zero-results?${q}&limit=10`),
+    fetchJson<TopQuery[]>(`/api/dashboard/kpi/top-queries?${q}&limit=50`),
+    fetchJson<ZeroResultQuery[]>(`/api/dashboard/kpi/zero-results?${q}&limit=50`),
   ])
   return { summary, volume, topQueries, zeroQueries }
 }
@@ -154,6 +215,8 @@ export default function KpisPage() {
   const [firing, setFiring] = useState(false)
   const [burst, setBurst] = useState<LoadTestResult | null>(null)
   const [burstError, setBurstError] = useState<string | null>(null)
+  const [topPage, setTopPage] = useState(1)
+  const [zeroPage, setZeroPage] = useState(1)
 
   useEffect(() => {
     let cancelled = false
@@ -234,10 +297,13 @@ export default function KpisPage() {
   return (
     <div className="page-container page-container-wide">
       <style>{`
+        .page-container { gap: 16px; padding-top: 28px; }
+        .page-title { font-size: 26px; }
+        .page-desc { font-size: 13px; }
         .kpi-dash-tables {
           display: grid;
           grid-template-columns: 1fr 1fr;
-          gap: 16px;
+          gap: 12px;
         }
         @media (max-width: 900px) {
           .kpi-dash-tables { grid-template-columns: 1fr; }
@@ -246,7 +312,7 @@ export default function KpisPage() {
           background: var(--c-surface);
           border: 1px solid var(--c-border);
           border-radius: 8px;
-          padding: 20px 22px;
+          padding: 14px 16px;
           box-shadow: var(--shadow-sm);
         }
         .kpi-dash-panel h2 {
@@ -255,7 +321,7 @@ export default function KpisPage() {
           color: var(--c-heading);
           margin-bottom: 14px;
         }
-        .kpi-dash-plot { width: 100%; height: 280px; }
+        .kpi-dash-plot { width: 100%; height: 220px; }
         .kpi-dash-table { width: 100%; border-collapse: collapse; }
         .kpi-dash-table th {
           text-align: left;
@@ -264,12 +330,12 @@ export default function KpisPage() {
           letter-spacing: 0.06em;
           text-transform: uppercase;
           color: var(--c-muted);
-          padding: 0 8px 10px 0;
+          padding: 0 8px 8px 0;
           border-bottom: 1px solid var(--c-border);
         }
         .kpi-dash-table td {
-          padding: 10px 8px 10px 0;
-          font-size: 13px;
+          padding: 7px 8px 7px 0;
+          font-size: 12px;
           color: var(--c-text);
           border-bottom: 1px solid var(--c-border);
           vertical-align: top;
@@ -353,6 +419,9 @@ export default function KpisPage() {
         }
         .kpi-field { display: flex; flex-direction: column; gap: 6px; }
         .kpi-field label {
+          display: flex;
+          align-items: center;
+          gap: 6px;
           font-size: 11px;
           font-weight: 600;
           letter-spacing: 0.06em;
@@ -415,12 +484,47 @@ export default function KpisPage() {
           font-family: var(--mono);
           color: var(--c-heading);
         }
+        .table-pager {
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          gap: 12px;
+          margin-top: 10px;
+          padding-top: 10px;
+          border-top: 1px solid var(--c-border);
+          font-size: 12px;
+          color: var(--c-muted);
+        }
+        .table-pager-btns { display: flex; gap: 4px; }
+        .table-pager button {
+          min-width: 28px;
+          height: 28px;
+          padding: 0 8px;
+          border: 1px solid var(--c-border);
+          background: var(--c-surface);
+          color: var(--c-text);
+          border-radius: 4px;
+          font-size: 12px;
+        }
+        .table-pager button:disabled { opacity: 0.45; }
+        .table-pager button[aria-current='page'] {
+          border-color: var(--purple);
+          color: var(--purple);
+          background: var(--purple-tint);
+        }
       `}</style>
 
       <div className="page-header page-header-row">
         <div>
           <div className="page-eyebrow">Observability</div>
-          <h1 className="page-title">KPIs</h1>
+          <div className="page-title-row">
+            <span className="page-title-icon" aria-hidden="true">
+              <svg width="20" height="20" viewBox="0 0 16 16" fill="none">
+                <path d="M3 12V8M8 12V4M13 12V6" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" />
+              </svg>
+            </span>
+            <h1 className="page-title">KPIs</h1>
+          </div>
           <p className="page-desc">
             Query volume, latency, and zero-result rates for the selected window.
           </p>
@@ -430,19 +534,25 @@ export default function KpisPage() {
           <button type="button" className="btn-secondary" onClick={() => setDrawerOpen(true)}>
             Test latency
           </button>
-          <div className="cg-toggle" role="group" aria-label="Time window">
-            {WINDOWS.map(option => (
-              <button
-                key={option}
-                type="button"
-                className={option === range ? 'active' : undefined}
-                aria-pressed={option === range}
-                onClick={() => setRange(option)}
-              >
-                {option}
-              </button>
-            ))}
-          </div>
+          <InfoTip label="Time window" hint={INFO_TIPS.timeWindow}>
+            <div className="cg-toggle" role="group" aria-label="Time window">
+              {WINDOWS.map(option => (
+                <button
+                  key={option}
+                  type="button"
+                  className={option === range ? 'active' : undefined}
+                  aria-pressed={option === range}
+                  onClick={() => {
+                    setRange(option)
+                    setTopPage(1)
+                    setZeroPage(1)
+                  }}
+                >
+                  {option}
+                </button>
+              ))}
+            </div>
+          </InfoTip>
         </div>
       </div>
 
@@ -458,25 +568,57 @@ export default function KpisPage() {
       {data && (
         <>
           <div className="health-grid">
-            <div className="health-card">
-              <div className="hc-eyebrow">p50 latency</div>
+            <InfoTip className="health-card" label="p50 latency" hint={INFO_TIPS.p50}>
+              <div className="hc-head">
+                <span className="hc-icon" aria-hidden="true">
+                  <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                    <circle cx="8" cy="8" r="5.5" stroke="currentColor" strokeWidth="1.4" />
+                    <path d="M8 5v3.2L10 10" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round" />
+                  </svg>
+                </span>
+                <div className="hc-eyebrow"><InfoLabel text="p50 latency" /></div>
+              </div>
               <div className="hc-metric">{formatMs(data.summary.p50)}</div>
-            </div>
-            <div className="health-card">
-              <div className="hc-eyebrow">p95 latency</div>
+            </InfoTip>
+            <InfoTip className="health-card" label="p95 latency" hint={INFO_TIPS.p95}>
+              <div className="hc-head">
+                <span className="hc-icon" aria-hidden="true">
+                  <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                    <path d="M2.5 10.5A5.5 5.5 0 1 1 13.5 10.5" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" />
+                    <path d="M8 8l2.2-1.4" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" />
+                    <path d="M4 13h8" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" />
+                  </svg>
+                </span>
+                <div className="hc-eyebrow"><InfoLabel text="p95 latency" /></div>
+              </div>
               <div className="hc-metric">{formatMs(data.summary.p95)}</div>
-            </div>
-            <div className="health-card">
-              <div className="hc-eyebrow">Total requests</div>
+            </InfoTip>
+            <InfoTip className="health-card" label="Total requests" hint={INFO_TIPS.totalRequests}>
+              <div className="hc-head">
+                <span className="hc-icon" aria-hidden="true">
+                  <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                    <path d="M3 12V8M8 12V4M13 12V6" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" />
+                  </svg>
+                </span>
+                <div className="hc-eyebrow"><InfoLabel text="Total requests" /></div>
+              </div>
               <div className="hc-metric">{data.summary.total.toLocaleString()}</div>
-            </div>
-            <div className="health-card">
-              <div className="hc-eyebrow">Zero results</div>
+            </InfoTip>
+            <InfoTip className="health-card" label="Zero results" hint={INFO_TIPS.zeroResults}>
+              <div className="hc-head">
+                <span className="hc-icon" aria-hidden="true">
+                  <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                    <circle cx="8" cy="8" r="5.5" stroke="currentColor" strokeWidth="1.4" />
+                    <path d="M4.2 4.2l7.6 7.6" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" />
+                  </svg>
+                </span>
+                <div className="hc-eyebrow"><InfoLabel text="Zero results" /></div>
+              </div>
               <div className="hc-metric">{data.summary.zero_result_count.toLocaleString()}</div>
-            </div>
+            </InfoTip>
           </div>
 
-          <section className="kpi-dash-panel">
+          {/* <section className="kpi-dash-panel">
             <div className="kpi-latency-row">
               <div className="kpi-latency-copy">
                 <h2>Latency load test</h2>
@@ -491,7 +633,7 @@ export default function KpisPage() {
                 Open test
               </button>
             </div>
-          </section>
+          </section> */}
 
           <section className="kpi-dash-panel">
             <h2>Volume per bucket</h2>
@@ -540,24 +682,37 @@ export default function KpisPage() {
               {data.topQueries.length === 0 ? (
                 <p className="kpi-dash-empty">No queries in this window.</p>
               ) : (
-                <table className="kpi-dash-table">
-                  <thead>
-                    <tr>
-                      <th>Query</th>
-                      <th>Count</th>
-                      <th>Avg latency</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {data.topQueries.map(row => (
-                      <tr key={row.query}>
-                        <td className="kpi-dash-query">{row.query}</td>
-                        <td className="kpi-dash-num">{row.count}</td>
-                        <td className="kpi-dash-num">{formatMs(row.avg_latency_ms)}</td>
+                <>
+                  <table className="kpi-dash-table">
+                    <thead>
+                      <tr>
+                        <th>Query</th>
+                        <th>Count</th>
+                        <th>Avg latency</th>
                       </tr>
-                    ))}
-                  </tbody>
-                </table>
+                    </thead>
+                    <tbody>
+                      {pageItems(
+                        data.topQueries,
+                        clampPage(topPage, data.topQueries.length, PAGE_SIZE),
+                        PAGE_SIZE,
+                      ).map(row => (
+                        <tr key={row.query}>
+                          <td className="kpi-dash-query">{row.query}</td>
+                          <td className="kpi-dash-num">{row.count}</td>
+                          <td className="kpi-dash-num">{formatMs(row.avg_latency_ms)}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                  <TablePager
+                    page={clampPage(topPage, data.topQueries.length, PAGE_SIZE)}
+                    total={data.topQueries.length}
+                    pageSize={PAGE_SIZE}
+                    onPage={setTopPage}
+                    label="Top query pages"
+                  />
+                </>
               )}
             </section>
 
@@ -566,24 +721,37 @@ export default function KpisPage() {
               {data.zeroQueries.length === 0 ? (
                 <p className="kpi-dash-empty">No zero-result queries in this window.</p>
               ) : (
-                <table className="kpi-dash-table">
-                  <thead>
-                    <tr>
-                      <th>Query</th>
-                      <th>Count</th>
-                      <th>Last seen</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {data.zeroQueries.map(row => (
-                      <tr key={row.query}>
-                        <td className="kpi-dash-query">{row.query}</td>
-                        <td className="kpi-dash-num">{row.count}</td>
-                        <td className="kpi-dash-num">{formatSeen(row.last_seen)}</td>
+                <>
+                  <table className="kpi-dash-table">
+                    <thead>
+                      <tr>
+                        <th>Query</th>
+                        <th>Count</th>
+                        <th>Last seen</th>
                       </tr>
-                    ))}
-                  </tbody>
-                </table>
+                    </thead>
+                    <tbody>
+                      {pageItems(
+                        data.zeroQueries,
+                        clampPage(zeroPage, data.zeroQueries.length, PAGE_SIZE),
+                        PAGE_SIZE,
+                      ).map(row => (
+                        <tr key={row.query}>
+                          <td className="kpi-dash-query">{row.query}</td>
+                          <td className="kpi-dash-num">{row.count}</td>
+                          <td className="kpi-dash-num">{formatSeen(row.last_seen)}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                  <TablePager
+                    page={clampPage(zeroPage, data.zeroQueries.length, PAGE_SIZE)}
+                    total={data.zeroQueries.length}
+                    pageSize={PAGE_SIZE}
+                    onPage={setZeroPage}
+                    label="Zero-result query pages"
+                  />
+                </>
               )}
             </section>
           </div>
@@ -629,8 +797,8 @@ export default function KpisPage() {
                 HTTP multi-user load against <code>/search</code>.
               </p>
 
-              <div className="kpi-field">
-                <label htmlFor="kpi-probe-query">Query</label>
+              <InfoTip className="kpi-field" label="Query" hint={INFO_TIPS.probeQuery}>
+                <label htmlFor="kpi-probe-query"><InfoLabel text="Query" /></label>
                 <input
                   id="kpi-probe-query"
                   value={probeQuery}
@@ -638,10 +806,10 @@ export default function KpisPage() {
                   disabled={firing}
                   maxLength={500}
                 />
-              </div>
+              </InfoTip>
 
-              <div className="kpi-field">
-                <label htmlFor="kpi-probe-count">Concurrent hits</label>
+              <InfoTip className="kpi-field" label="Concurrent hits" hint={INFO_TIPS.concurrentHits}>
+                <label htmlFor="kpi-probe-count"><InfoLabel text="Concurrent hits" /></label>
                 <input
                   id="kpi-probe-count"
                   type="number"
@@ -651,13 +819,10 @@ export default function KpisPage() {
                   onChange={event => setProbeCount(clampCount(Number(event.target.value)))}
                   disabled={firing}
                 />
-                <span className="kpi-field-hint">
-                  {MIN_COUNT}–{MAX_COUNT} requests, all started together.
-                </span>
-              </div>
+              </InfoTip>
 
-              <div className="kpi-field">
-                <label htmlFor="kpi-probe-dataset">Dataset</label>
+              <InfoTip className="kpi-field" label="Dataset" hint={INFO_TIPS.probeDataset}>
+                <label htmlFor="kpi-probe-dataset"><InfoLabel text="Dataset" /></label>
                 <select
                   id="kpi-probe-dataset"
                   value={probeDataset}
@@ -670,7 +835,7 @@ export default function KpisPage() {
                   <option value="wikipedia">Wikipedia</option>
                   <option value="contracts">Contracts</option>
                 </select>
-              </div>
+              </InfoTip>
 
               <div className="kpi-drawer-actions">
                 <button
@@ -687,32 +852,32 @@ export default function KpisPage() {
 
               {burst && (
                 <div className="kpi-burst-grid">
-                  <div className="kpi-burst-tile">
-                    <span>Sent / ok</span>
+                  <InfoTip className="kpi-burst-tile" label="Sent / ok" hint={INFO_TIPS.burstSent}>
+                    <span><InfoLabel text="Sent / ok" /></span>
                     <strong>
                       {burst.sent} / {burst.ok}
                     </strong>
-                  </div>
-                  <div className="kpi-burst-tile">
-                    <span>Failed</span>
+                  </InfoTip>
+                  <InfoTip className="kpi-burst-tile" label="Failed" hint={INFO_TIPS.burstFailed}>
+                    <span><InfoLabel text="Failed" /></span>
                     <strong>{burst.failed}</strong>
-                  </div>
-                  <div className="kpi-burst-tile">
-                    <span>Burst p50</span>
+                  </InfoTip>
+                  <InfoTip className="kpi-burst-tile" label="Burst p50" hint={INFO_TIPS.burstP50}>
+                    <span><InfoLabel text="Burst p50" /></span>
                     <strong>{formatMs(burst.p50)}</strong>
-                  </div>
-                  <div className="kpi-burst-tile">
-                    <span>Burst p95</span>
+                  </InfoTip>
+                  <InfoTip className="kpi-burst-tile" label="Burst p95" hint={INFO_TIPS.burstP95}>
+                    <span><InfoLabel text="Burst p95" /></span>
                     <strong>{formatMs(burst.p95)}</strong>
-                  </div>
-                  <div className="kpi-burst-tile">
-                    <span>Average</span>
+                  </InfoTip>
+                  <InfoTip className="kpi-burst-tile" label="Average" hint={INFO_TIPS.burstAvg}>
+                    <span><InfoLabel text="Average" /></span>
                     <strong>{formatMs(burst.avg_ms)}</strong>
-                  </div>
-                  <div className="kpi-burst-tile">
-                    <span>Wall clock</span>
+                  </InfoTip>
+                  <InfoTip className="kpi-burst-tile" label="Wall clock" hint={INFO_TIPS.burstWall}>
+                    <span><InfoLabel text="Wall clock" /></span>
                     <strong>{formatMs(burst.wall_ms)}</strong>
-                  </div>
+                  </InfoTip>
                 </div>
               )}
             </div>

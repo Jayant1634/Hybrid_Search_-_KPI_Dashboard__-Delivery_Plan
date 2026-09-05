@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-09-05T09:20:20Z",
+  "generated_at": "2026-09-05T13:29:13Z",
   "files": {
     "roots": [
       "backend/app/__init__.py",
@@ -12,7 +12,6 @@
       "backend/app/ingest/__main__.py",
       "backend/app/loadtest/__init__.py",
       "backend/app/loadtest/locustfile.py",
-      "backend/app/observability/logging.py",
       "frontend/src/main.tsx",
       "scripts/_check_titles.py",
       "scripts/fetch_until_done.py",
@@ -31,7 +30,6 @@
         "backend/app/ingest/__main__.py",
         "backend/app/loadtest/__init__.py",
         "backend/app/loadtest/locustfile.py",
-        "backend/app/observability/logging.py",
         "frontend/src/main.tsx",
         "scripts/_check_titles.py",
         "scripts/fetch_until_done.py",
@@ -45,6 +43,7 @@
         "backend/app/api/routes_dashboard.py",
         "backend/app/api/routes_search.py",
         "backend/app/config.py",
+        "backend/app/observability/logging.py",
         "backend/app/search/embedder.py",
         "backend/app/storage/db.py",
         "backend/app/callgraph/analyze.py",
@@ -52,7 +51,6 @@
         "backend/app/index/metadata.py",
         "backend/app/ingest/__init__.py",
         "backend/app/loadtest/burst.py",
-        "backend/app/storage/repo.py",
         "frontend/src/App.tsx",
         "scripts/fetch_corpus.py"
       ]
@@ -81,6 +79,10 @@
       {
         "from": "backend/app/api/main.py",
         "to": "backend/app/config.py"
+      },
+      {
+        "from": "backend/app/api/main.py",
+        "to": "backend/app/observability/logging.py"
       },
       {
         "from": "backend/app/api/main.py",
@@ -125,10 +127,6 @@
       {
         "from": "backend/app/loadtest/locustfile.py",
         "to": "backend/app/loadtest/burst.py"
-      },
-      {
-        "from": "backend/app/observability/logging.py",
-        "to": "backend/app/storage/repo.py"
       },
       {
         "from": "frontend/src/main.tsx",
@@ -166,6 +164,10 @@
       },
       {
         "from": "backend/app/api/main.py",
+        "to": "backend/app/observability/logging.py"
+      },
+      {
+        "from": "backend/app/api/main.py",
         "to": "backend/app/search/embedder.py"
       },
       {
@@ -209,10 +211,6 @@
         "to": "backend/app/loadtest/burst.py"
       },
       {
-        "from": "backend/app/observability/logging.py",
-        "to": "backend/app/storage/repo.py"
-      },
-      {
         "from": "frontend/src/main.tsx",
         "to": "frontend/src/App.tsx"
       },
@@ -232,7 +230,6 @@
       "backend/app/ingest/__main__.py",
       "backend/app/loadtest/__init__.py",
       "backend/app/loadtest/locustfile.py",
-      "backend/app/observability/logging.py",
       "frontend/src/main.tsx",
       "scripts/_check_titles.py",
       "scripts/fetch_until_done.py",
@@ -243,6 +240,7 @@
       "backend/app/api/middleware.py",
       "backend/app/api/routes_dashboard.py",
       "backend/app/api/routes_search.py",
+      "backend/app/observability/logging.py",
       "backend/app/search/embedder.py",
       "backend/app/storage/db.py",
       "backend/app/callgraph/analyze.py",
@@ -251,7 +249,6 @@
       "backend/app/index/metadata.py",
       "backend/app/ingest/__init__.py",
       "backend/app/loadtest/burst.py",
-      "backend/app/storage/repo.py",
       "frontend/src/App.tsx",
       "scripts/fetch_corpus.py"
     ],
@@ -266,7 +263,6 @@
       "backend/app/ingest/__main__.py",
       "backend/app/loadtest/__init__.py",
       "backend/app/loadtest/locustfile.py",
-      "backend/app/observability/logging.py",
       "frontend/src/main.tsx",
       "scripts/_check_titles.py",
       "scripts/fetch_until_done.py",
@@ -278,6 +274,7 @@
       "backend/app/api/routes_dashboard.py",
       "backend/app/api/routes_search.py",
       "backend/app/config.py",
+      "backend/app/observability/logging.py",
       "backend/app/search/embedder.py",
       "backend/app/storage/db.py",
       "backend/app/callgraph/analyze.py",
@@ -285,7 +282,6 @@
       "backend/app/index/metadata.py",
       "backend/app/ingest/__init__.py",
       "backend/app/loadtest/burst.py",
-      "backend/app/storage/repo.py",
       "frontend/src/App.tsx",
       "scripts/fetch_corpus.py"
     ]
@@ -306,12 +302,16 @@
       "backend/app/api/routes_dashboard.py::dashboard_kpi_volume",
       "backend/app/api/routes_dashboard.py::dashboard_kpi_zero_results",
       "backend/app/api/routes_dashboard.py::dashboard_logs",
+      "backend/app/api/routes_search.py::_run_reindex",
       "backend/app/api/routes_search.py::feedback",
       "backend/app/api/routes_search.py::get_document",
       "backend/app/api/routes_search.py::health",
       "backend/app/api/routes_search.py::metrics",
+      "backend/app/api/routes_search.py::reindex",
+      "backend/app/api/routes_search.py::reindex_progress",
       "backend/app/api/routes_search.py::search",
       "backend/app/api/schemas.py::SearchFiltersModel._must_be_iso8601",
+      "backend/app/api/schemas.py::SearchRequest._rrf_k_required_for_rrf",
       "backend/app/api/schemas.py::_default_alpha",
       "backend/app/api/schemas.py::_default_normalization",
       "backend/app/callgraph/__main__.py::main",
@@ -320,13 +320,14 @@
       "backend/app/eval/__main__.py::main",
       "backend/app/index/__main__.py::main",
       "backend/app/index/metadata.py::IndexMetadata.save",
+      "backend/app/index/progress.py::start",
+      "backend/app/index/progress.py::update",
       "backend/app/ingest/__init__.py::main",
       "backend/app/loadtest/burst.py::_one_search",
       "backend/app/loadtest/locustfile.py::SearchUser.search",
       "backend/app/observability/logging.py::JsonFormatter.format",
       "backend/app/observability/logging.py::SqliteLogHandler.__init__",
       "backend/app/observability/logging.py::SqliteLogHandler.emit",
-      "backend/app/observability/logging.py::configure",
       "backend/app/observability/metrics.py::reset",
       "backend/app/run.py::main",
       "backend/app/search/bm25.py::BM25Index.__init__",
@@ -357,17 +358,22 @@
       "frontend/src/api.ts::getZeroResultQueries",
       "frontend/src/components/CallGraphView.tsx::resetView",
       "frontend/src/components/CallGraphView.tsx::shortFile",
+      "frontend/src/components/InfoTip.tsx::onMove",
+      "frontend/src/components/InfoTip.tsx::show",
       "frontend/src/components/ResultCard.tsx::onKey",
+      "frontend/src/components/VantaHero.tsx::fit",
       "frontend/src/highlight.ts::escapeHtml",
       "frontend/src/highlight.ts::queryTerms",
       "frontend/src/highlight.ts::termMatchesWord",
+      "frontend/src/infoTips.ts::call",
       "frontend/src/pages/DebugPage.tsx::extraJson",
       "frontend/src/pages/DebugPage.tsx::formatTime",
       "frontend/src/pages/DebugPage.tsx::inRange",
       "frontend/src/pages/DebugPage.tsx::levelParam",
       "frontend/src/pages/DebugPage.tsx::parseTs",
       "frontend/src/pages/DebugPage.tsx::severityClass",
-      "frontend/src/pages/DebugPage.tsx::windowFromSince",
+      "frontend/src/pages/HomePage.tsx::Icon",
+      "frontend/src/pages/HomePage.tsx::graph",
       "frontend/src/pages/KpisPage.tsx::fetchJson",
       "frontend/src/pages/KpisPage.tsx::onKey",
       "frontend/src/pages/KpisPage.tsx::parseBucket",
@@ -394,12 +400,16 @@
         "backend/app/api/routes_dashboard.py::dashboard_kpi_volume",
         "backend/app/api/routes_dashboard.py::dashboard_kpi_zero_results",
         "backend/app/api/routes_dashboard.py::dashboard_logs",
+        "backend/app/api/routes_search.py::_run_reindex",
         "backend/app/api/routes_search.py::feedback",
         "backend/app/api/routes_search.py::get_document",
         "backend/app/api/routes_search.py::health",
         "backend/app/api/routes_search.py::metrics",
+        "backend/app/api/routes_search.py::reindex",
+        "backend/app/api/routes_search.py::reindex_progress",
         "backend/app/api/routes_search.py::search",
         "backend/app/api/schemas.py::SearchFiltersModel._must_be_iso8601",
+        "backend/app/api/schemas.py::SearchRequest._rrf_k_required_for_rrf",
         "backend/app/api/schemas.py::_default_alpha",
         "backend/app/api/schemas.py::_default_normalization",
         "backend/app/callgraph/__main__.py::main",
@@ -408,13 +418,14 @@
         "backend/app/eval/__main__.py::main",
         "backend/app/index/__main__.py::main",
         "backend/app/index/metadata.py::IndexMetadata.save",
+        "backend/app/index/progress.py::start",
+        "backend/app/index/progress.py::update",
         "backend/app/ingest/__init__.py::main",
         "backend/app/loadtest/burst.py::_one_search",
         "backend/app/loadtest/locustfile.py::SearchUser.search",
         "backend/app/observability/logging.py::JsonFormatter.format",
         "backend/app/observability/logging.py::SqliteLogHandler.__init__",
         "backend/app/observability/logging.py::SqliteLogHandler.emit",
-        "backend/app/observability/logging.py::configure",
         "backend/app/observability/metrics.py::reset",
         "backend/app/run.py::main",
         "backend/app/search/bm25.py::BM25Index.__init__",
@@ -445,17 +456,22 @@
         "frontend/src/api.ts::getZeroResultQueries",
         "frontend/src/components/CallGraphView.tsx::resetView",
         "frontend/src/components/CallGraphView.tsx::shortFile",
+        "frontend/src/components/InfoTip.tsx::onMove",
+        "frontend/src/components/InfoTip.tsx::show",
         "frontend/src/components/ResultCard.tsx::onKey",
+        "frontend/src/components/VantaHero.tsx::fit",
         "frontend/src/highlight.ts::escapeHtml",
         "frontend/src/highlight.ts::queryTerms",
         "frontend/src/highlight.ts::termMatchesWord",
+        "frontend/src/infoTips.ts::call",
         "frontend/src/pages/DebugPage.tsx::extraJson",
         "frontend/src/pages/DebugPage.tsx::formatTime",
         "frontend/src/pages/DebugPage.tsx::inRange",
         "frontend/src/pages/DebugPage.tsx::levelParam",
         "frontend/src/pages/DebugPage.tsx::parseTs",
         "frontend/src/pages/DebugPage.tsx::severityClass",
-        "frontend/src/pages/DebugPage.tsx::windowFromSince",
+        "frontend/src/pages/HomePage.tsx::Icon",
+        "frontend/src/pages/HomePage.tsx::graph",
         "frontend/src/pages/KpisPage.tsx::fetchJson",
         "frontend/src/pages/KpisPage.tsx::onKey",
         "frontend/src/pages/KpisPage.tsx::parseBucket",
@@ -471,6 +487,7 @@
         "backend/app/storage/db.py::connect",
         "backend/app/config.py::load_config",
         "backend/app/storage/db.py::init_schema",
+        "backend/app/observability/logging.py::configure",
         "backend/app/api/middleware.py::_read_search_params",
         "backend/app/api/middleware.py::_persist_search",
         "backend/app/observability/metrics.py::record_search_latency",
@@ -486,6 +503,10 @@
         "backend/app/storage/repo.py::request_volume",
         "backend/app/storage/repo.py::zero_result_queries",
         "backend/app/storage/repo.py::select_logs",
+        "backend/app/index/__main__.py::build_indexes",
+        "backend/app/index/progress.py::finishing",
+        "backend/app/index/progress.py::finish",
+        "backend/app/index/progress.py::fail",
         "backend/app/api/routes_search.py::_get_service",
         "backend/app/storage/repo.py::insert_feedback",
         "backend/app/search/tokenize.py::tokenize",
@@ -494,8 +515,12 @@
         "backend/app/search/highlight.py::count_occurrences",
         "backend/app/api/deps.py::get_version",
         "backend/app/api/deps.py::get_commit",
+        "backend/app/api/deps.py::get_commit_message",
         "backend/app/api/routes_search.py::_index_metadata",
         "backend/app/observability/metrics.py::render",
+        "backend/app/ingest/writer.py::read_jsonl",
+        "backend/app/index/progress.py::try_start",
+        "backend/app/api/routes_search.py::_progress_model",
         "backend/app/callgraph/analyze.py::find_repo_root",
         "backend/app/callgraph/analyze.py::write_callgraph_json",
         "backend/app/callgraph/analyze.py::_call_name",
@@ -510,15 +535,12 @@
         "backend/app/eval/runner.py::append_experiment",
         "backend/app/index/__main__.py::_build_parser",
         "backend/app/index/__main__.py::_resolve_path",
-        "backend/app/ingest/writer.py::read_jsonl",
         "backend/app/ingest/writer.py::corpus_hash",
         "backend/app/index/metadata.py::is_up_to_date",
-        "backend/app/index/__main__.py::build_indexes",
         "backend/app/ingest/__init__.py::_build_parser",
         "backend/app/ingest/__init__.py::_resolve_path",
         "backend/app/ingest/__init__.py::ingest",
         "backend/app/storage/repo.py::insert_log",
-        "backend/app/observability/logging.py::_find_flagged",
         "backend/app/run.py::load_dotenv",
         "backend/app/run.py::ensure_venv",
         "backend/app/search/filters.py::apply",
@@ -526,6 +548,7 @@
         "backend/app/search/highlight.py::make_snippet",
         "backend/app/search/normalize.py::min_max",
         "frontend/src/App.tsx::useTheme",
+        "frontend/src/useReindexJob.ts::useReindexJob",
         "frontend/src/api.ts::getHealth",
         "frontend/src/pages/HomePage.tsx::HomePage",
         "frontend/src/components/Sidebar.tsx::Sidebar",
@@ -535,7 +558,9 @@
         "frontend/src/pages/KpisPage.tsx::KpisPage",
         "frontend/src/pages/EvaluationPage.tsx::EvaluationPage",
         "frontend/src/pages/DebugPage.tsx::DebugPage",
+        "frontend/src/components/InfoTip.tsx::placePop",
         "frontend/src/components/ResultCard.tsx::closeModal",
+        "frontend/src/components/VantaHero.tsx::hardenNet",
         "scripts/fetch_until_done.py::parse_args",
         "scripts/fetch_corpus.py::repo_root",
         "scripts/fetch_corpus.py::read_seed",
@@ -568,6 +593,10 @@
         "to": "backend/app/storage/db.py::init_schema"
       },
       {
+        "from": "backend/app/api/main.py::create_app",
+        "to": "backend/app/observability/logging.py::configure"
+      },
+      {
         "from": "backend/app/api/middleware.py::RequestContextMiddleware.dispatch",
         "to": "backend/app/api/middleware.py::_read_search_params"
       },
@@ -672,6 +701,26 @@
         "to": "backend/app/storage/repo.py::select_logs"
       },
       {
+        "from": "backend/app/api/routes_search.py::_run_reindex",
+        "to": "backend/app/index/__main__.py::build_indexes"
+      },
+      {
+        "from": "backend/app/api/routes_search.py::_run_reindex",
+        "to": "backend/app/index/progress.py::finishing"
+      },
+      {
+        "from": "backend/app/api/routes_search.py::_run_reindex",
+        "to": "backend/app/api/deps.py::SearchService.load"
+      },
+      {
+        "from": "backend/app/api/routes_search.py::_run_reindex",
+        "to": "backend/app/index/progress.py::finish"
+      },
+      {
+        "from": "backend/app/api/routes_search.py::_run_reindex",
+        "to": "backend/app/index/progress.py::fail"
+      },
+      {
         "from": "backend/app/api/routes_search.py::feedback",
         "to": "backend/app/api/routes_search.py::_get_service"
       },
@@ -709,11 +758,39 @@
       },
       {
         "from": "backend/app/api/routes_search.py::health",
+        "to": "backend/app/api/deps.py::get_commit_message"
+      },
+      {
+        "from": "backend/app/api/routes_search.py::health",
         "to": "backend/app/api/routes_search.py::_index_metadata"
       },
       {
         "from": "backend/app/api/routes_search.py::metrics",
         "to": "backend/app/observability/metrics.py::render"
+      },
+      {
+        "from": "backend/app/api/routes_search.py::reindex",
+        "to": "backend/app/api/routes_search.py::_get_service"
+      },
+      {
+        "from": "backend/app/api/routes_search.py::reindex",
+        "to": "backend/app/config.py::load_config"
+      },
+      {
+        "from": "backend/app/api/routes_search.py::reindex",
+        "to": "backend/app/ingest/writer.py::read_jsonl"
+      },
+      {
+        "from": "backend/app/api/routes_search.py::reindex",
+        "to": "backend/app/index/progress.py::try_start"
+      },
+      {
+        "from": "backend/app/api/routes_search.py::reindex",
+        "to": "backend/app/api/routes_search.py::_progress_model"
+      },
+      {
+        "from": "backend/app/api/routes_search.py::reindex_progress",
+        "to": "backend/app/api/routes_search.py::_progress_model"
       },
       {
         "from": "backend/app/api/routes_search.py::search",
@@ -808,6 +885,10 @@
         "to": "backend/app/index/__main__.py::build_indexes"
       },
       {
+        "from": "backend/app/index/progress.py::start",
+        "to": "backend/app/index/progress.py::try_start"
+      },
+      {
         "from": "backend/app/ingest/__init__.py::main",
         "to": "backend/app/config.py::load_config"
       },
@@ -826,10 +907,6 @@
       {
         "from": "backend/app/observability/logging.py::SqliteLogHandler.emit",
         "to": "backend/app/storage/repo.py::insert_log"
-      },
-      {
-        "from": "backend/app/observability/logging.py::configure",
-        "to": "backend/app/observability/logging.py::_find_flagged"
       },
       {
         "from": "backend/app/run.py::main",
@@ -885,6 +962,10 @@
       },
       {
         "from": "frontend/src/App.tsx::App",
+        "to": "frontend/src/useReindexJob.ts::useReindexJob"
+      },
+      {
+        "from": "frontend/src/App.tsx::App",
         "to": "frontend/src/api.ts::getHealth"
       },
       {
@@ -920,8 +1001,20 @@
         "to": "frontend/src/pages/DebugPage.tsx::DebugPage"
       },
       {
+        "from": "frontend/src/components/InfoTip.tsx::onMove",
+        "to": "frontend/src/components/InfoTip.tsx::placePop"
+      },
+      {
+        "from": "frontend/src/components/InfoTip.tsx::show",
+        "to": "frontend/src/components/InfoTip.tsx::placePop"
+      },
+      {
         "from": "frontend/src/components/ResultCard.tsx::onKey",
         "to": "frontend/src/components/ResultCard.tsx::closeModal"
+      },
+      {
+        "from": "frontend/src/components/VantaHero.tsx::fit",
+        "to": "frontend/src/components/VantaHero.tsx::hardenNet"
       },
       {
         "from": "scripts/fetch_until_done.py::main",
@@ -990,6 +1083,10 @@
         "to": "backend/app/storage/db.py::init_schema"
       },
       {
+        "from": "backend/app/api/main.py::create_app",
+        "to": "backend/app/observability/logging.py::configure"
+      },
+      {
         "from": "backend/app/api/middleware.py::RequestContextMiddleware.dispatch",
         "to": "backend/app/api/middleware.py::_read_search_params"
       },
@@ -1094,6 +1191,26 @@
         "to": "backend/app/storage/repo.py::select_logs"
       },
       {
+        "from": "backend/app/api/routes_search.py::_run_reindex",
+        "to": "backend/app/index/__main__.py::build_indexes"
+      },
+      {
+        "from": "backend/app/api/routes_search.py::_run_reindex",
+        "to": "backend/app/index/progress.py::finishing"
+      },
+      {
+        "from": "backend/app/api/routes_search.py::_run_reindex",
+        "to": "backend/app/api/deps.py::SearchService.load"
+      },
+      {
+        "from": "backend/app/api/routes_search.py::_run_reindex",
+        "to": "backend/app/index/progress.py::finish"
+      },
+      {
+        "from": "backend/app/api/routes_search.py::_run_reindex",
+        "to": "backend/app/index/progress.py::fail"
+      },
+      {
         "from": "backend/app/api/routes_search.py::feedback",
         "to": "backend/app/api/routes_search.py::_get_service"
       },
@@ -1131,11 +1248,39 @@
       },
       {
         "from": "backend/app/api/routes_search.py::health",
+        "to": "backend/app/api/deps.py::get_commit_message"
+      },
+      {
+        "from": "backend/app/api/routes_search.py::health",
         "to": "backend/app/api/routes_search.py::_index_metadata"
       },
       {
         "from": "backend/app/api/routes_search.py::metrics",
         "to": "backend/app/observability/metrics.py::render"
+      },
+      {
+        "from": "backend/app/api/routes_search.py::reindex",
+        "to": "backend/app/api/routes_search.py::_get_service"
+      },
+      {
+        "from": "backend/app/api/routes_search.py::reindex",
+        "to": "backend/app/config.py::load_config"
+      },
+      {
+        "from": "backend/app/api/routes_search.py::reindex",
+        "to": "backend/app/ingest/writer.py::read_jsonl"
+      },
+      {
+        "from": "backend/app/api/routes_search.py::reindex",
+        "to": "backend/app/index/progress.py::try_start"
+      },
+      {
+        "from": "backend/app/api/routes_search.py::reindex",
+        "to": "backend/app/api/routes_search.py::_progress_model"
+      },
+      {
+        "from": "backend/app/api/routes_search.py::reindex_progress",
+        "to": "backend/app/api/routes_search.py::_progress_model"
       },
       {
         "from": "backend/app/api/routes_search.py::search",
@@ -1230,6 +1375,10 @@
         "to": "backend/app/index/__main__.py::build_indexes"
       },
       {
+        "from": "backend/app/index/progress.py::start",
+        "to": "backend/app/index/progress.py::try_start"
+      },
+      {
         "from": "backend/app/ingest/__init__.py::main",
         "to": "backend/app/config.py::load_config"
       },
@@ -1248,10 +1397,6 @@
       {
         "from": "backend/app/observability/logging.py::SqliteLogHandler.emit",
         "to": "backend/app/storage/repo.py::insert_log"
-      },
-      {
-        "from": "backend/app/observability/logging.py::configure",
-        "to": "backend/app/observability/logging.py::_find_flagged"
       },
       {
         "from": "backend/app/run.py::main",
@@ -1307,6 +1452,10 @@
       },
       {
         "from": "frontend/src/App.tsx::App",
+        "to": "frontend/src/useReindexJob.ts::useReindexJob"
+      },
+      {
+        "from": "frontend/src/App.tsx::App",
         "to": "frontend/src/api.ts::getHealth"
       },
       {
@@ -1342,8 +1491,20 @@
         "to": "frontend/src/pages/DebugPage.tsx::DebugPage"
       },
       {
+        "from": "frontend/src/components/InfoTip.tsx::onMove",
+        "to": "frontend/src/components/InfoTip.tsx::placePop"
+      },
+      {
+        "from": "frontend/src/components/InfoTip.tsx::show",
+        "to": "frontend/src/components/InfoTip.tsx::placePop"
+      },
+      {
         "from": "frontend/src/components/ResultCard.tsx::onKey",
         "to": "frontend/src/components/ResultCard.tsx::closeModal"
+      },
+      {
+        "from": "frontend/src/components/VantaHero.tsx::fit",
+        "to": "frontend/src/components/VantaHero.tsx::hardenNet"
       },
       {
         "from": "scripts/fetch_until_done.py::main",
@@ -1409,12 +1570,16 @@
       "backend/app/api/routes_dashboard.py::dashboard_kpi_volume",
       "backend/app/api/routes_dashboard.py::dashboard_kpi_zero_results",
       "backend/app/api/routes_dashboard.py::dashboard_logs",
+      "backend/app/api/routes_search.py::_run_reindex",
       "backend/app/api/routes_search.py::feedback",
       "backend/app/api/routes_search.py::get_document",
       "backend/app/api/routes_search.py::health",
       "backend/app/api/routes_search.py::metrics",
+      "backend/app/api/routes_search.py::reindex",
+      "backend/app/api/routes_search.py::reindex_progress",
       "backend/app/api/routes_search.py::search",
       "backend/app/api/schemas.py::SearchFiltersModel._must_be_iso8601",
+      "backend/app/api/schemas.py::SearchRequest._rrf_k_required_for_rrf",
       "backend/app/api/schemas.py::_default_alpha",
       "backend/app/api/schemas.py::_default_normalization",
       "backend/app/callgraph/__main__.py::main",
@@ -1423,13 +1588,14 @@
       "backend/app/eval/__main__.py::main",
       "backend/app/index/__main__.py::main",
       "backend/app/index/metadata.py::IndexMetadata.save",
+      "backend/app/index/progress.py::start",
+      "backend/app/index/progress.py::update",
       "backend/app/ingest/__init__.py::main",
       "backend/app/loadtest/burst.py::_one_search",
       "backend/app/loadtest/locustfile.py::SearchUser.search",
       "backend/app/observability/logging.py::JsonFormatter.format",
       "backend/app/observability/logging.py::SqliteLogHandler.__init__",
       "backend/app/observability/logging.py::SqliteLogHandler.emit",
-      "backend/app/observability/logging.py::configure",
       "backend/app/observability/metrics.py::reset",
       "backend/app/run.py::main",
       "backend/app/search/bm25.py::BM25Index.__init__",
@@ -1460,17 +1626,22 @@
       "frontend/src/api.ts::getZeroResultQueries",
       "frontend/src/components/CallGraphView.tsx::resetView",
       "frontend/src/components/CallGraphView.tsx::shortFile",
+      "frontend/src/components/InfoTip.tsx::onMove",
+      "frontend/src/components/InfoTip.tsx::show",
       "frontend/src/components/ResultCard.tsx::onKey",
+      "frontend/src/components/VantaHero.tsx::fit",
       "frontend/src/highlight.ts::escapeHtml",
       "frontend/src/highlight.ts::queryTerms",
       "frontend/src/highlight.ts::termMatchesWord",
+      "frontend/src/infoTips.ts::call",
       "frontend/src/pages/DebugPage.tsx::extraJson",
       "frontend/src/pages/DebugPage.tsx::formatTime",
       "frontend/src/pages/DebugPage.tsx::inRange",
       "frontend/src/pages/DebugPage.tsx::levelParam",
       "frontend/src/pages/DebugPage.tsx::parseTs",
       "frontend/src/pages/DebugPage.tsx::severityClass",
-      "frontend/src/pages/DebugPage.tsx::windowFromSince",
+      "frontend/src/pages/HomePage.tsx::Icon",
+      "frontend/src/pages/HomePage.tsx::graph",
       "frontend/src/pages/KpisPage.tsx::fetchJson",
       "frontend/src/pages/KpisPage.tsx::onKey",
       "frontend/src/pages/KpisPage.tsx::parseBucket",
@@ -1480,7 +1651,7 @@
       "scripts/generate_contracts.py::created_at_for",
       "scripts/generate_contracts.py::main",
       "scripts/qrels_helper.py::main",
-      "backend/app/api/deps.py::SearchService.load",
+      "backend/app/observability/logging.py::configure",
       "backend/app/storage/db.py::connect",
       "backend/app/storage/db.py::init_schema",
       "backend/app/api/middleware.py::_capture_result_count",
@@ -1498,13 +1669,19 @@
       "backend/app/api/routes_dashboard.py::_db",
       "backend/app/api/routes_dashboard.py::parse_window",
       "backend/app/storage/repo.py::select_logs",
+      "backend/app/api/deps.py::SearchService.load",
+      "backend/app/index/progress.py::fail",
+      "backend/app/index/progress.py::finish",
+      "backend/app/index/progress.py::finishing",
       "backend/app/storage/repo.py::insert_feedback",
       "backend/app/search/highlight.py::closest_document_words",
       "backend/app/search/highlight.py::count_occurrences",
       "backend/app/api/deps.py::get_commit",
+      "backend/app/api/deps.py::get_commit_message",
       "backend/app/api/deps.py::get_version",
       "backend/app/api/routes_search.py::_index_metadata",
       "backend/app/observability/metrics.py::render",
+      "backend/app/api/routes_search.py::_progress_model",
       "backend/app/api/routes_search.py::_get_service",
       "backend/app/callgraph/analyze.py::find_repo_root",
       "backend/app/callgraph/analyze.py::write_callgraph_json",
@@ -1524,11 +1701,11 @@
       "backend/app/index/metadata.py::is_up_to_date",
       "backend/app/ingest/writer.py::corpus_hash",
       "backend/app/ingest/writer.py::read_jsonl",
+      "backend/app/index/progress.py::try_start",
       "backend/app/ingest/__init__.py::_build_parser",
       "backend/app/ingest/__init__.py::_resolve_path",
       "backend/app/ingest/__init__.py::ingest",
       "backend/app/storage/repo.py::insert_log",
-      "backend/app/observability/logging.py::_find_flagged",
       "backend/app/run.py::ensure_venv",
       "backend/app/run.py::load_dotenv",
       "backend/app/config.py::load_config",
@@ -1548,7 +1725,10 @@
       "frontend/src/pages/KpisPage.tsx::KpisPage",
       "frontend/src/pages/SearchPage.tsx::SearchPage",
       "frontend/src/pages/SettingsPage.tsx::SettingsPage",
+      "frontend/src/useReindexJob.ts::useReindexJob",
+      "frontend/src/components/InfoTip.tsx::placePop",
       "frontend/src/components/ResultCard.tsx::closeModal",
+      "frontend/src/components/VantaHero.tsx::hardenNet",
       "scripts/fetch_corpus.py::main",
       "scripts/fetch_corpus.py::pending_rows",
       "scripts/fetch_corpus.py::read_seed",
@@ -1577,12 +1757,16 @@
       "backend/app/api/routes_dashboard.py::dashboard_kpi_volume",
       "backend/app/api/routes_dashboard.py::dashboard_kpi_zero_results",
       "backend/app/api/routes_dashboard.py::dashboard_logs",
+      "backend/app/api/routes_search.py::_run_reindex",
       "backend/app/api/routes_search.py::feedback",
       "backend/app/api/routes_search.py::get_document",
       "backend/app/api/routes_search.py::health",
       "backend/app/api/routes_search.py::metrics",
+      "backend/app/api/routes_search.py::reindex",
+      "backend/app/api/routes_search.py::reindex_progress",
       "backend/app/api/routes_search.py::search",
       "backend/app/api/schemas.py::SearchFiltersModel._must_be_iso8601",
+      "backend/app/api/schemas.py::SearchRequest._rrf_k_required_for_rrf",
       "backend/app/api/schemas.py::_default_alpha",
       "backend/app/api/schemas.py::_default_normalization",
       "backend/app/callgraph/__main__.py::main",
@@ -1591,13 +1775,14 @@
       "backend/app/eval/__main__.py::main",
       "backend/app/index/__main__.py::main",
       "backend/app/index/metadata.py::IndexMetadata.save",
+      "backend/app/index/progress.py::start",
+      "backend/app/index/progress.py::update",
       "backend/app/ingest/__init__.py::main",
       "backend/app/loadtest/burst.py::_one_search",
       "backend/app/loadtest/locustfile.py::SearchUser.search",
       "backend/app/observability/logging.py::JsonFormatter.format",
       "backend/app/observability/logging.py::SqliteLogHandler.__init__",
       "backend/app/observability/logging.py::SqliteLogHandler.emit",
-      "backend/app/observability/logging.py::configure",
       "backend/app/observability/metrics.py::reset",
       "backend/app/run.py::main",
       "backend/app/search/bm25.py::BM25Index.__init__",
@@ -1628,17 +1813,22 @@
       "frontend/src/api.ts::getZeroResultQueries",
       "frontend/src/components/CallGraphView.tsx::resetView",
       "frontend/src/components/CallGraphView.tsx::shortFile",
+      "frontend/src/components/InfoTip.tsx::onMove",
+      "frontend/src/components/InfoTip.tsx::show",
       "frontend/src/components/ResultCard.tsx::onKey",
+      "frontend/src/components/VantaHero.tsx::fit",
       "frontend/src/highlight.ts::escapeHtml",
       "frontend/src/highlight.ts::queryTerms",
       "frontend/src/highlight.ts::termMatchesWord",
+      "frontend/src/infoTips.ts::call",
       "frontend/src/pages/DebugPage.tsx::extraJson",
       "frontend/src/pages/DebugPage.tsx::formatTime",
       "frontend/src/pages/DebugPage.tsx::inRange",
       "frontend/src/pages/DebugPage.tsx::levelParam",
       "frontend/src/pages/DebugPage.tsx::parseTs",
       "frontend/src/pages/DebugPage.tsx::severityClass",
-      "frontend/src/pages/DebugPage.tsx::windowFromSince",
+      "frontend/src/pages/HomePage.tsx::Icon",
+      "frontend/src/pages/HomePage.tsx::graph",
       "frontend/src/pages/KpisPage.tsx::fetchJson",
       "frontend/src/pages/KpisPage.tsx::onKey",
       "frontend/src/pages/KpisPage.tsx::parseBucket",
@@ -1652,6 +1842,7 @@
       "backend/app/storage/db.py::connect",
       "backend/app/config.py::load_config",
       "backend/app/storage/db.py::init_schema",
+      "backend/app/observability/logging.py::configure",
       "backend/app/api/middleware.py::_read_search_params",
       "backend/app/api/middleware.py::_persist_search",
       "backend/app/observability/metrics.py::record_search_latency",
@@ -1667,6 +1858,10 @@
       "backend/app/storage/repo.py::request_volume",
       "backend/app/storage/repo.py::zero_result_queries",
       "backend/app/storage/repo.py::select_logs",
+      "backend/app/index/__main__.py::build_indexes",
+      "backend/app/index/progress.py::finishing",
+      "backend/app/index/progress.py::finish",
+      "backend/app/index/progress.py::fail",
       "backend/app/api/routes_search.py::_get_service",
       "backend/app/storage/repo.py::insert_feedback",
       "backend/app/search/tokenize.py::tokenize",
@@ -1675,8 +1870,12 @@
       "backend/app/search/highlight.py::count_occurrences",
       "backend/app/api/deps.py::get_version",
       "backend/app/api/deps.py::get_commit",
+      "backend/app/api/deps.py::get_commit_message",
       "backend/app/api/routes_search.py::_index_metadata",
       "backend/app/observability/metrics.py::render",
+      "backend/app/ingest/writer.py::read_jsonl",
+      "backend/app/index/progress.py::try_start",
+      "backend/app/api/routes_search.py::_progress_model",
       "backend/app/callgraph/analyze.py::find_repo_root",
       "backend/app/callgraph/analyze.py::write_callgraph_json",
       "backend/app/callgraph/analyze.py::_call_name",
@@ -1691,15 +1890,12 @@
       "backend/app/eval/runner.py::append_experiment",
       "backend/app/index/__main__.py::_build_parser",
       "backend/app/index/__main__.py::_resolve_path",
-      "backend/app/ingest/writer.py::read_jsonl",
       "backend/app/ingest/writer.py::corpus_hash",
       "backend/app/index/metadata.py::is_up_to_date",
-      "backend/app/index/__main__.py::build_indexes",
       "backend/app/ingest/__init__.py::_build_parser",
       "backend/app/ingest/__init__.py::_resolve_path",
       "backend/app/ingest/__init__.py::ingest",
       "backend/app/storage/repo.py::insert_log",
-      "backend/app/observability/logging.py::_find_flagged",
       "backend/app/run.py::load_dotenv",
       "backend/app/run.py::ensure_venv",
       "backend/app/search/filters.py::apply",
@@ -1707,6 +1903,7 @@
       "backend/app/search/highlight.py::make_snippet",
       "backend/app/search/normalize.py::min_max",
       "frontend/src/App.tsx::useTheme",
+      "frontend/src/useReindexJob.ts::useReindexJob",
       "frontend/src/api.ts::getHealth",
       "frontend/src/pages/HomePage.tsx::HomePage",
       "frontend/src/components/Sidebar.tsx::Sidebar",
@@ -1716,7 +1913,9 @@
       "frontend/src/pages/KpisPage.tsx::KpisPage",
       "frontend/src/pages/EvaluationPage.tsx::EvaluationPage",
       "frontend/src/pages/DebugPage.tsx::DebugPage",
+      "frontend/src/components/InfoTip.tsx::placePop",
       "frontend/src/components/ResultCard.tsx::closeModal",
+      "frontend/src/components/VantaHero.tsx::hardenNet",
       "scripts/fetch_until_done.py::parse_args",
       "scripts/fetch_corpus.py::repo_root",
       "scripts/fetch_corpus.py::read_seed",

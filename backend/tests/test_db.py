@@ -1,5 +1,6 @@
 import shutil
 import sqlite3
+import threading
 from pathlib import Path
 
 from app.storage import db as db_module
@@ -25,6 +26,25 @@ def test_connect_sets_row_factory_and_wal(tmp_path: Path) -> None:
         assert conn.row_factory is sqlite3.Row
         mode = conn.execute("PRAGMA journal_mode").fetchone()[0]
         assert mode.lower() == "wal"
+    finally:
+        conn.close()
+
+
+def test_connect_allows_other_thread(tmp_path: Path) -> None:
+    conn = connect(tmp_path / "hss.sqlite")
+    errors: list[BaseException] = []
+
+    def _query() -> None:
+        try:
+            conn.execute("SELECT 1")
+        except BaseException as exc:
+            errors.append(exc)
+
+    try:
+        thread = threading.Thread(target=_query)
+        thread.start()
+        thread.join()
+        assert errors == []
     finally:
         conn.close()
 

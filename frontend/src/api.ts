@@ -1,4 +1,4 @@
-export type Normalization = "minmax" | "zscore";
+export type Normalization = "minmax" | "zscore" | "rrf";
 
 export type DatasetName = "wikipedia" | "contracts";
 
@@ -15,6 +15,7 @@ export interface SearchRequest {
   alpha?: number;
   normalization?: Normalization;
   min_vector_score?: number;
+  rrf_k?: number;
   filters?: SearchFilters | null;
 }
 
@@ -54,13 +55,34 @@ export interface IndexMeta {
   corpus_hash: string;
   doc_count: number;
   built_at: string;
+  granularity: string;
+  vector_count: number;
 }
 
 export interface HealthResponse {
   status: string;
   version: string;
   commit: string;
+  commit_message?: string;
   index: IndexMeta | null;
+}
+
+export type IndexGranularity = "document" | "sentence";
+
+export interface ReindexResponse {
+  started: boolean;
+  already_running: boolean;
+  progress: ReindexProgress;
+}
+
+export interface ReindexProgress {
+  running: boolean;
+  granularity: string | null;
+  done: number;
+  total: number;
+  percent: number;
+  phase: string;
+  error?: string | null;
 }
 
 export interface KpiSummary {
@@ -100,8 +122,8 @@ export interface ExperimentRow {
 }
 
 export interface LogEntry {
-  ts: string;
-  level: string;
+  created_at: string;
+  severity: string;
   message: string;
   request_id?: string | null;
 }
@@ -169,6 +191,20 @@ export async function getHealth(): Promise<HealthResponse> {
   return _fetch<HealthResponse>("/health");
 }
 
+export async function reindex(
+  granularity: IndexGranularity,
+): Promise<ReindexResponse> {
+  return _fetch<ReindexResponse>("/reindex", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ granularity }),
+  });
+}
+
+export async function getReindexProgress(): Promise<ReindexProgress> {
+  return _fetch<ReindexProgress>("/reindex/progress");
+}
+
 export async function getKpiSummary(window: string): Promise<KpiSummary> {
   return _fetch<KpiSummary>(`/metrics/kpi?window=${encodeURIComponent(window)}`);
 }
@@ -197,12 +233,14 @@ export async function getLogs(params: {
   level?: string;
   from?: string;
   to?: string;
+  window?: string;
   limit?: number;
 }): Promise<LogEntry[]> {
   const p = new URLSearchParams();
   if (params.level) p.set("level", params.level);
   if (params.from) p.set("from", params.from);
   if (params.to) p.set("to", params.to);
+  if (params.window) p.set("window", params.window);
   if (params.limit !== undefined) p.set("limit", String(params.limit));
-  return _fetch<LogEntry[]>(`/api/logs?${p}`);
+  return _fetch<LogEntry[]>(`/api/dashboard/logs?${p}`);
 }

@@ -1,8 +1,9 @@
 """JSON logging: one object per line, safe to configure twice.
 
 ``configure`` attaches a JSON stdout handler and, when given a SQLite
-connection, a ``SqliteLogHandler`` that persists WARNING+ records to the
-``logs`` table so the debug page can read them back.
+connection, a ``SqliteLogHandler`` that persists every record that reaches
+the handler (subject to the root logger level) to the ``logs`` table so
+the debug page can read them back.
 """
 
 from __future__ import annotations
@@ -48,15 +49,16 @@ class JsonFormatter(logging.Formatter):
 
 
 class SqliteLogHandler(logging.Handler):
-    """Persist WARNING+ records to the ``logs`` table.
+    """Persist every record that reaches this handler to the ``logs`` table.
 
     Each emitted record becomes one row (severity, message, ``request_id`` if
     it was passed via ``extra=``). Insert failures are routed through
-    ``handleError`` so logging never crashes the caller.
+    ``handleError`` so logging never crashes the caller. The default level is
+    ``NOTSET`` so INFO/DEBUG are stored when the root logger allows them.
     """
 
     def __init__(
-        self, conn: sqlite3.Connection, level: int = logging.WARNING
+        self, conn: sqlite3.Connection, level: int = logging.NOTSET
     ) -> None:
         super().__init__(level)
         self._conn = conn

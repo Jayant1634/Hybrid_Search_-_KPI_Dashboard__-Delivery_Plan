@@ -7,7 +7,7 @@ import numpy as np
 import pytest
 from numpy.typing import NDArray
 
-from app.api.deps import SearchService, get_commit, get_version
+from app.api.deps import SearchService, get_commit, get_commit_message, get_version
 from app.config import load_config
 from app.index.__main__ import build_indexes
 from app.index.metadata import IndexMetadata
@@ -20,7 +20,11 @@ class _DimEmbedder:
     def __init__(self, dimension: int) -> None:
         self.dimension = dimension
 
-    def encode(self, texts: list[str]) -> NDArray[np.float32]:
+    def encode(
+        self,
+        texts: list[str],
+        on_progress: object | None = None,
+    ) -> NDArray[np.float32]:
         if not texts:
             return np.zeros((0, self.dimension), dtype=np.float32)
         rows = []
@@ -29,6 +33,8 @@ class _DimEmbedder:
             vec = np.random.default_rng(seed).standard_normal(self.dimension)
             norm = float(np.linalg.norm(vec)) or 1.0
             rows.append(vec / norm)
+        if on_progress is not None:
+            on_progress(len(texts), len(texts))  # type: ignore[operator]
         return np.asarray(np.stack(rows), dtype=np.float32)
 
 
@@ -63,6 +69,27 @@ def test_get_commit_falls_back_to_unknown(monkeypatch: pytest.MonkeyPatch) -> No
     monkeypatch.setattr(deps.subprocess, "run", lambda *a, **k: (_ for _ in ()).throw(FileNotFoundError()))
     monkeypatch.delenv("HSS_COMMIT", raising=False)
     assert get_commit() == "unknown"
+
+
+def test_get_commit_message_never_raises_and_returns_str() -> None:
+    message = get_commit_message()
+    assert isinstance(message, str)
+
+
+def test_get_commit_message_falls_back_to_env(monkeypatch: pytest.MonkeyPatch) -> None:
+    import app.api.deps as deps
+
+    monkeypatch.setattr(deps.subprocess, "run", lambda *a, **k: (_ for _ in ()).throw(FileNotFoundError()))
+    monkeypatch.setenv("HSS_COMMIT_MESSAGE", "compact health cards")
+    assert get_commit_message() == "compact health cards"
+
+
+def test_get_commit_message_falls_back_to_empty(monkeypatch: pytest.MonkeyPatch) -> None:
+    import app.api.deps as deps
+
+    monkeypatch.setattr(deps.subprocess, "run", lambda *a, **k: (_ for _ in ()).throw(FileNotFoundError()))
+    monkeypatch.delenv("HSS_COMMIT_MESSAGE", raising=False)
+    assert get_commit_message() == ""
 
 
 def test_search_service_loads_and_searches(

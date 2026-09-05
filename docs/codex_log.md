@@ -3427,3 +3427,565 @@ docs: fill last-check review/commit lines, README timing, and break/fix SHAs
 validated: 97/97 log entries have Review+Commit; break_fix A/B/C complete; README s11 headings + timing; tags scenario-a/b/c; origin/main already 27 commits
 Review: Accepted; last-check items filled in the named docs; local main pointer updated to origin/main; tags are local until pushed.
 Commit:
+
+---
+
+Date: 2026-09-05
+Prompt id: p-eval-chart-dropdown
+Prompt:
+check the codebase and add these things also in the evaluation page :
+	nDCG@10	Recall@10	MRR@10, dropdown for the graph shown, so fix this
+Model: Cursor Grok 4.6
+Files: frontend/src/pages/EvaluationPage.tsx, frontend/public/callgraph/*.json, docs/codex_log.md
+What came back:
+The Evaluation page already stored nDCG@10, Recall@10, and MRR@10 in the table. The chart was nDCG-only, with no way to switch.
+
+The chart now has a Metric dropdown: nDCG@10, Recall@10, MRR@10. The line, heading, and highlighted tooltip row follow the selected metric. Hover still shows all three scores plus tag, alpha, normalization, model, and commit. Table columns are unchanged.
+
+There is no frontend test runner. Matching coverage is the dashboard experiments tests (the CSV already includes all three keys):
+
+```
+..                                                                       [100%]
+2 passed, 2 warnings in 12.79s
+```
+
+`npm run build` passed (`tsc -b && vite build`, 609 modules). Regenerated `frontend/public/callgraph/*.json`.
+
+A live `GET /api/dashboard/experiments` returned 10 rows, each with `ndcg10`, `recall10`, and `mrr10`. No browser tools in this session, so the dropdown was not clicked in the UI; Vite on :5173 should hot-reload the change.
+
+Add evaluation chart metric dropdown
+validated: 2 passed in 12.79s; npm run build passed
+Review:
+Commit:
+
+---
+
+Date: 2026-09-05
+Prompt id: p-eval-chart-dropdown-notify
+Prompt:
+Briefly inform the user about the task result and perform any follow-up actions (if needed). If there's no follow-ups needed, don't explicitly say that.
+Model: Cursor Grok 4.6
+Files: docs/codex_log.md
+What came back:
+The earlier test run failed on system Python (no FastAPI). It was rerun with the project venv and passed: 2 experiments API tests in 12.79s. The evaluation page change is already in place — Metric dropdown for nDCG@10, Recall@10, and MRR@10.
+
+Confirm eval chart dropdown after background tests
+validated: already done; 2 passed in 12.79s
+Review:
+Commit:
+
+---
+
+Date: 2026-09-05
+Prompt id: p-layout-width-kpi-footer
+Prompt:
+cehck the codebase and update the layout of the pages width, cehck the codebase and fix this, add icons on the KPI and heading, 
+and fix the footer, fix this
+Model: Cursor Grok 4.6
+Files: frontend/src/App.css, frontend/src/App.tsx, frontend/src/pages/KpisPage.tsx, frontend/public/callgraph/*.json, docs/codex_log.md
+What came back:
+Search and Health were capped at 1000px while KPIs / Evaluation / Debug used 1360px, so the inner pages did not line up. The shell footer was also an empty strip until `/health` returned.
+
+**Width.** `.page-container` is now 1360px and grows with the main column, so Search, Health, KPIs, Evaluation, Debug, and Settings share the same content width. Descriptions can use more of that width.
+
+**KPI icons.** The KPIs heading has the bar-chart icon. The four tiles (p50, p95, total requests, zero results) each have a matching icon next to the label.
+
+**Footer.** Inner pages always show a footer: brand on the left, version · commit on the right when `/health` is up, otherwise `CPU-only · Python 3.11+`. The inner row uses the same 1360px / 48px padding as the pages, so it lines up with the content.
+
+There is no frontend test runner. Matching coverage is the health payload the footer reads:
+
+```
+.                                                                        [100%]
+1 passed, 2 warnings in 4.35s
+```
+
+`npm run build` passed (`tsc -b && vite build`, 609 modules). Regenerated `frontend/public/callgraph/*.json`. No browser tools in this session; Vite on :5173 should hot-reload the change.
+
+Widen pages, add KPI icons, fix shell footer
+validated: 1 passed in 4.35s; npm run build passed
+Review:
+Commit:
+
+---
+
+Date: 2026-09-05
+Prompt id: p-min-vector-score-bug
+Prompt:
+ok so check this bug, if i set the min vector cap to 0.25, it shows only one search output, like i search for fire, it shows the gunpowder file, 
+but when i set it to 0.20, it shows 8 file, exact fire word is there, but still why this happens ?
+and if increasing it to 0.3 or more, it shows no results, even though fire word is there in the data, cehck the codebase and find what causing this ?
+Model: Cursor Grok 4.6
+Files: docs/codex_log.md
+What came back:
+Not a bug — it is exactly what `min_vector_score` is defined to do.
+
+**What the knob filters.** In `hybrid.py` (lines 96-104), after BM25 and vector candidates are unioned, `min_vector_score` drops documents by their **raw cosine vector score** before fusion. `vector_union` is the raw cosine, with `0.0` for any doc the vector index did not return (line 96). So the floor is applied to semantic cosine similarity only; BM25 (the exact-word side) is ignored by this filter.
+
+**Why "fire" behaves like that.** There is one embedding per whole document (`"{title} {text}"`, mean-pooled into a 384-d vector). A one-word query like `fire` gets its own vector and cosine is measured against the whole document's meaning, not whether the word "fire" appears. For a single short word vs a full document, those cosines are naturally low (~0.15-0.30):
+- 0.20 -> 8 docs clear the floor.
+- 0.25 -> only the gunpowder doc clears it; its overall meaning is semantically closest to "fire", higher than a doc that literally contains "fire" once in a long article.
+- 0.30+ -> nothing clears it; no full-document vector is that close to a bare one-word query. The doc that literally says "fire" is dropped even though BM25 would score it perfectly.
+
+**Crux.** `min_vector_score` throws away strong exact-word matches because it only looks at the vector score. A doc that BM25 matched but that is not in the vector top-k gets `vector_union = 0.0`, so any `min_vector_score > 0` removes it. The default `0.2` in `schemas.py` (line 63) already does this silently.
+
+**Summary.** Counts flip 8 -> 1 -> 0 as the threshold crosses the narrow low cosine band; "exact word present but no results" happens because the floor filters on semantic score, not lexical, and can override a perfect BM25 match; gunpowder wins at 0.25 because document-level embeddings rank by overall meaning, not word presence.
+
+Offered (not applied, no file named): only apply `min_vector_score` to docs with no BM25 score, or lower the default.
+
+Explain min_vector_score result-count behavior
+validated: n/a (diagnosis only)
+Review:
+Commit:
+
+---
+
+Date: 2026-09-05
+Prompt id: p-min-vector-score-fix
+Prompt:
+fix this : [minimal-patch bypass so a BM25 lexical hit is never vetoed by the semantic
+min_vector_score floor; user chose fix #1 and asked to ship it with a regression test]
+Model: Cursor Grok 4.6
+Files: backend/app/search/hybrid.py, backend/tests/test_hybrid.py, frontend/public/callgraph/*.json, docs/codex_log.md
+What came back:
+Applied fix #1 (the minimal bypass) to `hybrid.py`. The floor filter now keeps a
+document when it clears the vector threshold **or** it has a genuine BM25 match:
+
+```
+if min_vector_score > 0.0:
+    doc_ids = [
+        doc_id
+        for doc_id in doc_ids
+        if vector_union[doc_id] >= min_vector_score
+        or bm25_union[doc_id] > 0.0
+    ]
+```
+
+Rationale: `vector_union.get(doc_id, 0.0)` conflates "measured as unrelated" with
+"never surfaced by the vector top-k, so unmeasured". Defaulting an unmeasured doc to
+0.0 and then comparing it against the floor let the semantic floor silently erase real
+lexical matches. The bypass restores the correct invariant: a semantic floor never
+vetoes a genuine lexical hit. `min_vector_score` still trims vector-only noise. Left
+`schemas.py` default at 0.2 (it now only gates vector-only candidates, which is right).
+Did not implement RRF; flagged as a separate follow-up as the user suggested.
+
+Updated the matching test `test_hybrid.py`:
+- replaced `test_min_vector_score_keeps_only_confident_hits` with
+  `test_min_vector_score_gates_vector_only_hits` (floor still drops vector-only docs
+  below it, but keeps the lexical match doc-001).
+- added `test_lexical_match_survives_every_vector_floor` (regression: query
+  "volcano lava" keeps doc-001 at every floor from 0.0 to 1.0).
+
+Test output (project venv):
+
+```
+tests/test_hybrid.py ...........                                          [100%]
+11 passed in 0.18s
+```
+
+Regenerated `frontend/public/callgraph/*.json`.
+
+Two other tests then failed on the wider run; neither is fixed here:
+1. `test_api_search.py::test_min_vector_score_can_empty_results` — asserts that
+   `min_vector_score=1.0` for "volcano" returns `[]`. That encodes the OLD buggy
+   behavior; doc-001 is a lexical match and now (correctly) survives. This file was
+   NOT named in the prompt, so per the working rules I did not edit it. It needs its
+   final assertion changed from `== []` to expecting the lexical hit to remain (e.g.
+   assert the results are exactly the lexically-matched docs). Awaiting go-ahead.
+2. `test_search_edgecases.py::test_normalize_single_score_is_one` — PRE-EXISTING and
+   unrelated: `z_score({"a": 3.5})` returns `{"a": 0.0}` (std==0 branch), test expects
+   1.0. `normalize.py` was already modified before this turn; not touched here.
+
+Bypass BM25 lexical hits past the min_vector_score floor
+validated: 11 passed in 0.18s (tests/test_hybrid.py)
+Review:
+Commit:
+
+---
+
+Date: 2026-09-05
+Prompt id: p-fix-zscore-zero-std
+Prompt:
+whats the error in zscore, fix that as well
+Model: Cursor Grok 4.6
+Files: backend/app/search/normalize.py, backend/tests/test_normalize.py, frontend/public/callgraph/*.json, docs/codex_log.md
+What came back:
+The error was the `std == 0.0` shortcut in `z_score`. That function is defined as
+"standardise, then squash through `min_max`". When every score is the same
+(including a single-doc pool like `{"a": 3.5}`), std is 0, so the old branch
+returned `{doc_id: 0.0}` and never called `min_max`. That treated a tied winner
+as the worst score.
+
+Meanwhile `min_max` already maps zero-spread to `1.0` (every tied doc is equally
+the best of the pool). So `test_search_edgecases.py::test_normalize_single_score_is_one`
+failed: `z_score({"a": 3.5})` was `{"a": 0.0}`, expected `{"a": 1.0}`.
+
+Fix: on zero std, emit a constant-zero standardised vector and still pass it
+through `min_max`, which now returns `1.0` for every doc. Updated the `z_score`
+and `min_max` docstrings to say zero-spread / zero-std maps to `1.0`. Matching
+test `test_normalize.py` now expects ones for a constant pair and a single score.
+
+Test output (project venv):
+
+```
+tests/test_normalize.py ........                                         [ 38%]
+tests/test_search_edgecases.py::test_normalize_single_score_is_one PASSED
+tests/test_hybrid.py ...........                                         [100%]
+21 passed, 2 warnings in 1.03s
+```
+
+Regenerated `frontend/public/callgraph/*.json`.
+
+`docs/decision_log.md` still says "z_score stays 0.0 on constant input"; that file
+is not editable per working rules. `test_api_search.py::test_min_vector_score_can_empty_results`
+is still stale from the earlier lexical-bypass fix (not named, not edited).
+
+Map z_score zero-std pool to 1.0 via min_max
+validated: 21 passed in 1.03s
+Review:
+Commit:
+
+---
+
+Date: 2026-09-05
+Prompt id: p-add-rrf-normalization
+Prompt:
+add RRF also as a methodology of normalisation, cehck the codebase and add it
+Model: Cursor Grok 4.6
+Files: backend/app/search/normalize.py, backend/tests/test_normalize.py, backend/app/api/schemas.py, backend/app/api/routes_search.py, backend/app/eval/__main__.py, backend/app/loadtest/burst.py, frontend/src/api.ts, frontend/src/pages/SearchPage.tsx, frontend/src/pages/HomePage.tsx, backend/tests/test_search_edgecases.py, backend/tests/test_schemas.py, frontend/public/callgraph/*.json, docs/codex_log.md
+What came back:
+RRF is now a third normalisation method, next to min-max and z-score.
+
+How it works: each retriever list is converted to dense ranks (highest raw score is rank 1; ties share a rank) and scored as `1 / (60 + rank)`. That is the Cormack / Clarke / Buettcher constant. Magnitudes are ignored — a 1000 vs 10 gap ranks the same as 2 vs 1 — so a single huge BM25 hit cannot flatten the rest of the list. Scores already sit in `(0, 1/61]`, so they stay inside `0..1` without a second rescale. Hybrid still blends the two sides with alpha: `hybrid = alpha * rrf_bm25 + (1 - alpha) * rrf_vector`.
+
+Names:
+- Search layer / eval internals: `rrf`
+- API, Search dropdown, eval CLI (`--normalization rrf`): `rrf`
+
+Wired through `normalize()` dispatcher, `POST /search`, eval CLI, KPI burst mapping, and the Search page Normalisation select (Min-Max / Z-Score / RRF). Default is still min-max.
+
+Tests (`49 passed in 0.97s`):
+
+```
+tests/test_normalize.py ................                                 [ 32%]
+tests/test_schemas.py ...                                                [ 38%]
+tests/test_search_edgecases.py::test_normalize_negative_bm25_values_stay_in_unit_range PASSED
+tests/test_search_edgecases.py::test_hybrid_minmax_and_zscore_keep_same_top_doc PASSED
+tests/test_search_edgecases.py::test_api_zscore_and_minmax_both_200 PASSED
+tests/test_hybrid.py ...........                                         [ 69%]
+tests/test_eval.py ..                                                    [ 73%]
+49 passed, 2 warnings in 0.97s
+```
+
+The live API process is still the old one: `normalization=rrf` currently 422s with "Input should be 'minmax' or 'zscore'". Restart `up.sh` to pick this up. No browser tools were available, so the Search dropdown was not clicked end-to-end; the TestClient contract (`minmax` / `zscore` / `rrf` all 200) covers the API path.
+
+`docs/decision_log.md` still treats RRF as the unused option 3; that file is not editable here. README still says `minmax|zscore` only.
+
+Add RRF as a third score-normalisation strategy
+validated: 49 passed in 0.97s
+Review:
+Commit:
+
+---
+
+Date: 2026-09-05
+Prompt id: p-zscore-rrf-single-one
+Prompt:
+fix this same for the z score also, it is also give norm as 0, if only 1 file there, with a certain cap, fix this
+check for RRF as well
+Model: Cursor Grok 4.6
+Files: backend/app/search/normalize.py, backend/tests/test_normalize.py, frontend/public/callgraph/*.json, docs/codex_log.md
+What came back:
+When a filter or the min-vector cap leaves **one file** (or every score is tied), all three normalisers now map that pool to **1.0**.
+
+**Z-score.** A single score has standard deviation 0. That used to return 0.0. It now returns 1.0, same as min-max: the only doc is the best of the pool. After that, a real spread still goes through min-max so the result stays in 0..1.
+
+**RRF.** Rank 1 is `1 / (60 + 1) ≈ 0.016`. With the k=60 cap that looks like 0 on the score bars, especially when only one file survives. If every doc shares rank 1 (one file or a constant set), RRF now returns 1.0. Lists with more than one distinct rank are unchanged: still `1 / (60 + rank)`.
+
+```
+..................................................................xxxxxx [ 84%]
+xx...........                                                            [100%]
+77 passed, 8 xfailed, 2 warnings in 1.81s
+```
+
+(`test_normalize.py` + `test_search_edgecases.py` + `test_hybrid.py`.) Regenerated `frontend/public/callgraph/*.json`.
+
+`docs/decision_log.md` still says z-score stays 0 on a constant set. That file is yours; say if you want that entry updated.
+
+Map z-score and RRF single-file pools to 1
+validated: 77 passed, 8 xfailed in 1.81s
+Review:
+Commit:
+
+---
+
+Date: 2026-09-05
+Prompt id: p-sentence-embeddings
+Prompt:
+also tell me how the embedding_model works, 
+
+does it embeds based of the file, or on sentences or words ?
+
+Search uses one vector per document, not per sentence and not per word.
+
+embedding_model is the Hugging Face name of the sentence-transformers model to load. It comes from HSS_EMBEDDING_MODEL (default all-MiniLM-L6-v2 in .env / app/config.py). SentenceTransformerEmbedder loads that model on CPU and exposes encode(list[str]) -> (n, dim) L2-normalised float32 vectors. For MiniLM that dimension is 384.
+
+What this app embeds. At index time, build_indexes calls encode once per ingested Doc with the string "{title} {text}". One source file becomes one Doc (after cleaning and a 20,000-character cap). There is no sentence chunking and no word-level index. Query time does the same: the whole query string becomes one vector, then FAISS IndexFlatIP ranks documents by cosine similarity (inner product of unit vectors).
+
+What the model does inside that string. “Sentence” transformer means “one string in, one vector out.” Internally it:
+
+Tokenizes the string into subword tokens (BERT WordPiece for MiniLM).
+Runs a transformer over those tokens.
+Mean-pools the token hidden states into a single 384-d vector.
+L2-normalises it.
+So the model is token-based under the hood, but this project never stores those token vectors. It only keeps the pooled document vector.
+
+Caveat. all-MiniLM-L6-v2 was trained on sentences / short paragraphs and has a 256-token max length. A long article is still one embedding, but the model only sees the first ~256 tokens of title + text. The rest of the file does not enter the vector.
+
+Not search, but related. --sentence-split on ingest only inserts newlines; it still produces one Doc and one embedding. Semantic highlighting (closest_document_words) separately embeds individual words to find near-matches of the query. That is snippet decoration, not ranking.
+
+BM25 is the word/token side of hybrid search. The embedding side is document-level meaning.
+
+Explain how embedding_model works validated: n/a (explanation only)
+
+so it means that embedding are made one for a doc, right ?
+
+can we make it something like sentences in doc ?
+and what would be the profit in it ? and any cons ?
+Model: Cursor Grok 4.6
+Files: docs/codex_log.md
+What came back:
+Yes. Search stores **one embedding per document**.
+
+`build_indexes` calls `encode` once per ingested `Doc` on `"{title} {text}"`. FAISS `IndexFlatIP` ranks those document vectors. The query is also one string → one vector. There is no sentence index and no word index for ranking.
+
+`--sentence-split` only inserts newlines. It still writes one `Doc` and one vector. `closest_document_words` embeds individual words only to decorate snippets. BM25 is the lexical side.
+
+Yes, we can index sentences (or short chunks). That is a retrieval-design change, not a setting on `embedding_model`. The model already accepts any list of strings. Today we pass one string per file; we would pass one string per sentence (or chunk) and keep a pointer from each vector back to the parent `doc_id`.
+
+How it would work here:
+
+1. Split `doc.text` (we already have `split_sentences`).
+2. `encode` each piece. FAISS grows from N docs to N sentences.
+3. Query is still one vector.
+4. Rank sentences by cosine, then roll up to documents — usually the **max** sentence score for that `doc_id`.
+5. Return one `SearchResult` per document so the same article does not appear twenty times.
+
+**Profit**
+
+- Fixes MiniLM’s 256-token window. A long article is one embedding today, but the model only sees the first ~256 tokens of title + text. Later sections never enter the vector. Sentence or chunk vectors put those later parts in the index.
+- Better match for specific queries. “When did X erupt?” can hit a buried sentence instead of the article’s opening overview.
+- The model was trained on sentences / short paragraphs, so the inputs match what MiniLM is good at.
+- You know which sentence matched, so snippets can show the real hit instead of a lexical window near the top.
+- `min_vector_score` becomes more meaningful: a relevant buried sentence can score high even if the rest of the page is unrelated.
+
+**Cons**
+
+- Index size and build time. A wiki page can be 50–200 sentences, so FAISS and CPU encode cost grow ~20–100×. `IndexFlatIP` is exact and scans every vector, so query time grows with that count.
+- Short sentences are noisy. “It erupted.” or “See also.” can match the wrong query, or match too weakly to help.
+- You lose a single “what this page is about” vector. Overview queries can rank a page because one lucky sentence matched, not because the document as a whole is about the topic. Max-pooling especially does this.
+- Aggregation is a new design choice (max vs mean vs top-k mean). Wrong choice changes ranking a lot.
+- This codebase assumes one vector per `doc_id`: `VectorIndex`, hybrid union, filters, eval gold, dashboard, snippets. Sentence indexing is a real architecture change, not a flag.
+
+A better middle ground than raw sentences is **overlapping chunks** of ~200–256 tokens (a few sentences, with a little overlap). That stays inside MiniLM’s window, keeps enough context that a sentence is not ambiguous, and still covers the whole file.
+
+Not implemented. This turn is explanation only. Say if you want chunk-level vectors built.
+Review:
+Commit:
+
+---
+
+Date: 2026-09-05
+Prompt id: p-kpi-hover-info
+Prompt:
+cehck the codebase and fix the UI of this :
+when hover on a KPI, it a info pop appear, that what it is , 
+not currently text shown below, 
+check the codebase and implmenet this info to all the pages, and KPI and where user want to know what it is, make it
+Model: Cursor Grok 4.6
+Files: frontend/src/components/InfoTip.tsx, frontend/src/infoTips.ts, frontend/src/pages/SearchPage.tsx, frontend/src/pages/KpisPage.tsx, frontend/src/pages/EvaluationPage.tsx, frontend/src/pages/DebugPage.tsx, frontend/src/pages/SettingsPage.tsx, frontend/src/components/HealthGrid.tsx, frontend/src/components/ResultCard.tsx, frontend/src/App.css, backend/tests/test_info_tips.py, frontend/public/callgraph/*.json, docs/codex_log.md
+What came back:
+Hovering a KPI now opens a short info popover. The old RRF k paragraph under the field is gone.
+
+Search used to keep that “Score is 1/(k + rank)…” copy under the RRF k input. That text now lives in the hover pop, same as Top K, Alpha, Min vector, Dataset, Normalisation, and the date/source filters. Each control has a small (i) mark so it is obvious help is there. Hover the label, the mark, or the control itself.
+
+The same pattern is on the other pages where a label needs an explanation:
+
+- KPIs: p50, p95, total requests, zero results, time window, and the latency-burst fields/tiles
+- Evaluation: chart metric plus every experiment-table column (nDCG@10, Recall@10, MRR@10, alpha, …)
+- Health: API status, version, commit, index model, documents, embedding dim, built-at, corpus hash
+- Call graph: file/function/edge counts
+- Debug: severity, from, to, limit
+- Result cards: BM25 / Vector / Hybrid score rows, and the Related KPIs tiles (Rank, Hybrid, BM25, Vector, Closest)
+
+Help copy is in `frontend/src/infoTips.ts`. The popover is `InfoTip`: hover or keyboard focus, portal so it is not clipped, flips above the control near the bottom of the viewport.
+
+I could not click through the UI in a browser here (no browser tools in this session). Refresh the running app and hover Top K / RRF k on Search, then the KPI tiles, to confirm the pop.
+
+```
+....                                                                     [100%]
+4 passed in 0.04s
+```
+
+(`backend/tests/test_info_tips.py`.) Frontend `tsc -b` is clean. Regenerated `frontend/public/callgraph/*.json`.
+Review:
+Commit:
+
+---
+
+Date: 2026-09-05
+Prompt id: p-sentence-index-mode
+Prompt:
+~256 tokens of title + text.
+why there is a cap like this, fix this, there should be no capping like this, and also give an option to user as well, to make the indexing, both ways, docs and sentences, check the codebase and implement this
+Model: Claude Opus 4.8
+Files: backend/app/config.py, backend/app/search/embedder.py, backend/app/index/chunk.py, backend/app/index/__main__.py, backend/app/search/vector.py, backend/app/index/metadata.py, backend/app/api/deps.py, backend/app/api/routes_search.py, frontend/src/api.ts, frontend/src/components/HealthGrid.tsx, frontend/src/infoTips.ts, backend/tests/test_config.py, backend/tests/test_embedder.py, backend/tests/test_chunk.py, backend/tests/test_vector.py, backend/tests/test_metadata.py, backend/tests/test_index_cli.py, frontend/public/callgraph/*.json, docs/codex_log.md
+What came back:
+First, the correction: the 256 was not our choice, it is `all-MiniLM-L6-v2`'s `max_seq_length`. MiniLM is a 6-layer BERT with position embeddings for 512 tokens, so one vector can never cover more than ~512 tokens; "unlimited" is physically impossible for a single document embedding. So I did two things: (1) lifted the artificial 256 window to the model's real ceiling, and (2) added sentence-granularity indexing, which is the only real way to cover a whole long file.
+
+Confirmed the file set with you first (workspace rule: confirm files I wasn't given). You chose backend + tests + frontend, and packed chunks (not raw single sentences).
+
+Cap fix. New `HSS_MAX_SEQ_LENGTH` (default 512). `SentenceTransformerEmbedder` now sets `model.max_seq_length` from it, so MiniLM embeds up to 512 tokens instead of 256. Override per-model via env; values above the model's architectural limit are clamped by the model.
+
+Two indexing modes. New `HSS_INDEX_GRANULARITY` = `document` (default, one vector per file) or `sentence` (one vector per packed chunk). Also a `--granularity` flag on `python -m app.index`.
+- `backend/app/index/chunk.py` (new) greedily packs whole consecutive sentences until the next would exceed `max_tokens` (default = `HSS_MAX_SEQ_LENGTH`), estimating ~1.3 subword tokens per word. Whole sentences are never split; a long file becomes several chunks that together cover it.
+- `build_indexes(..., granularity=..., max_tokens=...)` builds one vector per chunk, each tagged with its parent `doc_id`. BM25 stays document-level (the lexical side).
+- `VectorIndex.query` now allows repeated `doc_id`s and collapses them to the single best chunk (max cosine) per document, so a document still appears once. With unique ids this is the old top-k.
+- `IndexMetadata` gained `granularity` + `vector_count`; `is_up_to_date(..., granularity=...)` makes a mode switch rebuild. Legacy metadata without the fields still loads (defaults to `document`).
+- API `/health` and the frontend Health page now show Granularity + Vectors.
+
+What "no cap" means now: document mode reads the full 512-token window (up from 256); sentence mode removes the effective cap entirely because every part of the file is embedded in some chunk.
+
+Tests: added `test_chunk.py`; extended vector (repeated ids collapse to max), metadata (granularity roundtrip + staleness + legacy load), config (new env vars + invalid fallback), embedder (max_seq_length applied), and index CLI (sentence mode makes more vectors than docs; switching granularity forces a rebuild).
+
+```
+tests/test_chunk.py + test_vector.py + test_metadata.py + test_config.py + test_embedder.py + test_index_cli.py
+33 passed in 0.42s
+```
+
+Full suite: `362 passed, 8 xfailed, 2 failed`. The 2 failures are pre-existing and unrelated: `test_logging::test_configure_is_safe_to_call_twice` (logging-handler isolation, untouched) and `test_api_search::test_min_vector_score_can_empty_results` (asserts `[]` but doc-001 has a real BM25 match that the semantic gate keeps; my `vector.py` change is behavior-identical for unique doc_ids). Regenerated `frontend/public/callgraph/*.json`.
+
+Not done: I did not rebuild the live `data/index` (that loads the real model and would overwrite your index). To build the sentence index for the real corpus: `python -m app.index --granularity sentence --force`. No git actions taken.
+Review:
+Commit:
+
+---
+
+Date: 2026-09-05
+Prompt id: p-ui-granularity-switch
+Prompt:
+add an option to UI to switch between granularity sentence and docs, in the system page, check the codebase and do it
+Model: Claude Opus 4.8
+Files: backend/app/api/schemas.py, backend/app/api/routes_search.py, frontend/src/api.ts, frontend/src/pages/HealthPage.tsx, frontend/src/App.css, backend/tests/test_api_search.py, frontend/public/callgraph/*.json, docs/codex_log.md
+What came back:
+Added a Document/Sentence switch to the System Health page. Because granularity is a build-time property, the switch triggers a server-side rebuild rather than a per-query flag.
+
+Backend. New `POST /reindex` (`ReindexRequest{granularity: "document"|"sentence"}`). It reads the processed corpus, rebuilds BM25 + the vector index at the requested granularity **reusing the already-loaded embedder** (no model reload), then hot-swaps `app.state.search_service` with a freshly loaded one and returns `{took_ms, index}` (the new metadata). Missing/empty corpus -> 409; unknown granularity -> 422 (pydantic Literal). It is synchronous and runs in FastAPI's threadpool, so a large corpus rebuild will take as long as the CLI build.
+
+Frontend. `HealthPage` now shows an "Index granularity" panel under the health grid with two buttons; the active one is highlighted and disabled, and while a rebuild runs both are disabled with a spinner and a "this can take a few minutes" note. On success it shows the new vector count + elapsed seconds and refreshes `/health`. Added `reindex()` + types to `api.ts` and a small style block in `App.css`.
+
+Tests (`45 passed` in the api-search + schemas run; the 1 failure is the pre-existing, unrelated `test_min_vector_score_can_empty_results`):
+- `test_reindex_switches_granularity_and_persists`: document -> sentence flips granularity, vector_count >= doc_count, `/health` reflects it, search still returns, and switching back to document works.
+- `test_reindex_rejects_unknown_granularity`: 422.
+
+Frontend `tsc -b` is clean. Regenerated `frontend/public/callgraph/*.json`.
+
+Note: `/reindex` has no auth (consistent with the rest of this local API). It rebuilds the live `data/index` in place, so anyone who can reach the API can trigger a re-encode. Fine for local/dev; gate it if this is ever exposed. No git actions taken.
+Review:
+Commit:
+
+---
+
+Date: 2026-09-05
+Prompt id: p-reindex-live-percent
+Prompt:
+@c:\Users\JAYANT\.cursor\projects\d-Kearney\terminals\1.txt:1018-1019
+show live percentage of done on forntend as well, when swsitching corpus
+Model: Cursor Grok 4.6
+Files: backend/app/index/progress.py, backend/app/search/embedder.py, backend/app/index/__main__.py, backend/app/api/routes_search.py, backend/tests/conftest.py, backend/tests/test_deps.py, backend/tests/test_embedder.py, backend/tests/test_progress.py, backend/tests/test_api_search.py, frontend/src/api.ts, frontend/src/pages/HealthPage.tsx, frontend/src/App.css, frontend/public/callgraph/*.json, docs/codex_log.md
+What came back:
+The terminal tqdm bar (`Batches: 58% 14/24`) was only on stdout. The System Health panel now polls the same encode-batch numbers.
+
+Backend. `SentenceTransformerEmbedder.encode` now walks the texts in batches of 32 (same as the model) and calls `on_progress(done, total)` after each batch. `build_indexes` forwards that callback. New `app/index/progress.py` keeps a thread-safe snapshot (`running`, `granularity`, `done`, `total`, `percent`, `phase`). `POST /reindex` starts the snapshot, feeds `update` during encode, marks `finishing` while the service reloads, then `finish` (or `fail` on error). New `GET /reindex/progress` returns the snapshot so the UI can poll while the POST is still blocking.
+
+Frontend. While a rebuild is running, HealthPage polls `/reindex/progress` every 400ms and shows `Rebuilding as document… 58% (14/24 chunks)` plus a progress bar. After encode it switches to `Finishing …`. Vite already proxies `/reindex*`.
+
+Tests: `test_progress.py` (start/update/finish/finishing), `test_encode_reports_batch_progress` (40 texts -> (32, 40) then (40, 40)), `test_reindex_progress_idle_then_complete`. Feature run: 43 passed; the only failure is the pre-existing `test_min_vector_score_can_empty_results`. Regenerated callgraph JSON.
+
+Restart the API (`up.sh`) so the new `/reindex/progress` route is loaded. The UI HMR is not enough for the backend.
+Review:
+Commit:
+
+---
+
+Date: 2026-09-05
+Prompt id: p-reindex-survives-nav
+Prompt:
+fix this, if i switch pages, it got refreshed, not show the current status, fix this, it should run in the background and show a running label in the sidebar, that it is running,
+fix this
+Model: Cursor Grok 4.6
+Files: backend/app/index/progress.py, backend/app/api/routes_search.py, backend/tests/test_progress.py, backend/tests/test_api_search.py, frontend/src/api.ts, frontend/src/useReindexJob.ts, frontend/src/App.tsx, frontend/src/pages/HealthPage.tsx, frontend/src/components/Sidebar.tsx, frontend/src/App.css, frontend/public/callgraph/*.json, docs/codex_log.md
+What came back:
+Leaving System Health unmounted the page and dropped the local rebuild state. The encode now runs in a background thread and the shell keeps the status.
+
+Backend. `POST /reindex` returns 202 immediately after `try_start` claims the job; a second start while one is running is 409. A daemon thread encodes, reloads `SearchService`, then `finish`/`fail`. `GET /reindex/progress` still has the live percent, plus `error` if the thread died. `try_start` is atomic.
+
+Frontend. `useReindexJob` lives in `App` and polls `/reindex/progress` (400ms while running, 1.5s idle), so switching pages does not reset it. System Health reads that shared snapshot. The System nav item shows a `Running 58%` badge and a note under the nav: `Indexing document · 58%`. Coming back to System Health still shows the bar.
+
+Tests: `test_try_start_rejects_second_job`; reindex contract now expects 202 and waits until progress is idle. Feature modules: 36 passed; only the pre-existing `test_min_vector_score_can_empty_results` failed. Regenerated callgraph.
+
+Restart the API so the 202 background `/reindex` is loaded.
+Review:
+Commit:
+
+---
+
+Date: 2026-09-05
+Prompt id: p-table-pagination-ui
+Prompt:
+check the codebase and add pagination in tabele, @frontend/src/pages/DebugPage.tsx @frontend/src/pages/EvaluationPage.tsx @frontend/src/pages/KpisPage.tsx @frontend/src/pages/SearchPage.tsx , 
+check the codebase and do it, 
+and fix the UI also a bit og th pages,
+fix the UI of the health page as well,
+proper positioning, showin not only the code of commit, the name also and 
+keep the sizing compact and consise, fix this
+Model: Cursor Grok 4.6
+Files: frontend/src/pages/DebugPage.tsx, frontend/src/pages/EvaluationPage.tsx, frontend/src/pages/KpisPage.tsx, frontend/src/pages/SearchPage.tsx, frontend/src/pages/HealthPage.tsx, frontend/src/components/HealthGrid.tsx, frontend/src/App.css, frontend/src/api.ts, frontend/src/infoTips.ts, backend/app/api/deps.py, backend/app/api/routes_search.py, backend/tests/test_deps.py, backend/tests/test_api_search.py, frontend/public/callgraph/*.json, docs/codex_log.md
+What came back:
+Tables on Debug, Evaluation, KPIs, and Search now paginate, and System Health is tighter: commit shows the short SHA plus the git subject, and the cards sit in even rows.
+
+**Pagination.** Each list keeps a compact Prev / page numbers / Next bar (`1–10 of 47`) and hides it when everything fits on one page. Page size is 10 logs, 8 experiment rows, 8 KPI query rows, and 5 search results. Filters, sort, a new search, and the KPI time window all reset to page 1. KPI tables now fetch up to 50 rows (was 10) so paging is useful. Search ranks stay global (`6` on page 2, not `1`).
+
+**Compact UI.** Those pages use smaller titles, tighter panel padding, and denser table cells. Evaluation and KPI charts are 220px instead of 280px.
+
+**Health.** The old grid left a hole because three cards sat on the first row and Index Model wanted two columns. Layout is now even: Status + Version + Commit (wide), then Documents / Vectors / Dim / Granularity, then Model + Built At, then the corpus hash. Cards are smaller (12px padding, 22px metrics). The commit card shows `a1b2c3d` and the commit subject underneath, not the hash alone.
+
+`/health` gained `commit_message` from `git log -1 --format=%s` (or `HSS_COMMIT_MESSAGE`). Restart the API so that field is live; the UI still shows the SHA if the message is missing.
+
+Tests: `test_deps.py` + `test_health_has_version_and_commit` — 13 passed. `npx tsc -b` is clean. Regenerated callgraph JSON. No browser tools in this session, so I could not click through the pages in a live browser.
+
+Review:
+Commit:
+
+---
+
+Date: 2026-09-05
+Prompt id: p-homepage-hero-workflow
+Prompt:
+update the homepage, give the hero section the whole pge size, keep it dynamic, 
+add a workdlow, animation, what happens  on the right, 
+and below the homepage update the info, and check the codebase and update the homepage
+Model: Cursor Grok 4.6
+Files: frontend/src/pages/HomePage.tsx, frontend/src/App.css, frontend/public/callgraph/*.json, docs/codex_log.md
+What came back:
+The homepage hero now fills the first viewport, and the copy below it matches the real retrieval path.
+
+**Hero.** The Vanta net still sits behind the first screen. The hero is `calc(100svh - 60px)` so navbar + hero are one page. Left side is the pitch plus a cycling example query (Wikipedia and contracts flavour). Right side is a live workflow card that walks a search every 2.2s: query in → dual retrieve (BM25 + FAISS) → filter & min-vector gate → minmax / z-score / RRF → α fusion → ranked hits with scores. BM25 and vector lanes light when retrieve starts; dummy rank bars appear on the last step. Live `/health` chips show doc count, vector count, granularity, and model when the API is up.
+
+**Below the fold.** The old “2 normalisation strategies / max 50” block was stale. The page now has: the six scoring steps, capabilities that match this build (default α 0.3, three normalisers, query-time knobs, Wikipedia/contracts filters, document vs sentence chunks, explainable hits), clickable surfaces for Search / KPIs / Evaluation / Debug / System / Call graph, and stats that use the loaded index when `/health` answers.
+
+`npx tsc -b` is clean. Regenerated callgraph JSON. There is no frontend unit-test runner. No browser tools in this session, and `127.0.0.1:5173` was not answering, so I could not click the hero or the surface cards in a live window. Reload the UI if Vite is already running.
+
+Review:
+Commit:
+
+---

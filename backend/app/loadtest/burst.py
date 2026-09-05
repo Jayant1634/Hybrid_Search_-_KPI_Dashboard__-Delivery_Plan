@@ -24,7 +24,7 @@ DEFAULT_COUNT = 20
 MIN_COUNT = 2
 MAX_COUNT = 200
 
-_NORMALIZATION = {"minmax": "min_max", "zscore": "z_score"}
+_NORMALIZATION = {"minmax": "min_max", "zscore": "z_score", "rrf": "rrf"}
 
 
 @dataclass(frozen=True)
@@ -73,6 +73,7 @@ def _one_search(
     alpha: float,
     normalization: str,
     filters: SearchFilters | None,
+    rrf_k: int | None,
 ) -> BurstHit:
     start = time.perf_counter()
     try:
@@ -82,6 +83,7 @@ def _one_search(
             alpha=alpha,
             normalization=normalization,
             filters=filters,
+            rrf_k=rrf_k,
         )
         latency_ms = (time.perf_counter() - start) * 1000.0
         return BurstHit(
@@ -111,6 +113,7 @@ def run_search_burst(
     top_k: int = 10,
     alpha: float | None = None,
     dataset: str | None = None,
+    rrf_k: int | None = None,
 ) -> BurstResult:
     """Run ``count`` searches concurrently and write ``requests`` rows."""
 
@@ -120,6 +123,8 @@ def run_search_burst(
     settings = load_config()
     used_alpha = settings.default_alpha if alpha is None else alpha
     norm_key = _NORMALIZATION.get(settings.normalisation, "min_max")
+    if norm_key == "rrf" and rrf_k is None:
+        raise ValueError("rrf requires rrf_k")
     filters = SearchFilters(dataset=dataset) if dataset is not None else None
 
     wall_start = time.perf_counter()
@@ -133,6 +138,7 @@ def run_search_burst(
                 alpha=used_alpha,
                 normalization=norm_key,
                 filters=filters,
+                rrf_k=rrf_k,
             )
             for _ in range(count)
         ]
