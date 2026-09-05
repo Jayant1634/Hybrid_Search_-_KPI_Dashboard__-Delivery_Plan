@@ -3224,3 +3224,45 @@ Review:
 Commit:
 
 ---
+
+Date: 2026-09-05
+Prompt id: p-schema-client-id-break
+Prompt:
+add a client_id TEXT NOT NULL column to the requests table in db.py and to the insert in
+repo.py. restart against the existing db. search, open the KPI page. paste the error and a
+screenshot note into the log. type break
+Model: Cursor Grok 4.6
+Files: backend/app/storage/db.py, backend/app/storage/repo.py, backend/tests/test_db.py, backend/tests/test_repo.py, frontend/public/callgraph/*.json, docs/break_fix_log.md, docs/codex_log.md
+What came back:
+Added `client_id TEXT NOT NULL` to `requests` in `db.py` and to the `INSERT` in `repo.py` (`insert_request(..., client_id: str = "")`). Restarted against the existing `data/hss.sqlite` (reload; no migrate). `CREATE TABLE IF NOT EXISTS` left the on-disk table on the old schema (no `client_id`; 175 rows).
+
+Search returned 200 with results, but the row was not written (count stayed 175). Server:
+
+```
+failed to persist request row
+sqlite3.OperationalError: table requests has no column named client_id
+INFO:     127.0.0.1:56500 - "POST /search HTTP/1.1" 200 OK
+```
+
+KPI tiles still loaded (`GET /api/dashboard/kpi/summary?window=24h` 200, total 149). The new search is missing from those totals. KPI latency burst (`POST /api/dashboard/kpi/load-test`) 500s:
+
+```
+STATUS 500
+REQUEST-ID f3674cfea44b4d1fbf0ab20ba6714953
+BODY {"request_id":"f3674cfea44b4d1fbf0ab20ba6714953","detail":"internal server error"}
+```
+
+Screenshot note: KPIs page still shows the existing 24h cards; no red banner on first paint. After Search, the new query is absent from volume / top queries. Test latency → Fire hits shows `HTTP 500: {"detail":"internal server error"}` in the drawer. No PNG (no browser tool).
+
+Pasted into Scenario B of `docs/break_fix_log.md`. Matching tests updated. Callgraph regenerated.
+
+```
+============================= 16 passed in 0.24s ==============================
+```
+
+break: add requests.client_id without migrating existing sqlite
+validated: 16 passed in 0.24s; /search 200 persist fail "no column named client_id"; KPI load-test 500
+Review:
+Commit:
+
+---
