@@ -13,6 +13,11 @@ flowchart LR
   eval --> dash
 ```
 
+## Submission
+
+Walkthrough (5–8 min): [JayantAssignmentDemo.mp4](https://drive.google.com/file/d/1NJfPC_eKX2e6xBO_jGihUf-NwBbX2OT_/view?usp=sharing)
+
+
 fresh clone timing: ~12–18 min cold (`./up.sh` on Windows 11: venv + CPU torch/pip + npm ci + ingest + MiniLM index 16.99s for 359 docs / 384-dim); warm restart with artifacts present starts API + UI in under 15s.
 
 All `python` commands below mean the venv interpreter after setup: Linux/macOS `.venv/bin/python`, Windows `.venv/Scripts/python.exe`. Run them from the repo root.
