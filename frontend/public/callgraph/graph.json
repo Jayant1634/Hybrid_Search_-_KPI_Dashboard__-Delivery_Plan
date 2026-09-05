@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-09-05T09:05:11Z",
+  "generated_at": "2026-09-05T09:20:20Z",
   "stats": {
     "file_count": 64,
     "function_count": 326,
@@ -3276,7 +3276,7 @@
       "file": "backend/app/search/hybrid.py",
       "name": "__init__",
       "qualname": "HybridSearcher.__init__",
-      "lineno": 44,
+      "lineno": 47,
       "calls": [],
       "called_by": []
     },
@@ -3284,7 +3284,7 @@
       "file": "backend/app/search/hybrid.py",
       "name": "embedder",
       "qualname": "HybridSearcher.embedder",
-      "lineno": 57,
+      "lineno": 60,
       "calls": [],
       "called_by": []
     },
@@ -3292,7 +3292,7 @@
       "file": "backend/app/search/hybrid.py",
       "name": "search",
       "qualname": "HybridSearcher.search",
-      "lineno": 60,
+      "lineno": 63,
       "calls": [
         "backend/app/search/filters.py::apply",
         "backend/app/search/normalize.py::normalize",

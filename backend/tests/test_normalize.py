@@ -18,8 +18,10 @@ def test_min_max_empty() -> None:
     assert min_max({}) == {}
 
 
-def test_min_max_constant_scores_all_one() -> None:
-    assert min_max({"a": 7.0, "b": 7.0}) == {"a": 1.0, "b": 1.0}
+def test_constant_input_returns_zeros_for_both_normalisers() -> None:
+    constant = {"a": 7.0, "b": 7.0}
+    assert min_max(constant) == {"a": 0.0, "b": 0.0}
+    assert z_score(constant) == {"a": 0.0, "b": 0.0}
 
 
 def test_z_score_five_values_in_unit_range() -> None:

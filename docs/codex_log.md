@@ -3316,3 +3316,84 @@ Review:
 Commit:
 
 ---
+
+Date: 2026-09-05
+Prompt id: p-arch-sqlite-migrations
+Prompt:
+update the sqlite section in docs/architecture.md, mention the migrations and where they live.
+Model: Cursor Grok 4.6
+Files: docs/architecture.md, docs/codex_log.md
+What came back:
+Updated the SQLite section in `docs/architecture.md`. It still shows the v1 `CREATE TABLE` dump (matching `001_initial.sql` / the LLD), and now says schema is no longer a create-if-not-exists block in `db.py`. Numbered files live in `backend/app/storage/migrations/`: `001_initial.sql` is that v1 schema, `002_add_client_id.sql` adds `requests.client_id TEXT NOT NULL DEFAULT ''`. `db.py` keeps `schema_version` and `migrate()` applies every file above the current version, each in its own transaction; `init_schema()` just calls `migrate()`.
+
+No source under `backend/app` changed, so the callgraph was not regenerated. Docs only; no tests.
+
+Document sqlite numbered migrations in architecture.md
+validated: docs only; no code change
+Review:
+Commit:
+
+---
+
+Date: 2026-09-05
+Prompt id: p-fix-minmax-nan
+Prompt:
+i removed the equal-scores guard from min_max and searched for "<query>", which has no word
+overlap with the corpus so every bm25 score is 0. norm_bm25 and hybrid_score come back NaN
+and eval drops:
+
+b3c8c5cce368 bm25_raw 8.664376396292608 bm25_norm 0.7701340656606754 hybrid 0.9004598768663721
+526a9cbc8e95 bm25_raw 6.455011516422769 bm25_norm 0.573754421051731 hybrid 0.8505047235971112
+dc0972cbcaf4 bm25_raw 4.678811896008004 bm25_norm 0.41587671900726697 hybrid 0.82476301570218
+af01a6734158 bm25_raw 4.525935623807316 bm25_norm 0.40228829444351627 hybrid 0.80629885872199
+1a0ec239a1df bm25_raw 4.9528884906061865 bm25_norm 0.4402380477914883 hybrid 0.7451710057602393
+
+
+
+FAILED tests/test_normalize.py::test_min_max_constant_scores_all_one
+AssertionError: assert {'a': nan, 'b': nan} == {'a': 1.0, 'b': 1.0}
+FAILED tests/test_search_edgecases.py::test_normalize_single_score_is_one
+AssertionError: assert {'a': nan} == {'a': 1.0}
+2 failed, 7 passed, 4 warnings in 1.89s
+
+tests first: in test_normalize.py, constant input returns zeros for both normalisers. in
+test_hybrid.py, a query with no overlap with the fixture docs never produces a non finite
+score. run them, they should fail. then fix normalize.py, and in hybrid.py replace any non
+finite normalised score with 0 and log a warning with the query. nothing else.
+
+check the codebase and fix this
+Model: Cursor Grok 4.6
+Files: backend/tests/test_normalize.py, backend/tests/test_hybrid.py, backend/app/search/normalize.py, backend/app/search/hybrid.py, frontend/public/callgraph/*.json, docs/codex_log.md
+What came back:
+Wrote the tests first, ran them (both failed), then fixed only `normalize.py` and `hybrid.py`.
+
+`min_max` and `z_score` now map a zero-spread / constant input to `0.0` instead of dividing by zero (NaN) or returning `1.0`. After each side is normalised, `HybridSearcher.search` replaces any non-finite norm with `0.0` and logs a warning that includes the query.
+
+Tests before the fix:
+
+```
+FAILED tests/test_normalize.py::test_constant_input_returns_zeros_for_both_normalisers
+AssertionError: assert {'a': nan, 'b': nan} == {'a': 0.0, 'b': 0.0}
+FAILED tests/test_hybrid.py::test_no_overlap_query_never_produces_non_finite_score
+assert False
+ +  where False = <built-in function isfinite>(nan)
+2 failed, 2 warnings in 0.35s
+```
+
+Tests after the fix:
+
+```
+..................                                                       [100%]
+18 passed in 0.23s
+```
+
+(`test_normalize.py` + `test_hybrid.py`, including the two new cases.)
+
+`backend/tests/test_search_edgecases.py` still expects a single score to map to `1.0`. That file was not named, so it was not edited; it now fails with `{'a': 0.0} == {'a': 1.0}`. It needs to expect `0.0` to match the new contract.
+
+fix: map constant scores to 0 and clamp non-finite hybrid norms
+validated: 18 passed in 0.23s (test_normalize + test_hybrid); edgecases single-score test still fails (unnamed)
+Review:
+Commit:
+
+---
