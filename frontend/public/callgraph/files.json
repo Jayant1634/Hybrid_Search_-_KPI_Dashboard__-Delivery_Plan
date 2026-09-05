@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-09-05T08:57:12Z",
+  "generated_at": "2026-09-05T09:05:11Z",
   "files": {
     "backend/app/__init__.py": {
       "language": "python",
@@ -879,6 +879,11 @@
       "language": "python",
       "functions": [
         "backend/app/storage/db.py::connect",
+        "backend/app/storage/db.py::_now",
+        "backend/app/storage/db.py::_discover_migrations",
+        "backend/app/storage/db.py::_split_statements",
+        "backend/app/storage/db.py::_current_version",
+        "backend/app/storage/db.py::migrate",
         "backend/app/storage/db.py::init_schema"
       ],
       "imports": [],

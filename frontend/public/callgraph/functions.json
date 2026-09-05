@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-09-05T08:57:12Z",
+  "generated_at": "2026-09-05T09:05:11Z",
   "functions": {
     "backend/app/api/deps.py::_pyproject_path": {
       "file": "backend/app/api/deps.py",
@@ -1930,19 +1930,76 @@
       "file": "backend/app/storage/db.py",
       "name": "connect",
       "qualname": "connect",
-      "lineno": 44,
+      "lineno": 21,
       "calls": [],
       "called_by": [
         "backend/app/api/main.py::create_app",
         "backend/app/api/routes_dashboard.py::_db"
       ]
     },
+    "backend/app/storage/db.py::_now": {
+      "file": "backend/app/storage/db.py",
+      "name": "_now",
+      "qualname": "_now",
+      "lineno": 37,
+      "calls": [],
+      "called_by": [
+        "backend/app/storage/db.py::migrate"
+      ]
+    },
+    "backend/app/storage/db.py::_discover_migrations": {
+      "file": "backend/app/storage/db.py",
+      "name": "_discover_migrations",
+      "qualname": "_discover_migrations",
+      "lineno": 41,
+      "calls": [],
+      "called_by": [
+        "backend/app/storage/db.py::migrate"
+      ]
+    },
+    "backend/app/storage/db.py::_split_statements": {
+      "file": "backend/app/storage/db.py",
+      "name": "_split_statements",
+      "qualname": "_split_statements",
+      "lineno": 53,
+      "calls": [],
+      "called_by": [
+        "backend/app/storage/db.py::migrate"
+      ]
+    },
+    "backend/app/storage/db.py::_current_version": {
+      "file": "backend/app/storage/db.py",
+      "name": "_current_version",
+      "qualname": "_current_version",
+      "lineno": 59,
+      "calls": [],
+      "called_by": [
+        "backend/app/storage/db.py::migrate"
+      ]
+    },
+    "backend/app/storage/db.py::migrate": {
+      "file": "backend/app/storage/db.py",
+      "name": "migrate",
+      "qualname": "migrate",
+      "lineno": 66,
+      "calls": [
+        "backend/app/storage/db.py::_current_version",
+        "backend/app/storage/db.py::_discover_migrations",
+        "backend/app/storage/db.py::_split_statements",
+        "backend/app/storage/db.py::_now"
+      ],
+      "called_by": [
+        "backend/app/storage/db.py::init_schema"
+      ]
+    },
     "backend/app/storage/db.py::init_schema": {
       "file": "backend/app/storage/db.py",
       "name": "init_schema",
       "qualname": "init_schema",
-      "lineno": 60,
-      "calls": [],
+      "lineno": 111,
+      "calls": [
+        "backend/app/storage/db.py::migrate"
+      ],
       "called_by": [
         "backend/app/api/main.py::create_app"
       ]
