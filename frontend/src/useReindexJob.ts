@@ -5,14 +5,13 @@ import {
   type IndexGranularity,
   type ReindexProgress,
 } from './api'
+import { nextPollDelay } from './reindexPoll'
 
-const IDLE_MS = 1500
-const LIVE_MS = 400
-
-export function useReindexJob() {
+export function useReindexJob(enabled = true) {
   const [progress, setProgress] = useState<ReindexProgress | null>(null)
   const [error, setError] = useState<string | null>(null)
   const [note, setNote] = useState<string | null>(null)
+  const [lease, setLease] = useState(0)
   const wasRunning = useRef(false)
 
   const refresh = useCallback(async () => {
@@ -34,23 +33,35 @@ export function useReindexJob() {
   }, [])
 
   useEffect(() => {
+    // Homepage stays quiet. lease === 0 means nobody started a rebuild this
+    // session, so do not probe /reindex/progress at all (avoids Vite proxy
+    // spam while the API is still coming up).
+    if (!enabled || lease === 0) return
     let cancelled = false
     let timer = 0
+    let failCount = 0
+
     const tick = async () => {
       try {
         const next = await refresh()
         if (cancelled) return
-        timer = window.setTimeout(tick, next.running ? LIVE_MS : IDLE_MS)
+        failCount = 0
+        const wait = nextPollDelay(next.running, 0)
+        if (wait !== null) timer = window.setTimeout(() => void tick(), wait)
       } catch {
-        if (!cancelled) timer = window.setTimeout(tick, IDLE_MS)
+        if (cancelled) return
+        failCount += 1
+        const wait = nextPollDelay(false, failCount)
+        if (wait !== null) timer = window.setTimeout(() => void tick(), wait)
       }
     }
+
     void tick()
     return () => {
       cancelled = true
       window.clearTimeout(timer)
     }
-  }, [refresh])
+  }, [refresh, enabled, lease])
 
   const start = useCallback(async (granularity: IndexGranularity) => {
     setError(null)
@@ -68,6 +79,7 @@ export function useReindexJob() {
     try {
       const accepted = await reindex(granularity)
       setProgress(accepted.progress)
+      setLease((n) => n + 1)
     } catch (e) {
       wasRunning.current = false
       setError(e instanceof Error ? e.message : String(e))

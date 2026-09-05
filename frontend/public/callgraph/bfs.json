@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-09-05T13:29:13Z",
+  "generated_at": "2026-09-05T14:10:27Z",
   "files": {
     "roots": [
       "backend/app/__init__.py",
@@ -361,7 +361,6 @@
       "frontend/src/components/InfoTip.tsx::onMove",
       "frontend/src/components/InfoTip.tsx::show",
       "frontend/src/components/ResultCard.tsx::onKey",
-      "frontend/src/components/VantaHero.tsx::fit",
       "frontend/src/highlight.ts::escapeHtml",
       "frontend/src/highlight.ts::queryTerms",
       "frontend/src/highlight.ts::termMatchesWord",
@@ -459,7 +458,6 @@
         "frontend/src/components/InfoTip.tsx::onMove",
         "frontend/src/components/InfoTip.tsx::show",
         "frontend/src/components/ResultCard.tsx::onKey",
-        "frontend/src/components/VantaHero.tsx::fit",
         "frontend/src/highlight.ts::escapeHtml",
         "frontend/src/highlight.ts::queryTerms",
         "frontend/src/highlight.ts::termMatchesWord",
@@ -560,7 +558,6 @@
         "frontend/src/pages/DebugPage.tsx::DebugPage",
         "frontend/src/components/InfoTip.tsx::placePop",
         "frontend/src/components/ResultCard.tsx::closeModal",
-        "frontend/src/components/VantaHero.tsx::hardenNet",
         "scripts/fetch_until_done.py::parse_args",
         "scripts/fetch_corpus.py::repo_root",
         "scripts/fetch_corpus.py::read_seed",
@@ -1013,10 +1010,6 @@
         "to": "frontend/src/components/ResultCard.tsx::closeModal"
       },
       {
-        "from": "frontend/src/components/VantaHero.tsx::fit",
-        "to": "frontend/src/components/VantaHero.tsx::hardenNet"
-      },
-      {
         "from": "scripts/fetch_until_done.py::main",
         "to": "scripts/fetch_until_done.py::parse_args"
       },
@@ -1503,10 +1496,6 @@
         "to": "frontend/src/components/ResultCard.tsx::closeModal"
       },
       {
-        "from": "frontend/src/components/VantaHero.tsx::fit",
-        "to": "frontend/src/components/VantaHero.tsx::hardenNet"
-      },
-      {
         "from": "scripts/fetch_until_done.py::main",
         "to": "scripts/fetch_until_done.py::parse_args"
       },
@@ -1629,7 +1618,6 @@
       "frontend/src/components/InfoTip.tsx::onMove",
       "frontend/src/components/InfoTip.tsx::show",
       "frontend/src/components/ResultCard.tsx::onKey",
-      "frontend/src/components/VantaHero.tsx::fit",
       "frontend/src/highlight.ts::escapeHtml",
       "frontend/src/highlight.ts::queryTerms",
       "frontend/src/highlight.ts::termMatchesWord",
@@ -1728,7 +1716,6 @@
       "frontend/src/useReindexJob.ts::useReindexJob",
       "frontend/src/components/InfoTip.tsx::placePop",
       "frontend/src/components/ResultCard.tsx::closeModal",
-      "frontend/src/components/VantaHero.tsx::hardenNet",
       "scripts/fetch_corpus.py::main",
       "scripts/fetch_corpus.py::pending_rows",
       "scripts/fetch_corpus.py::read_seed",
@@ -1816,7 +1803,6 @@
       "frontend/src/components/InfoTip.tsx::onMove",
       "frontend/src/components/InfoTip.tsx::show",
       "frontend/src/components/ResultCard.tsx::onKey",
-      "frontend/src/components/VantaHero.tsx::fit",
       "frontend/src/highlight.ts::escapeHtml",
       "frontend/src/highlight.ts::queryTerms",
       "frontend/src/highlight.ts::termMatchesWord",
@@ -1915,7 +1901,6 @@
       "frontend/src/pages/DebugPage.tsx::DebugPage",
       "frontend/src/components/InfoTip.tsx::placePop",
       "frontend/src/components/ResultCard.tsx::closeModal",
-      "frontend/src/components/VantaHero.tsx::hardenNet",
       "scripts/fetch_until_done.py::parse_args",
       "scripts/fetch_corpus.py::repo_root",
       "scripts/fetch_corpus.py::read_seed",

@@ -1,11 +1,11 @@
 {
-  "generated_at": "2026-09-05T13:29:13Z",
+  "generated_at": "2026-09-05T14:10:27Z",
   "stats": {
-    "file_count": 69,
-    "function_count": 373,
+    "file_count": 70,
+    "function_count": 372,
     "uncalled_file_count": 15,
-    "uncalled_function_count": 95,
-    "file_edge_count": 125,
+    "uncalled_function_count": 94,
+    "file_edge_count": 126,
     "function_edge_count": 379
   },
   "files": {
@@ -1398,9 +1398,7 @@
     "frontend/src/components/VantaHero.tsx": {
       "language": "typescript",
       "functions": [
-        "frontend/src/components/VantaHero.tsx::hardenNet",
-        "frontend/src/components/VantaHero.tsx::VantaHero",
-        "frontend/src/components/VantaHero.tsx::fit"
+        "frontend/src/components/VantaHero.tsx::VantaHero"
       ],
       "imports": [],
       "imported_by": [
@@ -1670,6 +1668,20 @@
         "frontend/src/App.tsx"
       ]
     },
+    "frontend/src/reindexPoll.ts": {
+      "language": "typescript",
+      "functions": [
+        "frontend/src/reindexPoll.ts::nextPollDelay"
+      ],
+      "imports": [],
+      "imported_by": [
+        "frontend/src/useReindexJob.ts"
+      ],
+      "calls": [],
+      "called_by": [
+        "frontend/src/useReindexJob.ts"
+      ]
+    },
     "frontend/src/useReindexJob.ts": {
       "language": "typescript",
       "functions": [
@@ -1677,13 +1689,15 @@
         "frontend/src/useReindexJob.ts::tick"
       ],
       "imports": [
-        "frontend/src/api.ts"
+        "frontend/src/api.ts",
+        "frontend/src/reindexPoll.ts"
       ],
       "imported_by": [
         "frontend/src/App.tsx"
       ],
       "calls": [
-        "frontend/src/api.ts"
+        "frontend/src/api.ts",
+        "frontend/src/reindexPoll.ts"
       ],
       "called_by": [
         "frontend/src/App.tsx"
@@ -5135,38 +5149,15 @@
         "frontend/src/components/Sidebar.tsx::Sidebar"
       ]
     },
-    "frontend/src/components/VantaHero.tsx::hardenNet": {
-      "file": "frontend/src/components/VantaHero.tsx",
-      "name": "hardenNet",
-      "qualname": "hardenNet",
-      "lineno": 35,
-      "calls": [],
-      "called_by": [
-        "frontend/src/components/VantaHero.tsx::VantaHero",
-        "frontend/src/components/VantaHero.tsx::fit"
-      ]
-    },
     "frontend/src/components/VantaHero.tsx::VantaHero": {
       "file": "frontend/src/components/VantaHero.tsx",
       "name": "VantaHero",
       "qualname": "VantaHero",
-      "lineno": 56,
-      "calls": [
-        "frontend/src/components/VantaHero.tsx::hardenNet"
-      ],
+      "lineno": 15,
+      "calls": [],
       "called_by": [
         "frontend/src/pages/HomePage.tsx::HomePage"
       ]
-    },
-    "frontend/src/components/VantaHero.tsx::fit": {
-      "file": "frontend/src/components/VantaHero.tsx",
-      "name": "fit",
-      "qualname": "fit",
-      "lineno": 82,
-      "calls": [
-        "frontend/src/components/VantaHero.tsx::hardenNet"
-      ],
-      "called_by": []
     },
     "frontend/src/highlight.ts::queryTerms": {
       "file": "frontend/src/highlight.ts",
@@ -5832,13 +5823,25 @@
         "frontend/src/App.tsx::App"
       ]
     },
+    "frontend/src/reindexPoll.ts::nextPollDelay": {
+      "file": "frontend/src/reindexPoll.ts",
+      "name": "nextPollDelay",
+      "qualname": "nextPollDelay",
+      "lineno": 5,
+      "calls": [],
+      "called_by": [
+        "frontend/src/useReindexJob.ts::useReindexJob",
+        "frontend/src/useReindexJob.ts::tick"
+      ]
+    },
     "frontend/src/useReindexJob.ts::useReindexJob": {
       "file": "frontend/src/useReindexJob.ts",
       "name": "useReindexJob",
       "qualname": "useReindexJob",
-      "lineno": 12,
+      "lineno": 10,
       "calls": [
         "frontend/src/api.ts::getReindexProgress",
+        "frontend/src/reindexPoll.ts::nextPollDelay",
         "frontend/src/useReindexJob.ts::tick",
         "frontend/src/api.ts::reindex"
       ],
@@ -5850,8 +5853,10 @@
       "file": "frontend/src/useReindexJob.ts",
       "name": "tick",
       "qualname": "tick",
-      "lineno": 39,
-      "calls": [],
+      "lineno": 44,
+      "calls": [
+        "frontend/src/reindexPoll.ts::nextPollDelay"
+      ],
       "called_by": [
         "frontend/src/useReindexJob.ts::useReindexJob"
       ]
@@ -5948,7 +5953,6 @@
     "frontend/src/components/InfoTip.tsx::onMove",
     "frontend/src/components/InfoTip.tsx::show",
     "frontend/src/components/ResultCard.tsx::onKey",
-    "frontend/src/components/VantaHero.tsx::fit",
     "frontend/src/highlight.ts::escapeHtml",
     "frontend/src/highlight.ts::queryTerms",
     "frontend/src/highlight.ts::termMatchesWord",
@@ -6332,7 +6336,6 @@
       "frontend/src/components/InfoTip.tsx::onMove",
       "frontend/src/components/InfoTip.tsx::show",
       "frontend/src/components/ResultCard.tsx::onKey",
-      "frontend/src/components/VantaHero.tsx::fit",
       "frontend/src/highlight.ts::escapeHtml",
       "frontend/src/highlight.ts::queryTerms",
       "frontend/src/highlight.ts::termMatchesWord",
@@ -6430,7 +6433,6 @@
         "frontend/src/components/InfoTip.tsx::onMove",
         "frontend/src/components/InfoTip.tsx::show",
         "frontend/src/components/ResultCard.tsx::onKey",
-        "frontend/src/components/VantaHero.tsx::fit",
         "frontend/src/highlight.ts::escapeHtml",
         "frontend/src/highlight.ts::queryTerms",
         "frontend/src/highlight.ts::termMatchesWord",
@@ -6531,7 +6533,6 @@
         "frontend/src/pages/DebugPage.tsx::DebugPage",
         "frontend/src/components/InfoTip.tsx::placePop",
         "frontend/src/components/ResultCard.tsx::closeModal",
-        "frontend/src/components/VantaHero.tsx::hardenNet",
         "scripts/fetch_until_done.py::parse_args",
         "scripts/fetch_corpus.py::repo_root",
         "scripts/fetch_corpus.py::read_seed",
@@ -6984,10 +6985,6 @@
         "to": "frontend/src/components/ResultCard.tsx::closeModal"
       },
       {
-        "from": "frontend/src/components/VantaHero.tsx::fit",
-        "to": "frontend/src/components/VantaHero.tsx::hardenNet"
-      },
-      {
         "from": "scripts/fetch_until_done.py::main",
         "to": "scripts/fetch_until_done.py::parse_args"
       },
@@ -7474,10 +7471,6 @@
         "to": "frontend/src/components/ResultCard.tsx::closeModal"
       },
       {
-        "from": "frontend/src/components/VantaHero.tsx::fit",
-        "to": "frontend/src/components/VantaHero.tsx::hardenNet"
-      },
-      {
         "from": "scripts/fetch_until_done.py::main",
         "to": "scripts/fetch_until_done.py::parse_args"
       },
@@ -7600,7 +7593,6 @@
       "frontend/src/components/InfoTip.tsx::onMove",
       "frontend/src/components/InfoTip.tsx::show",
       "frontend/src/components/ResultCard.tsx::onKey",
-      "frontend/src/components/VantaHero.tsx::fit",
       "frontend/src/highlight.ts::escapeHtml",
       "frontend/src/highlight.ts::queryTerms",
       "frontend/src/highlight.ts::termMatchesWord",
@@ -7699,7 +7691,6 @@
       "frontend/src/useReindexJob.ts::useReindexJob",
       "frontend/src/components/InfoTip.tsx::placePop",
       "frontend/src/components/ResultCard.tsx::closeModal",
-      "frontend/src/components/VantaHero.tsx::hardenNet",
       "scripts/fetch_corpus.py::main",
       "scripts/fetch_corpus.py::pending_rows",
       "scripts/fetch_corpus.py::read_seed",
@@ -7787,7 +7778,6 @@
       "frontend/src/components/InfoTip.tsx::onMove",
       "frontend/src/components/InfoTip.tsx::show",
       "frontend/src/components/ResultCard.tsx::onKey",
-      "frontend/src/components/VantaHero.tsx::fit",
       "frontend/src/highlight.ts::escapeHtml",
       "frontend/src/highlight.ts::queryTerms",
       "frontend/src/highlight.ts::termMatchesWord",
@@ -7886,7 +7876,6 @@
       "frontend/src/pages/DebugPage.tsx::DebugPage",
       "frontend/src/components/InfoTip.tsx::placePop",
       "frontend/src/components/ResultCard.tsx::closeModal",
-      "frontend/src/components/VantaHero.tsx::hardenNet",
       "scripts/fetch_until_done.py::parse_args",
       "scripts/fetch_corpus.py::repo_root",
       "scripts/fetch_corpus.py::read_seed",
@@ -8008,7 +7997,6 @@
     "frontend/src/components/InfoTip.tsx::onMove",
     "frontend/src/components/InfoTip.tsx::show",
     "frontend/src/components/ResultCard.tsx::onKey",
-    "frontend/src/components/VantaHero.tsx::fit",
     "frontend/src/highlight.ts::escapeHtml",
     "frontend/src/highlight.ts::queryTerms",
     "frontend/src/highlight.ts::termMatchesWord",
@@ -8107,7 +8095,6 @@
     "frontend/src/useReindexJob.ts::useReindexJob",
     "frontend/src/components/InfoTip.tsx::placePop",
     "frontend/src/components/ResultCard.tsx::closeModal",
-    "frontend/src/components/VantaHero.tsx::hardenNet",
     "scripts/fetch_corpus.py::main",
     "scripts/fetch_corpus.py::pending_rows",
     "scripts/fetch_corpus.py::read_seed",
@@ -8639,10 +8626,6 @@
     {
       "from": "frontend/src/components/ResultCard.tsx::onKey",
       "to": "frontend/src/components/ResultCard.tsx::closeModal"
-    },
-    {
-      "from": "frontend/src/components/VantaHero.tsx::fit",
-      "to": "frontend/src/components/VantaHero.tsx::hardenNet"
     },
     {
       "from": "scripts/fetch_until_done.py::main",
