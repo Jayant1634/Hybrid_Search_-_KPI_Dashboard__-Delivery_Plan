@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-09-05T06:59:10Z",
+  "generated_at": "2026-09-05T09:20:20Z",
   "files": {
     "backend/app/__init__.py": {
       "language": "python",
@@ -28,10 +28,13 @@
         "backend/app/api/deps.py::get_version",
         "backend/app/api/deps.py::get_commit",
         "backend/app/api/deps.py::SearchService.__init__",
-        "backend/app/api/deps.py::SearchService.load"
+        "backend/app/api/deps.py::SearchService.load",
+        "backend/app/api/deps.py::_reconcile_index"
       ],
       "imports": [
         "backend/app/config.py",
+        "backend/app/index/__main__.py",
+        "backend/app/index/metadata.py",
         "backend/app/ingest/writer.py",
         "backend/app/search/bm25.py",
         "backend/app/search/embedder.py",
@@ -44,6 +47,8 @@
       ],
       "calls": [
         "backend/app/config.py",
+        "backend/app/index/__main__.py",
+        "backend/app/index/metadata.py",
         "backend/app/ingest/writer.py",
         "backend/app/search/bm25.py",
         "backend/app/search/embedder.py",
@@ -400,7 +405,9 @@
         "backend/app/search/vector.py",
         "backend/app/index/metadata.py"
       ],
-      "imported_by": [],
+      "imported_by": [
+        "backend/app/api/deps.py"
+      ],
       "calls": [
         "backend/app/config.py",
         "backend/app/index/metadata.py",
@@ -409,7 +416,9 @@
         "backend/app/search/embedder.py",
         "backend/app/search/vector.py"
       ],
-      "called_by": []
+      "called_by": [
+        "backend/app/api/deps.py"
+      ]
     },
     "backend/app/index/metadata.py": {
       "language": "python",
@@ -421,12 +430,14 @@
       ],
       "imports": [],
       "imported_by": [
+        "backend/app/api/deps.py",
         "backend/app/api/routes_search.py",
         "backend/app/eval/__main__.py",
         "backend/app/index/__main__.py"
       ],
       "calls": [],
       "called_by": [
+        "backend/app/api/deps.py",
         "backend/app/api/routes_search.py",
         "backend/app/eval/__main__.py",
         "backend/app/index/__main__.py"
@@ -644,6 +655,9 @@
     "backend/app/run.py": {
       "language": "python",
       "functions": [
+        "backend/app/run.py::_parse_env_line",
+        "backend/app/run.py::_iter_env_file",
+        "backend/app/run.py::load_dotenv",
         "backend/app/run.py::_venv_python",
         "backend/app/run.py::_same_interpreter",
         "backend/app/run.py::_uvicorn_available",
@@ -865,6 +879,11 @@
       "language": "python",
       "functions": [
         "backend/app/storage/db.py::connect",
+        "backend/app/storage/db.py::_now",
+        "backend/app/storage/db.py::_discover_migrations",
+        "backend/app/storage/db.py::_split_statements",
+        "backend/app/storage/db.py::_current_version",
+        "backend/app/storage/db.py::migrate",
         "backend/app/storage/db.py::init_schema"
       ],
       "imports": [],

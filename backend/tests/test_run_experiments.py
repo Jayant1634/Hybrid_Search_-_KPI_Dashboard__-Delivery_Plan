@@ -58,6 +58,8 @@ def test_script_uses_strict_bash_and_venv_detection() -> None:
     assert ".venv/bin/python" in text
     assert ".venv/Scripts/python.exe" in text
     assert text.index(".venv/bin/python") < text.index(".venv/Scripts/python.exe")
+    assert "./backend/.env" in text
+    assert ". ./.env" not in text
 
 
 def test_script_is_lf() -> None:
