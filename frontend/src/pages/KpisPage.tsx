@@ -21,6 +21,65 @@ const DEFAULT_QUERY = 'volcano'
 const MIN_COUNT = 2
 const MAX_COUNT = 200
 const DEFAULT_COUNT = 20
+const PAGE_SIZE = 8
+
+function clampPage(page: number, total: number, size: number): number {
+  const pages = Math.max(1, Math.ceil(total / size))
+  return Math.min(pages, Math.max(1, page))
+}
+
+function pageItems<T>(items: T[], page: number, size: number): T[] {
+  const start = (page - 1) * size
+  return items.slice(start, start + size)
+}
+
+function TablePager({
+  page,
+  total,
+  pageSize,
+  onPage,
+  label,
+}: {
+  page: number
+  total: number
+  pageSize: number
+  onPage: (page: number) => void
+  label: string
+}) {
+  if (total <= pageSize) return null
+  const pages = Math.ceil(total / pageSize)
+  const from = (page - 1) * pageSize + 1
+  const to = Math.min(total, page * pageSize)
+  const windowStart = Math.max(1, Math.min(page - 2, pages - 4))
+  const windowEnd = Math.min(pages, windowStart + 4)
+  const nums: number[] = []
+  for (let n = windowStart; n <= windowEnd; n += 1) nums.push(n)
+  return (
+    <nav className="table-pager" aria-label={label}>
+      <span className="table-pager-meta">
+        {from}–{to} of {total}
+      </span>
+      <div className="table-pager-btns">
+        <button type="button" disabled={page <= 1} onClick={() => onPage(page - 1)}>
+          Prev
+        </button>
+        {nums.map(n => (
+          <button
+            key={n}
+            type="button"
+            aria-current={n === page ? 'page' : undefined}
+            onClick={() => onPage(n)}
+          >
+            {n}
+          </button>
+        ))}
+        <button type="button" disabled={page >= pages} onClick={() => onPage(page + 1)}>
+          Next
+        </button>
+      </div>
+    </nav>
+  )
+}
 
 interface KpiSummary {
   total: number
@@ -80,8 +139,8 @@ async function loadKpis(range: TimeWindow): Promise<KpiData> {
   const [summary, volume, topQueries, zeroQueries] = await Promise.all([
     fetchJson<KpiSummary>(`/api/dashboard/kpi/summary?${q}`),
     fetchJson<VolumePoint[]>(`/api/dashboard/kpi/volume?${q}`),
-    fetchJson<TopQuery[]>(`/api/dashboard/kpi/top-queries?${q}&limit=10`),
-    fetchJson<ZeroResultQuery[]>(`/api/dashboard/kpi/zero-results?${q}&limit=10`),
+    fetchJson<TopQuery[]>(`/api/dashboard/kpi/top-queries?${q}&limit=50`),
+    fetchJson<ZeroResultQuery[]>(`/api/dashboard/kpi/zero-results?${q}&limit=50`),
   ])
   return { summary, volume, topQueries, zeroQueries }
 }
@@ -156,6 +215,8 @@ export default function KpisPage() {
   const [firing, setFiring] = useState(false)
   const [burst, setBurst] = useState<LoadTestResult | null>(null)
   const [burstError, setBurstError] = useState<string | null>(null)
+  const [topPage, setTopPage] = useState(1)
+  const [zeroPage, setZeroPage] = useState(1)
 
   useEffect(() => {
     let cancelled = false
@@ -236,10 +297,13 @@ export default function KpisPage() {
   return (
     <div className="page-container page-container-wide">
       <style>{`
+        .page-container { gap: 16px; padding-top: 28px; }
+        .page-title { font-size: 26px; }
+        .page-desc { font-size: 13px; }
         .kpi-dash-tables {
           display: grid;
           grid-template-columns: 1fr 1fr;
-          gap: 16px;
+          gap: 12px;
         }
         @media (max-width: 900px) {
           .kpi-dash-tables { grid-template-columns: 1fr; }
@@ -248,7 +312,7 @@ export default function KpisPage() {
           background: var(--c-surface);
           border: 1px solid var(--c-border);
           border-radius: 8px;
-          padding: 20px 22px;
+          padding: 14px 16px;
           box-shadow: var(--shadow-sm);
         }
         .kpi-dash-panel h2 {
@@ -257,7 +321,7 @@ export default function KpisPage() {
           color: var(--c-heading);
           margin-bottom: 14px;
         }
-        .kpi-dash-plot { width: 100%; height: 280px; }
+        .kpi-dash-plot { width: 100%; height: 220px; }
         .kpi-dash-table { width: 100%; border-collapse: collapse; }
         .kpi-dash-table th {
           text-align: left;
@@ -266,12 +330,12 @@ export default function KpisPage() {
           letter-spacing: 0.06em;
           text-transform: uppercase;
           color: var(--c-muted);
-          padding: 0 8px 10px 0;
+          padding: 0 8px 8px 0;
           border-bottom: 1px solid var(--c-border);
         }
         .kpi-dash-table td {
-          padding: 10px 8px 10px 0;
-          font-size: 13px;
+          padding: 7px 8px 7px 0;
+          font-size: 12px;
           color: var(--c-text);
           border-bottom: 1px solid var(--c-border);
           vertical-align: top;
@@ -420,6 +484,34 @@ export default function KpisPage() {
           font-family: var(--mono);
           color: var(--c-heading);
         }
+        .table-pager {
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          gap: 12px;
+          margin-top: 10px;
+          padding-top: 10px;
+          border-top: 1px solid var(--c-border);
+          font-size: 12px;
+          color: var(--c-muted);
+        }
+        .table-pager-btns { display: flex; gap: 4px; }
+        .table-pager button {
+          min-width: 28px;
+          height: 28px;
+          padding: 0 8px;
+          border: 1px solid var(--c-border);
+          background: var(--c-surface);
+          color: var(--c-text);
+          border-radius: 4px;
+          font-size: 12px;
+        }
+        .table-pager button:disabled { opacity: 0.45; }
+        .table-pager button[aria-current='page'] {
+          border-color: var(--purple);
+          color: var(--purple);
+          background: var(--purple-tint);
+        }
       `}</style>
 
       <div className="page-header page-header-row">
@@ -450,7 +542,11 @@ export default function KpisPage() {
                   type="button"
                   className={option === range ? 'active' : undefined}
                   aria-pressed={option === range}
-                  onClick={() => setRange(option)}
+                  onClick={() => {
+                    setRange(option)
+                    setTopPage(1)
+                    setZeroPage(1)
+                  }}
                 >
                   {option}
                 </button>
@@ -586,24 +682,37 @@ export default function KpisPage() {
               {data.topQueries.length === 0 ? (
                 <p className="kpi-dash-empty">No queries in this window.</p>
               ) : (
-                <table className="kpi-dash-table">
-                  <thead>
-                    <tr>
-                      <th>Query</th>
-                      <th>Count</th>
-                      <th>Avg latency</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {data.topQueries.map(row => (
-                      <tr key={row.query}>
-                        <td className="kpi-dash-query">{row.query}</td>
-                        <td className="kpi-dash-num">{row.count}</td>
-                        <td className="kpi-dash-num">{formatMs(row.avg_latency_ms)}</td>
+                <>
+                  <table className="kpi-dash-table">
+                    <thead>
+                      <tr>
+                        <th>Query</th>
+                        <th>Count</th>
+                        <th>Avg latency</th>
                       </tr>
-                    ))}
-                  </tbody>
-                </table>
+                    </thead>
+                    <tbody>
+                      {pageItems(
+                        data.topQueries,
+                        clampPage(topPage, data.topQueries.length, PAGE_SIZE),
+                        PAGE_SIZE,
+                      ).map(row => (
+                        <tr key={row.query}>
+                          <td className="kpi-dash-query">{row.query}</td>
+                          <td className="kpi-dash-num">{row.count}</td>
+                          <td className="kpi-dash-num">{formatMs(row.avg_latency_ms)}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                  <TablePager
+                    page={clampPage(topPage, data.topQueries.length, PAGE_SIZE)}
+                    total={data.topQueries.length}
+                    pageSize={PAGE_SIZE}
+                    onPage={setTopPage}
+                    label="Top query pages"
+                  />
+                </>
               )}
             </section>
 
@@ -612,24 +721,37 @@ export default function KpisPage() {
               {data.zeroQueries.length === 0 ? (
                 <p className="kpi-dash-empty">No zero-result queries in this window.</p>
               ) : (
-                <table className="kpi-dash-table">
-                  <thead>
-                    <tr>
-                      <th>Query</th>
-                      <th>Count</th>
-                      <th>Last seen</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {data.zeroQueries.map(row => (
-                      <tr key={row.query}>
-                        <td className="kpi-dash-query">{row.query}</td>
-                        <td className="kpi-dash-num">{row.count}</td>
-                        <td className="kpi-dash-num">{formatSeen(row.last_seen)}</td>
+                <>
+                  <table className="kpi-dash-table">
+                    <thead>
+                      <tr>
+                        <th>Query</th>
+                        <th>Count</th>
+                        <th>Last seen</th>
                       </tr>
-                    ))}
-                  </tbody>
-                </table>
+                    </thead>
+                    <tbody>
+                      {pageItems(
+                        data.zeroQueries,
+                        clampPage(zeroPage, data.zeroQueries.length, PAGE_SIZE),
+                        PAGE_SIZE,
+                      ).map(row => (
+                        <tr key={row.query}>
+                          <td className="kpi-dash-query">{row.query}</td>
+                          <td className="kpi-dash-num">{row.count}</td>
+                          <td className="kpi-dash-num">{formatSeen(row.last_seen)}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                  <TablePager
+                    page={clampPage(zeroPage, data.zeroQueries.length, PAGE_SIZE)}
+                    total={data.zeroQueries.length}
+                    pageSize={PAGE_SIZE}
+                    onPage={setZeroPage}
+                    label="Zero-result query pages"
+                  />
+                </>
               )}
             </section>
           </div>

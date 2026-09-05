@@ -37,6 +37,64 @@ type ColumnKey = (typeof COLUMNS)[number]['key']
 type ChartMetric = (typeof CHART_METRICS)[number]['key']
 type SortDir = 'asc' | 'desc'
 
+const PAGE_SIZE = 8
+
+function clampPage(page: number, total: number, size: number): number {
+  const pages = Math.max(1, Math.ceil(total / size))
+  return Math.min(pages, Math.max(1, page))
+}
+
+function pageItems<T>(items: T[], page: number, size: number): T[] {
+  const start = (page - 1) * size
+  return items.slice(start, start + size)
+}
+
+function TablePager({
+  page,
+  total,
+  pageSize,
+  onPage,
+}: {
+  page: number
+  total: number
+  pageSize: number
+  onPage: (page: number) => void
+}) {
+  if (total <= pageSize) return null
+  const pages = Math.ceil(total / pageSize)
+  const from = (page - 1) * pageSize + 1
+  const to = Math.min(total, page * pageSize)
+  const windowStart = Math.max(1, Math.min(page - 2, pages - 4))
+  const windowEnd = Math.min(pages, windowStart + 4)
+  const nums: number[] = []
+  for (let n = windowStart; n <= windowEnd; n += 1) nums.push(n)
+  return (
+    <nav className="table-pager" aria-label="Experiment pages">
+      <span className="table-pager-meta">
+        {from}–{to} of {total}
+      </span>
+      <div className="table-pager-btns">
+        <button type="button" disabled={page <= 1} onClick={() => onPage(page - 1)}>
+          Prev
+        </button>
+        {nums.map(n => (
+          <button
+            key={n}
+            type="button"
+            aria-current={n === page ? 'page' : undefined}
+            onClick={() => onPage(n)}
+          >
+            {n}
+          </button>
+        ))}
+        <button type="button" disabled={page >= pages} onClick={() => onPage(page + 1)}>
+          Next
+        </button>
+      </div>
+    </nav>
+  )
+}
+
 const NUMERIC = new Set<ColumnKey>([
   'alpha',
   'ndcg10',
@@ -155,6 +213,7 @@ export default function EvaluationPage() {
   const [sortKey, setSortKey] = useState<ColumnKey>('timestamp')
   const [sortDir, setSortDir] = useState<SortDir>('asc')
   const [chartMetric, setChartMetric] = useState<ChartMetric>('ndcg')
+  const [page, setPage] = useState(1)
   const selectedMetric =
     CHART_METRICS.find(item => item.key === chartMetric) ?? CHART_METRICS[0]
 
@@ -197,6 +256,7 @@ export default function EvaluationPage() {
   }, [rows, sortKey, sortDir])
 
   function onSort(key: ColumnKey) {
+    setPage(1)
     if (key === sortKey) {
       setSortDir(dir => (dir === 'asc' ? 'desc' : 'asc'))
       return
@@ -205,14 +265,20 @@ export default function EvaluationPage() {
     setSortDir(NUMERIC.has(key) ? 'desc' : 'asc')
   }
 
+  const safePage = clampPage(page, tableRows.length, PAGE_SIZE)
+  const visibleRows = pageItems(tableRows, safePage, PAGE_SIZE)
+
   return (
     <div className="page-container page-container-wide">
       <style>{`
+        .page-container { gap: 16px; padding-top: 28px; }
+        .page-title { font-size: 26px; }
+        .page-desc { font-size: 13px; }
         .eval-panel {
           background: var(--c-surface);
           border: 1px solid var(--c-border);
           border-radius: 8px;
-          padding: 20px 22px;
+          padding: 14px 16px;
           box-shadow: var(--shadow-sm);
         }
         .eval-panel h2 {
@@ -242,12 +308,12 @@ export default function EvaluationPage() {
           color: var(--c-muted);
         }
         .eval-tooltip-metric-active { color: var(--purple); }
-        .eval-plot { width: 100%; height: 280px; }
+        .eval-plot { width: 100%; height: 220px; }
         .eval-table-wrap { overflow-x: auto; }
         .eval-table { width: 100%; border-collapse: collapse; min-width: 920px; }
         .eval-table th {
           text-align: left;
-          padding: 0 10px 10px 0;
+          padding: 0 8px 8px 0;
           border-bottom: 1px solid var(--c-border);
           white-space: nowrap;
         }
@@ -276,11 +342,39 @@ export default function EvaluationPage() {
           gap: 4px;
         }
         .eval-table td {
-          padding: 10px 10px 10px 0;
-          font-size: 13px;
+          padding: 7px 8px 7px 0;
+          font-size: 12px;
           color: var(--c-text);
           border-bottom: 1px solid var(--c-border);
           vertical-align: top;
+        }
+        .table-pager {
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          gap: 12px;
+          margin-top: 10px;
+          padding-top: 10px;
+          border-top: 1px solid var(--c-border);
+          font-size: 12px;
+          color: var(--c-muted);
+        }
+        .table-pager-btns { display: flex; gap: 4px; }
+        .table-pager button {
+          min-width: 28px;
+          height: 28px;
+          padding: 0 8px;
+          border: 1px solid var(--c-border);
+          background: var(--c-surface);
+          color: var(--c-text);
+          border-radius: 4px;
+          font-size: 12px;
+        }
+        .table-pager button:disabled { opacity: 0.45; }
+        .table-pager button[aria-current='page'] {
+          border-color: var(--purple);
+          color: var(--purple);
+          background: var(--purple-tint);
         }
         .eval-table tr:last-child td { border-bottom: none; }
         .eval-num { font-family: var(--mono); font-variant-numeric: tabular-nums; }
@@ -431,10 +525,12 @@ export default function EvaluationPage() {
                   </tr>
                 </thead>
                 <tbody>
-                  {tableRows.map((row, index) => (
+                  {visibleRows.map((row, index) => (
                     <tr key={`${row.timestamp}-${row.tag}-${index}`}>
                       <td className="eval-num">{formatTime(row.timestamp)}</td>
-                      <td className="eval-mono">{row.commit}</td>
+                      <td className="eval-mono" title={row.commit}>
+                        {row.commit.length > 7 ? row.commit.slice(0, 7) : row.commit}
+                      </td>
                       <td>{row.tag}</td>
                       <td className="eval-num">{row.alpha}</td>
                       <td>{row.normalization}</td>
@@ -449,6 +545,12 @@ export default function EvaluationPage() {
                 </tbody>
               </table>
             </div>
+            <TablePager
+              page={safePage}
+              total={tableRows.length}
+              pageSize={PAGE_SIZE}
+              onPage={setPage}
+            />
           </section>
         </>
       )}

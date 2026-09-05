@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-09-05T12:24:58Z",
+  "generated_at": "2026-09-05T13:29:13Z",
   "files": [
     {
       "from": "backend/app/__main__.py",
@@ -208,6 +208,26 @@
       "to": "backend/app/storage/repo.py::select_logs"
     },
     {
+      "from": "backend/app/api/routes_search.py::_run_reindex",
+      "to": "backend/app/index/__main__.py::build_indexes"
+    },
+    {
+      "from": "backend/app/api/routes_search.py::_run_reindex",
+      "to": "backend/app/index/progress.py::finishing"
+    },
+    {
+      "from": "backend/app/api/routes_search.py::_run_reindex",
+      "to": "backend/app/api/deps.py::SearchService.load"
+    },
+    {
+      "from": "backend/app/api/routes_search.py::_run_reindex",
+      "to": "backend/app/index/progress.py::finish"
+    },
+    {
+      "from": "backend/app/api/routes_search.py::_run_reindex",
+      "to": "backend/app/index/progress.py::fail"
+    },
+    {
       "from": "backend/app/api/routes_search.py::feedback",
       "to": "backend/app/api/routes_search.py::_get_service"
     },
@@ -245,11 +265,39 @@
     },
     {
       "from": "backend/app/api/routes_search.py::health",
+      "to": "backend/app/api/deps.py::get_commit_message"
+    },
+    {
+      "from": "backend/app/api/routes_search.py::health",
       "to": "backend/app/api/routes_search.py::_index_metadata"
     },
     {
       "from": "backend/app/api/routes_search.py::metrics",
       "to": "backend/app/observability/metrics.py::render"
+    },
+    {
+      "from": "backend/app/api/routes_search.py::reindex",
+      "to": "backend/app/api/routes_search.py::_get_service"
+    },
+    {
+      "from": "backend/app/api/routes_search.py::reindex",
+      "to": "backend/app/config.py::load_config"
+    },
+    {
+      "from": "backend/app/api/routes_search.py::reindex",
+      "to": "backend/app/ingest/writer.py::read_jsonl"
+    },
+    {
+      "from": "backend/app/api/routes_search.py::reindex",
+      "to": "backend/app/index/progress.py::try_start"
+    },
+    {
+      "from": "backend/app/api/routes_search.py::reindex",
+      "to": "backend/app/api/routes_search.py::_progress_model"
+    },
+    {
+      "from": "backend/app/api/routes_search.py::reindex_progress",
+      "to": "backend/app/api/routes_search.py::_progress_model"
     },
     {
       "from": "backend/app/api/routes_search.py::search",
@@ -344,6 +392,10 @@
       "to": "backend/app/index/__main__.py::build_indexes"
     },
     {
+      "from": "backend/app/index/progress.py::start",
+      "to": "backend/app/index/progress.py::try_start"
+    },
+    {
       "from": "backend/app/ingest/__init__.py::main",
       "to": "backend/app/config.py::load_config"
     },
@@ -417,6 +469,10 @@
     },
     {
       "from": "frontend/src/App.tsx::App",
+      "to": "frontend/src/useReindexJob.ts::useReindexJob"
+    },
+    {
+      "from": "frontend/src/App.tsx::App",
       "to": "frontend/src/api.ts::getHealth"
     },
     {
@@ -462,6 +518,10 @@
     {
       "from": "frontend/src/components/ResultCard.tsx::onKey",
       "to": "frontend/src/components/ResultCard.tsx::closeModal"
+    },
+    {
+      "from": "frontend/src/components/VantaHero.tsx::fit",
+      "to": "frontend/src/components/VantaHero.tsx::hardenNet"
     },
     {
       "from": "scripts/fetch_until_done.py::main",

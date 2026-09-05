@@ -1,11 +1,18 @@
 interface Props {
   dark: boolean
   onToggle: () => void
+  compact?: boolean
 }
 
-export default function ThemeToggle({ dark, onToggle }: Props) {
+export default function ThemeToggle({ dark, onToggle, compact = false }: Props) {
   return (
-    <button className="theme-toggle" onClick={onToggle} title={dark ? 'Switch to light mode' : 'Switch to dark mode'}>
+    <button
+      type="button"
+      className={compact ? 'theme-toggle theme-toggle-nav' : 'theme-toggle'}
+      onClick={onToggle}
+      title={dark ? 'Switch to light mode' : 'Switch to dark mode'}
+      aria-label={dark ? 'Switch to light mode' : 'Switch to dark mode'}
+    >
       {dark ? (
         <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
           <circle cx="8" cy="8" r="3.5" stroke="currentColor" strokeWidth="1.4" />
@@ -16,7 +23,7 @@ export default function ThemeToggle({ dark, onToggle }: Props) {
           <path d="M13.5 10.5A6 6 0 015.5 2.5a6 6 0 108 8z" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round" />
         </svg>
       )}
-      <span>{dark ? 'Light mode' : 'Dark mode'}</span>
+      {!compact && <span>{dark ? 'Light mode' : 'Dark mode'}</span>}
     </button>
   )
 }

@@ -22,6 +22,63 @@ const DEFAULTS: Filters = {
 }
 
 const TABLE_KEYS = new Set(['created_at', 'severity', 'message'])
+const PAGE_SIZE = 10
+
+function clampPage(page: number, total: number, size: number): number {
+  const pages = Math.max(1, Math.ceil(total / size))
+  return Math.min(pages, Math.max(1, page))
+}
+
+function pageItems<T>(items: T[], page: number, size: number): T[] {
+  const start = (page - 1) * size
+  return items.slice(start, start + size)
+}
+
+function TablePager({
+  page,
+  total,
+  pageSize,
+  onPage,
+}: {
+  page: number
+  total: number
+  pageSize: number
+  onPage: (page: number) => void
+}) {
+  if (total <= pageSize) return null
+  const pages = Math.ceil(total / pageSize)
+  const from = (page - 1) * pageSize + 1
+  const to = Math.min(total, page * pageSize)
+  const windowStart = Math.max(1, Math.min(page - 2, pages - 4))
+  const windowEnd = Math.min(pages, windowStart + 4)
+  const nums: number[] = []
+  for (let n = windowStart; n <= windowEnd; n += 1) nums.push(n)
+  return (
+    <nav className="table-pager" aria-label="Log pages">
+      <span className="table-pager-meta">
+        {from}–{to} of {total}
+      </span>
+      <div className="table-pager-btns">
+        <button type="button" disabled={page <= 1} onClick={() => onPage(page - 1)}>
+          Prev
+        </button>
+        {nums.map(n => (
+          <button
+            key={n}
+            type="button"
+            aria-current={n === page ? 'page' : undefined}
+            onClick={() => onPage(n)}
+          >
+            {n}
+          </button>
+        ))}
+        <button type="button" disabled={page >= pages} onClick={() => onPage(page + 1)}>
+          Next
+        </button>
+      </div>
+    </nav>
+  )
+}
 
 function clampLimit(value: number): number {
   if (!Number.isFinite(value)) return DEFAULTS.limit
@@ -95,11 +152,13 @@ export default function DebugPage() {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [open, setOpen] = useState<string | null>(null)
+  const [page, setPage] = useState(1)
 
   const load = useCallback(async (filters: Filters) => {
     setLoading(true)
     setError(null)
     setOpen(null)
+    setPage(1)
     try {
       const next = await fetchLogs(filters)
       setRows(next)
@@ -132,11 +191,14 @@ export default function DebugPage() {
       <style>{`
         .debug-dt { width: 210px; }
         .debug-actions { display: flex; gap: 10px; align-items: flex-end; }
+        .page-container { gap: 16px; padding-top: 28px; }
+        .page-title { font-size: 26px; }
+        .page-desc { font-size: 13px; }
         .debug-panel {
           background: var(--c-surface);
           border: 1px solid var(--c-border);
           border-radius: 8px;
-          padding: 20px 22px;
+          padding: 14px 16px;
           box-shadow: var(--shadow-sm);
         }
         .debug-table-wrap { overflow-x: auto; }
@@ -148,16 +210,44 @@ export default function DebugPage() {
           letter-spacing: 0.06em;
           text-transform: uppercase;
           color: var(--c-muted);
-          padding: 0 12px 10px 0;
+          padding: 0 10px 8px 0;
           border-bottom: 1px solid var(--c-border);
           white-space: nowrap;
         }
         .debug-table td {
-          padding: 10px 12px 10px 0;
-          font-size: 13px;
+          padding: 7px 10px 7px 0;
+          font-size: 12px;
           color: var(--c-text);
           border-bottom: 1px solid var(--c-border);
           vertical-align: top;
+        }
+        .table-pager {
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          gap: 12px;
+          margin-top: 10px;
+          padding-top: 10px;
+          border-top: 1px solid var(--c-border);
+          font-size: 12px;
+          color: var(--c-muted);
+        }
+        .table-pager-btns { display: flex; gap: 4px; }
+        .table-pager button {
+          min-width: 28px;
+          height: 28px;
+          padding: 0 8px;
+          border: 1px solid var(--c-border);
+          background: var(--c-surface);
+          color: var(--c-text);
+          border-radius: 4px;
+          font-size: 12px;
+        }
+        .table-pager button:disabled { opacity: 0.45; }
+        .table-pager button[aria-current='page'] {
+          border-color: var(--purple);
+          color: var(--purple);
+          background: var(--purple-tint);
         }
         .debug-table tr:last-child td { border-bottom: none; }
         .debug-table .debug-expand-row td { border-bottom: 1px solid var(--c-border); }
@@ -295,38 +385,48 @@ export default function DebugPage() {
         </div>
       )}
 
-      {rows !== null && rows.length > 0 && (
-        <section className="debug-panel">
-          <div className="debug-table-wrap">
-            <table className="debug-table">
-              <thead>
-                <tr>
-                  <th aria-hidden="true" />
-                  <th>Time</th>
-                  <th>Severity</th>
-                  <th>Message</th>
-                  <th>Request</th>
-                </tr>
-              </thead>
-              <tbody>
-                {rows.map((row, index) => {
-                  const key = rowKey(row, index)
-                  const expanded = open === key
-                  return (
-                    <LogRows
-                      key={key}
-                      row={row}
-                      rowId={key}
-                      expanded={expanded}
-                      onToggle={() => setOpen(expanded ? null : key)}
-                    />
-                  )
-                })}
-              </tbody>
-            </table>
-          </div>
-        </section>
-      )}
+      {rows !== null && rows.length > 0 && (() => {
+        const safePage = clampPage(page, rows.length, PAGE_SIZE)
+        const start = (safePage - 1) * PAGE_SIZE
+        return (
+          <section className="debug-panel">
+            <div className="debug-table-wrap">
+              <table className="debug-table">
+                <thead>
+                  <tr>
+                    <th aria-hidden="true" />
+                    <th>Time</th>
+                    <th>Severity</th>
+                    <th>Message</th>
+                    <th>Request</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {pageItems(rows, safePage, PAGE_SIZE).map((row, index) => {
+                    const key = rowKey(row, start + index)
+                    const expanded = open === key
+                    return (
+                      <LogRows
+                        key={key}
+                        row={row}
+                        rowId={key}
+                        expanded={expanded}
+                        onToggle={() => setOpen(expanded ? null : key)}
+                      />
+                    )
+                  })}
+                </tbody>
+              </table>
+            </div>
+            <TablePager
+              page={safePage}
+              total={rows.length}
+              pageSize={PAGE_SIZE}
+              onPage={setPage}
+            />
+          </section>
+        )
+      })()}
     </div>
   )
 }

@@ -15,6 +15,7 @@ export default defineConfig({
       '/health': 'http://127.0.0.1:8000',
       '/feedback': 'http://127.0.0.1:8000',
       '/metrics': 'http://127.0.0.1:8000',
+      '/reindex': 'http://127.0.0.1:8000',
       '/api': 'http://127.0.0.1:8000',
     },
   },

@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-09-05T12:24:58Z",
+  "generated_at": "2026-09-05T13:29:13Z",
   "files": {
     "backend/app/__init__.py": {
       "language": "python",
@@ -27,6 +27,7 @@
         "backend/app/api/deps.py::_pyproject_path",
         "backend/app/api/deps.py::get_version",
         "backend/app/api/deps.py::get_commit",
+        "backend/app/api/deps.py::get_commit_message",
         "backend/app/api/deps.py::SearchService.__init__",
         "backend/app/api/deps.py::SearchService.load",
         "backend/app/api/deps.py::_reconcile_index"
@@ -170,6 +171,10 @@
         "backend/app/api/routes_search.py::health",
         "backend/app/api/routes_search.py::metrics",
         "backend/app/api/routes_search.py::search",
+        "backend/app/api/routes_search.py::_progress_model",
+        "backend/app/api/routes_search.py::_run_reindex",
+        "backend/app/api/routes_search.py::reindex",
+        "backend/app/api/routes_search.py::reindex_progress",
         "backend/app/api/routes_search.py::get_document",
         "backend/app/api/routes_search.py::feedback"
       ],
@@ -177,7 +182,10 @@
         "backend/app/api/deps.py",
         "backend/app/api/schemas.py",
         "backend/app/config.py",
+        "backend/app/index/__main__.py",
         "backend/app/index/metadata.py",
+        "backend/app/index/progress.py",
+        "backend/app/ingest/writer.py",
         "backend/app/observability/metrics.py",
         "backend/app/search/filters.py",
         "backend/app/search/highlight.py",
@@ -191,7 +199,10 @@
         "backend/app/api/deps.py",
         "backend/app/api/schemas.py",
         "backend/app/config.py",
+        "backend/app/index/__main__.py",
         "backend/app/index/metadata.py",
+        "backend/app/index/progress.py",
+        "backend/app/ingest/writer.py",
         "backend/app/observability/metrics.py",
         "backend/app/search/filters.py",
         "backend/app/search/highlight.py",
@@ -292,6 +303,7 @@
         "backend/app/config.py::_env_str",
         "backend/app/config.py::_env_int",
         "backend/app/config.py::_env_float",
+        "backend/app/config.py::_env_granularity",
         "backend/app/config.py::load_config"
       ],
       "imports": [],
@@ -396,6 +408,7 @@
       "functions": [
         "backend/app/index/__main__.py::_resolve_path",
         "backend/app/index/__main__.py::_embed_text",
+        "backend/app/index/__main__.py::_embedding_inputs",
         "backend/app/index/__main__.py::build_indexes",
         "backend/app/index/__main__.py::_build_parser",
         "backend/app/index/__main__.py::main"
@@ -406,13 +419,16 @@
         "backend/app/search/bm25.py",
         "backend/app/search/embedder.py",
         "backend/app/search/vector.py",
+        "backend/app/index/chunk.py",
         "backend/app/index/metadata.py"
       ],
       "imported_by": [
-        "backend/app/api/deps.py"
+        "backend/app/api/deps.py",
+        "backend/app/api/routes_search.py"
       ],
       "calls": [
         "backend/app/config.py",
+        "backend/app/index/chunk.py",
         "backend/app/index/metadata.py",
         "backend/app/ingest/writer.py",
         "backend/app/search/bm25.py",
@@ -420,7 +436,27 @@
         "backend/app/search/vector.py"
       ],
       "called_by": [
-        "backend/app/api/deps.py"
+        "backend/app/api/deps.py",
+        "backend/app/api/routes_search.py"
+      ]
+    },
+    "backend/app/index/chunk.py": {
+      "language": "python",
+      "functions": [
+        "backend/app/index/chunk.py::estimate_tokens",
+        "backend/app/index/chunk.py::chunk_document"
+      ],
+      "imports": [
+        "backend/app/ingest/split.py"
+      ],
+      "imported_by": [
+        "backend/app/index/__main__.py"
+      ],
+      "calls": [
+        "backend/app/ingest/split.py"
+      ],
+      "called_by": [
+        "backend/app/index/__main__.py"
       ]
     },
     "backend/app/index/metadata.py": {
@@ -444,6 +480,26 @@
         "backend/app/api/routes_search.py",
         "backend/app/eval/__main__.py",
         "backend/app/index/__main__.py"
+      ]
+    },
+    "backend/app/index/progress.py": {
+      "language": "python",
+      "functions": [
+        "backend/app/index/progress.py::snapshot",
+        "backend/app/index/progress.py::start",
+        "backend/app/index/progress.py::try_start",
+        "backend/app/index/progress.py::update",
+        "backend/app/index/progress.py::finishing",
+        "backend/app/index/progress.py::finish",
+        "backend/app/index/progress.py::fail"
+      ],
+      "imports": [],
+      "imported_by": [
+        "backend/app/api/routes_search.py"
+      ],
+      "calls": [],
+      "called_by": [
+        "backend/app/api/routes_search.py"
       ]
     },
     "backend/app/ingest/__init__.py": {
@@ -523,11 +579,13 @@
       ],
       "imports": [],
       "imported_by": [
+        "backend/app/index/chunk.py",
         "backend/app/ingest/__init__.py",
         "backend/app/ingest/clean.py"
       ],
       "calls": [],
       "called_by": [
+        "backend/app/index/chunk.py",
         "backend/app/ingest/__init__.py",
         "backend/app/ingest/clean.py"
       ]
@@ -544,12 +602,14 @@
       "imports": [],
       "imported_by": [
         "backend/app/api/deps.py",
+        "backend/app/api/routes_search.py",
         "backend/app/index/__main__.py",
         "backend/app/ingest/__init__.py"
       ],
       "calls": [],
       "called_by": [
         "backend/app/api/deps.py",
+        "backend/app/api/routes_search.py",
         "backend/app/index/__main__.py",
         "backend/app/ingest/__init__.py"
       ]
@@ -1053,6 +1113,8 @@
         "frontend/src/api.ts::getDocument",
         "frontend/src/api.ts::submitFeedback",
         "frontend/src/api.ts::getHealth",
+        "frontend/src/api.ts::reindex",
+        "frontend/src/api.ts::getReindexProgress",
         "frontend/src/api.ts::getKpiSummary",
         "frontend/src/api.ts::getKpiVolume",
         "frontend/src/api.ts::getTopQueries",
@@ -1067,7 +1129,9 @@
         "frontend/src/components/ResultCard.tsx",
         "frontend/src/pages/DebugPage.tsx",
         "frontend/src/pages/HealthPage.tsx",
-        "frontend/src/pages/SearchPage.tsx"
+        "frontend/src/pages/HomePage.tsx",
+        "frontend/src/pages/SearchPage.tsx",
+        "frontend/src/useReindexJob.ts"
       ],
       "calls": [],
       "called_by": [
@@ -1076,7 +1140,9 @@
         "frontend/src/components/ResultCard.tsx",
         "frontend/src/pages/DebugPage.tsx",
         "frontend/src/pages/HealthPage.tsx",
-        "frontend/src/pages/SearchPage.tsx"
+        "frontend/src/pages/HomePage.tsx",
+        "frontend/src/pages/SearchPage.tsx",
+        "frontend/src/useReindexJob.ts"
       ]
     },
     "frontend/src/App.tsx": {
@@ -1087,6 +1153,7 @@
       ],
       "imports": [
         "frontend/src/api.ts",
+        "frontend/src/useReindexJob.ts",
         "frontend/src/components/Sidebar.tsx",
         "frontend/src/pages/HomePage.tsx",
         "frontend/src/pages/SearchPage.tsx",
@@ -1099,7 +1166,8 @@
       "imported_by": [
         "frontend/src/components/Navbar.tsx",
         "frontend/src/components/Sidebar.tsx",
-        "frontend/src/main.tsx"
+        "frontend/src/main.tsx",
+        "frontend/src/pages/HomePage.tsx"
       ],
       "calls": [
         "frontend/src/api.ts",
@@ -1110,12 +1178,14 @@
         "frontend/src/pages/HomePage.tsx",
         "frontend/src/pages/KpisPage.tsx",
         "frontend/src/pages/SearchPage.tsx",
-        "frontend/src/pages/SettingsPage.tsx"
+        "frontend/src/pages/SettingsPage.tsx",
+        "frontend/src/useReindexJob.ts"
       ],
       "called_by": [
         "frontend/src/components/Navbar.tsx",
         "frontend/src/components/Sidebar.tsx",
-        "frontend/src/main.tsx"
+        "frontend/src/main.tsx",
+        "frontend/src/pages/HomePage.tsx"
       ]
     },
     "frontend/src/callgraphTypes.ts": {
@@ -1162,6 +1232,7 @@
     "frontend/src/components/HealthGrid.tsx": {
       "language": "typescript",
       "functions": [
+        "frontend/src/components/HealthGrid.tsx::shortCommit",
         "frontend/src/components/HealthGrid.tsx::HealthGrid"
       ],
       "imports": [
@@ -1219,13 +1290,15 @@
         "frontend/src/components/Navbar.tsx::Navbar"
       ],
       "imports": [
-        "frontend/src/App.tsx"
+        "frontend/src/App.tsx",
+        "frontend/src/components/ThemeToggle.tsx"
       ],
       "imported_by": [
         "frontend/src/pages/HomePage.tsx"
       ],
       "calls": [
-        "frontend/src/App.tsx"
+        "frontend/src/App.tsx",
+        "frontend/src/components/ThemeToggle.tsx"
       ],
       "called_by": [
         "frontend/src/pages/HomePage.tsx"
@@ -1305,17 +1378,21 @@
       ],
       "imports": [],
       "imported_by": [
+        "frontend/src/components/Navbar.tsx",
         "frontend/src/components/Sidebar.tsx"
       ],
       "calls": [],
       "called_by": [
+        "frontend/src/components/Navbar.tsx",
         "frontend/src/components/Sidebar.tsx"
       ]
     },
     "frontend/src/components/VantaHero.tsx": {
       "language": "typescript",
       "functions": [
-        "frontend/src/components/VantaHero.tsx::VantaHero"
+        "frontend/src/components/VantaHero.tsx::hardenNet",
+        "frontend/src/components/VantaHero.tsx::VantaHero",
+        "frontend/src/components/VantaHero.tsx::fit"
       ],
       "imports": [],
       "imported_by": [
@@ -1385,6 +1462,9 @@
     "frontend/src/pages/DebugPage.tsx": {
       "language": "typescript",
       "functions": [
+        "frontend/src/pages/DebugPage.tsx::clampPage",
+        "frontend/src/pages/DebugPage.tsx::pageItems",
+        "frontend/src/pages/DebugPage.tsx::TablePager",
         "frontend/src/pages/DebugPage.tsx::clampLimit",
         "frontend/src/pages/DebugPage.tsx::levelParam",
         "frontend/src/pages/DebugPage.tsx::parseTs",
@@ -1419,6 +1499,9 @@
     "frontend/src/pages/EvaluationPage.tsx": {
       "language": "typescript",
       "functions": [
+        "frontend/src/pages/EvaluationPage.tsx::clampPage",
+        "frontend/src/pages/EvaluationPage.tsx::pageItems",
+        "frontend/src/pages/EvaluationPage.tsx::TablePager",
         "frontend/src/pages/EvaluationPage.tsx::fetchExperiments",
         "frontend/src/pages/EvaluationPage.tsx::parseTime",
         "frontend/src/pages/EvaluationPage.tsx::formatTime",
@@ -1466,9 +1549,14 @@
     "frontend/src/pages/HomePage.tsx": {
       "language": "typescript",
       "functions": [
+        "frontend/src/pages/HomePage.tsx::Icon",
+        "frontend/src/pages/HomePage.tsx::graph",
+        "frontend/src/pages/HomePage.tsx::WorkflowPanel",
         "frontend/src/pages/HomePage.tsx::HomePage"
       ],
       "imports": [
+        "frontend/src/api.ts",
+        "frontend/src/App.tsx",
         "frontend/src/components/VantaHero.tsx",
         "frontend/src/components/Navbar.tsx"
       ],
@@ -1476,6 +1564,8 @@
         "frontend/src/App.tsx"
       ],
       "calls": [
+        "frontend/src/App.tsx",
+        "frontend/src/api.ts",
         "frontend/src/components/Navbar.tsx",
         "frontend/src/components/VantaHero.tsx"
       ],
@@ -1486,6 +1576,9 @@
     "frontend/src/pages/KpisPage.tsx": {
       "language": "typescript",
       "functions": [
+        "frontend/src/pages/KpisPage.tsx::clampPage",
+        "frontend/src/pages/KpisPage.tsx::pageItems",
+        "frontend/src/pages/KpisPage.tsx::TablePager",
         "frontend/src/pages/KpisPage.tsx::fetchJson",
         "frontend/src/pages/KpisPage.tsx::loadKpis",
         "frontend/src/pages/KpisPage.tsx::runLoadTest",
@@ -1519,6 +1612,9 @@
       "language": "typescript",
       "functions": [
         "frontend/src/pages/SearchPage.tsx::localDateToIso",
+        "frontend/src/pages/SearchPage.tsx::clampPage",
+        "frontend/src/pages/SearchPage.tsx::pageItems",
+        "frontend/src/pages/SearchPage.tsx::TablePager",
         "frontend/src/pages/SearchPage.tsx::SearchPage",
         "frontend/src/pages/SearchPage.tsx::handleKeyDown",
         "frontend/src/pages/SearchPage.tsx::handleClear"
@@ -1561,6 +1657,25 @@
         "frontend/src/components/CallGraphView.tsx",
         "frontend/src/components/InfoTip.tsx",
         "frontend/src/infoTips.ts"
+      ],
+      "called_by": [
+        "frontend/src/App.tsx"
+      ]
+    },
+    "frontend/src/useReindexJob.ts": {
+      "language": "typescript",
+      "functions": [
+        "frontend/src/useReindexJob.ts::useReindexJob",
+        "frontend/src/useReindexJob.ts::tick"
+      ],
+      "imports": [
+        "frontend/src/api.ts"
+      ],
+      "imported_by": [
+        "frontend/src/App.tsx"
+      ],
+      "calls": [
+        "frontend/src/api.ts"
       ],
       "called_by": [
         "frontend/src/App.tsx"

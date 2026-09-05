@@ -1,12 +1,12 @@
 {
-  "generated_at": "2026-09-05T12:24:58Z",
+  "generated_at": "2026-09-05T13:29:13Z",
   "stats": {
-    "file_count": 66,
-    "function_count": 335,
+    "file_count": 69,
+    "function_count": 373,
     "uncalled_file_count": 15,
-    "uncalled_function_count": 87,
-    "file_edge_count": 115,
-    "function_edge_count": 336
+    "uncalled_function_count": 95,
+    "file_edge_count": 125,
+    "function_edge_count": 379
   },
   "files": {
     "backend/app/__init__.py": {
@@ -35,6 +35,7 @@
         "backend/app/api/deps.py::_pyproject_path",
         "backend/app/api/deps.py::get_version",
         "backend/app/api/deps.py::get_commit",
+        "backend/app/api/deps.py::get_commit_message",
         "backend/app/api/deps.py::SearchService.__init__",
         "backend/app/api/deps.py::SearchService.load",
         "backend/app/api/deps.py::_reconcile_index"
@@ -178,6 +179,10 @@
         "backend/app/api/routes_search.py::health",
         "backend/app/api/routes_search.py::metrics",
         "backend/app/api/routes_search.py::search",
+        "backend/app/api/routes_search.py::_progress_model",
+        "backend/app/api/routes_search.py::_run_reindex",
+        "backend/app/api/routes_search.py::reindex",
+        "backend/app/api/routes_search.py::reindex_progress",
         "backend/app/api/routes_search.py::get_document",
         "backend/app/api/routes_search.py::feedback"
       ],
@@ -185,7 +190,10 @@
         "backend/app/api/deps.py",
         "backend/app/api/schemas.py",
         "backend/app/config.py",
+        "backend/app/index/__main__.py",
         "backend/app/index/metadata.py",
+        "backend/app/index/progress.py",
+        "backend/app/ingest/writer.py",
         "backend/app/observability/metrics.py",
         "backend/app/search/filters.py",
         "backend/app/search/highlight.py",
@@ -199,7 +207,10 @@
         "backend/app/api/deps.py",
         "backend/app/api/schemas.py",
         "backend/app/config.py",
+        "backend/app/index/__main__.py",
         "backend/app/index/metadata.py",
+        "backend/app/index/progress.py",
+        "backend/app/ingest/writer.py",
         "backend/app/observability/metrics.py",
         "backend/app/search/filters.py",
         "backend/app/search/highlight.py",
@@ -300,6 +311,7 @@
         "backend/app/config.py::_env_str",
         "backend/app/config.py::_env_int",
         "backend/app/config.py::_env_float",
+        "backend/app/config.py::_env_granularity",
         "backend/app/config.py::load_config"
       ],
       "imports": [],
@@ -404,6 +416,7 @@
       "functions": [
         "backend/app/index/__main__.py::_resolve_path",
         "backend/app/index/__main__.py::_embed_text",
+        "backend/app/index/__main__.py::_embedding_inputs",
         "backend/app/index/__main__.py::build_indexes",
         "backend/app/index/__main__.py::_build_parser",
         "backend/app/index/__main__.py::main"
@@ -414,13 +427,16 @@
         "backend/app/search/bm25.py",
         "backend/app/search/embedder.py",
         "backend/app/search/vector.py",
+        "backend/app/index/chunk.py",
         "backend/app/index/metadata.py"
       ],
       "imported_by": [
-        "backend/app/api/deps.py"
+        "backend/app/api/deps.py",
+        "backend/app/api/routes_search.py"
       ],
       "calls": [
         "backend/app/config.py",
+        "backend/app/index/chunk.py",
         "backend/app/index/metadata.py",
         "backend/app/ingest/writer.py",
         "backend/app/search/bm25.py",
@@ -428,7 +444,27 @@
         "backend/app/search/vector.py"
       ],
       "called_by": [
-        "backend/app/api/deps.py"
+        "backend/app/api/deps.py",
+        "backend/app/api/routes_search.py"
+      ]
+    },
+    "backend/app/index/chunk.py": {
+      "language": "python",
+      "functions": [
+        "backend/app/index/chunk.py::estimate_tokens",
+        "backend/app/index/chunk.py::chunk_document"
+      ],
+      "imports": [
+        "backend/app/ingest/split.py"
+      ],
+      "imported_by": [
+        "backend/app/index/__main__.py"
+      ],
+      "calls": [
+        "backend/app/ingest/split.py"
+      ],
+      "called_by": [
+        "backend/app/index/__main__.py"
       ]
     },
     "backend/app/index/metadata.py": {
@@ -452,6 +488,26 @@
         "backend/app/api/routes_search.py",
         "backend/app/eval/__main__.py",
         "backend/app/index/__main__.py"
+      ]
+    },
+    "backend/app/index/progress.py": {
+      "language": "python",
+      "functions": [
+        "backend/app/index/progress.py::snapshot",
+        "backend/app/index/progress.py::start",
+        "backend/app/index/progress.py::try_start",
+        "backend/app/index/progress.py::update",
+        "backend/app/index/progress.py::finishing",
+        "backend/app/index/progress.py::finish",
+        "backend/app/index/progress.py::fail"
+      ],
+      "imports": [],
+      "imported_by": [
+        "backend/app/api/routes_search.py"
+      ],
+      "calls": [],
+      "called_by": [
+        "backend/app/api/routes_search.py"
       ]
     },
     "backend/app/ingest/__init__.py": {
@@ -531,11 +587,13 @@
       ],
       "imports": [],
       "imported_by": [
+        "backend/app/index/chunk.py",
         "backend/app/ingest/__init__.py",
         "backend/app/ingest/clean.py"
       ],
       "calls": [],
       "called_by": [
+        "backend/app/index/chunk.py",
         "backend/app/ingest/__init__.py",
         "backend/app/ingest/clean.py"
       ]
@@ -552,12 +610,14 @@
       "imports": [],
       "imported_by": [
         "backend/app/api/deps.py",
+        "backend/app/api/routes_search.py",
         "backend/app/index/__main__.py",
         "backend/app/ingest/__init__.py"
       ],
       "calls": [],
       "called_by": [
         "backend/app/api/deps.py",
+        "backend/app/api/routes_search.py",
         "backend/app/index/__main__.py",
         "backend/app/ingest/__init__.py"
       ]
@@ -1061,6 +1121,8 @@
         "frontend/src/api.ts::getDocument",
         "frontend/src/api.ts::submitFeedback",
         "frontend/src/api.ts::getHealth",
+        "frontend/src/api.ts::reindex",
+        "frontend/src/api.ts::getReindexProgress",
         "frontend/src/api.ts::getKpiSummary",
         "frontend/src/api.ts::getKpiVolume",
         "frontend/src/api.ts::getTopQueries",
@@ -1075,7 +1137,9 @@
         "frontend/src/components/ResultCard.tsx",
         "frontend/src/pages/DebugPage.tsx",
         "frontend/src/pages/HealthPage.tsx",
-        "frontend/src/pages/SearchPage.tsx"
+        "frontend/src/pages/HomePage.tsx",
+        "frontend/src/pages/SearchPage.tsx",
+        "frontend/src/useReindexJob.ts"
       ],
       "calls": [],
       "called_by": [
@@ -1084,7 +1148,9 @@
         "frontend/src/components/ResultCard.tsx",
         "frontend/src/pages/DebugPage.tsx",
         "frontend/src/pages/HealthPage.tsx",
-        "frontend/src/pages/SearchPage.tsx"
+        "frontend/src/pages/HomePage.tsx",
+        "frontend/src/pages/SearchPage.tsx",
+        "frontend/src/useReindexJob.ts"
       ]
     },
     "frontend/src/App.tsx": {
@@ -1095,6 +1161,7 @@
       ],
       "imports": [
         "frontend/src/api.ts",
+        "frontend/src/useReindexJob.ts",
         "frontend/src/components/Sidebar.tsx",
         "frontend/src/pages/HomePage.tsx",
         "frontend/src/pages/SearchPage.tsx",
@@ -1107,7 +1174,8 @@
       "imported_by": [
         "frontend/src/components/Navbar.tsx",
         "frontend/src/components/Sidebar.tsx",
-        "frontend/src/main.tsx"
+        "frontend/src/main.tsx",
+        "frontend/src/pages/HomePage.tsx"
       ],
       "calls": [
         "frontend/src/api.ts",
@@ -1118,12 +1186,14 @@
         "frontend/src/pages/HomePage.tsx",
         "frontend/src/pages/KpisPage.tsx",
         "frontend/src/pages/SearchPage.tsx",
-        "frontend/src/pages/SettingsPage.tsx"
+        "frontend/src/pages/SettingsPage.tsx",
+        "frontend/src/useReindexJob.ts"
       ],
       "called_by": [
         "frontend/src/components/Navbar.tsx",
         "frontend/src/components/Sidebar.tsx",
-        "frontend/src/main.tsx"
+        "frontend/src/main.tsx",
+        "frontend/src/pages/HomePage.tsx"
       ]
     },
     "frontend/src/callgraphTypes.ts": {
@@ -1170,6 +1240,7 @@
     "frontend/src/components/HealthGrid.tsx": {
       "language": "typescript",
       "functions": [
+        "frontend/src/components/HealthGrid.tsx::shortCommit",
         "frontend/src/components/HealthGrid.tsx::HealthGrid"
       ],
       "imports": [
@@ -1227,13 +1298,15 @@
         "frontend/src/components/Navbar.tsx::Navbar"
       ],
       "imports": [
-        "frontend/src/App.tsx"
+        "frontend/src/App.tsx",
+        "frontend/src/components/ThemeToggle.tsx"
       ],
       "imported_by": [
         "frontend/src/pages/HomePage.tsx"
       ],
       "calls": [
-        "frontend/src/App.tsx"
+        "frontend/src/App.tsx",
+        "frontend/src/components/ThemeToggle.tsx"
       ],
       "called_by": [
         "frontend/src/pages/HomePage.tsx"
@@ -1313,17 +1386,21 @@
       ],
       "imports": [],
       "imported_by": [
+        "frontend/src/components/Navbar.tsx",
         "frontend/src/components/Sidebar.tsx"
       ],
       "calls": [],
       "called_by": [
+        "frontend/src/components/Navbar.tsx",
         "frontend/src/components/Sidebar.tsx"
       ]
     },
     "frontend/src/components/VantaHero.tsx": {
       "language": "typescript",
       "functions": [
-        "frontend/src/components/VantaHero.tsx::VantaHero"
+        "frontend/src/components/VantaHero.tsx::hardenNet",
+        "frontend/src/components/VantaHero.tsx::VantaHero",
+        "frontend/src/components/VantaHero.tsx::fit"
       ],
       "imports": [],
       "imported_by": [
@@ -1393,6 +1470,9 @@
     "frontend/src/pages/DebugPage.tsx": {
       "language": "typescript",
       "functions": [
+        "frontend/src/pages/DebugPage.tsx::clampPage",
+        "frontend/src/pages/DebugPage.tsx::pageItems",
+        "frontend/src/pages/DebugPage.tsx::TablePager",
         "frontend/src/pages/DebugPage.tsx::clampLimit",
         "frontend/src/pages/DebugPage.tsx::levelParam",
         "frontend/src/pages/DebugPage.tsx::parseTs",
@@ -1427,6 +1507,9 @@
     "frontend/src/pages/EvaluationPage.tsx": {
       "language": "typescript",
       "functions": [
+        "frontend/src/pages/EvaluationPage.tsx::clampPage",
+        "frontend/src/pages/EvaluationPage.tsx::pageItems",
+        "frontend/src/pages/EvaluationPage.tsx::TablePager",
         "frontend/src/pages/EvaluationPage.tsx::fetchExperiments",
         "frontend/src/pages/EvaluationPage.tsx::parseTime",
         "frontend/src/pages/EvaluationPage.tsx::formatTime",
@@ -1474,9 +1557,14 @@
     "frontend/src/pages/HomePage.tsx": {
       "language": "typescript",
       "functions": [
+        "frontend/src/pages/HomePage.tsx::Icon",
+        "frontend/src/pages/HomePage.tsx::graph",
+        "frontend/src/pages/HomePage.tsx::WorkflowPanel",
         "frontend/src/pages/HomePage.tsx::HomePage"
       ],
       "imports": [
+        "frontend/src/api.ts",
+        "frontend/src/App.tsx",
         "frontend/src/components/VantaHero.tsx",
         "frontend/src/components/Navbar.tsx"
       ],
@@ -1484,6 +1572,8 @@
         "frontend/src/App.tsx"
       ],
       "calls": [
+        "frontend/src/App.tsx",
+        "frontend/src/api.ts",
         "frontend/src/components/Navbar.tsx",
         "frontend/src/components/VantaHero.tsx"
       ],
@@ -1494,6 +1584,9 @@
     "frontend/src/pages/KpisPage.tsx": {
       "language": "typescript",
       "functions": [
+        "frontend/src/pages/KpisPage.tsx::clampPage",
+        "frontend/src/pages/KpisPage.tsx::pageItems",
+        "frontend/src/pages/KpisPage.tsx::TablePager",
         "frontend/src/pages/KpisPage.tsx::fetchJson",
         "frontend/src/pages/KpisPage.tsx::loadKpis",
         "frontend/src/pages/KpisPage.tsx::runLoadTest",
@@ -1527,6 +1620,9 @@
       "language": "typescript",
       "functions": [
         "frontend/src/pages/SearchPage.tsx::localDateToIso",
+        "frontend/src/pages/SearchPage.tsx::clampPage",
+        "frontend/src/pages/SearchPage.tsx::pageItems",
+        "frontend/src/pages/SearchPage.tsx::TablePager",
         "frontend/src/pages/SearchPage.tsx::SearchPage",
         "frontend/src/pages/SearchPage.tsx::handleKeyDown",
         "frontend/src/pages/SearchPage.tsx::handleClear"
@@ -1573,6 +1669,25 @@
       "called_by": [
         "frontend/src/App.tsx"
       ]
+    },
+    "frontend/src/useReindexJob.ts": {
+      "language": "typescript",
+      "functions": [
+        "frontend/src/useReindexJob.ts::useReindexJob",
+        "frontend/src/useReindexJob.ts::tick"
+      ],
+      "imports": [
+        "frontend/src/api.ts"
+      ],
+      "imported_by": [
+        "frontend/src/App.tsx"
+      ],
+      "calls": [
+        "frontend/src/api.ts"
+      ],
+      "called_by": [
+        "frontend/src/App.tsx"
+      ]
     }
   },
   "functions": {
@@ -1580,7 +1695,7 @@
       "file": "backend/app/api/deps.py",
       "name": "_pyproject_path",
       "qualname": "_pyproject_path",
-      "lineno": 33,
+      "lineno": 35,
       "calls": [],
       "called_by": [
         "backend/app/api/deps.py::get_version"
@@ -1590,7 +1705,7 @@
       "file": "backend/app/api/deps.py",
       "name": "get_version",
       "qualname": "get_version",
-      "lineno": 38,
+      "lineno": 40,
       "calls": [
         "backend/app/api/deps.py::_pyproject_path",
         "backend/app/api/deps.py::SearchService.load"
@@ -1603,7 +1718,17 @@
       "file": "backend/app/api/deps.py",
       "name": "get_commit",
       "qualname": "get_commit",
-      "lineno": 45,
+      "lineno": 47,
+      "calls": [],
+      "called_by": [
+        "backend/app/api/routes_search.py::health"
+      ]
+    },
+    "backend/app/api/deps.py::get_commit_message": {
+      "file": "backend/app/api/deps.py",
+      "name": "get_commit_message",
+      "qualname": "get_commit_message",
+      "lineno": 72,
       "calls": [],
       "called_by": [
         "backend/app/api/routes_search.py::health"
@@ -1613,7 +1738,7 @@
       "file": "backend/app/api/deps.py",
       "name": "__init__",
       "qualname": "SearchService.__init__",
-      "lineno": 73,
+      "lineno": 97,
       "calls": [],
       "called_by": []
     },
@@ -1621,7 +1746,7 @@
       "file": "backend/app/api/deps.py",
       "name": "load",
       "qualname": "SearchService.load",
-      "lineno": 80,
+      "lineno": 104,
       "calls": [
         "backend/app/config.py::load_config",
         "backend/app/ingest/writer.py::read_jsonl",
@@ -1632,14 +1757,15 @@
       ],
       "called_by": [
         "backend/app/api/deps.py::get_version",
-        "backend/app/api/main.py::create_app"
+        "backend/app/api/main.py::create_app",
+        "backend/app/api/routes_search.py::_run_reindex"
       ]
     },
     "backend/app/api/deps.py::_reconcile_index": {
       "file": "backend/app/api/deps.py",
       "name": "_reconcile_index",
       "qualname": "_reconcile_index",
-      "lineno": 132,
+      "lineno": 156,
       "calls": [
         "backend/app/index/__main__.py::build_indexes"
       ],
@@ -1885,10 +2011,11 @@
       "file": "backend/app/api/routes_search.py",
       "name": "_get_service",
       "qualname": "_get_service",
-      "lineno": 120,
+      "lineno": 147,
       "calls": [],
       "called_by": [
         "backend/app/api/routes_search.py::search",
+        "backend/app/api/routes_search.py::reindex",
         "backend/app/api/routes_search.py::get_document",
         "backend/app/api/routes_search.py::feedback"
       ]
@@ -1897,7 +2024,7 @@
       "file": "backend/app/api/routes_search.py",
       "name": "_index_metadata",
       "qualname": "_index_metadata",
-      "lineno": 124,
+      "lineno": 151,
       "calls": [
         "backend/app/index/metadata.py::IndexMetadata.load",
         "backend/app/config.py::load_config"
@@ -1910,10 +2037,11 @@
       "file": "backend/app/api/routes_search.py",
       "name": "health",
       "qualname": "health",
-      "lineno": 133,
+      "lineno": 160,
       "calls": [
         "backend/app/api/deps.py::get_version",
         "backend/app/api/deps.py::get_commit",
+        "backend/app/api/deps.py::get_commit_message",
         "backend/app/api/routes_search.py::_index_metadata"
       ],
       "called_by": []
@@ -1922,7 +2050,7 @@
       "file": "backend/app/api/routes_search.py",
       "name": "metrics",
       "qualname": "metrics",
-      "lineno": 144,
+      "lineno": 172,
       "calls": [
         "backend/app/observability/metrics.py::render"
       ],
@@ -1932,9 +2060,60 @@
       "file": "backend/app/api/routes_search.py",
       "name": "search",
       "qualname": "search",
-      "lineno": 153,
+      "lineno": 181,
       "calls": [
         "backend/app/api/routes_search.py::_get_service"
+      ],
+      "called_by": []
+    },
+    "backend/app/api/routes_search.py::_progress_model": {
+      "file": "backend/app/api/routes_search.py",
+      "name": "_progress_model",
+      "qualname": "_progress_model",
+      "lineno": 229,
+      "calls": [
+        "backend/app/index/progress.py::snapshot"
+      ],
+      "called_by": [
+        "backend/app/api/routes_search.py::reindex",
+        "backend/app/api/routes_search.py::reindex_progress"
+      ]
+    },
+    "backend/app/api/routes_search.py::_run_reindex": {
+      "file": "backend/app/api/routes_search.py",
+      "name": "_run_reindex",
+      "qualname": "_run_reindex",
+      "lineno": 242,
+      "calls": [
+        "backend/app/index/__main__.py::build_indexes",
+        "backend/app/index/progress.py::finishing",
+        "backend/app/api/deps.py::SearchService.load",
+        "backend/app/index/progress.py::finish",
+        "backend/app/index/progress.py::fail"
+      ],
+      "called_by": []
+    },
+    "backend/app/api/routes_search.py::reindex": {
+      "file": "backend/app/api/routes_search.py",
+      "name": "reindex",
+      "qualname": "reindex",
+      "lineno": 267,
+      "calls": [
+        "backend/app/api/routes_search.py::_get_service",
+        "backend/app/config.py::load_config",
+        "backend/app/ingest/writer.py::read_jsonl",
+        "backend/app/index/progress.py::try_start",
+        "backend/app/api/routes_search.py::_progress_model"
+      ],
+      "called_by": []
+    },
+    "backend/app/api/routes_search.py::reindex_progress": {
+      "file": "backend/app/api/routes_search.py",
+      "name": "reindex_progress",
+      "qualname": "reindex_progress",
+      "lineno": 310,
+      "calls": [
+        "backend/app/api/routes_search.py::_progress_model"
       ],
       "called_by": []
     },
@@ -1942,7 +2121,7 @@
       "file": "backend/app/api/routes_search.py",
       "name": "get_document",
       "qualname": "get_document",
-      "lineno": 202,
+      "lineno": 316,
       "calls": [
         "backend/app/api/routes_search.py::_get_service",
         "backend/app/search/tokenize.py::tokenize",
@@ -1956,7 +2135,7 @@
       "file": "backend/app/api/routes_search.py",
       "name": "feedback",
       "qualname": "feedback",
-      "lineno": 237,
+      "lineno": 351,
       "calls": [
         "backend/app/api/routes_search.py::_get_service",
         "backend/app/storage/repo.py::insert_feedback"
@@ -2227,7 +2406,7 @@
       "file": "backend/app/config.py",
       "name": "_is_repo_root",
       "qualname": "_is_repo_root",
-      "lineno": 30,
+      "lineno": 32,
       "calls": [],
       "called_by": [
         "backend/app/config.py::_walk_up"
@@ -2237,7 +2416,7 @@
       "file": "backend/app/config.py",
       "name": "_walk_up",
       "qualname": "_walk_up",
-      "lineno": 34,
+      "lineno": 36,
       "calls": [
         "backend/app/config.py::_is_repo_root"
       ],
@@ -2249,7 +2428,7 @@
       "file": "backend/app/config.py",
       "name": "find_repo_root",
       "qualname": "find_repo_root",
-      "lineno": 42,
+      "lineno": 44,
       "calls": [
         "backend/app/config.py::_walk_up"
       ],
@@ -2263,9 +2442,10 @@
       "file": "backend/app/config.py",
       "name": "_env_str",
       "qualname": "_env_str",
-      "lineno": 56,
+      "lineno": 58,
       "calls": [],
       "called_by": [
+        "backend/app/config.py::_env_granularity",
         "backend/app/config.py::load_config"
       ]
     },
@@ -2273,7 +2453,7 @@
       "file": "backend/app/config.py",
       "name": "_env_int",
       "qualname": "_env_int",
-      "lineno": 63,
+      "lineno": 65,
       "calls": [],
       "called_by": [
         "backend/app/config.py::load_config"
@@ -2283,8 +2463,20 @@
       "file": "backend/app/config.py",
       "name": "_env_float",
       "qualname": "_env_float",
-      "lineno": 70,
+      "lineno": 72,
       "calls": [],
+      "called_by": [
+        "backend/app/config.py::load_config"
+      ]
+    },
+    "backend/app/config.py::_env_granularity": {
+      "file": "backend/app/config.py",
+      "name": "_env_granularity",
+      "qualname": "_env_granularity",
+      "lineno": 82,
+      "calls": [
+        "backend/app/config.py::_env_str"
+      ],
       "called_by": [
         "backend/app/config.py::load_config"
       ]
@@ -2293,12 +2485,13 @@
       "file": "backend/app/config.py",
       "name": "load_config",
       "qualname": "load_config",
-      "lineno": 78,
+      "lineno": 88,
       "calls": [
         "backend/app/config.py::find_repo_root",
         "backend/app/config.py::_env_str",
-        "backend/app/config.py::_env_float",
-        "backend/app/config.py::_env_int"
+        "backend/app/config.py::_env_int",
+        "backend/app/config.py::_env_granularity",
+        "backend/app/config.py::_env_float"
       ],
       "called_by": [
         "backend/app/api/deps.py::SearchService.load",
@@ -2307,9 +2500,11 @@
         "backend/app/api/routes_dashboard.py::_db",
         "backend/app/api/routes_dashboard.py::_read_experiments",
         "backend/app/api/routes_search.py::_index_metadata",
+        "backend/app/api/routes_search.py::reindex",
         "backend/app/api/schemas.py::_default_alpha",
         "backend/app/api/schemas.py::_default_normalization",
         "backend/app/eval/__main__.py::main",
+        "backend/app/index/__main__.py::build_indexes",
         "backend/app/index/__main__.py::main",
         "backend/app/ingest/__init__.py::main",
         "backend/app/loadtest/burst.py::run_search_burst",
@@ -2537,7 +2732,7 @@
       "file": "backend/app/index/__main__.py",
       "name": "_resolve_path",
       "qualname": "_resolve_path",
-      "lineno": 27,
+      "lineno": 29,
       "calls": [],
       "called_by": [
         "backend/app/index/__main__.py::main"
@@ -2547,8 +2742,21 @@
       "file": "backend/app/index/__main__.py",
       "name": "_embed_text",
       "qualname": "_embed_text",
-      "lineno": 34,
+      "lineno": 36,
       "calls": [],
+      "called_by": [
+        "backend/app/index/__main__.py::_embedding_inputs"
+      ]
+    },
+    "backend/app/index/__main__.py::_embedding_inputs": {
+      "file": "backend/app/index/__main__.py",
+      "name": "_embedding_inputs",
+      "qualname": "_embedding_inputs",
+      "lineno": 40,
+      "calls": [
+        "backend/app/index/__main__.py::_embed_text",
+        "backend/app/index/chunk.py::chunk_document"
+      ],
       "called_by": [
         "backend/app/index/__main__.py::build_indexes"
       ]
@@ -2557,16 +2765,18 @@
       "file": "backend/app/index/__main__.py",
       "name": "build_indexes",
       "qualname": "build_indexes",
-      "lineno": 38,
+      "lineno": 68,
       "calls": [
+        "backend/app/config.py::load_config",
         "backend/app/search/bm25.py::BM25Index.build",
-        "backend/app/index/__main__.py::_embed_text",
+        "backend/app/index/__main__.py::_embedding_inputs",
         "backend/app/search/vector.py::VectorIndex.build",
         "backend/app/index/metadata.py::IndexMetadata.create",
         "backend/app/ingest/writer.py::corpus_hash"
       ],
       "called_by": [
         "backend/app/api/deps.py::_reconcile_index",
+        "backend/app/api/routes_search.py::_run_reindex",
         "backend/app/index/__main__.py::main"
       ]
     },
@@ -2574,7 +2784,7 @@
       "file": "backend/app/index/__main__.py",
       "name": "_build_parser",
       "qualname": "_build_parser",
-      "lineno": 65,
+      "lineno": 111,
       "calls": [],
       "called_by": [
         "backend/app/index/__main__.py::main"
@@ -2584,7 +2794,7 @@
       "file": "backend/app/index/__main__.py",
       "name": "main",
       "qualname": "main",
-      "lineno": 81,
+      "lineno": 137,
       "calls": [
         "backend/app/config.py::load_config",
         "backend/app/index/__main__.py::_build_parser",
@@ -2596,11 +2806,34 @@
       ],
       "called_by": []
     },
+    "backend/app/index/chunk.py::estimate_tokens": {
+      "file": "backend/app/index/chunk.py",
+      "name": "estimate_tokens",
+      "qualname": "estimate_tokens",
+      "lineno": 22,
+      "calls": [],
+      "called_by": [
+        "backend/app/index/chunk.py::chunk_document"
+      ]
+    },
+    "backend/app/index/chunk.py::chunk_document": {
+      "file": "backend/app/index/chunk.py",
+      "name": "chunk_document",
+      "qualname": "chunk_document",
+      "lineno": 30,
+      "calls": [
+        "backend/app/ingest/split.py::split_sentences",
+        "backend/app/index/chunk.py::estimate_tokens"
+      ],
+      "called_by": [
+        "backend/app/index/__main__.py::_embedding_inputs"
+      ]
+    },
     "backend/app/index/metadata.py::IndexMetadata.create": {
       "file": "backend/app/index/metadata.py",
       "name": "create",
       "qualname": "IndexMetadata.create",
-      "lineno": 24,
+      "lineno": 26,
       "calls": [],
       "called_by": [
         "backend/app/index/__main__.py::build_indexes"
@@ -2610,7 +2843,7 @@
       "file": "backend/app/index/metadata.py",
       "name": "save",
       "qualname": "IndexMetadata.save",
-      "lineno": 43,
+      "lineno": 55,
       "calls": [],
       "called_by": []
     },
@@ -2618,7 +2851,7 @@
       "file": "backend/app/index/metadata.py",
       "name": "load",
       "qualname": "IndexMetadata.load",
-      "lineno": 55,
+      "lineno": 67,
       "calls": [],
       "called_by": [
         "backend/app/api/deps.py::SearchService.load",
@@ -2631,12 +2864,81 @@
       "file": "backend/app/index/metadata.py",
       "name": "is_up_to_date",
       "qualname": "is_up_to_date",
-      "lineno": 68,
+      "lineno": 83,
       "calls": [
         "backend/app/index/metadata.py::IndexMetadata.load"
       ],
       "called_by": [
         "backend/app/index/__main__.py::main"
+      ]
+    },
+    "backend/app/index/progress.py::snapshot": {
+      "file": "backend/app/index/progress.py",
+      "name": "snapshot",
+      "qualname": "snapshot",
+      "lineno": 38,
+      "calls": [],
+      "called_by": [
+        "backend/app/api/routes_search.py::_progress_model"
+      ]
+    },
+    "backend/app/index/progress.py::start": {
+      "file": "backend/app/index/progress.py",
+      "name": "start",
+      "qualname": "start",
+      "lineno": 44,
+      "calls": [
+        "backend/app/index/progress.py::try_start"
+      ],
+      "called_by": []
+    },
+    "backend/app/index/progress.py::try_start": {
+      "file": "backend/app/index/progress.py",
+      "name": "try_start",
+      "qualname": "try_start",
+      "lineno": 49,
+      "calls": [],
+      "called_by": [
+        "backend/app/api/routes_search.py::reindex",
+        "backend/app/index/progress.py::start"
+      ]
+    },
+    "backend/app/index/progress.py::update": {
+      "file": "backend/app/index/progress.py",
+      "name": "update",
+      "qualname": "update",
+      "lineno": 67,
+      "calls": [],
+      "called_by": []
+    },
+    "backend/app/index/progress.py::finishing": {
+      "file": "backend/app/index/progress.py",
+      "name": "finishing",
+      "qualname": "finishing",
+      "lineno": 85,
+      "calls": [],
+      "called_by": [
+        "backend/app/api/routes_search.py::_run_reindex"
+      ]
+    },
+    "backend/app/index/progress.py::finish": {
+      "file": "backend/app/index/progress.py",
+      "name": "finish",
+      "qualname": "finish",
+      "lineno": 100,
+      "calls": [],
+      "called_by": [
+        "backend/app/api/routes_search.py::_run_reindex"
+      ]
+    },
+    "backend/app/index/progress.py::fail": {
+      "file": "backend/app/index/progress.py",
+      "name": "fail",
+      "qualname": "fail",
+      "lineno": 115,
+      "calls": [],
+      "called_by": [
+        "backend/app/api/routes_search.py::_run_reindex"
       ]
     },
     "backend/app/ingest/__init__.py::_resolve_path": {
@@ -2855,6 +3157,7 @@
         "backend/app/ingest/split.py::_is_sentence_end"
       ],
       "called_by": [
+        "backend/app/index/chunk.py::chunk_document",
         "backend/app/ingest/__init__.py::_format_text",
         "backend/app/ingest/clean.py::_cap_at_sentence"
       ]
@@ -2887,6 +3190,7 @@
       "calls": [],
       "called_by": [
         "backend/app/api/deps.py::SearchService.load",
+        "backend/app/api/routes_search.py::reindex",
         "backend/app/index/__main__.py::main"
       ]
     },
@@ -3234,7 +3538,7 @@
       "file": "backend/app/search/embedder.py",
       "name": "encode",
       "qualname": "Embedder.encode",
-      "lineno": 22,
+      "lineno": 25,
       "calls": [],
       "called_by": []
     },
@@ -3242,7 +3546,7 @@
       "file": "backend/app/search/embedder.py",
       "name": "__init__",
       "qualname": "SentenceTransformerEmbedder.__init__",
-      "lineno": 28,
+      "lineno": 35,
       "calls": [
         "backend/app/config.py::load_config"
       ],
@@ -3252,7 +3556,7 @@
       "file": "backend/app/search/embedder.py",
       "name": "encode",
       "qualname": "SentenceTransformerEmbedder.encode",
-      "lineno": 41,
+      "lineno": 59,
       "calls": [],
       "called_by": []
     },
@@ -3502,7 +3806,7 @@
       "file": "backend/app/search/vector.py",
       "name": "query",
       "qualname": "VectorIndex.query",
-      "lineno": 47,
+      "lineno": 51,
       "calls": [],
       "called_by": []
     },
@@ -3510,7 +3814,7 @@
       "file": "backend/app/search/vector.py",
       "name": "save",
       "qualname": "VectorIndex.save",
-      "lineno": 66,
+      "lineno": 81,
       "calls": [],
       "called_by": []
     },
@@ -3518,7 +3822,7 @@
       "file": "backend/app/search/vector.py",
       "name": "load",
       "qualname": "VectorIndex.load",
-      "lineno": 76,
+      "lineno": 91,
       "calls": [],
       "called_by": [
         "backend/app/api/deps.py::SearchService.load"
@@ -4318,7 +4622,7 @@
       "file": "frontend/src/api.ts",
       "name": "_fetch",
       "qualname": "_fetch",
-      "lineno": 110,
+      "lineno": 131,
       "calls": [],
       "called_by": []
     },
@@ -4326,7 +4630,7 @@
       "file": "frontend/src/api.ts",
       "name": "search",
       "qualname": "search",
-      "lineno": 141,
+      "lineno": 162,
       "calls": [],
       "called_by": [
         "frontend/src/pages/SearchPage.tsx::SearchPage"
@@ -4336,7 +4640,7 @@
       "file": "frontend/src/api.ts",
       "name": "getDocument",
       "qualname": "getDocument",
-      "lineno": 149,
+      "lineno": 170,
       "calls": [],
       "called_by": [
         "frontend/src/components/ResultCard.tsx::ResultCard"
@@ -4346,7 +4650,7 @@
       "file": "frontend/src/api.ts",
       "name": "submitFeedback",
       "qualname": "submitFeedback",
-      "lineno": 161,
+      "lineno": 182,
       "calls": [],
       "called_by": [
         "frontend/src/components/ResultCard.tsx::ResultCard",
@@ -4357,18 +4661,39 @@
       "file": "frontend/src/api.ts",
       "name": "getHealth",
       "qualname": "getHealth",
-      "lineno": 169,
+      "lineno": 190,
       "calls": [],
       "called_by": [
         "frontend/src/App.tsx::App",
-        "frontend/src/pages/HealthPage.tsx::HealthPage"
+        "frontend/src/pages/HealthPage.tsx::HealthPage",
+        "frontend/src/pages/HomePage.tsx::HomePage"
+      ]
+    },
+    "frontend/src/api.ts::reindex": {
+      "file": "frontend/src/api.ts",
+      "name": "reindex",
+      "qualname": "reindex",
+      "lineno": 194,
+      "calls": [],
+      "called_by": [
+        "frontend/src/useReindexJob.ts::useReindexJob"
+      ]
+    },
+    "frontend/src/api.ts::getReindexProgress": {
+      "file": "frontend/src/api.ts",
+      "name": "getReindexProgress",
+      "qualname": "getReindexProgress",
+      "lineno": 204,
+      "calls": [],
+      "called_by": [
+        "frontend/src/useReindexJob.ts::useReindexJob"
       ]
     },
     "frontend/src/api.ts::getKpiSummary": {
       "file": "frontend/src/api.ts",
       "name": "getKpiSummary",
       "qualname": "getKpiSummary",
-      "lineno": 173,
+      "lineno": 208,
       "calls": [],
       "called_by": []
     },
@@ -4376,7 +4701,7 @@
       "file": "frontend/src/api.ts",
       "name": "getKpiVolume",
       "qualname": "getKpiVolume",
-      "lineno": 177,
+      "lineno": 212,
       "calls": [],
       "called_by": []
     },
@@ -4384,7 +4709,7 @@
       "file": "frontend/src/api.ts",
       "name": "getTopQueries",
       "qualname": "getTopQueries",
-      "lineno": 181,
+      "lineno": 216,
       "calls": [],
       "called_by": []
     },
@@ -4392,7 +4717,7 @@
       "file": "frontend/src/api.ts",
       "name": "getZeroResultQueries",
       "qualname": "getZeroResultQueries",
-      "lineno": 187,
+      "lineno": 222,
       "calls": [],
       "called_by": []
     },
@@ -4400,7 +4725,7 @@
       "file": "frontend/src/api.ts",
       "name": "getExperiments",
       "qualname": "getExperiments",
-      "lineno": 193,
+      "lineno": 228,
       "calls": [],
       "called_by": []
     },
@@ -4408,7 +4733,7 @@
       "file": "frontend/src/api.ts",
       "name": "getLogs",
       "qualname": "getLogs",
-      "lineno": 197,
+      "lineno": 232,
       "calls": [],
       "called_by": []
     },
@@ -4416,7 +4741,7 @@
       "file": "frontend/src/App.tsx",
       "name": "useTheme",
       "qualname": "useTheme",
-      "lineno": 15,
+      "lineno": 16,
       "calls": [],
       "called_by": [
         "frontend/src/App.tsx::App"
@@ -4426,9 +4751,10 @@
       "file": "frontend/src/App.tsx",
       "name": "App",
       "qualname": "App",
-      "lineno": 30,
+      "lineno": 31,
       "calls": [
         "frontend/src/App.tsx::useTheme",
+        "frontend/src/useReindexJob.ts::useReindexJob",
         "frontend/src/api.ts::getHealth",
         "frontend/src/pages/HomePage.tsx::HomePage",
         "frontend/src/components/Sidebar.tsx::Sidebar",
@@ -4553,12 +4879,23 @@
         "frontend/src/components/CallGraphView.tsx::CallGraphView"
       ]
     },
+    "frontend/src/components/HealthGrid.tsx::shortCommit": {
+      "file": "frontend/src/components/HealthGrid.tsx",
+      "name": "shortCommit",
+      "qualname": "shortCommit",
+      "lineno": 9,
+      "calls": [],
+      "called_by": [
+        "frontend/src/components/HealthGrid.tsx::HealthGrid"
+      ]
+    },
     "frontend/src/components/HealthGrid.tsx::HealthGrid": {
       "file": "frontend/src/components/HealthGrid.tsx",
       "name": "HealthGrid",
       "qualname": "HealthGrid",
-      "lineno": 9,
+      "lineno": 14,
       "calls": [
+        "frontend/src/components/HealthGrid.tsx::shortCommit",
         "frontend/src/components/InfoTip.tsx::InfoTip",
         "frontend/src/components/InfoTip.tsx::InfoLabel"
       ],
@@ -4660,8 +4997,10 @@
       "file": "frontend/src/components/Navbar.tsx",
       "name": "Navbar",
       "qualname": "Navbar",
-      "lineno": 17,
-      "calls": [],
+      "lineno": 20,
+      "calls": [
+        "frontend/src/components/ThemeToggle.tsx::ThemeToggle"
+      ],
       "called_by": [
         "frontend/src/pages/HomePage.tsx::HomePage"
       ]
@@ -4777,7 +5116,7 @@
       "file": "frontend/src/components/Sidebar.tsx",
       "name": "Sidebar",
       "qualname": "Sidebar",
-      "lineno": 72,
+      "lineno": 75,
       "calls": [
         "frontend/src/components/ThemeToggle.tsx::ThemeToggle"
       ],
@@ -4789,21 +5128,45 @@
       "file": "frontend/src/components/ThemeToggle.tsx",
       "name": "ThemeToggle",
       "qualname": "ThemeToggle",
-      "lineno": 6,
+      "lineno": 7,
       "calls": [],
       "called_by": [
+        "frontend/src/components/Navbar.tsx::Navbar",
         "frontend/src/components/Sidebar.tsx::Sidebar"
+      ]
+    },
+    "frontend/src/components/VantaHero.tsx::hardenNet": {
+      "file": "frontend/src/components/VantaHero.tsx",
+      "name": "hardenNet",
+      "qualname": "hardenNet",
+      "lineno": 35,
+      "calls": [],
+      "called_by": [
+        "frontend/src/components/VantaHero.tsx::VantaHero",
+        "frontend/src/components/VantaHero.tsx::fit"
       ]
     },
     "frontend/src/components/VantaHero.tsx::VantaHero": {
       "file": "frontend/src/components/VantaHero.tsx",
       "name": "VantaHero",
       "qualname": "VantaHero",
-      "lineno": 15,
-      "calls": [],
+      "lineno": 56,
+      "calls": [
+        "frontend/src/components/VantaHero.tsx::hardenNet"
+      ],
       "called_by": [
         "frontend/src/pages/HomePage.tsx::HomePage"
       ]
+    },
+    "frontend/src/components/VantaHero.tsx::fit": {
+      "file": "frontend/src/components/VantaHero.tsx",
+      "name": "fit",
+      "qualname": "fit",
+      "lineno": 82,
+      "calls": [
+        "frontend/src/components/VantaHero.tsx::hardenNet"
+      ],
+      "called_by": []
     },
     "frontend/src/highlight.ts::queryTerms": {
       "file": "frontend/src/highlight.ts",
@@ -4853,15 +5216,45 @@
       "file": "frontend/src/infoTips.ts",
       "name": "call",
       "qualname": "call",
-      "lineno": 56,
+      "lineno": 58,
       "calls": [],
       "called_by": []
+    },
+    "frontend/src/pages/DebugPage.tsx::clampPage": {
+      "file": "frontend/src/pages/DebugPage.tsx",
+      "name": "clampPage",
+      "qualname": "clampPage",
+      "lineno": 27,
+      "calls": [],
+      "called_by": [
+        "frontend/src/pages/DebugPage.tsx::DebugPage"
+      ]
+    },
+    "frontend/src/pages/DebugPage.tsx::pageItems": {
+      "file": "frontend/src/pages/DebugPage.tsx",
+      "name": "pageItems",
+      "qualname": "pageItems",
+      "lineno": 32,
+      "calls": [],
+      "called_by": [
+        "frontend/src/pages/DebugPage.tsx::DebugPage"
+      ]
+    },
+    "frontend/src/pages/DebugPage.tsx::TablePager": {
+      "file": "frontend/src/pages/DebugPage.tsx",
+      "name": "TablePager",
+      "qualname": "TablePager",
+      "lineno": 37,
+      "calls": [],
+      "called_by": [
+        "frontend/src/pages/DebugPage.tsx::DebugPage"
+      ]
     },
     "frontend/src/pages/DebugPage.tsx::clampLimit": {
       "file": "frontend/src/pages/DebugPage.tsx",
       "name": "clampLimit",
       "qualname": "clampLimit",
-      "lineno": 26,
+      "lineno": 83,
       "calls": [],
       "called_by": [
         "frontend/src/pages/DebugPage.tsx::DebugPage",
@@ -4872,7 +5265,7 @@
       "file": "frontend/src/pages/DebugPage.tsx",
       "name": "levelParam",
       "qualname": "levelParam",
-      "lineno": 31,
+      "lineno": 88,
       "calls": [],
       "called_by": []
     },
@@ -4880,7 +5273,7 @@
       "file": "frontend/src/pages/DebugPage.tsx",
       "name": "parseTs",
       "qualname": "parseTs",
-      "lineno": 36,
+      "lineno": 93,
       "calls": [],
       "called_by": []
     },
@@ -4888,7 +5281,7 @@
       "file": "frontend/src/pages/DebugPage.tsx",
       "name": "inRange",
       "qualname": "inRange",
-      "lineno": 41,
+      "lineno": 98,
       "calls": [],
       "called_by": []
     },
@@ -4896,7 +5289,7 @@
       "file": "frontend/src/pages/DebugPage.tsx",
       "name": "fetchLogs",
       "qualname": "fetchLogs",
-      "lineno": 54,
+      "lineno": 111,
       "calls": [],
       "called_by": [
         "frontend/src/pages/DebugPage.tsx::DebugPage"
@@ -4906,7 +5299,7 @@
       "file": "frontend/src/pages/DebugPage.tsx",
       "name": "formatTime",
       "qualname": "formatTime",
-      "lineno": 66,
+      "lineno": 123,
       "calls": [],
       "called_by": []
     },
@@ -4914,7 +5307,7 @@
       "file": "frontend/src/pages/DebugPage.tsx",
       "name": "extraJson",
       "qualname": "extraJson",
-      "lineno": 72,
+      "lineno": 129,
       "calls": [],
       "called_by": []
     },
@@ -4922,7 +5315,7 @@
       "file": "frontend/src/pages/DebugPage.tsx",
       "name": "rowKey",
       "qualname": "rowKey",
-      "lineno": 80,
+      "lineno": 137,
       "calls": [],
       "called_by": [
         "frontend/src/pages/DebugPage.tsx::DebugPage"
@@ -4932,7 +5325,7 @@
       "file": "frontend/src/pages/DebugPage.tsx",
       "name": "severityClass",
       "qualname": "severityClass",
-      "lineno": 84,
+      "lineno": 141,
       "calls": [],
       "called_by": []
     },
@@ -4940,16 +5333,19 @@
       "file": "frontend/src/pages/DebugPage.tsx",
       "name": "DebugPage",
       "qualname": "DebugPage",
-      "lineno": 91,
+      "lineno": 148,
       "calls": [
         "frontend/src/pages/DebugPage.tsx::fetchLogs",
         "frontend/src/pages/DebugPage.tsx::apply",
         "frontend/src/pages/DebugPage.tsx::clampLimit",
         "frontend/src/pages/DebugPage.tsx::reset",
+        "frontend/src/pages/DebugPage.tsx::clampPage",
+        "frontend/src/pages/DebugPage.tsx::pageItems",
         "frontend/src/pages/DebugPage.tsx::rowKey",
         "frontend/src/components/InfoTip.tsx::InfoTip",
         "frontend/src/components/InfoTip.tsx::InfoLabel",
-        "frontend/src/pages/DebugPage.tsx::LogRows"
+        "frontend/src/pages/DebugPage.tsx::LogRows",
+        "frontend/src/pages/DebugPage.tsx::TablePager"
       ],
       "called_by": [
         "frontend/src/App.tsx::App"
@@ -4959,7 +5355,7 @@
       "file": "frontend/src/pages/DebugPage.tsx",
       "name": "apply",
       "qualname": "apply",
-      "lineno": 117,
+      "lineno": 176,
       "calls": [
         "frontend/src/pages/DebugPage.tsx::clampLimit"
       ],
@@ -4971,7 +5367,7 @@
       "file": "frontend/src/pages/DebugPage.tsx",
       "name": "reset",
       "qualname": "reset",
-      "lineno": 124,
+      "lineno": 183,
       "calls": [],
       "called_by": [
         "frontend/src/pages/DebugPage.tsx::DebugPage"
@@ -4981,17 +5377,47 @@
       "file": "frontend/src/pages/DebugPage.tsx",
       "name": "LogRows",
       "qualname": "LogRows",
-      "lineno": 334,
+      "lineno": 434,
       "calls": [],
       "called_by": [
         "frontend/src/pages/DebugPage.tsx::DebugPage"
+      ]
+    },
+    "frontend/src/pages/EvaluationPage.tsx::clampPage": {
+      "file": "frontend/src/pages/EvaluationPage.tsx",
+      "name": "clampPage",
+      "qualname": "clampPage",
+      "lineno": 42,
+      "calls": [],
+      "called_by": [
+        "frontend/src/pages/EvaluationPage.tsx::EvaluationPage"
+      ]
+    },
+    "frontend/src/pages/EvaluationPage.tsx::pageItems": {
+      "file": "frontend/src/pages/EvaluationPage.tsx",
+      "name": "pageItems",
+      "qualname": "pageItems",
+      "lineno": 47,
+      "calls": [],
+      "called_by": [
+        "frontend/src/pages/EvaluationPage.tsx::EvaluationPage"
+      ]
+    },
+    "frontend/src/pages/EvaluationPage.tsx::TablePager": {
+      "file": "frontend/src/pages/EvaluationPage.tsx",
+      "name": "TablePager",
+      "qualname": "TablePager",
+      "lineno": 52,
+      "calls": [],
+      "called_by": [
+        "frontend/src/pages/EvaluationPage.tsx::EvaluationPage"
       ]
     },
     "frontend/src/pages/EvaluationPage.tsx::fetchExperiments": {
       "file": "frontend/src/pages/EvaluationPage.tsx",
       "name": "fetchExperiments",
       "qualname": "fetchExperiments",
-      "lineno": 69,
+      "lineno": 127,
       "calls": [],
       "called_by": [
         "frontend/src/pages/EvaluationPage.tsx::EvaluationPage"
@@ -5001,7 +5427,7 @@
       "file": "frontend/src/pages/EvaluationPage.tsx",
       "name": "parseTime",
       "qualname": "parseTime",
-      "lineno": 78,
+      "lineno": 136,
       "calls": [],
       "called_by": [
         "frontend/src/pages/EvaluationPage.tsx::EvaluationPage"
@@ -5011,7 +5437,7 @@
       "file": "frontend/src/pages/EvaluationPage.tsx",
       "name": "formatTime",
       "qualname": "formatTime",
-      "lineno": 83,
+      "lineno": 141,
       "calls": [],
       "called_by": [
         "frontend/src/pages/EvaluationPage.tsx::EvaluationPage"
@@ -5021,7 +5447,7 @@
       "file": "frontend/src/pages/EvaluationPage.tsx",
       "name": "formatMetric",
       "qualname": "formatMetric",
-      "lineno": 94,
+      "lineno": 152,
       "calls": [],
       "called_by": [
         "frontend/src/pages/EvaluationPage.tsx::EvaluationPage"
@@ -5031,7 +5457,7 @@
       "file": "frontend/src/pages/EvaluationPage.tsx",
       "name": "compareRows",
       "qualname": "compareRows",
-      "lineno": 99,
+      "lineno": 157,
       "calls": [],
       "called_by": [
         "frontend/src/pages/EvaluationPage.tsx::EvaluationPage"
@@ -5041,7 +5467,7 @@
       "file": "frontend/src/pages/EvaluationPage.tsx",
       "name": "ExperimentTooltip",
       "qualname": "ExperimentTooltip",
-      "lineno": 117,
+      "lineno": 175,
       "calls": [],
       "called_by": [
         "frontend/src/pages/EvaluationPage.tsx::EvaluationPage"
@@ -5051,18 +5477,21 @@
       "file": "frontend/src/pages/EvaluationPage.tsx",
       "name": "EvaluationPage",
       "qualname": "EvaluationPage",
-      "lineno": 151,
+      "lineno": 209,
       "calls": [
         "frontend/src/pages/EvaluationPage.tsx::fetchExperiments",
         "frontend/src/pages/EvaluationPage.tsx::parseTime",
         "frontend/src/pages/EvaluationPage.tsx::formatTime",
         "frontend/src/pages/EvaluationPage.tsx::compareRows",
         "frontend/src/pages/EvaluationPage.tsx::onSort",
+        "frontend/src/pages/EvaluationPage.tsx::clampPage",
+        "frontend/src/pages/EvaluationPage.tsx::pageItems",
         "frontend/src/pages/EvaluationPage.tsx::formatMetric",
         "frontend/src/components/InfoTip.tsx::InfoTip",
         "frontend/src/components/InfoTip.tsx::InfoLabel",
         "frontend/src/pages/EvaluationPage.tsx::ExperimentTooltip",
-        "frontend/src/components/InfoTip.tsx::InfoMark"
+        "frontend/src/components/InfoTip.tsx::InfoMark",
+        "frontend/src/pages/EvaluationPage.tsx::TablePager"
       ],
       "called_by": [
         "frontend/src/App.tsx::App"
@@ -5072,7 +5501,7 @@
       "file": "frontend/src/pages/EvaluationPage.tsx",
       "name": "onSort",
       "qualname": "onSort",
-      "lineno": 199,
+      "lineno": 258,
       "calls": [],
       "called_by": [
         "frontend/src/pages/EvaluationPage.tsx::EvaluationPage"
@@ -5082,7 +5511,7 @@
       "file": "frontend/src/pages/HealthPage.tsx",
       "name": "HealthPage",
       "qualname": "HealthPage",
-      "lineno": 5,
+      "lineno": 26,
       "calls": [
         "frontend/src/api.ts::getHealth",
         "frontend/src/components/HealthGrid.tsx::HealthGrid"
@@ -5091,24 +5520,82 @@
         "frontend/src/App.tsx::App"
       ]
     },
+    "frontend/src/pages/HomePage.tsx::Icon": {
+      "file": "frontend/src/pages/HomePage.tsx",
+      "name": "Icon",
+      "qualname": "Icon",
+      "lineno": 13,
+      "calls": [],
+      "called_by": []
+    },
+    "frontend/src/pages/HomePage.tsx::graph": {
+      "file": "frontend/src/pages/HomePage.tsx",
+      "name": "graph",
+      "qualname": "graph",
+      "lineno": 233,
+      "calls": [],
+      "called_by": []
+    },
+    "frontend/src/pages/HomePage.tsx::WorkflowPanel": {
+      "file": "frontend/src/pages/HomePage.tsx",
+      "name": "WorkflowPanel",
+      "qualname": "WorkflowPanel",
+      "lineno": 238,
+      "calls": [],
+      "called_by": [
+        "frontend/src/pages/HomePage.tsx::HomePage"
+      ]
+    },
     "frontend/src/pages/HomePage.tsx::HomePage": {
       "file": "frontend/src/pages/HomePage.tsx",
       "name": "HomePage",
       "qualname": "HomePage",
-      "lineno": 38,
+      "lineno": 303,
       "calls": [
+        "frontend/src/api.ts::getHealth",
         "frontend/src/components/Navbar.tsx::Navbar",
-        "frontend/src/components/VantaHero.tsx::VantaHero"
+        "frontend/src/components/VantaHero.tsx::VantaHero",
+        "frontend/src/pages/HomePage.tsx::WorkflowPanel"
       ],
       "called_by": [
         "frontend/src/App.tsx::App"
+      ]
+    },
+    "frontend/src/pages/KpisPage.tsx::clampPage": {
+      "file": "frontend/src/pages/KpisPage.tsx",
+      "name": "clampPage",
+      "qualname": "clampPage",
+      "lineno": 26,
+      "calls": [],
+      "called_by": [
+        "frontend/src/pages/KpisPage.tsx::KpisPage"
+      ]
+    },
+    "frontend/src/pages/KpisPage.tsx::pageItems": {
+      "file": "frontend/src/pages/KpisPage.tsx",
+      "name": "pageItems",
+      "qualname": "pageItems",
+      "lineno": 31,
+      "calls": [],
+      "called_by": [
+        "frontend/src/pages/KpisPage.tsx::KpisPage"
+      ]
+    },
+    "frontend/src/pages/KpisPage.tsx::TablePager": {
+      "file": "frontend/src/pages/KpisPage.tsx",
+      "name": "TablePager",
+      "qualname": "TablePager",
+      "lineno": 36,
+      "calls": [],
+      "called_by": [
+        "frontend/src/pages/KpisPage.tsx::KpisPage"
       ]
     },
     "frontend/src/pages/KpisPage.tsx::fetchJson": {
       "file": "frontend/src/pages/KpisPage.tsx",
       "name": "fetchJson",
       "qualname": "fetchJson",
-      "lineno": 69,
+      "lineno": 128,
       "calls": [],
       "called_by": []
     },
@@ -5116,7 +5603,7 @@
       "file": "frontend/src/pages/KpisPage.tsx",
       "name": "loadKpis",
       "qualname": "loadKpis",
-      "lineno": 78,
+      "lineno": 137,
       "calls": [],
       "called_by": [
         "frontend/src/pages/KpisPage.tsx::KpisPage",
@@ -5128,7 +5615,7 @@
       "file": "frontend/src/pages/KpisPage.tsx",
       "name": "runLoadTest",
       "qualname": "runLoadTest",
-      "lineno": 89,
+      "lineno": 148,
       "calls": [],
       "called_by": [
         "frontend/src/pages/KpisPage.tsx::KpisPage",
@@ -5139,7 +5626,7 @@
       "file": "frontend/src/pages/KpisPage.tsx",
       "name": "formatMs",
       "qualname": "formatMs",
-      "lineno": 107,
+      "lineno": 166,
       "calls": [],
       "called_by": [
         "frontend/src/pages/KpisPage.tsx::KpisPage"
@@ -5149,7 +5636,7 @@
       "file": "frontend/src/pages/KpisPage.tsx",
       "name": "parseBucket",
       "qualname": "parseBucket",
-      "lineno": 111,
+      "lineno": 170,
       "calls": [],
       "called_by": []
     },
@@ -5157,7 +5644,7 @@
       "file": "frontend/src/pages/KpisPage.tsx",
       "name": "formatBucket",
       "qualname": "formatBucket",
-      "lineno": 121,
+      "lineno": 180,
       "calls": [],
       "called_by": [
         "frontend/src/pages/KpisPage.tsx::KpisPage"
@@ -5167,7 +5654,7 @@
       "file": "frontend/src/pages/KpisPage.tsx",
       "name": "formatSeen",
       "qualname": "formatSeen",
-      "lineno": 135,
+      "lineno": 194,
       "calls": [],
       "called_by": [
         "frontend/src/pages/KpisPage.tsx::KpisPage"
@@ -5177,7 +5664,7 @@
       "file": "frontend/src/pages/KpisPage.tsx",
       "name": "clampCount",
       "qualname": "clampCount",
-      "lineno": 141,
+      "lineno": 200,
       "calls": [],
       "called_by": [
         "frontend/src/pages/KpisPage.tsx::KpisPage",
@@ -5188,7 +5675,7 @@
       "file": "frontend/src/pages/KpisPage.tsx",
       "name": "KpisPage",
       "qualname": "KpisPage",
-      "lineno": 146,
+      "lineno": 205,
       "calls": [
         "frontend/src/pages/KpisPage.tsx::loadKpis",
         "frontend/src/pages/KpisPage.tsx::run",
@@ -5197,10 +5684,13 @@
         "frontend/src/pages/KpisPage.tsx::refreshQuietly",
         "frontend/src/pages/KpisPage.tsx::formatBucket",
         "frontend/src/pages/KpisPage.tsx::formatMs",
+        "frontend/src/pages/KpisPage.tsx::pageItems",
+        "frontend/src/pages/KpisPage.tsx::clampPage",
         "frontend/src/pages/KpisPage.tsx::formatSeen",
         "frontend/src/pages/KpisPage.tsx::fireBurst",
         "frontend/src/components/InfoTip.tsx::InfoTip",
-        "frontend/src/components/InfoTip.tsx::InfoLabel"
+        "frontend/src/components/InfoTip.tsx::InfoLabel",
+        "frontend/src/pages/KpisPage.tsx::TablePager"
       ],
       "called_by": [
         "frontend/src/App.tsx::App"
@@ -5210,7 +5700,7 @@
       "file": "frontend/src/pages/KpisPage.tsx",
       "name": "run",
       "qualname": "run",
-      "lineno": 163,
+      "lineno": 224,
       "calls": [
         "frontend/src/pages/KpisPage.tsx::loadKpis"
       ],
@@ -5222,7 +5712,7 @@
       "file": "frontend/src/pages/KpisPage.tsx",
       "name": "onKey",
       "qualname": "onKey",
-      "lineno": 193,
+      "lineno": 254,
       "calls": [],
       "called_by": []
     },
@@ -5230,7 +5720,7 @@
       "file": "frontend/src/pages/KpisPage.tsx",
       "name": "refreshQuietly",
       "qualname": "refreshQuietly",
-      "lineno": 200,
+      "lineno": 261,
       "calls": [
         "frontend/src/pages/KpisPage.tsx::loadKpis"
       ],
@@ -5243,7 +5733,7 @@
       "file": "frontend/src/pages/KpisPage.tsx",
       "name": "fireBurst",
       "qualname": "fireBurst",
-      "lineno": 211,
+      "lineno": 272,
       "calls": [
         "frontend/src/pages/KpisPage.tsx::runLoadTest",
         "frontend/src/pages/KpisPage.tsx::clampCount",
@@ -5257,7 +5747,37 @@
       "file": "frontend/src/pages/SearchPage.tsx",
       "name": "localDateToIso",
       "qualname": "localDateToIso",
-      "lineno": 7,
+      "lineno": 9,
+      "calls": [],
+      "called_by": [
+        "frontend/src/pages/SearchPage.tsx::SearchPage"
+      ]
+    },
+    "frontend/src/pages/SearchPage.tsx::clampPage": {
+      "file": "frontend/src/pages/SearchPage.tsx",
+      "name": "clampPage",
+      "qualname": "clampPage",
+      "lineno": 14,
+      "calls": [],
+      "called_by": [
+        "frontend/src/pages/SearchPage.tsx::SearchPage"
+      ]
+    },
+    "frontend/src/pages/SearchPage.tsx::pageItems": {
+      "file": "frontend/src/pages/SearchPage.tsx",
+      "name": "pageItems",
+      "qualname": "pageItems",
+      "lineno": 19,
+      "calls": [],
+      "called_by": [
+        "frontend/src/pages/SearchPage.tsx::SearchPage"
+      ]
+    },
+    "frontend/src/pages/SearchPage.tsx::TablePager": {
+      "file": "frontend/src/pages/SearchPage.tsx",
+      "name": "TablePager",
+      "qualname": "TablePager",
+      "lineno": 24,
       "calls": [],
       "called_by": [
         "frontend/src/pages/SearchPage.tsx::SearchPage"
@@ -5267,13 +5787,16 @@
       "file": "frontend/src/pages/SearchPage.tsx",
       "name": "SearchPage",
       "qualname": "SearchPage",
-      "lineno": 12,
+      "lineno": 70,
       "calls": [
         "frontend/src/pages/SearchPage.tsx::localDateToIso",
         "frontend/src/api.ts::search",
+        "frontend/src/pages/SearchPage.tsx::clampPage",
+        "frontend/src/pages/SearchPage.tsx::pageItems",
         "frontend/src/components/InfoTip.tsx::InfoTip",
         "frontend/src/components/InfoTip.tsx::InfoLabel",
-        "frontend/src/components/ResultCard.tsx::ResultCard"
+        "frontend/src/components/ResultCard.tsx::ResultCard",
+        "frontend/src/pages/SearchPage.tsx::TablePager"
       ],
       "called_by": [
         "frontend/src/App.tsx::App"
@@ -5283,7 +5806,7 @@
       "file": "frontend/src/pages/SearchPage.tsx",
       "name": "handleKeyDown",
       "qualname": "handleKeyDown",
-      "lineno": 79,
+      "lineno": 139,
       "calls": [],
       "called_by": []
     },
@@ -5291,7 +5814,7 @@
       "file": "frontend/src/pages/SearchPage.tsx",
       "name": "handleClear",
       "qualname": "handleClear",
-      "lineno": 83,
+      "lineno": 143,
       "calls": [],
       "called_by": []
     },
@@ -5307,6 +5830,30 @@
       ],
       "called_by": [
         "frontend/src/App.tsx::App"
+      ]
+    },
+    "frontend/src/useReindexJob.ts::useReindexJob": {
+      "file": "frontend/src/useReindexJob.ts",
+      "name": "useReindexJob",
+      "qualname": "useReindexJob",
+      "lineno": 12,
+      "calls": [
+        "frontend/src/api.ts::getReindexProgress",
+        "frontend/src/useReindexJob.ts::tick",
+        "frontend/src/api.ts::reindex"
+      ],
+      "called_by": [
+        "frontend/src/App.tsx::App"
+      ]
+    },
+    "frontend/src/useReindexJob.ts::tick": {
+      "file": "frontend/src/useReindexJob.ts",
+      "name": "tick",
+      "qualname": "tick",
+      "lineno": 39,
+      "calls": [],
+      "called_by": [
+        "frontend/src/useReindexJob.ts::useReindexJob"
       ]
     }
   },
@@ -5342,10 +5889,13 @@
     "backend/app/api/routes_dashboard.py::dashboard_kpi_volume",
     "backend/app/api/routes_dashboard.py::dashboard_kpi_zero_results",
     "backend/app/api/routes_dashboard.py::dashboard_logs",
+    "backend/app/api/routes_search.py::_run_reindex",
     "backend/app/api/routes_search.py::feedback",
     "backend/app/api/routes_search.py::get_document",
     "backend/app/api/routes_search.py::health",
     "backend/app/api/routes_search.py::metrics",
+    "backend/app/api/routes_search.py::reindex",
+    "backend/app/api/routes_search.py::reindex_progress",
     "backend/app/api/routes_search.py::search",
     "backend/app/api/schemas.py::SearchFiltersModel._must_be_iso8601",
     "backend/app/api/schemas.py::SearchRequest._rrf_k_required_for_rrf",
@@ -5357,6 +5907,8 @@
     "backend/app/eval/__main__.py::main",
     "backend/app/index/__main__.py::main",
     "backend/app/index/metadata.py::IndexMetadata.save",
+    "backend/app/index/progress.py::start",
+    "backend/app/index/progress.py::update",
     "backend/app/ingest/__init__.py::main",
     "backend/app/loadtest/burst.py::_one_search",
     "backend/app/loadtest/locustfile.py::SearchUser.search",
@@ -5396,6 +5948,7 @@
     "frontend/src/components/InfoTip.tsx::onMove",
     "frontend/src/components/InfoTip.tsx::show",
     "frontend/src/components/ResultCard.tsx::onKey",
+    "frontend/src/components/VantaHero.tsx::fit",
     "frontend/src/highlight.ts::escapeHtml",
     "frontend/src/highlight.ts::queryTerms",
     "frontend/src/highlight.ts::termMatchesWord",
@@ -5406,6 +5959,8 @@
     "frontend/src/pages/DebugPage.tsx::levelParam",
     "frontend/src/pages/DebugPage.tsx::parseTs",
     "frontend/src/pages/DebugPage.tsx::severityClass",
+    "frontend/src/pages/HomePage.tsx::Icon",
+    "frontend/src/pages/HomePage.tsx::graph",
     "frontend/src/pages/KpisPage.tsx::fetchJson",
     "frontend/src/pages/KpisPage.tsx::onKey",
     "frontend/src/pages/KpisPage.tsx::parseBucket",
@@ -5718,10 +6273,13 @@
       "backend/app/api/routes_dashboard.py::dashboard_kpi_volume",
       "backend/app/api/routes_dashboard.py::dashboard_kpi_zero_results",
       "backend/app/api/routes_dashboard.py::dashboard_logs",
+      "backend/app/api/routes_search.py::_run_reindex",
       "backend/app/api/routes_search.py::feedback",
       "backend/app/api/routes_search.py::get_document",
       "backend/app/api/routes_search.py::health",
       "backend/app/api/routes_search.py::metrics",
+      "backend/app/api/routes_search.py::reindex",
+      "backend/app/api/routes_search.py::reindex_progress",
       "backend/app/api/routes_search.py::search",
       "backend/app/api/schemas.py::SearchFiltersModel._must_be_iso8601",
       "backend/app/api/schemas.py::SearchRequest._rrf_k_required_for_rrf",
@@ -5733,6 +6291,8 @@
       "backend/app/eval/__main__.py::main",
       "backend/app/index/__main__.py::main",
       "backend/app/index/metadata.py::IndexMetadata.save",
+      "backend/app/index/progress.py::start",
+      "backend/app/index/progress.py::update",
       "backend/app/ingest/__init__.py::main",
       "backend/app/loadtest/burst.py::_one_search",
       "backend/app/loadtest/locustfile.py::SearchUser.search",
@@ -5772,6 +6332,7 @@
       "frontend/src/components/InfoTip.tsx::onMove",
       "frontend/src/components/InfoTip.tsx::show",
       "frontend/src/components/ResultCard.tsx::onKey",
+      "frontend/src/components/VantaHero.tsx::fit",
       "frontend/src/highlight.ts::escapeHtml",
       "frontend/src/highlight.ts::queryTerms",
       "frontend/src/highlight.ts::termMatchesWord",
@@ -5782,6 +6343,8 @@
       "frontend/src/pages/DebugPage.tsx::levelParam",
       "frontend/src/pages/DebugPage.tsx::parseTs",
       "frontend/src/pages/DebugPage.tsx::severityClass",
+      "frontend/src/pages/HomePage.tsx::Icon",
+      "frontend/src/pages/HomePage.tsx::graph",
       "frontend/src/pages/KpisPage.tsx::fetchJson",
       "frontend/src/pages/KpisPage.tsx::onKey",
       "frontend/src/pages/KpisPage.tsx::parseBucket",
@@ -5808,10 +6371,13 @@
         "backend/app/api/routes_dashboard.py::dashboard_kpi_volume",
         "backend/app/api/routes_dashboard.py::dashboard_kpi_zero_results",
         "backend/app/api/routes_dashboard.py::dashboard_logs",
+        "backend/app/api/routes_search.py::_run_reindex",
         "backend/app/api/routes_search.py::feedback",
         "backend/app/api/routes_search.py::get_document",
         "backend/app/api/routes_search.py::health",
         "backend/app/api/routes_search.py::metrics",
+        "backend/app/api/routes_search.py::reindex",
+        "backend/app/api/routes_search.py::reindex_progress",
         "backend/app/api/routes_search.py::search",
         "backend/app/api/schemas.py::SearchFiltersModel._must_be_iso8601",
         "backend/app/api/schemas.py::SearchRequest._rrf_k_required_for_rrf",
@@ -5823,6 +6389,8 @@
         "backend/app/eval/__main__.py::main",
         "backend/app/index/__main__.py::main",
         "backend/app/index/metadata.py::IndexMetadata.save",
+        "backend/app/index/progress.py::start",
+        "backend/app/index/progress.py::update",
         "backend/app/ingest/__init__.py::main",
         "backend/app/loadtest/burst.py::_one_search",
         "backend/app/loadtest/locustfile.py::SearchUser.search",
@@ -5862,6 +6430,7 @@
         "frontend/src/components/InfoTip.tsx::onMove",
         "frontend/src/components/InfoTip.tsx::show",
         "frontend/src/components/ResultCard.tsx::onKey",
+        "frontend/src/components/VantaHero.tsx::fit",
         "frontend/src/highlight.ts::escapeHtml",
         "frontend/src/highlight.ts::queryTerms",
         "frontend/src/highlight.ts::termMatchesWord",
@@ -5872,6 +6441,8 @@
         "frontend/src/pages/DebugPage.tsx::levelParam",
         "frontend/src/pages/DebugPage.tsx::parseTs",
         "frontend/src/pages/DebugPage.tsx::severityClass",
+        "frontend/src/pages/HomePage.tsx::Icon",
+        "frontend/src/pages/HomePage.tsx::graph",
         "frontend/src/pages/KpisPage.tsx::fetchJson",
         "frontend/src/pages/KpisPage.tsx::onKey",
         "frontend/src/pages/KpisPage.tsx::parseBucket",
@@ -5903,6 +6474,10 @@
         "backend/app/storage/repo.py::request_volume",
         "backend/app/storage/repo.py::zero_result_queries",
         "backend/app/storage/repo.py::select_logs",
+        "backend/app/index/__main__.py::build_indexes",
+        "backend/app/index/progress.py::finishing",
+        "backend/app/index/progress.py::finish",
+        "backend/app/index/progress.py::fail",
         "backend/app/api/routes_search.py::_get_service",
         "backend/app/storage/repo.py::insert_feedback",
         "backend/app/search/tokenize.py::tokenize",
@@ -5911,8 +6486,12 @@
         "backend/app/search/highlight.py::count_occurrences",
         "backend/app/api/deps.py::get_version",
         "backend/app/api/deps.py::get_commit",
+        "backend/app/api/deps.py::get_commit_message",
         "backend/app/api/routes_search.py::_index_metadata",
         "backend/app/observability/metrics.py::render",
+        "backend/app/ingest/writer.py::read_jsonl",
+        "backend/app/index/progress.py::try_start",
+        "backend/app/api/routes_search.py::_progress_model",
         "backend/app/callgraph/analyze.py::find_repo_root",
         "backend/app/callgraph/analyze.py::write_callgraph_json",
         "backend/app/callgraph/analyze.py::_call_name",
@@ -5927,10 +6506,8 @@
         "backend/app/eval/runner.py::append_experiment",
         "backend/app/index/__main__.py::_build_parser",
         "backend/app/index/__main__.py::_resolve_path",
-        "backend/app/ingest/writer.py::read_jsonl",
         "backend/app/ingest/writer.py::corpus_hash",
         "backend/app/index/metadata.py::is_up_to_date",
-        "backend/app/index/__main__.py::build_indexes",
         "backend/app/ingest/__init__.py::_build_parser",
         "backend/app/ingest/__init__.py::_resolve_path",
         "backend/app/ingest/__init__.py::ingest",
@@ -5942,6 +6519,7 @@
         "backend/app/search/highlight.py::make_snippet",
         "backend/app/search/normalize.py::min_max",
         "frontend/src/App.tsx::useTheme",
+        "frontend/src/useReindexJob.ts::useReindexJob",
         "frontend/src/api.ts::getHealth",
         "frontend/src/pages/HomePage.tsx::HomePage",
         "frontend/src/components/Sidebar.tsx::Sidebar",
@@ -5953,6 +6531,7 @@
         "frontend/src/pages/DebugPage.tsx::DebugPage",
         "frontend/src/components/InfoTip.tsx::placePop",
         "frontend/src/components/ResultCard.tsx::closeModal",
+        "frontend/src/components/VantaHero.tsx::hardenNet",
         "scripts/fetch_until_done.py::parse_args",
         "scripts/fetch_corpus.py::repo_root",
         "scripts/fetch_corpus.py::read_seed",
@@ -6093,6 +6672,26 @@
         "to": "backend/app/storage/repo.py::select_logs"
       },
       {
+        "from": "backend/app/api/routes_search.py::_run_reindex",
+        "to": "backend/app/index/__main__.py::build_indexes"
+      },
+      {
+        "from": "backend/app/api/routes_search.py::_run_reindex",
+        "to": "backend/app/index/progress.py::finishing"
+      },
+      {
+        "from": "backend/app/api/routes_search.py::_run_reindex",
+        "to": "backend/app/api/deps.py::SearchService.load"
+      },
+      {
+        "from": "backend/app/api/routes_search.py::_run_reindex",
+        "to": "backend/app/index/progress.py::finish"
+      },
+      {
+        "from": "backend/app/api/routes_search.py::_run_reindex",
+        "to": "backend/app/index/progress.py::fail"
+      },
+      {
         "from": "backend/app/api/routes_search.py::feedback",
         "to": "backend/app/api/routes_search.py::_get_service"
       },
@@ -6130,11 +6729,39 @@
       },
       {
         "from": "backend/app/api/routes_search.py::health",
+        "to": "backend/app/api/deps.py::get_commit_message"
+      },
+      {
+        "from": "backend/app/api/routes_search.py::health",
         "to": "backend/app/api/routes_search.py::_index_metadata"
       },
       {
         "from": "backend/app/api/routes_search.py::metrics",
         "to": "backend/app/observability/metrics.py::render"
+      },
+      {
+        "from": "backend/app/api/routes_search.py::reindex",
+        "to": "backend/app/api/routes_search.py::_get_service"
+      },
+      {
+        "from": "backend/app/api/routes_search.py::reindex",
+        "to": "backend/app/config.py::load_config"
+      },
+      {
+        "from": "backend/app/api/routes_search.py::reindex",
+        "to": "backend/app/ingest/writer.py::read_jsonl"
+      },
+      {
+        "from": "backend/app/api/routes_search.py::reindex",
+        "to": "backend/app/index/progress.py::try_start"
+      },
+      {
+        "from": "backend/app/api/routes_search.py::reindex",
+        "to": "backend/app/api/routes_search.py::_progress_model"
+      },
+      {
+        "from": "backend/app/api/routes_search.py::reindex_progress",
+        "to": "backend/app/api/routes_search.py::_progress_model"
       },
       {
         "from": "backend/app/api/routes_search.py::search",
@@ -6229,6 +6856,10 @@
         "to": "backend/app/index/__main__.py::build_indexes"
       },
       {
+        "from": "backend/app/index/progress.py::start",
+        "to": "backend/app/index/progress.py::try_start"
+      },
+      {
         "from": "backend/app/ingest/__init__.py::main",
         "to": "backend/app/config.py::load_config"
       },
@@ -6302,6 +6933,10 @@
       },
       {
         "from": "frontend/src/App.tsx::App",
+        "to": "frontend/src/useReindexJob.ts::useReindexJob"
+      },
+      {
+        "from": "frontend/src/App.tsx::App",
         "to": "frontend/src/api.ts::getHealth"
       },
       {
@@ -6347,6 +6982,10 @@
       {
         "from": "frontend/src/components/ResultCard.tsx::onKey",
         "to": "frontend/src/components/ResultCard.tsx::closeModal"
+      },
+      {
+        "from": "frontend/src/components/VantaHero.tsx::fit",
+        "to": "frontend/src/components/VantaHero.tsx::hardenNet"
       },
       {
         "from": "scripts/fetch_until_done.py::main",
@@ -6523,6 +7162,26 @@
         "to": "backend/app/storage/repo.py::select_logs"
       },
       {
+        "from": "backend/app/api/routes_search.py::_run_reindex",
+        "to": "backend/app/index/__main__.py::build_indexes"
+      },
+      {
+        "from": "backend/app/api/routes_search.py::_run_reindex",
+        "to": "backend/app/index/progress.py::finishing"
+      },
+      {
+        "from": "backend/app/api/routes_search.py::_run_reindex",
+        "to": "backend/app/api/deps.py::SearchService.load"
+      },
+      {
+        "from": "backend/app/api/routes_search.py::_run_reindex",
+        "to": "backend/app/index/progress.py::finish"
+      },
+      {
+        "from": "backend/app/api/routes_search.py::_run_reindex",
+        "to": "backend/app/index/progress.py::fail"
+      },
+      {
         "from": "backend/app/api/routes_search.py::feedback",
         "to": "backend/app/api/routes_search.py::_get_service"
       },
@@ -6560,11 +7219,39 @@
       },
       {
         "from": "backend/app/api/routes_search.py::health",
+        "to": "backend/app/api/deps.py::get_commit_message"
+      },
+      {
+        "from": "backend/app/api/routes_search.py::health",
         "to": "backend/app/api/routes_search.py::_index_metadata"
       },
       {
         "from": "backend/app/api/routes_search.py::metrics",
         "to": "backend/app/observability/metrics.py::render"
+      },
+      {
+        "from": "backend/app/api/routes_search.py::reindex",
+        "to": "backend/app/api/routes_search.py::_get_service"
+      },
+      {
+        "from": "backend/app/api/routes_search.py::reindex",
+        "to": "backend/app/config.py::load_config"
+      },
+      {
+        "from": "backend/app/api/routes_search.py::reindex",
+        "to": "backend/app/ingest/writer.py::read_jsonl"
+      },
+      {
+        "from": "backend/app/api/routes_search.py::reindex",
+        "to": "backend/app/index/progress.py::try_start"
+      },
+      {
+        "from": "backend/app/api/routes_search.py::reindex",
+        "to": "backend/app/api/routes_search.py::_progress_model"
+      },
+      {
+        "from": "backend/app/api/routes_search.py::reindex_progress",
+        "to": "backend/app/api/routes_search.py::_progress_model"
       },
       {
         "from": "backend/app/api/routes_search.py::search",
@@ -6659,6 +7346,10 @@
         "to": "backend/app/index/__main__.py::build_indexes"
       },
       {
+        "from": "backend/app/index/progress.py::start",
+        "to": "backend/app/index/progress.py::try_start"
+      },
+      {
         "from": "backend/app/ingest/__init__.py::main",
         "to": "backend/app/config.py::load_config"
       },
@@ -6732,6 +7423,10 @@
       },
       {
         "from": "frontend/src/App.tsx::App",
+        "to": "frontend/src/useReindexJob.ts::useReindexJob"
+      },
+      {
+        "from": "frontend/src/App.tsx::App",
         "to": "frontend/src/api.ts::getHealth"
       },
       {
@@ -6777,6 +7472,10 @@
       {
         "from": "frontend/src/components/ResultCard.tsx::onKey",
         "to": "frontend/src/components/ResultCard.tsx::closeModal"
+      },
+      {
+        "from": "frontend/src/components/VantaHero.tsx::fit",
+        "to": "frontend/src/components/VantaHero.tsx::hardenNet"
       },
       {
         "from": "scripts/fetch_until_done.py::main",
@@ -6842,10 +7541,13 @@
       "backend/app/api/routes_dashboard.py::dashboard_kpi_volume",
       "backend/app/api/routes_dashboard.py::dashboard_kpi_zero_results",
       "backend/app/api/routes_dashboard.py::dashboard_logs",
+      "backend/app/api/routes_search.py::_run_reindex",
       "backend/app/api/routes_search.py::feedback",
       "backend/app/api/routes_search.py::get_document",
       "backend/app/api/routes_search.py::health",
       "backend/app/api/routes_search.py::metrics",
+      "backend/app/api/routes_search.py::reindex",
+      "backend/app/api/routes_search.py::reindex_progress",
       "backend/app/api/routes_search.py::search",
       "backend/app/api/schemas.py::SearchFiltersModel._must_be_iso8601",
       "backend/app/api/schemas.py::SearchRequest._rrf_k_required_for_rrf",
@@ -6857,6 +7559,8 @@
       "backend/app/eval/__main__.py::main",
       "backend/app/index/__main__.py::main",
       "backend/app/index/metadata.py::IndexMetadata.save",
+      "backend/app/index/progress.py::start",
+      "backend/app/index/progress.py::update",
       "backend/app/ingest/__init__.py::main",
       "backend/app/loadtest/burst.py::_one_search",
       "backend/app/loadtest/locustfile.py::SearchUser.search",
@@ -6896,6 +7600,7 @@
       "frontend/src/components/InfoTip.tsx::onMove",
       "frontend/src/components/InfoTip.tsx::show",
       "frontend/src/components/ResultCard.tsx::onKey",
+      "frontend/src/components/VantaHero.tsx::fit",
       "frontend/src/highlight.ts::escapeHtml",
       "frontend/src/highlight.ts::queryTerms",
       "frontend/src/highlight.ts::termMatchesWord",
@@ -6906,6 +7611,8 @@
       "frontend/src/pages/DebugPage.tsx::levelParam",
       "frontend/src/pages/DebugPage.tsx::parseTs",
       "frontend/src/pages/DebugPage.tsx::severityClass",
+      "frontend/src/pages/HomePage.tsx::Icon",
+      "frontend/src/pages/HomePage.tsx::graph",
       "frontend/src/pages/KpisPage.tsx::fetchJson",
       "frontend/src/pages/KpisPage.tsx::onKey",
       "frontend/src/pages/KpisPage.tsx::parseBucket",
@@ -6915,7 +7622,6 @@
       "scripts/generate_contracts.py::created_at_for",
       "scripts/generate_contracts.py::main",
       "scripts/qrels_helper.py::main",
-      "backend/app/api/deps.py::SearchService.load",
       "backend/app/observability/logging.py::configure",
       "backend/app/storage/db.py::connect",
       "backend/app/storage/db.py::init_schema",
@@ -6934,13 +7640,19 @@
       "backend/app/api/routes_dashboard.py::_db",
       "backend/app/api/routes_dashboard.py::parse_window",
       "backend/app/storage/repo.py::select_logs",
+      "backend/app/api/deps.py::SearchService.load",
+      "backend/app/index/progress.py::fail",
+      "backend/app/index/progress.py::finish",
+      "backend/app/index/progress.py::finishing",
       "backend/app/storage/repo.py::insert_feedback",
       "backend/app/search/highlight.py::closest_document_words",
       "backend/app/search/highlight.py::count_occurrences",
       "backend/app/api/deps.py::get_commit",
+      "backend/app/api/deps.py::get_commit_message",
       "backend/app/api/deps.py::get_version",
       "backend/app/api/routes_search.py::_index_metadata",
       "backend/app/observability/metrics.py::render",
+      "backend/app/api/routes_search.py::_progress_model",
       "backend/app/api/routes_search.py::_get_service",
       "backend/app/callgraph/analyze.py::find_repo_root",
       "backend/app/callgraph/analyze.py::write_callgraph_json",
@@ -6960,6 +7672,7 @@
       "backend/app/index/metadata.py::is_up_to_date",
       "backend/app/ingest/writer.py::corpus_hash",
       "backend/app/ingest/writer.py::read_jsonl",
+      "backend/app/index/progress.py::try_start",
       "backend/app/ingest/__init__.py::_build_parser",
       "backend/app/ingest/__init__.py::_resolve_path",
       "backend/app/ingest/__init__.py::ingest",
@@ -6983,8 +7696,10 @@
       "frontend/src/pages/KpisPage.tsx::KpisPage",
       "frontend/src/pages/SearchPage.tsx::SearchPage",
       "frontend/src/pages/SettingsPage.tsx::SettingsPage",
+      "frontend/src/useReindexJob.ts::useReindexJob",
       "frontend/src/components/InfoTip.tsx::placePop",
       "frontend/src/components/ResultCard.tsx::closeModal",
+      "frontend/src/components/VantaHero.tsx::hardenNet",
       "scripts/fetch_corpus.py::main",
       "scripts/fetch_corpus.py::pending_rows",
       "scripts/fetch_corpus.py::read_seed",
@@ -7013,10 +7728,13 @@
       "backend/app/api/routes_dashboard.py::dashboard_kpi_volume",
       "backend/app/api/routes_dashboard.py::dashboard_kpi_zero_results",
       "backend/app/api/routes_dashboard.py::dashboard_logs",
+      "backend/app/api/routes_search.py::_run_reindex",
       "backend/app/api/routes_search.py::feedback",
       "backend/app/api/routes_search.py::get_document",
       "backend/app/api/routes_search.py::health",
       "backend/app/api/routes_search.py::metrics",
+      "backend/app/api/routes_search.py::reindex",
+      "backend/app/api/routes_search.py::reindex_progress",
       "backend/app/api/routes_search.py::search",
       "backend/app/api/schemas.py::SearchFiltersModel._must_be_iso8601",
       "backend/app/api/schemas.py::SearchRequest._rrf_k_required_for_rrf",
@@ -7028,6 +7746,8 @@
       "backend/app/eval/__main__.py::main",
       "backend/app/index/__main__.py::main",
       "backend/app/index/metadata.py::IndexMetadata.save",
+      "backend/app/index/progress.py::start",
+      "backend/app/index/progress.py::update",
       "backend/app/ingest/__init__.py::main",
       "backend/app/loadtest/burst.py::_one_search",
       "backend/app/loadtest/locustfile.py::SearchUser.search",
@@ -7067,6 +7787,7 @@
       "frontend/src/components/InfoTip.tsx::onMove",
       "frontend/src/components/InfoTip.tsx::show",
       "frontend/src/components/ResultCard.tsx::onKey",
+      "frontend/src/components/VantaHero.tsx::fit",
       "frontend/src/highlight.ts::escapeHtml",
       "frontend/src/highlight.ts::queryTerms",
       "frontend/src/highlight.ts::termMatchesWord",
@@ -7077,6 +7798,8 @@
       "frontend/src/pages/DebugPage.tsx::levelParam",
       "frontend/src/pages/DebugPage.tsx::parseTs",
       "frontend/src/pages/DebugPage.tsx::severityClass",
+      "frontend/src/pages/HomePage.tsx::Icon",
+      "frontend/src/pages/HomePage.tsx::graph",
       "frontend/src/pages/KpisPage.tsx::fetchJson",
       "frontend/src/pages/KpisPage.tsx::onKey",
       "frontend/src/pages/KpisPage.tsx::parseBucket",
@@ -7106,6 +7829,10 @@
       "backend/app/storage/repo.py::request_volume",
       "backend/app/storage/repo.py::zero_result_queries",
       "backend/app/storage/repo.py::select_logs",
+      "backend/app/index/__main__.py::build_indexes",
+      "backend/app/index/progress.py::finishing",
+      "backend/app/index/progress.py::finish",
+      "backend/app/index/progress.py::fail",
       "backend/app/api/routes_search.py::_get_service",
       "backend/app/storage/repo.py::insert_feedback",
       "backend/app/search/tokenize.py::tokenize",
@@ -7114,8 +7841,12 @@
       "backend/app/search/highlight.py::count_occurrences",
       "backend/app/api/deps.py::get_version",
       "backend/app/api/deps.py::get_commit",
+      "backend/app/api/deps.py::get_commit_message",
       "backend/app/api/routes_search.py::_index_metadata",
       "backend/app/observability/metrics.py::render",
+      "backend/app/ingest/writer.py::read_jsonl",
+      "backend/app/index/progress.py::try_start",
+      "backend/app/api/routes_search.py::_progress_model",
       "backend/app/callgraph/analyze.py::find_repo_root",
       "backend/app/callgraph/analyze.py::write_callgraph_json",
       "backend/app/callgraph/analyze.py::_call_name",
@@ -7130,10 +7861,8 @@
       "backend/app/eval/runner.py::append_experiment",
       "backend/app/index/__main__.py::_build_parser",
       "backend/app/index/__main__.py::_resolve_path",
-      "backend/app/ingest/writer.py::read_jsonl",
       "backend/app/ingest/writer.py::corpus_hash",
       "backend/app/index/metadata.py::is_up_to_date",
-      "backend/app/index/__main__.py::build_indexes",
       "backend/app/ingest/__init__.py::_build_parser",
       "backend/app/ingest/__init__.py::_resolve_path",
       "backend/app/ingest/__init__.py::ingest",
@@ -7145,6 +7874,7 @@
       "backend/app/search/highlight.py::make_snippet",
       "backend/app/search/normalize.py::min_max",
       "frontend/src/App.tsx::useTheme",
+      "frontend/src/useReindexJob.ts::useReindexJob",
       "frontend/src/api.ts::getHealth",
       "frontend/src/pages/HomePage.tsx::HomePage",
       "frontend/src/components/Sidebar.tsx::Sidebar",
@@ -7156,6 +7886,7 @@
       "frontend/src/pages/DebugPage.tsx::DebugPage",
       "frontend/src/components/InfoTip.tsx::placePop",
       "frontend/src/components/ResultCard.tsx::closeModal",
+      "frontend/src/components/VantaHero.tsx::hardenNet",
       "scripts/fetch_until_done.py::parse_args",
       "scripts/fetch_corpus.py::repo_root",
       "scripts/fetch_corpus.py::read_seed",
@@ -7218,10 +7949,13 @@
     "backend/app/api/routes_dashboard.py::dashboard_kpi_volume",
     "backend/app/api/routes_dashboard.py::dashboard_kpi_zero_results",
     "backend/app/api/routes_dashboard.py::dashboard_logs",
+    "backend/app/api/routes_search.py::_run_reindex",
     "backend/app/api/routes_search.py::feedback",
     "backend/app/api/routes_search.py::get_document",
     "backend/app/api/routes_search.py::health",
     "backend/app/api/routes_search.py::metrics",
+    "backend/app/api/routes_search.py::reindex",
+    "backend/app/api/routes_search.py::reindex_progress",
     "backend/app/api/routes_search.py::search",
     "backend/app/api/schemas.py::SearchFiltersModel._must_be_iso8601",
     "backend/app/api/schemas.py::SearchRequest._rrf_k_required_for_rrf",
@@ -7233,6 +7967,8 @@
     "backend/app/eval/__main__.py::main",
     "backend/app/index/__main__.py::main",
     "backend/app/index/metadata.py::IndexMetadata.save",
+    "backend/app/index/progress.py::start",
+    "backend/app/index/progress.py::update",
     "backend/app/ingest/__init__.py::main",
     "backend/app/loadtest/burst.py::_one_search",
     "backend/app/loadtest/locustfile.py::SearchUser.search",
@@ -7272,6 +8008,7 @@
     "frontend/src/components/InfoTip.tsx::onMove",
     "frontend/src/components/InfoTip.tsx::show",
     "frontend/src/components/ResultCard.tsx::onKey",
+    "frontend/src/components/VantaHero.tsx::fit",
     "frontend/src/highlight.ts::escapeHtml",
     "frontend/src/highlight.ts::queryTerms",
     "frontend/src/highlight.ts::termMatchesWord",
@@ -7282,6 +8019,8 @@
     "frontend/src/pages/DebugPage.tsx::levelParam",
     "frontend/src/pages/DebugPage.tsx::parseTs",
     "frontend/src/pages/DebugPage.tsx::severityClass",
+    "frontend/src/pages/HomePage.tsx::Icon",
+    "frontend/src/pages/HomePage.tsx::graph",
     "frontend/src/pages/KpisPage.tsx::fetchJson",
     "frontend/src/pages/KpisPage.tsx::onKey",
     "frontend/src/pages/KpisPage.tsx::parseBucket",
@@ -7291,7 +8030,6 @@
     "scripts/generate_contracts.py::created_at_for",
     "scripts/generate_contracts.py::main",
     "scripts/qrels_helper.py::main",
-    "backend/app/api/deps.py::SearchService.load",
     "backend/app/observability/logging.py::configure",
     "backend/app/storage/db.py::connect",
     "backend/app/storage/db.py::init_schema",
@@ -7310,13 +8048,19 @@
     "backend/app/api/routes_dashboard.py::_db",
     "backend/app/api/routes_dashboard.py::parse_window",
     "backend/app/storage/repo.py::select_logs",
+    "backend/app/api/deps.py::SearchService.load",
+    "backend/app/index/progress.py::fail",
+    "backend/app/index/progress.py::finish",
+    "backend/app/index/progress.py::finishing",
     "backend/app/storage/repo.py::insert_feedback",
     "backend/app/search/highlight.py::closest_document_words",
     "backend/app/search/highlight.py::count_occurrences",
     "backend/app/api/deps.py::get_commit",
+    "backend/app/api/deps.py::get_commit_message",
     "backend/app/api/deps.py::get_version",
     "backend/app/api/routes_search.py::_index_metadata",
     "backend/app/observability/metrics.py::render",
+    "backend/app/api/routes_search.py::_progress_model",
     "backend/app/api/routes_search.py::_get_service",
     "backend/app/callgraph/analyze.py::find_repo_root",
     "backend/app/callgraph/analyze.py::write_callgraph_json",
@@ -7336,6 +8080,7 @@
     "backend/app/index/metadata.py::is_up_to_date",
     "backend/app/ingest/writer.py::corpus_hash",
     "backend/app/ingest/writer.py::read_jsonl",
+    "backend/app/index/progress.py::try_start",
     "backend/app/ingest/__init__.py::_build_parser",
     "backend/app/ingest/__init__.py::_resolve_path",
     "backend/app/ingest/__init__.py::ingest",
@@ -7359,8 +8104,10 @@
     "frontend/src/pages/KpisPage.tsx::KpisPage",
     "frontend/src/pages/SearchPage.tsx::SearchPage",
     "frontend/src/pages/SettingsPage.tsx::SettingsPage",
+    "frontend/src/useReindexJob.ts::useReindexJob",
     "frontend/src/components/InfoTip.tsx::placePop",
     "frontend/src/components/ResultCard.tsx::closeModal",
+    "frontend/src/components/VantaHero.tsx::hardenNet",
     "scripts/fetch_corpus.py::main",
     "scripts/fetch_corpus.py::pending_rows",
     "scripts/fetch_corpus.py::read_seed",
@@ -7582,6 +8329,26 @@
       "to": "backend/app/storage/repo.py::select_logs"
     },
     {
+      "from": "backend/app/api/routes_search.py::_run_reindex",
+      "to": "backend/app/index/__main__.py::build_indexes"
+    },
+    {
+      "from": "backend/app/api/routes_search.py::_run_reindex",
+      "to": "backend/app/index/progress.py::finishing"
+    },
+    {
+      "from": "backend/app/api/routes_search.py::_run_reindex",
+      "to": "backend/app/api/deps.py::SearchService.load"
+    },
+    {
+      "from": "backend/app/api/routes_search.py::_run_reindex",
+      "to": "backend/app/index/progress.py::finish"
+    },
+    {
+      "from": "backend/app/api/routes_search.py::_run_reindex",
+      "to": "backend/app/index/progress.py::fail"
+    },
+    {
       "from": "backend/app/api/routes_search.py::feedback",
       "to": "backend/app/api/routes_search.py::_get_service"
     },
@@ -7619,11 +8386,39 @@
     },
     {
       "from": "backend/app/api/routes_search.py::health",
+      "to": "backend/app/api/deps.py::get_commit_message"
+    },
+    {
+      "from": "backend/app/api/routes_search.py::health",
       "to": "backend/app/api/routes_search.py::_index_metadata"
     },
     {
       "from": "backend/app/api/routes_search.py::metrics",
       "to": "backend/app/observability/metrics.py::render"
+    },
+    {
+      "from": "backend/app/api/routes_search.py::reindex",
+      "to": "backend/app/api/routes_search.py::_get_service"
+    },
+    {
+      "from": "backend/app/api/routes_search.py::reindex",
+      "to": "backend/app/config.py::load_config"
+    },
+    {
+      "from": "backend/app/api/routes_search.py::reindex",
+      "to": "backend/app/ingest/writer.py::read_jsonl"
+    },
+    {
+      "from": "backend/app/api/routes_search.py::reindex",
+      "to": "backend/app/index/progress.py::try_start"
+    },
+    {
+      "from": "backend/app/api/routes_search.py::reindex",
+      "to": "backend/app/api/routes_search.py::_progress_model"
+    },
+    {
+      "from": "backend/app/api/routes_search.py::reindex_progress",
+      "to": "backend/app/api/routes_search.py::_progress_model"
     },
     {
       "from": "backend/app/api/routes_search.py::search",
@@ -7718,6 +8513,10 @@
       "to": "backend/app/index/__main__.py::build_indexes"
     },
     {
+      "from": "backend/app/index/progress.py::start",
+      "to": "backend/app/index/progress.py::try_start"
+    },
+    {
       "from": "backend/app/ingest/__init__.py::main",
       "to": "backend/app/config.py::load_config"
     },
@@ -7791,6 +8590,10 @@
     },
     {
       "from": "frontend/src/App.tsx::App",
+      "to": "frontend/src/useReindexJob.ts::useReindexJob"
+    },
+    {
+      "from": "frontend/src/App.tsx::App",
       "to": "frontend/src/api.ts::getHealth"
     },
     {
@@ -7836,6 +8639,10 @@
     {
       "from": "frontend/src/components/ResultCard.tsx::onKey",
       "to": "frontend/src/components/ResultCard.tsx::closeModal"
+    },
+    {
+      "from": "frontend/src/components/VantaHero.tsx::fit",
+      "to": "frontend/src/components/VantaHero.tsx::hardenNet"
     },
     {
       "from": "scripts/fetch_until_done.py::main",

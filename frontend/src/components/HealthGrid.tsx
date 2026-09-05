@@ -6,6 +6,11 @@ interface Props {
   health: HealthResponse
 }
 
+function shortCommit(commit: string): string {
+  if (!commit) return '—'
+  return commit.length > 7 ? commit.slice(0, 7) : commit
+}
+
 export default function HealthGrid({ health }: Props) {
   const ok = health.status === 'ok'
   return (
@@ -25,24 +30,37 @@ export default function HealthGrid({ health }: Props) {
         <div className="hc-value mono">{health.version || '—'}</div>
       </InfoTip>
 
-      <InfoTip className="health-card" label="Commit" hint={INFO_TIPS.commit}>
+      <InfoTip className="health-card hc-wide" label="Commit" hint={INFO_TIPS.commit}>
         <div className="hc-eyebrow"><InfoLabel text="Commit" /></div>
-        <div className="hc-value mono">{health.commit ? health.commit.slice(0, 7) : '—'}</div>
+        <div className="hc-commit">
+          <div className="hc-value mono">{shortCommit(health.commit)}</div>
+          {health.commit_message ? (
+            <div className="hc-commit-name">{health.commit_message}</div>
+          ) : null}
+        </div>
       </InfoTip>
 
       {health.index ? (
         <>
-          <InfoTip className="health-card hc-wide" label="Index Model" hint={INFO_TIPS.indexModel}>
-            <div className="hc-eyebrow"><InfoLabel text="Index Model" /></div>
-            <div className="hc-value mono sm">{health.index.model}</div>
-          </InfoTip>
           <InfoTip className="health-card" label="Documents" hint={INFO_TIPS.documents}>
             <div className="hc-eyebrow"><InfoLabel text="Documents" /></div>
-            <div className="hc-metric">{health.index.doc_count.toLocaleString()}</div>
+            <div className="hc-metric">{(health.index.doc_count ?? 0).toLocaleString()}</div>
+          </InfoTip>
+          <InfoTip className="health-card" label="Vectors" hint={INFO_TIPS.vectorCount}>
+            <div className="hc-eyebrow"><InfoLabel text="Vectors" /></div>
+            <div className="hc-metric">{(health.index.vector_count ?? 0).toLocaleString()}</div>
           </InfoTip>
           <InfoTip className="health-card" label="Embedding Dim." hint={INFO_TIPS.embeddingDim}>
             <div className="hc-eyebrow"><InfoLabel text="Embedding Dim." /></div>
             <div className="hc-metric">{health.index.dimension}</div>
+          </InfoTip>
+          <InfoTip className="health-card" label="Granularity" hint={INFO_TIPS.granularity}>
+            <div className="hc-eyebrow"><InfoLabel text="Granularity" /></div>
+            <div className="hc-value mono sm">{health.index.granularity}</div>
+          </InfoTip>
+          <InfoTip className="health-card hc-wide" label="Index Model" hint={INFO_TIPS.indexModel}>
+            <div className="hc-eyebrow"><InfoLabel text="Index Model" /></div>
+            <div className="hc-value mono sm">{health.index.model}</div>
           </InfoTip>
           <InfoTip className="health-card hc-wide" label="Built At" hint={INFO_TIPS.builtAt}>
             <div className="hc-eyebrow"><InfoLabel text="Built At" /></div>

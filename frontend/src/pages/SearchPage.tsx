@@ -4,9 +4,67 @@ import ResultCard from '../components/ResultCard'
 import { INFO_TIPS } from '../infoTips'
 import { search, type DatasetName, type Normalization, type SearchFilters, type SearchResult } from '../api'
 
+const PAGE_SIZE = 5
+
 function localDateToIso(value: string, endOfDay: boolean): string {
   if (!value) return ''
   return endOfDay ? `${value}T23:59:59` : `${value}T00:00:00`
+}
+
+function clampPage(page: number, total: number, size: number): number {
+  const pages = Math.max(1, Math.ceil(total / size))
+  return Math.min(pages, Math.max(1, page))
+}
+
+function pageItems<T>(items: T[], page: number, size: number): T[] {
+  const start = (page - 1) * size
+  return items.slice(start, start + size)
+}
+
+function TablePager({
+  page,
+  total,
+  pageSize,
+  onPage,
+}: {
+  page: number
+  total: number
+  pageSize: number
+  onPage: (page: number) => void
+}) {
+  if (total <= pageSize) return null
+  const pages = Math.ceil(total / pageSize)
+  const from = (page - 1) * pageSize + 1
+  const to = Math.min(total, page * pageSize)
+  const windowStart = Math.max(1, Math.min(page - 2, pages - 4))
+  const windowEnd = Math.min(pages, windowStart + 4)
+  const nums: number[] = []
+  for (let n = windowStart; n <= windowEnd; n += 1) nums.push(n)
+  return (
+    <nav className="table-pager" aria-label="Result pages">
+      <span className="table-pager-meta">
+        {from}–{to} of {total}
+      </span>
+      <div className="table-pager-btns">
+        <button type="button" disabled={page <= 1} onClick={() => onPage(page - 1)}>
+          Prev
+        </button>
+        {nums.map(n => (
+          <button
+            key={n}
+            type="button"
+            aria-current={n === page ? 'page' : undefined}
+            onClick={() => onPage(n)}
+          >
+            {n}
+          </button>
+        ))}
+        <button type="button" disabled={page >= pages} onClick={() => onPage(page + 1)}>
+          Next
+        </button>
+      </div>
+    </nav>
+  )
 }
 
 export default function SearchPage() {
@@ -28,6 +86,7 @@ export default function SearchPage() {
   const [requestId, setRequestId] = useState('')
   const [tookMs, setTookMs] = useState<number | null>(null)
   const [searched, setSearched] = useState(false)
+  const [page, setPage] = useState(1)
   const rrfKReady =
     normalization !== 'rrf' ||
     (rrfK.trim() !== '' && Number.isInteger(Number(rrfK)) && Number(rrfK) >= 0)
@@ -38,6 +97,7 @@ export default function SearchPage() {
     setLoading(true)
     setError(null)
     setSearched(true)
+    setPage(1)
     const filters: SearchFilters = {}
     if (dataset) filters.dataset = dataset
     if (sourceFilter.trim()) filters.source_contains = sourceFilter.trim()
@@ -86,10 +146,50 @@ export default function SearchPage() {
     setTookMs(null)
     setSearched(false)
     setError(null)
+    setPage(1)
   }
+
+  const safePage = clampPage(page, results.length, PAGE_SIZE)
+  const visible = pageItems(results, safePage, PAGE_SIZE)
+  const rankOffset = (safePage - 1) * PAGE_SIZE
 
   return (
     <div className="page-container">
+      <style>{`
+        .page-container { gap: 16px; padding-top: 28px; }
+        .page-title { font-size: 26px; }
+        .page-desc { font-size: 13px; }
+        .search-panel { padding: 16px 18px; gap: 14px; }
+        .results-list { gap: 8px; }
+        .table-pager {
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          gap: 12px;
+          margin-top: 4px;
+          padding-top: 10px;
+          border-top: 1px solid var(--c-border);
+          font-size: 12px;
+          color: var(--c-muted);
+        }
+        .table-pager-btns { display: flex; gap: 4px; }
+        .table-pager button {
+          min-width: 28px;
+          height: 28px;
+          padding: 0 8px;
+          border: 1px solid var(--c-border);
+          background: var(--c-surface);
+          color: var(--c-text);
+          border-radius: 4px;
+          font-size: 12px;
+        }
+        .table-pager button:disabled { opacity: 0.45; }
+        .table-pager button[aria-current='page'] {
+          border-color: var(--purple);
+          color: var(--purple);
+          background: var(--purple-tint);
+        }
+      `}</style>
       <div className="page-header">
         <div className="page-eyebrow">Hybrid Search</div>
         <h1 className="page-title">Search Documents</h1>
@@ -288,15 +388,21 @@ export default function SearchPage() {
 
       {results.length > 0 && (
         <div className="results-list">
-          {results.map((r, i) => (
+          {visible.map((r, i) => (
             <ResultCard
               key={r.doc_id}
               result={r}
               requestId={requestId}
-              rank={i + 1}
+              rank={rankOffset + i + 1}
               query={query}
             />
           ))}
+          <TablePager
+            page={safePage}
+            total={results.length}
+            pageSize={PAGE_SIZE}
+            onPage={setPage}
+          />
         </div>
       )}
 

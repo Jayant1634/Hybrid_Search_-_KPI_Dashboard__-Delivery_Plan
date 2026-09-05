@@ -8,6 +8,7 @@ import KpisPage from './pages/KpisPage'
 import EvaluationPage from './pages/EvaluationPage'
 import DebugPage from './pages/DebugPage'
 import { getHealth } from './api'
+import { useReindexJob } from './useReindexJob'
 import './App.css'
 
 export type Page = 'home' | 'search' | 'health' | 'settings' | 'kpis' | 'evaluation' | 'debug'
@@ -31,6 +32,7 @@ export default function App() {
   const [page, setPage] = useState<Page>('home')
   const { dark, toggle } = useTheme()
   const [build, setBuild] = useState<{ version: string; commit: string } | null>(null)
+  const reindexJob = useReindexJob()
 
   useEffect(() => {
     let cancelled = false
@@ -47,15 +49,30 @@ export default function App() {
   }, [])
 
   if (page === 'home') {
-    return <HomePage dark={dark} onNavigate={setPage} />
+    return <HomePage dark={dark} onToggleTheme={toggle} onNavigate={setPage} />
   }
 
   return (
     <div className="app-shell">
-      <Sidebar current={page} onNavigate={setPage} dark={dark} onToggleTheme={toggle} />
+      <Sidebar
+        current={page}
+        onNavigate={setPage}
+        dark={dark}
+        onToggleTheme={toggle}
+        indexing={reindexJob.running}
+        indexingPercent={reindexJob.progress?.percent ?? 0}
+        indexingGranularity={reindexJob.progress?.granularity ?? null}
+      />
       <main className="app-main">
         {page === 'search' && <SearchPage />}
-        {page === 'health' && <HealthPage />}
+        {page === 'health' && (
+          <HealthPage
+            progress={reindexJob.progress}
+            reindexError={reindexJob.error}
+            reindexNote={reindexJob.note}
+            onSwitch={reindexJob.start}
+          />
+        )}
         {page === 'settings' && <SettingsPage />}
         {page === 'kpis' && <KpisPage />}
         {page === 'evaluation' && <EvaluationPage />}

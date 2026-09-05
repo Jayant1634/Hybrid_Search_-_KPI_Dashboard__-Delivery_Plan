@@ -1,8 +1,11 @@
 import type { Page } from '../App'
+import ThemeToggle from './ThemeToggle'
 
 interface Props {
   current: string
   onNavigate(p: Page): void
+  dark: boolean
+  onToggleTheme: () => void
 }
 
 const LINKS: [Page, string][] = [
@@ -14,7 +17,7 @@ const LINKS: [Page, string][] = [
   ['health', 'System'],
 ]
 
-export default function Navbar({ current, onNavigate }: Props) {
+export default function Navbar({ current, onNavigate, dark, onToggleTheme }: Props) {
   return (
     <nav className="navbar">
       <div className="navbar-inner">
@@ -37,6 +40,9 @@ export default function Navbar({ current, onNavigate }: Props) {
               {label}
             </button>
           ))}
+        </div>
+        <div className="navbar-right">
+          <ThemeToggle dark={dark} onToggle={onToggleTheme} compact />
         </div>
       </div>
     </nav>
