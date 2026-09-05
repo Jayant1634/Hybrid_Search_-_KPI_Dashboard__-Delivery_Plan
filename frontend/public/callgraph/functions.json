@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-09-05T08:46:10Z",
+  "generated_at": "2026-09-05T08:57:12Z",
   "functions": {
     "backend/app/api/deps.py::_pyproject_path": {
       "file": "backend/app/api/deps.py",
@@ -1930,7 +1930,7 @@
       "file": "backend/app/storage/db.py",
       "name": "connect",
       "qualname": "connect",
-      "lineno": 43,
+      "lineno": 44,
       "calls": [],
       "called_by": [
         "backend/app/api/main.py::create_app",
@@ -1941,7 +1941,7 @@
       "file": "backend/app/storage/db.py",
       "name": "init_schema",
       "qualname": "init_schema",
-      "lineno": 59,
+      "lineno": 60,
       "calls": [],
       "called_by": [
         "backend/app/api/main.py::create_app"
@@ -1986,7 +1986,7 @@
       "file": "backend/app/storage/repo.py",
       "name": "insert_feedback",
       "qualname": "insert_feedback",
-      "lineno": 92,
+      "lineno": 94,
       "calls": [
         "backend/app/storage/repo.py::_now"
       ],
@@ -1998,7 +1998,7 @@
       "file": "backend/app/storage/repo.py",
       "name": "insert_log",
       "qualname": "insert_log",
-      "lineno": 113,
+      "lineno": 115,
       "calls": [
         "backend/app/storage/repo.py::_now"
       ],
@@ -2010,7 +2010,7 @@
       "file": "backend/app/storage/repo.py",
       "name": "select_requests",
       "qualname": "select_requests",
-      "lineno": 134,
+      "lineno": 136,
       "calls": [],
       "called_by": []
     },
@@ -2018,7 +2018,7 @@
       "file": "backend/app/storage/repo.py",
       "name": "select_feedback",
       "qualname": "select_feedback",
-      "lineno": 146,
+      "lineno": 148,
       "calls": [],
       "called_by": []
     },
@@ -2026,7 +2026,7 @@
       "file": "backend/app/storage/repo.py",
       "name": "select_logs",
       "qualname": "select_logs",
-      "lineno": 168,
+      "lineno": 170,
       "calls": [],
       "called_by": [
         "backend/app/api/routes_dashboard.py::dashboard_logs"
@@ -2036,7 +2036,7 @@
       "file": "backend/app/storage/repo.py",
       "name": "kpi_summary",
       "qualname": "kpi_summary",
-      "lineno": 204,
+      "lineno": 206,
       "calls": [
         "backend/app/observability/metrics.py::percentile"
       ],
@@ -2048,7 +2048,7 @@
       "file": "backend/app/storage/repo.py",
       "name": "request_volume",
       "qualname": "request_volume",
-      "lineno": 232,
+      "lineno": 234,
       "calls": [
         "backend/app/storage/repo.py::_bucket_sql"
       ],
@@ -2060,7 +2060,7 @@
       "file": "backend/app/storage/repo.py",
       "name": "top_queries",
       "qualname": "top_queries",
-      "lineno": 257,
+      "lineno": 259,
       "calls": [],
       "called_by": [
         "backend/app/api/routes_dashboard.py::dashboard_kpi_top_queries"
@@ -2070,7 +2070,7 @@
       "file": "backend/app/storage/repo.py",
       "name": "zero_result_queries",
       "qualname": "zero_result_queries",
-      "lineno": 287,
+      "lineno": 289,
       "calls": [],
       "called_by": [
         "backend/app/api/routes_dashboard.py::dashboard_kpi_zero_results"

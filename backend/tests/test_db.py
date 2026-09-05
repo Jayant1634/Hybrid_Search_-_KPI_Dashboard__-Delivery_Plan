@@ -32,6 +32,11 @@ def test_init_schema_creates_three_tables() -> None:
         ).fetchall()
         names = {row["name"] for row in rows}
         assert {"requests", "feedback", "logs"} <= names
+        columns = {
+            row["name"]
+            for row in conn.execute("PRAGMA table_info(requests)").fetchall()
+        }
+        assert "client_id" in columns
     finally:
         conn.close()
 

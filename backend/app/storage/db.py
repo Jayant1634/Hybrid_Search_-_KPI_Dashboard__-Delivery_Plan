@@ -16,7 +16,8 @@ _SCHEMA = (
         alpha REAL,
         result_count INTEGER,
         error TEXT,
-        created_at TEXT NOT NULL
+        created_at TEXT NOT NULL,
+        client_id TEXT NOT NULL
     )
     """,
     """

@@ -101,7 +101,52 @@ with `python -m app.index`, or start with `HSS_INDEX_ON_MISMATCH=rebuild`.
 
 ### What I broke
 
+Added `client_id TEXT NOT NULL` to the `requests` `CREATE TABLE` in
+`backend/app/storage/db.py` and to the `INSERT` in `backend/app/storage/repo.py`.
+Restarted against the existing `data/hss.sqlite`. `CREATE TABLE IF NOT EXISTS`
+does not alter an already-created table, so the on-disk `requests` rows stayed
+on the old schema (no `client_id` column; 175 rows).
+
 ### What happened
+
+The API reloaded cleanly (`Application startup complete`). Search still returned
+results (`POST /search` 200, `took_ms` ~16) but the request row was not written.
+`requests` stayed at 175. Server log:
+
+```
+failed to persist request row
+Traceback (most recent call last):
+  File "backend/app/api/middleware.py", line 162, in _persist_search
+    insert_request(
+  File "backend/app/storage/repo.py", line 71, in insert_request
+    cursor = conn.execute(
+sqlite3.OperationalError: table requests has no column named client_id
+INFO:     127.0.0.1:56500 - "POST /search HTTP/1.1" 200 OK
+```
+
+KPI tiles still loaded (`GET /api/dashboard/kpi/summary?window=24h` 200):
+
+```
+{"total":149,"p50":512.7699999138713,"p95":1109.0029600076377,"zero_result_count":16,"error_count":5}
+```
+
+The new search is missing from those totals. The KPI latency-burst action
+(`POST /api/dashboard/kpi/load-test`) 500s because `burst.py` inserts without
+swallowing the same column error:
+
+```
+STATUS 500
+REQUEST-ID f3674cfea44b4d1fbf0ab20ba6714953
+BODY {"request_id":"f3674cfea44b4d1fbf0ab20ba6714953","detail":"internal server error"}
+```
+
+Screenshot note: KPIs page still shows the existing 24h cards (p50 / p95 /
+Total requests / Zero results) and the volume chart; no red banner on first
+paint because those GETs do not touch `client_id`. After Search, the new query
+does not appear in Top queries or volume. Opening Test latency and firing hits
+puts `HTTP 500: {"request_id":"...","detail":"internal server error"}` in the
+drawer error banner. No PNG captured this session (no browser tool); this is
+the on-screen state against the live Vite tab at `http://localhost:5173/`.
 
 ### Root cause
 
@@ -110,6 +155,10 @@ with `python -m app.index`, or start with `HSS_INDEX_ON_MISMATCH=rebuild`.
 ### How I verified
 
 ### Commits
+
+- `break: add requests.client_id without migrating existing sqlite`
+
+(commit SHA pending)
 
 ## Scenario C: Hybrid scoring regression (s9.3)
 
