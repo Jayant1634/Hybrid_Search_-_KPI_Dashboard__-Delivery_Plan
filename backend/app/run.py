@@ -4,12 +4,50 @@ from __future__ import annotations
 
 import os
 import sys
+from collections.abc import Iterator
 from pathlib import Path
 
 from app.config import find_repo_root, load_config
 
 APP = "app.api.main:create_app"
 HOST = "127.0.0.1"
+
+
+def _parse_env_line(line: str) -> tuple[str, str] | None:
+    stripped = line.strip()
+    if not stripped or stripped.startswith("#"):
+        return None
+    if stripped.startswith("export "):
+        stripped = stripped[7:].strip()
+    if "=" not in stripped:
+        return None
+    key, _, value = stripped.partition("=")
+    key = key.strip()
+    if not key:
+        return None
+    value = value.strip()
+    if len(value) >= 2 and value[0] == value[-1] and value[0] in {'"', "'"}:
+        value = value[1:-1]
+    return key, value
+
+
+def _iter_env_file(path: Path) -> Iterator[tuple[str, str]]:
+    for line in path.read_text(encoding="utf-8").splitlines():
+        parsed = _parse_env_line(line)
+        if parsed is not None:
+            yield parsed
+
+
+def load_dotenv(repo_root: Path | None = None) -> list[Path]:
+    """Load ``backend/.env``. Existing keys win. Repo-root ``.env`` is ignored."""
+    root = repo_root if repo_root is not None else find_repo_root()
+    path = root / "backend" / ".env"
+    if not path.is_file():
+        return []
+    for key, value in _iter_env_file(path):
+        if key not in os.environ:
+            os.environ[key] = value
+    return [path]
 
 
 def _venv_python(repo_root: Path) -> Path | None:
@@ -50,6 +88,8 @@ def ensure_venv() -> None:
 
 def main() -> None:
     """Run uvicorn with the factory app, local host, config port, reload on."""
+    load_dotenv()
+    load_config.cache_clear()
     ensure_venv()
     import uvicorn
 

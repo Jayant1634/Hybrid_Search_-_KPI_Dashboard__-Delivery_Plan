@@ -16,7 +16,7 @@ import numpy as np
 def min_max(scores: Mapping[str, float]) -> dict[str, float]:
     """Rescale ``scores`` linearly so the min maps to 0 and the max to 1.
 
-    When all scores are equal (zero spread) every doc gets ``1.0``. An empty
+    When all scores are equal (zero spread) every doc gets ``0.0``. An empty
     input yields an empty output.
     """
     if not scores:
@@ -27,7 +27,7 @@ def min_max(scores: Mapping[str, float]) -> dict[str, float]:
     high = float(values.max())
     spread = high - low
     if spread == 0.0:
-        return {doc_id: 1.0 for doc_id in ids}
+        return {doc_id: 0.0 for doc_id in ids}
     scaled = (values - low) / spread
     return {doc_id: float(value) for doc_id, value in zip(ids, scaled)}
 
@@ -37,7 +37,7 @@ def z_score(scores: Mapping[str, float]) -> dict[str, float]:
 
     Scores are centred and scaled by their standard deviation, then passed
     through min-max so the result lands in ``0..1``. This keeps the relative
-    ordering of the inputs. When all scores are equal every doc gets ``1.0``.
+    ordering of the inputs. When all scores are equal every doc gets ``0.0``.
     An empty input yields an empty output.
     """
     if not scores:
@@ -46,7 +46,7 @@ def z_score(scores: Mapping[str, float]) -> dict[str, float]:
     values = np.asarray([scores[doc_id] for doc_id in ids], dtype=np.float64)
     std = float(values.std())
     if std == 0.0:
-        return {doc_id: 1.0 for doc_id in ids}
+        return {doc_id: 0.0 for doc_id in ids}
     standardised = (values - float(values.mean())) / std
     return min_max({doc_id: float(v) for doc_id, v in zip(ids, standardised)})
 

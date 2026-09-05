@@ -1,12 +1,12 @@
 {
-  "generated_at": "2026-09-05T06:59:10Z",
+  "generated_at": "2026-09-05T09:20:20Z",
   "stats": {
     "file_count": 64,
-    "function_count": 317,
-    "uncalled_file_count": 17,
+    "function_count": 326,
+    "uncalled_file_count": 16,
     "uncalled_function_count": 85,
-    "file_edge_count": 97,
-    "function_edge_count": 302
+    "file_edge_count": 99,
+    "function_edge_count": 314
   },
   "files": {
     "backend/app/__init__.py": {
@@ -36,10 +36,13 @@
         "backend/app/api/deps.py::get_version",
         "backend/app/api/deps.py::get_commit",
         "backend/app/api/deps.py::SearchService.__init__",
-        "backend/app/api/deps.py::SearchService.load"
+        "backend/app/api/deps.py::SearchService.load",
+        "backend/app/api/deps.py::_reconcile_index"
       ],
       "imports": [
         "backend/app/config.py",
+        "backend/app/index/__main__.py",
+        "backend/app/index/metadata.py",
         "backend/app/ingest/writer.py",
         "backend/app/search/bm25.py",
         "backend/app/search/embedder.py",
@@ -52,6 +55,8 @@
       ],
       "calls": [
         "backend/app/config.py",
+        "backend/app/index/__main__.py",
+        "backend/app/index/metadata.py",
         "backend/app/ingest/writer.py",
         "backend/app/search/bm25.py",
         "backend/app/search/embedder.py",
@@ -408,7 +413,9 @@
         "backend/app/search/vector.py",
         "backend/app/index/metadata.py"
       ],
-      "imported_by": [],
+      "imported_by": [
+        "backend/app/api/deps.py"
+      ],
       "calls": [
         "backend/app/config.py",
         "backend/app/index/metadata.py",
@@ -417,7 +424,9 @@
         "backend/app/search/embedder.py",
         "backend/app/search/vector.py"
       ],
-      "called_by": []
+      "called_by": [
+        "backend/app/api/deps.py"
+      ]
     },
     "backend/app/index/metadata.py": {
       "language": "python",
@@ -429,12 +438,14 @@
       ],
       "imports": [],
       "imported_by": [
+        "backend/app/api/deps.py",
         "backend/app/api/routes_search.py",
         "backend/app/eval/__main__.py",
         "backend/app/index/__main__.py"
       ],
       "calls": [],
       "called_by": [
+        "backend/app/api/deps.py",
         "backend/app/api/routes_search.py",
         "backend/app/eval/__main__.py",
         "backend/app/index/__main__.py"
@@ -652,6 +663,9 @@
     "backend/app/run.py": {
       "language": "python",
       "functions": [
+        "backend/app/run.py::_parse_env_line",
+        "backend/app/run.py::_iter_env_file",
+        "backend/app/run.py::load_dotenv",
         "backend/app/run.py::_venv_python",
         "backend/app/run.py::_same_interpreter",
         "backend/app/run.py::_uvicorn_available",
@@ -873,6 +887,11 @@
       "language": "python",
       "functions": [
         "backend/app/storage/db.py::connect",
+        "backend/app/storage/db.py::_now",
+        "backend/app/storage/db.py::_discover_migrations",
+        "backend/app/storage/db.py::_split_statements",
+        "backend/app/storage/db.py::_current_version",
+        "backend/app/storage/db.py::migrate",
         "backend/app/storage/db.py::init_schema"
       ],
       "imports": [],
@@ -1458,7 +1477,7 @@
       "file": "backend/app/api/deps.py",
       "name": "_pyproject_path",
       "qualname": "_pyproject_path",
-      "lineno": 31,
+      "lineno": 33,
       "calls": [],
       "called_by": [
         "backend/app/api/deps.py::get_version"
@@ -1468,7 +1487,7 @@
       "file": "backend/app/api/deps.py",
       "name": "get_version",
       "qualname": "get_version",
-      "lineno": 36,
+      "lineno": 38,
       "calls": [
         "backend/app/api/deps.py::_pyproject_path",
         "backend/app/api/deps.py::SearchService.load"
@@ -1481,7 +1500,7 @@
       "file": "backend/app/api/deps.py",
       "name": "get_commit",
       "qualname": "get_commit",
-      "lineno": 43,
+      "lineno": 45,
       "calls": [],
       "called_by": [
         "backend/app/api/routes_search.py::health"
@@ -1491,7 +1510,7 @@
       "file": "backend/app/api/deps.py",
       "name": "__init__",
       "qualname": "SearchService.__init__",
-      "lineno": 71,
+      "lineno": 73,
       "calls": [],
       "called_by": []
     },
@@ -1499,16 +1518,30 @@
       "file": "backend/app/api/deps.py",
       "name": "load",
       "qualname": "SearchService.load",
-      "lineno": 78,
+      "lineno": 80,
       "calls": [
         "backend/app/config.py::load_config",
         "backend/app/ingest/writer.py::read_jsonl",
+        "backend/app/index/metadata.py::IndexMetadata.load",
+        "backend/app/api/deps.py::_reconcile_index",
         "backend/app/search/bm25.py::BM25Index.load",
         "backend/app/search/vector.py::VectorIndex.load"
       ],
       "called_by": [
         "backend/app/api/deps.py::get_version",
         "backend/app/api/main.py::create_app"
+      ]
+    },
+    "backend/app/api/deps.py::_reconcile_index": {
+      "file": "backend/app/api/deps.py",
+      "name": "_reconcile_index",
+      "qualname": "_reconcile_index",
+      "lineno": 132,
+      "calls": [
+        "backend/app/index/__main__.py::build_indexes"
+      ],
+      "called_by": [
+        "backend/app/api/deps.py::SearchService.load"
       ]
     },
     "backend/app/api/main.py::create_app": {
@@ -2082,7 +2115,7 @@
       "file": "backend/app/config.py",
       "name": "_is_repo_root",
       "qualname": "_is_repo_root",
-      "lineno": 29,
+      "lineno": 30,
       "calls": [],
       "called_by": [
         "backend/app/config.py::_walk_up"
@@ -2092,7 +2125,7 @@
       "file": "backend/app/config.py",
       "name": "_walk_up",
       "qualname": "_walk_up",
-      "lineno": 33,
+      "lineno": 34,
       "calls": [
         "backend/app/config.py::_is_repo_root"
       ],
@@ -2104,12 +2137,13 @@
       "file": "backend/app/config.py",
       "name": "find_repo_root",
       "qualname": "find_repo_root",
-      "lineno": 41,
+      "lineno": 42,
       "calls": [
         "backend/app/config.py::_walk_up"
       ],
       "called_by": [
         "backend/app/config.py::load_config",
+        "backend/app/run.py::load_dotenv",
         "backend/app/run.py::ensure_venv"
       ]
     },
@@ -2117,7 +2151,7 @@
       "file": "backend/app/config.py",
       "name": "_env_str",
       "qualname": "_env_str",
-      "lineno": 55,
+      "lineno": 56,
       "calls": [],
       "called_by": [
         "backend/app/config.py::load_config"
@@ -2127,7 +2161,7 @@
       "file": "backend/app/config.py",
       "name": "_env_int",
       "qualname": "_env_int",
-      "lineno": 62,
+      "lineno": 63,
       "calls": [],
       "called_by": [
         "backend/app/config.py::load_config"
@@ -2137,7 +2171,7 @@
       "file": "backend/app/config.py",
       "name": "_env_float",
       "qualname": "_env_float",
-      "lineno": 69,
+      "lineno": 70,
       "calls": [],
       "called_by": [
         "backend/app/config.py::load_config"
@@ -2147,7 +2181,7 @@
       "file": "backend/app/config.py",
       "name": "load_config",
       "qualname": "load_config",
-      "lineno": 77,
+      "lineno": 78,
       "calls": [
         "backend/app/config.py::find_repo_root",
         "backend/app/config.py::_env_str",
@@ -2420,6 +2454,7 @@
         "backend/app/ingest/writer.py::corpus_hash"
       ],
       "called_by": [
+        "backend/app/api/deps.py::_reconcile_index",
         "backend/app/index/__main__.py::main"
       ]
     },
@@ -2474,6 +2509,7 @@
       "lineno": 55,
       "calls": [],
       "called_by": [
+        "backend/app/api/deps.py::SearchService.load",
         "backend/app/api/routes_search.py::_index_metadata",
         "backend/app/eval/__main__.py::check_model",
         "backend/app/index/metadata.py::is_up_to_date"
@@ -2918,11 +2954,46 @@
         "backend/app/api/routes_search.py::metrics"
       ]
     },
+    "backend/app/run.py::_parse_env_line": {
+      "file": "backend/app/run.py",
+      "name": "_parse_env_line",
+      "qualname": "_parse_env_line",
+      "lineno": 16,
+      "calls": [],
+      "called_by": [
+        "backend/app/run.py::_iter_env_file"
+      ]
+    },
+    "backend/app/run.py::_iter_env_file": {
+      "file": "backend/app/run.py",
+      "name": "_iter_env_file",
+      "qualname": "_iter_env_file",
+      "lineno": 34,
+      "calls": [
+        "backend/app/run.py::_parse_env_line"
+      ],
+      "called_by": [
+        "backend/app/run.py::load_dotenv"
+      ]
+    },
+    "backend/app/run.py::load_dotenv": {
+      "file": "backend/app/run.py",
+      "name": "load_dotenv",
+      "qualname": "load_dotenv",
+      "lineno": 41,
+      "calls": [
+        "backend/app/config.py::find_repo_root",
+        "backend/app/run.py::_iter_env_file"
+      ],
+      "called_by": [
+        "backend/app/run.py::main"
+      ]
+    },
     "backend/app/run.py::_venv_python": {
       "file": "backend/app/run.py",
       "name": "_venv_python",
       "qualname": "_venv_python",
-      "lineno": 15,
+      "lineno": 53,
       "calls": [],
       "called_by": [
         "backend/app/run.py::ensure_venv"
@@ -2932,7 +3003,7 @@
       "file": "backend/app/run.py",
       "name": "_same_interpreter",
       "qualname": "_same_interpreter",
-      "lineno": 23,
+      "lineno": 61,
       "calls": [],
       "called_by": [
         "backend/app/run.py::ensure_venv"
@@ -2942,7 +3013,7 @@
       "file": "backend/app/run.py",
       "name": "_uvicorn_available",
       "qualname": "_uvicorn_available",
-      "lineno": 30,
+      "lineno": 68,
       "calls": [],
       "called_by": [
         "backend/app/run.py::ensure_venv"
@@ -2952,7 +3023,7 @@
       "file": "backend/app/run.py",
       "name": "ensure_venv",
       "qualname": "ensure_venv",
-      "lineno": 38,
+      "lineno": 76,
       "calls": [
         "backend/app/run.py::_uvicorn_available",
         "backend/app/run.py::_venv_python",
@@ -2967,10 +3038,11 @@
       "file": "backend/app/run.py",
       "name": "main",
       "qualname": "main",
-      "lineno": 51,
+      "lineno": 89,
       "calls": [
-        "backend/app/run.py::ensure_venv",
-        "backend/app/config.py::load_config"
+        "backend/app/run.py::load_dotenv",
+        "backend/app/config.py::load_config",
+        "backend/app/run.py::ensure_venv"
       ],
       "called_by": []
     },
@@ -3204,7 +3276,7 @@
       "file": "backend/app/search/hybrid.py",
       "name": "__init__",
       "qualname": "HybridSearcher.__init__",
-      "lineno": 44,
+      "lineno": 47,
       "calls": [],
       "called_by": []
     },
@@ -3212,7 +3284,7 @@
       "file": "backend/app/search/hybrid.py",
       "name": "embedder",
       "qualname": "HybridSearcher.embedder",
-      "lineno": 57,
+      "lineno": 60,
       "calls": [],
       "called_by": []
     },
@@ -3220,7 +3292,7 @@
       "file": "backend/app/search/hybrid.py",
       "name": "search",
       "qualname": "HybridSearcher.search",
-      "lineno": 60,
+      "lineno": 63,
       "calls": [
         "backend/app/search/filters.py::apply",
         "backend/app/search/normalize.py::normalize",
@@ -3330,19 +3402,76 @@
       "file": "backend/app/storage/db.py",
       "name": "connect",
       "qualname": "connect",
-      "lineno": 43,
+      "lineno": 21,
       "calls": [],
       "called_by": [
         "backend/app/api/main.py::create_app",
         "backend/app/api/routes_dashboard.py::_db"
       ]
     },
+    "backend/app/storage/db.py::_now": {
+      "file": "backend/app/storage/db.py",
+      "name": "_now",
+      "qualname": "_now",
+      "lineno": 37,
+      "calls": [],
+      "called_by": [
+        "backend/app/storage/db.py::migrate"
+      ]
+    },
+    "backend/app/storage/db.py::_discover_migrations": {
+      "file": "backend/app/storage/db.py",
+      "name": "_discover_migrations",
+      "qualname": "_discover_migrations",
+      "lineno": 41,
+      "calls": [],
+      "called_by": [
+        "backend/app/storage/db.py::migrate"
+      ]
+    },
+    "backend/app/storage/db.py::_split_statements": {
+      "file": "backend/app/storage/db.py",
+      "name": "_split_statements",
+      "qualname": "_split_statements",
+      "lineno": 53,
+      "calls": [],
+      "called_by": [
+        "backend/app/storage/db.py::migrate"
+      ]
+    },
+    "backend/app/storage/db.py::_current_version": {
+      "file": "backend/app/storage/db.py",
+      "name": "_current_version",
+      "qualname": "_current_version",
+      "lineno": 59,
+      "calls": [],
+      "called_by": [
+        "backend/app/storage/db.py::migrate"
+      ]
+    },
+    "backend/app/storage/db.py::migrate": {
+      "file": "backend/app/storage/db.py",
+      "name": "migrate",
+      "qualname": "migrate",
+      "lineno": 66,
+      "calls": [
+        "backend/app/storage/db.py::_current_version",
+        "backend/app/storage/db.py::_discover_migrations",
+        "backend/app/storage/db.py::_split_statements",
+        "backend/app/storage/db.py::_now"
+      ],
+      "called_by": [
+        "backend/app/storage/db.py::init_schema"
+      ]
+    },
     "backend/app/storage/db.py::init_schema": {
       "file": "backend/app/storage/db.py",
       "name": "init_schema",
       "qualname": "init_schema",
-      "lineno": 59,
-      "calls": [],
+      "lineno": 111,
+      "calls": [
+        "backend/app/storage/db.py::migrate"
+      ],
       "called_by": [
         "backend/app/api/main.py::create_app"
       ]
@@ -3386,7 +3515,7 @@
       "file": "backend/app/storage/repo.py",
       "name": "insert_feedback",
       "qualname": "insert_feedback",
-      "lineno": 92,
+      "lineno": 94,
       "calls": [
         "backend/app/storage/repo.py::_now"
       ],
@@ -3398,7 +3527,7 @@
       "file": "backend/app/storage/repo.py",
       "name": "insert_log",
       "qualname": "insert_log",
-      "lineno": 113,
+      "lineno": 115,
       "calls": [
         "backend/app/storage/repo.py::_now"
       ],
@@ -3410,7 +3539,7 @@
       "file": "backend/app/storage/repo.py",
       "name": "select_requests",
       "qualname": "select_requests",
-      "lineno": 134,
+      "lineno": 136,
       "calls": [],
       "called_by": []
     },
@@ -3418,7 +3547,7 @@
       "file": "backend/app/storage/repo.py",
       "name": "select_feedback",
       "qualname": "select_feedback",
-      "lineno": 146,
+      "lineno": 148,
       "calls": [],
       "called_by": []
     },
@@ -3426,7 +3555,7 @@
       "file": "backend/app/storage/repo.py",
       "name": "select_logs",
       "qualname": "select_logs",
-      "lineno": 168,
+      "lineno": 170,
       "calls": [],
       "called_by": [
         "backend/app/api/routes_dashboard.py::dashboard_logs"
@@ -3436,7 +3565,7 @@
       "file": "backend/app/storage/repo.py",
       "name": "kpi_summary",
       "qualname": "kpi_summary",
-      "lineno": 204,
+      "lineno": 206,
       "calls": [
         "backend/app/observability/metrics.py::percentile"
       ],
@@ -3448,7 +3577,7 @@
       "file": "backend/app/storage/repo.py",
       "name": "request_volume",
       "qualname": "request_volume",
-      "lineno": 232,
+      "lineno": 234,
       "calls": [
         "backend/app/storage/repo.py::_bucket_sql"
       ],
@@ -3460,7 +3589,7 @@
       "file": "backend/app/storage/repo.py",
       "name": "top_queries",
       "qualname": "top_queries",
-      "lineno": 257,
+      "lineno": 259,
       "calls": [],
       "called_by": [
         "backend/app/api/routes_dashboard.py::dashboard_kpi_top_queries"
@@ -3470,7 +3599,7 @@
       "file": "backend/app/storage/repo.py",
       "name": "zero_result_queries",
       "qualname": "zero_result_queries",
-      "lineno": 287,
+      "lineno": 289,
       "calls": [],
       "called_by": [
         "backend/app/api/routes_dashboard.py::dashboard_kpi_zero_results"
@@ -4957,7 +5086,6 @@
     "backend/app/callgraph/__init__.py",
     "backend/app/callgraph/__main__.py",
     "backend/app/eval/__main__.py",
-    "backend/app/index/__main__.py",
     "backend/app/ingest/__main__.py",
     "backend/app/loadtest/__init__.py",
     "backend/app/loadtest/locustfile.py",
@@ -5064,7 +5192,6 @@
       "backend/app/callgraph/__init__.py",
       "backend/app/callgraph/__main__.py",
       "backend/app/eval/__main__.py",
-      "backend/app/index/__main__.py",
       "backend/app/ingest/__main__.py",
       "backend/app/loadtest/__init__.py",
       "backend/app/loadtest/locustfile.py",
@@ -5084,7 +5211,6 @@
         "backend/app/callgraph/__init__.py",
         "backend/app/callgraph/__main__.py",
         "backend/app/eval/__main__.py",
-        "backend/app/index/__main__.py",
         "backend/app/ingest/__main__.py",
         "backend/app/loadtest/__init__.py",
         "backend/app/loadtest/locustfile.py",
@@ -5107,9 +5233,6 @@
         "backend/app/callgraph/analyze.py",
         "backend/app/eval/runner.py",
         "backend/app/index/metadata.py",
-        "backend/app/ingest/writer.py",
-        "backend/app/search/bm25.py",
-        "backend/app/search/vector.py",
         "backend/app/ingest/__init__.py",
         "backend/app/loadtest/burst.py",
         "backend/app/storage/repo.py",
@@ -5173,30 +5296,6 @@
       {
         "from": "backend/app/eval/__main__.py",
         "to": "backend/app/index/metadata.py"
-      },
-      {
-        "from": "backend/app/index/__main__.py",
-        "to": "backend/app/config.py"
-      },
-      {
-        "from": "backend/app/index/__main__.py",
-        "to": "backend/app/index/metadata.py"
-      },
-      {
-        "from": "backend/app/index/__main__.py",
-        "to": "backend/app/ingest/writer.py"
-      },
-      {
-        "from": "backend/app/index/__main__.py",
-        "to": "backend/app/search/bm25.py"
-      },
-      {
-        "from": "backend/app/index/__main__.py",
-        "to": "backend/app/search/embedder.py"
-      },
-      {
-        "from": "backend/app/index/__main__.py",
-        "to": "backend/app/search/vector.py"
       },
       {
         "from": "backend/app/ingest/__main__.py",
@@ -5281,30 +5380,6 @@
         "to": "backend/app/index/metadata.py"
       },
       {
-        "from": "backend/app/index/__main__.py",
-        "to": "backend/app/config.py"
-      },
-      {
-        "from": "backend/app/index/__main__.py",
-        "to": "backend/app/index/metadata.py"
-      },
-      {
-        "from": "backend/app/index/__main__.py",
-        "to": "backend/app/ingest/writer.py"
-      },
-      {
-        "from": "backend/app/index/__main__.py",
-        "to": "backend/app/search/bm25.py"
-      },
-      {
-        "from": "backend/app/index/__main__.py",
-        "to": "backend/app/search/embedder.py"
-      },
-      {
-        "from": "backend/app/index/__main__.py",
-        "to": "backend/app/search/vector.py"
-      },
-      {
         "from": "backend/app/ingest/__main__.py",
         "to": "backend/app/ingest/__init__.py"
       },
@@ -5337,7 +5412,6 @@
       "backend/app/callgraph/__init__.py",
       "backend/app/callgraph/__main__.py",
       "backend/app/eval/__main__.py",
-      "backend/app/index/__main__.py",
       "backend/app/ingest/__main__.py",
       "backend/app/loadtest/__init__.py",
       "backend/app/loadtest/locustfile.py",
@@ -5352,15 +5426,12 @@
       "backend/app/api/middleware.py",
       "backend/app/api/routes_dashboard.py",
       "backend/app/api/routes_search.py",
+      "backend/app/search/embedder.py",
       "backend/app/storage/db.py",
       "backend/app/callgraph/analyze.py",
-      "backend/app/eval/runner.py",
       "backend/app/config.py",
+      "backend/app/eval/runner.py",
       "backend/app/index/metadata.py",
-      "backend/app/ingest/writer.py",
-      "backend/app/search/bm25.py",
-      "backend/app/search/embedder.py",
-      "backend/app/search/vector.py",
       "backend/app/ingest/__init__.py",
       "backend/app/loadtest/burst.py",
       "backend/app/storage/repo.py",
@@ -5375,7 +5446,6 @@
       "backend/app/callgraph/__init__.py",
       "backend/app/callgraph/__main__.py",
       "backend/app/eval/__main__.py",
-      "backend/app/index/__main__.py",
       "backend/app/ingest/__main__.py",
       "backend/app/loadtest/__init__.py",
       "backend/app/loadtest/locustfile.py",
@@ -5396,9 +5466,6 @@
       "backend/app/callgraph/analyze.py",
       "backend/app/eval/runner.py",
       "backend/app/index/metadata.py",
-      "backend/app/ingest/writer.py",
-      "backend/app/search/bm25.py",
-      "backend/app/search/vector.py",
       "backend/app/ingest/__init__.py",
       "backend/app/loadtest/burst.py",
       "backend/app/storage/repo.py",
@@ -5635,6 +5702,7 @@
         "backend/app/ingest/__init__.py::ingest",
         "backend/app/storage/repo.py::insert_log",
         "backend/app/observability/logging.py::_find_flagged",
+        "backend/app/run.py::load_dotenv",
         "backend/app/run.py::ensure_venv",
         "backend/app/search/filters.py::apply",
         "backend/app/search/normalize.py::normalize",
@@ -5948,11 +6016,15 @@
       },
       {
         "from": "backend/app/run.py::main",
-        "to": "backend/app/run.py::ensure_venv"
+        "to": "backend/app/run.py::load_dotenv"
       },
       {
         "from": "backend/app/run.py::main",
         "to": "backend/app/config.py::load_config"
+      },
+      {
+        "from": "backend/app/run.py::main",
+        "to": "backend/app/run.py::ensure_venv"
       },
       {
         "from": "backend/app/search/bm25.py::BM25Index.query",
@@ -6366,11 +6438,15 @@
       },
       {
         "from": "backend/app/run.py::main",
-        "to": "backend/app/run.py::ensure_venv"
+        "to": "backend/app/run.py::load_dotenv"
       },
       {
         "from": "backend/app/run.py::main",
         "to": "backend/app/config.py::load_config"
+      },
+      {
+        "from": "backend/app/run.py::main",
+        "to": "backend/app/run.py::ensure_venv"
       },
       {
         "from": "backend/app/search/bm25.py::BM25Index.query",
@@ -6637,6 +6713,7 @@
       "backend/app/storage/repo.py::insert_log",
       "backend/app/observability/logging.py::_find_flagged",
       "backend/app/run.py::ensure_venv",
+      "backend/app/run.py::load_dotenv",
       "backend/app/config.py::load_config",
       "backend/app/search/highlight.py::highlight_document",
       "backend/app/search/filters.py::apply",
@@ -6806,6 +6883,7 @@
       "backend/app/ingest/__init__.py::ingest",
       "backend/app/storage/repo.py::insert_log",
       "backend/app/observability/logging.py::_find_flagged",
+      "backend/app/run.py::load_dotenv",
       "backend/app/run.py::ensure_venv",
       "backend/app/search/filters.py::apply",
       "backend/app/search/normalize.py::normalize",
@@ -6844,7 +6922,6 @@
     "backend/app/callgraph/__init__.py",
     "backend/app/callgraph/__main__.py",
     "backend/app/eval/__main__.py",
-    "backend/app/index/__main__.py",
     "backend/app/ingest/__main__.py",
     "backend/app/loadtest/__init__.py",
     "backend/app/loadtest/locustfile.py",
@@ -6859,15 +6936,12 @@
     "backend/app/api/middleware.py",
     "backend/app/api/routes_dashboard.py",
     "backend/app/api/routes_search.py",
+    "backend/app/search/embedder.py",
     "backend/app/storage/db.py",
     "backend/app/callgraph/analyze.py",
-    "backend/app/eval/runner.py",
     "backend/app/config.py",
+    "backend/app/eval/runner.py",
     "backend/app/index/metadata.py",
-    "backend/app/ingest/writer.py",
-    "backend/app/search/bm25.py",
-    "backend/app/search/embedder.py",
-    "backend/app/search/vector.py",
     "backend/app/ingest/__init__.py",
     "backend/app/loadtest/burst.py",
     "backend/app/storage/repo.py",
@@ -7010,6 +7084,7 @@
     "backend/app/storage/repo.py::insert_log",
     "backend/app/observability/logging.py::_find_flagged",
     "backend/app/run.py::ensure_venv",
+    "backend/app/run.py::load_dotenv",
     "backend/app/config.py::load_config",
     "backend/app/search/highlight.py::highlight_document",
     "backend/app/search/filters.py::apply",
@@ -7097,30 +7172,6 @@
     {
       "from": "backend/app/eval/__main__.py",
       "to": "backend/app/index/metadata.py"
-    },
-    {
-      "from": "backend/app/index/__main__.py",
-      "to": "backend/app/config.py"
-    },
-    {
-      "from": "backend/app/index/__main__.py",
-      "to": "backend/app/index/metadata.py"
-    },
-    {
-      "from": "backend/app/index/__main__.py",
-      "to": "backend/app/ingest/writer.py"
-    },
-    {
-      "from": "backend/app/index/__main__.py",
-      "to": "backend/app/search/bm25.py"
-    },
-    {
-      "from": "backend/app/index/__main__.py",
-      "to": "backend/app/search/embedder.py"
-    },
-    {
-      "from": "backend/app/index/__main__.py",
-      "to": "backend/app/search/vector.py"
     },
     {
       "from": "backend/app/ingest/__main__.py",
@@ -7430,11 +7481,15 @@
     },
     {
       "from": "backend/app/run.py::main",
-      "to": "backend/app/run.py::ensure_venv"
+      "to": "backend/app/run.py::load_dotenv"
     },
     {
       "from": "backend/app/run.py::main",
       "to": "backend/app/config.py::load_config"
+    },
+    {
+      "from": "backend/app/run.py::main",
+      "to": "backend/app/run.py::ensure_venv"
     },
     {
       "from": "backend/app/search/bm25.py::BM25Index.query",

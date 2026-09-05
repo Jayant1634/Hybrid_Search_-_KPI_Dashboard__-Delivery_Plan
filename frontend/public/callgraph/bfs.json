@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-09-05T06:59:10Z",
+  "generated_at": "2026-09-05T09:20:20Z",
   "files": {
     "roots": [
       "backend/app/__init__.py",
@@ -9,7 +9,6 @@
       "backend/app/callgraph/__init__.py",
       "backend/app/callgraph/__main__.py",
       "backend/app/eval/__main__.py",
-      "backend/app/index/__main__.py",
       "backend/app/ingest/__main__.py",
       "backend/app/loadtest/__init__.py",
       "backend/app/loadtest/locustfile.py",
@@ -29,7 +28,6 @@
         "backend/app/callgraph/__init__.py",
         "backend/app/callgraph/__main__.py",
         "backend/app/eval/__main__.py",
-        "backend/app/index/__main__.py",
         "backend/app/ingest/__main__.py",
         "backend/app/loadtest/__init__.py",
         "backend/app/loadtest/locustfile.py",
@@ -52,9 +50,6 @@
         "backend/app/callgraph/analyze.py",
         "backend/app/eval/runner.py",
         "backend/app/index/metadata.py",
-        "backend/app/ingest/writer.py",
-        "backend/app/search/bm25.py",
-        "backend/app/search/vector.py",
         "backend/app/ingest/__init__.py",
         "backend/app/loadtest/burst.py",
         "backend/app/storage/repo.py",
@@ -118,30 +113,6 @@
       {
         "from": "backend/app/eval/__main__.py",
         "to": "backend/app/index/metadata.py"
-      },
-      {
-        "from": "backend/app/index/__main__.py",
-        "to": "backend/app/config.py"
-      },
-      {
-        "from": "backend/app/index/__main__.py",
-        "to": "backend/app/index/metadata.py"
-      },
-      {
-        "from": "backend/app/index/__main__.py",
-        "to": "backend/app/ingest/writer.py"
-      },
-      {
-        "from": "backend/app/index/__main__.py",
-        "to": "backend/app/search/bm25.py"
-      },
-      {
-        "from": "backend/app/index/__main__.py",
-        "to": "backend/app/search/embedder.py"
-      },
-      {
-        "from": "backend/app/index/__main__.py",
-        "to": "backend/app/search/vector.py"
       },
       {
         "from": "backend/app/ingest/__main__.py",
@@ -226,30 +197,6 @@
         "to": "backend/app/index/metadata.py"
       },
       {
-        "from": "backend/app/index/__main__.py",
-        "to": "backend/app/config.py"
-      },
-      {
-        "from": "backend/app/index/__main__.py",
-        "to": "backend/app/index/metadata.py"
-      },
-      {
-        "from": "backend/app/index/__main__.py",
-        "to": "backend/app/ingest/writer.py"
-      },
-      {
-        "from": "backend/app/index/__main__.py",
-        "to": "backend/app/search/bm25.py"
-      },
-      {
-        "from": "backend/app/index/__main__.py",
-        "to": "backend/app/search/embedder.py"
-      },
-      {
-        "from": "backend/app/index/__main__.py",
-        "to": "backend/app/search/vector.py"
-      },
-      {
         "from": "backend/app/ingest/__main__.py",
         "to": "backend/app/ingest/__init__.py"
       },
@@ -282,7 +229,6 @@
       "backend/app/callgraph/__init__.py",
       "backend/app/callgraph/__main__.py",
       "backend/app/eval/__main__.py",
-      "backend/app/index/__main__.py",
       "backend/app/ingest/__main__.py",
       "backend/app/loadtest/__init__.py",
       "backend/app/loadtest/locustfile.py",
@@ -297,15 +243,12 @@
       "backend/app/api/middleware.py",
       "backend/app/api/routes_dashboard.py",
       "backend/app/api/routes_search.py",
+      "backend/app/search/embedder.py",
       "backend/app/storage/db.py",
       "backend/app/callgraph/analyze.py",
-      "backend/app/eval/runner.py",
       "backend/app/config.py",
+      "backend/app/eval/runner.py",
       "backend/app/index/metadata.py",
-      "backend/app/ingest/writer.py",
-      "backend/app/search/bm25.py",
-      "backend/app/search/embedder.py",
-      "backend/app/search/vector.py",
       "backend/app/ingest/__init__.py",
       "backend/app/loadtest/burst.py",
       "backend/app/storage/repo.py",
@@ -320,7 +263,6 @@
       "backend/app/callgraph/__init__.py",
       "backend/app/callgraph/__main__.py",
       "backend/app/eval/__main__.py",
-      "backend/app/index/__main__.py",
       "backend/app/ingest/__main__.py",
       "backend/app/loadtest/__init__.py",
       "backend/app/loadtest/locustfile.py",
@@ -341,9 +283,6 @@
       "backend/app/callgraph/analyze.py",
       "backend/app/eval/runner.py",
       "backend/app/index/metadata.py",
-      "backend/app/ingest/writer.py",
-      "backend/app/search/bm25.py",
-      "backend/app/search/vector.py",
       "backend/app/ingest/__init__.py",
       "backend/app/loadtest/burst.py",
       "backend/app/storage/repo.py",
@@ -580,6 +519,7 @@
         "backend/app/ingest/__init__.py::ingest",
         "backend/app/storage/repo.py::insert_log",
         "backend/app/observability/logging.py::_find_flagged",
+        "backend/app/run.py::load_dotenv",
         "backend/app/run.py::ensure_venv",
         "backend/app/search/filters.py::apply",
         "backend/app/search/normalize.py::normalize",
@@ -893,11 +833,15 @@
       },
       {
         "from": "backend/app/run.py::main",
-        "to": "backend/app/run.py::ensure_venv"
+        "to": "backend/app/run.py::load_dotenv"
       },
       {
         "from": "backend/app/run.py::main",
         "to": "backend/app/config.py::load_config"
+      },
+      {
+        "from": "backend/app/run.py::main",
+        "to": "backend/app/run.py::ensure_venv"
       },
       {
         "from": "backend/app/search/bm25.py::BM25Index.query",
@@ -1311,11 +1255,15 @@
       },
       {
         "from": "backend/app/run.py::main",
-        "to": "backend/app/run.py::ensure_venv"
+        "to": "backend/app/run.py::load_dotenv"
       },
       {
         "from": "backend/app/run.py::main",
         "to": "backend/app/config.py::load_config"
+      },
+      {
+        "from": "backend/app/run.py::main",
+        "to": "backend/app/run.py::ensure_venv"
       },
       {
         "from": "backend/app/search/bm25.py::BM25Index.query",
@@ -1582,6 +1530,7 @@
       "backend/app/storage/repo.py::insert_log",
       "backend/app/observability/logging.py::_find_flagged",
       "backend/app/run.py::ensure_venv",
+      "backend/app/run.py::load_dotenv",
       "backend/app/config.py::load_config",
       "backend/app/search/highlight.py::highlight_document",
       "backend/app/search/filters.py::apply",
@@ -1751,6 +1700,7 @@
       "backend/app/ingest/__init__.py::ingest",
       "backend/app/storage/repo.py::insert_log",
       "backend/app/observability/logging.py::_find_flagged",
+      "backend/app/run.py::load_dotenv",
       "backend/app/run.py::ensure_venv",
       "backend/app/search/filters.py::apply",
       "backend/app/search/normalize.py::normalize",

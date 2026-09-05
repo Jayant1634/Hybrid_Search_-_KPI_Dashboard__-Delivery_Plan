@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+import math
+
 import pytest
 
 from app.search.bm25 import BM25Index
@@ -135,6 +137,22 @@ def test_min_vector_score_keeps_only_confident_hits(
         _QUERY, top_k=len(SAMPLE_DOCS), min_vector_score=ceiling + 0.01
     )
     assert empty == []
+
+
+def test_no_overlap_query_never_produces_non_finite_score(
+    searcher: HybridSearcher,
+) -> None:
+    results = searcher.search("fnord xyzzy qwertyplugh", top_k=len(SAMPLE_DOCS))
+    assert results
+    for result in results:
+        for value in (
+            result.bm25_raw,
+            result.vector_raw,
+            result.bm25_norm,
+            result.vector_norm,
+            result.hybrid_score,
+        ):
+            assert math.isfinite(value)
 
 
 def test_result_carries_raw_and_normalised(searcher: HybridSearcher) -> None:

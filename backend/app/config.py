@@ -24,6 +24,7 @@ class Settings:
     ui_port: int
     rate_limit_per_minute: int
     log_level: str
+    index_on_mismatch: str
 
 
 def _is_repo_root(path: Path) -> bool:
@@ -92,4 +93,5 @@ def load_config() -> Settings:
         ui_port=_env_int("HSS_UI_PORT", 5173),
         rate_limit_per_minute=_env_int("HSS_RATE_LIMIT_PER_MINUTE", 60),
         log_level=_env_str("HSS_LOG_LEVEL", "INFO"),
+        index_on_mismatch=_env_str("HSS_INDEX_ON_MISMATCH", "fail"),
     )
