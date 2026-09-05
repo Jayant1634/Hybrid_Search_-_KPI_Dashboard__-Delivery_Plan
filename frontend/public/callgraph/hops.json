@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-09-05T13:29:13Z",
+  "generated_at": "2026-09-05T14:10:27Z",
   "files": [
     {
       "from": "backend/app/__main__.py",
@@ -518,10 +518,6 @@
     {
       "from": "frontend/src/components/ResultCard.tsx::onKey",
       "to": "frontend/src/components/ResultCard.tsx::closeModal"
-    },
-    {
-      "from": "frontend/src/components/VantaHero.tsx::fit",
-      "to": "frontend/src/components/VantaHero.tsx::hardenNet"
     },
     {
       "from": "scripts/fetch_until_done.py::main",

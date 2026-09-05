@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-09-05T13:29:13Z",
+  "generated_at": "2026-09-05T14:10:27Z",
   "files": {
     "backend/app/__init__.py": {
       "language": "python",
@@ -1390,9 +1390,7 @@
     "frontend/src/components/VantaHero.tsx": {
       "language": "typescript",
       "functions": [
-        "frontend/src/components/VantaHero.tsx::hardenNet",
-        "frontend/src/components/VantaHero.tsx::VantaHero",
-        "frontend/src/components/VantaHero.tsx::fit"
+        "frontend/src/components/VantaHero.tsx::VantaHero"
       ],
       "imports": [],
       "imported_by": [
@@ -1662,6 +1660,20 @@
         "frontend/src/App.tsx"
       ]
     },
+    "frontend/src/reindexPoll.ts": {
+      "language": "typescript",
+      "functions": [
+        "frontend/src/reindexPoll.ts::nextPollDelay"
+      ],
+      "imports": [],
+      "imported_by": [
+        "frontend/src/useReindexJob.ts"
+      ],
+      "calls": [],
+      "called_by": [
+        "frontend/src/useReindexJob.ts"
+      ]
+    },
     "frontend/src/useReindexJob.ts": {
       "language": "typescript",
       "functions": [
@@ -1669,13 +1681,15 @@
         "frontend/src/useReindexJob.ts::tick"
       ],
       "imports": [
-        "frontend/src/api.ts"
+        "frontend/src/api.ts",
+        "frontend/src/reindexPoll.ts"
       ],
       "imported_by": [
         "frontend/src/App.tsx"
       ],
       "calls": [
-        "frontend/src/api.ts"
+        "frontend/src/api.ts",
+        "frontend/src/reindexPoll.ts"
       ],
       "called_by": [
         "frontend/src/App.tsx"

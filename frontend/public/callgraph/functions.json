@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-09-05T13:29:13Z",
+  "generated_at": "2026-09-05T14:10:27Z",
   "functions": {
     "backend/app/api/deps.py::_pyproject_path": {
       "file": "backend/app/api/deps.py",
@@ -3445,38 +3445,15 @@
         "frontend/src/components/Sidebar.tsx::Sidebar"
       ]
     },
-    "frontend/src/components/VantaHero.tsx::hardenNet": {
-      "file": "frontend/src/components/VantaHero.tsx",
-      "name": "hardenNet",
-      "qualname": "hardenNet",
-      "lineno": 35,
-      "calls": [],
-      "called_by": [
-        "frontend/src/components/VantaHero.tsx::VantaHero",
-        "frontend/src/components/VantaHero.tsx::fit"
-      ]
-    },
     "frontend/src/components/VantaHero.tsx::VantaHero": {
       "file": "frontend/src/components/VantaHero.tsx",
       "name": "VantaHero",
       "qualname": "VantaHero",
-      "lineno": 56,
-      "calls": [
-        "frontend/src/components/VantaHero.tsx::hardenNet"
-      ],
+      "lineno": 15,
+      "calls": [],
       "called_by": [
         "frontend/src/pages/HomePage.tsx::HomePage"
       ]
-    },
-    "frontend/src/components/VantaHero.tsx::fit": {
-      "file": "frontend/src/components/VantaHero.tsx",
-      "name": "fit",
-      "qualname": "fit",
-      "lineno": 82,
-      "calls": [
-        "frontend/src/components/VantaHero.tsx::hardenNet"
-      ],
-      "called_by": []
     },
     "frontend/src/highlight.ts::queryTerms": {
       "file": "frontend/src/highlight.ts",
@@ -4142,13 +4119,25 @@
         "frontend/src/App.tsx::App"
       ]
     },
+    "frontend/src/reindexPoll.ts::nextPollDelay": {
+      "file": "frontend/src/reindexPoll.ts",
+      "name": "nextPollDelay",
+      "qualname": "nextPollDelay",
+      "lineno": 5,
+      "calls": [],
+      "called_by": [
+        "frontend/src/useReindexJob.ts::useReindexJob",
+        "frontend/src/useReindexJob.ts::tick"
+      ]
+    },
     "frontend/src/useReindexJob.ts::useReindexJob": {
       "file": "frontend/src/useReindexJob.ts",
       "name": "useReindexJob",
       "qualname": "useReindexJob",
-      "lineno": 12,
+      "lineno": 10,
       "calls": [
         "frontend/src/api.ts::getReindexProgress",
+        "frontend/src/reindexPoll.ts::nextPollDelay",
         "frontend/src/useReindexJob.ts::tick",
         "frontend/src/api.ts::reindex"
       ],
@@ -4160,8 +4149,10 @@
       "file": "frontend/src/useReindexJob.ts",
       "name": "tick",
       "qualname": "tick",
-      "lineno": 39,
-      "calls": [],
+      "lineno": 44,
+      "calls": [
+        "frontend/src/reindexPoll.ts::nextPollDelay"
+      ],
       "called_by": [
         "frontend/src/useReindexJob.ts::useReindexJob"
       ]

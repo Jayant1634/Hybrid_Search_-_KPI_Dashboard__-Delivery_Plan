@@ -32,7 +32,7 @@ export default function App() {
   const [page, setPage] = useState<Page>('home')
   const { dark, toggle } = useTheme()
   const [build, setBuild] = useState<{ version: string; commit: string } | null>(null)
-  const reindexJob = useReindexJob()
+  const reindexJob = useReindexJob(page !== 'home')
 
   useEffect(() => {
     let cancelled = false
