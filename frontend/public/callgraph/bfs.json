@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-09-05T12:04:24Z",
+  "generated_at": "2026-09-05T12:24:58Z",
   "files": {
     "roots": [
       "backend/app/__init__.py",
@@ -353,10 +353,13 @@
       "frontend/src/api.ts::getZeroResultQueries",
       "frontend/src/components/CallGraphView.tsx::resetView",
       "frontend/src/components/CallGraphView.tsx::shortFile",
+      "frontend/src/components/InfoTip.tsx::onMove",
+      "frontend/src/components/InfoTip.tsx::show",
       "frontend/src/components/ResultCard.tsx::onKey",
       "frontend/src/highlight.ts::escapeHtml",
       "frontend/src/highlight.ts::queryTerms",
       "frontend/src/highlight.ts::termMatchesWord",
+      "frontend/src/infoTips.ts::call",
       "frontend/src/pages/DebugPage.tsx::extraJson",
       "frontend/src/pages/DebugPage.tsx::formatTime",
       "frontend/src/pages/DebugPage.tsx::inRange",
@@ -440,10 +443,13 @@
         "frontend/src/api.ts::getZeroResultQueries",
         "frontend/src/components/CallGraphView.tsx::resetView",
         "frontend/src/components/CallGraphView.tsx::shortFile",
+        "frontend/src/components/InfoTip.tsx::onMove",
+        "frontend/src/components/InfoTip.tsx::show",
         "frontend/src/components/ResultCard.tsx::onKey",
         "frontend/src/highlight.ts::escapeHtml",
         "frontend/src/highlight.ts::queryTerms",
         "frontend/src/highlight.ts::termMatchesWord",
+        "frontend/src/infoTips.ts::call",
         "frontend/src/pages/DebugPage.tsx::extraJson",
         "frontend/src/pages/DebugPage.tsx::formatTime",
         "frontend/src/pages/DebugPage.tsx::inRange",
@@ -529,6 +535,7 @@
         "frontend/src/pages/KpisPage.tsx::KpisPage",
         "frontend/src/pages/EvaluationPage.tsx::EvaluationPage",
         "frontend/src/pages/DebugPage.tsx::DebugPage",
+        "frontend/src/components/InfoTip.tsx::placePop",
         "frontend/src/components/ResultCard.tsx::closeModal",
         "scripts/fetch_until_done.py::parse_args",
         "scripts/fetch_corpus.py::repo_root",
@@ -914,6 +921,14 @@
         "to": "frontend/src/pages/DebugPage.tsx::DebugPage"
       },
       {
+        "from": "frontend/src/components/InfoTip.tsx::onMove",
+        "to": "frontend/src/components/InfoTip.tsx::placePop"
+      },
+      {
+        "from": "frontend/src/components/InfoTip.tsx::show",
+        "to": "frontend/src/components/InfoTip.tsx::placePop"
+      },
+      {
         "from": "frontend/src/components/ResultCard.tsx::onKey",
         "to": "frontend/src/components/ResultCard.tsx::closeModal"
       },
@@ -1336,6 +1351,14 @@
         "to": "frontend/src/pages/DebugPage.tsx::DebugPage"
       },
       {
+        "from": "frontend/src/components/InfoTip.tsx::onMove",
+        "to": "frontend/src/components/InfoTip.tsx::placePop"
+      },
+      {
+        "from": "frontend/src/components/InfoTip.tsx::show",
+        "to": "frontend/src/components/InfoTip.tsx::placePop"
+      },
+      {
         "from": "frontend/src/components/ResultCard.tsx::onKey",
         "to": "frontend/src/components/ResultCard.tsx::closeModal"
       },
@@ -1454,10 +1477,13 @@
       "frontend/src/api.ts::getZeroResultQueries",
       "frontend/src/components/CallGraphView.tsx::resetView",
       "frontend/src/components/CallGraphView.tsx::shortFile",
+      "frontend/src/components/InfoTip.tsx::onMove",
+      "frontend/src/components/InfoTip.tsx::show",
       "frontend/src/components/ResultCard.tsx::onKey",
       "frontend/src/highlight.ts::escapeHtml",
       "frontend/src/highlight.ts::queryTerms",
       "frontend/src/highlight.ts::termMatchesWord",
+      "frontend/src/infoTips.ts::call",
       "frontend/src/pages/DebugPage.tsx::extraJson",
       "frontend/src/pages/DebugPage.tsx::formatTime",
       "frontend/src/pages/DebugPage.tsx::inRange",
@@ -1541,6 +1567,7 @@
       "frontend/src/pages/KpisPage.tsx::KpisPage",
       "frontend/src/pages/SearchPage.tsx::SearchPage",
       "frontend/src/pages/SettingsPage.tsx::SettingsPage",
+      "frontend/src/components/InfoTip.tsx::placePop",
       "frontend/src/components/ResultCard.tsx::closeModal",
       "scripts/fetch_corpus.py::main",
       "scripts/fetch_corpus.py::pending_rows",
@@ -1621,10 +1648,13 @@
       "frontend/src/api.ts::getZeroResultQueries",
       "frontend/src/components/CallGraphView.tsx::resetView",
       "frontend/src/components/CallGraphView.tsx::shortFile",
+      "frontend/src/components/InfoTip.tsx::onMove",
+      "frontend/src/components/InfoTip.tsx::show",
       "frontend/src/components/ResultCard.tsx::onKey",
       "frontend/src/highlight.ts::escapeHtml",
       "frontend/src/highlight.ts::queryTerms",
       "frontend/src/highlight.ts::termMatchesWord",
+      "frontend/src/infoTips.ts::call",
       "frontend/src/pages/DebugPage.tsx::extraJson",
       "frontend/src/pages/DebugPage.tsx::formatTime",
       "frontend/src/pages/DebugPage.tsx::inRange",
@@ -1708,6 +1738,7 @@
       "frontend/src/pages/KpisPage.tsx::KpisPage",
       "frontend/src/pages/EvaluationPage.tsx::EvaluationPage",
       "frontend/src/pages/DebugPage.tsx::DebugPage",
+      "frontend/src/components/InfoTip.tsx::placePop",
       "frontend/src/components/ResultCard.tsx::closeModal",
       "scripts/fetch_until_done.py::parse_args",
       "scripts/fetch_corpus.py::repo_root",

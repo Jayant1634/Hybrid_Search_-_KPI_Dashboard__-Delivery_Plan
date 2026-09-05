@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-09-05T12:04:24Z",
+  "generated_at": "2026-09-05T12:24:58Z",
   "files": [
     "backend/app/__init__.py",
     "backend/app/__main__.py",
@@ -83,10 +83,13 @@
     "frontend/src/api.ts::getZeroResultQueries",
     "frontend/src/components/CallGraphView.tsx::resetView",
     "frontend/src/components/CallGraphView.tsx::shortFile",
+    "frontend/src/components/InfoTip.tsx::onMove",
+    "frontend/src/components/InfoTip.tsx::show",
     "frontend/src/components/ResultCard.tsx::onKey",
     "frontend/src/highlight.ts::escapeHtml",
     "frontend/src/highlight.ts::queryTerms",
     "frontend/src/highlight.ts::termMatchesWord",
+    "frontend/src/infoTips.ts::call",
     "frontend/src/pages/DebugPage.tsx::extraJson",
     "frontend/src/pages/DebugPage.tsx::formatTime",
     "frontend/src/pages/DebugPage.tsx::inRange",

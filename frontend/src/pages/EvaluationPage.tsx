@@ -8,21 +8,23 @@ import {
   XAxis,
   YAxis,
 } from 'recharts'
+import InfoTip, { InfoLabel, InfoMark } from '../components/InfoTip'
+import { INFO_TIPS } from '../infoTips'
 
 const PURPLE = '#7823DC'
 
 const COLUMNS = [
-  { key: 'timestamp', label: 'Timestamp' },
-  { key: 'commit', label: 'Commit' },
-  { key: 'tag', label: 'Tag' },
-  { key: 'alpha', label: 'Alpha' },
-  { key: 'normalization', label: 'Normalization' },
-  { key: 'model', label: 'Model' },
-  { key: 'preprocessing', label: 'Preprocessing' },
-  { key: 'ndcg10', label: 'nDCG@10' },
-  { key: 'recall10', label: 'Recall@10' },
-  { key: 'mrr10', label: 'MRR@10' },
-  { key: 'n_queries', label: 'n' },
+  { key: 'timestamp', label: 'Timestamp', hint: INFO_TIPS.evalTimestamp },
+  { key: 'commit', label: 'Commit', hint: INFO_TIPS.evalCommit },
+  { key: 'tag', label: 'Tag', hint: INFO_TIPS.evalTag },
+  { key: 'alpha', label: 'Alpha', hint: INFO_TIPS.evalAlpha },
+  { key: 'normalization', label: 'Normalization', hint: INFO_TIPS.evalNorm },
+  { key: 'model', label: 'Model', hint: INFO_TIPS.evalModel },
+  { key: 'preprocessing', label: 'Preprocessing', hint: INFO_TIPS.evalPreprocess },
+  { key: 'ndcg10', label: 'nDCG@10', hint: INFO_TIPS.ndcg10 },
+  { key: 'recall10', label: 'Recall@10', hint: INFO_TIPS.recall10 },
+  { key: 'mrr10', label: 'MRR@10', hint: INFO_TIPS.mrr10 },
+  { key: 'n_queries', label: 'n', hint: INFO_TIPS.evalN },
 ] as const
 
 const CHART_METRICS = [
@@ -268,6 +270,11 @@ export default function EvaluationPage() {
         .eval-th:hover { color: var(--c-heading); }
         .eval-th.active { color: var(--purple); }
         .eval-caret { font-size: 10px; }
+        .eval-th-tip {
+          display: inline-flex;
+          align-items: center;
+          gap: 4px;
+        }
         .eval-table td {
           padding: 10px 10px 10px 0;
           font-size: 13px;
@@ -333,8 +340,8 @@ export default function EvaluationPage() {
           <section className="eval-panel">
             <div className="eval-panel-head">
               <h2>{selectedMetric.label} across runs</h2>
-              <div className="eval-metric-field">
-                <label htmlFor="eval-chart-metric">Metric</label>
+              <InfoTip className="eval-metric-field" label="Metric" hint={INFO_TIPS.evalMetric}>
+                <label htmlFor="eval-chart-metric"><InfoLabel text="Metric" /></label>
                 <select
                   id="eval-chart-metric"
                   className="param-select"
@@ -347,7 +354,7 @@ export default function EvaluationPage() {
                     </option>
                   ))}
                 </select>
-              </div>
+              </InfoTip>
             </div>
             <div className="eval-plot">
               <ResponsiveContainer width="100%" height="100%">
@@ -403,18 +410,21 @@ export default function EvaluationPage() {
                               : 'none'
                           }
                         >
-                          <button
-                            type="button"
-                            className={active ? 'eval-th active' : 'eval-th'}
-                            onClick={() => onSort(col.key)}
-                          >
-                            {col.label}
-                            {active && (
-                              <span className="eval-caret" aria-hidden="true">
-                                {sortDir === 'asc' ? '↑' : '↓'}
-                              </span>
-                            )}
-                          </button>
+                          <InfoTip className="eval-th-tip" label={col.label} hint={col.hint}>
+                            <button
+                              type="button"
+                              className={active ? 'eval-th active' : 'eval-th'}
+                              onClick={() => onSort(col.key)}
+                            >
+                              {col.label}
+                              {active && (
+                                <span className="eval-caret" aria-hidden="true">
+                                  {sortDir === 'asc' ? '↑' : '↓'}
+                                </span>
+                              )}
+                            </button>
+                            <InfoMark label={col.label} />
+                          </InfoTip>
                         </th>
                       )
                     })}

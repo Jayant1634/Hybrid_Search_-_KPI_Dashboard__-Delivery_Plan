@@ -1,6 +1,8 @@
 import { useEffect, useState } from 'react'
 import CallGraphView from '../components/CallGraphView'
+import InfoTip, { InfoLabel } from '../components/InfoTip'
 import type { CallGraphDoc } from '../callgraphTypes'
+import { INFO_TIPS } from '../infoTips'
 
 export default function SettingsPage() {
   const [graph, setGraph] = useState<CallGraphDoc | null>(null)
@@ -47,30 +49,30 @@ export default function SettingsPage() {
 
       {s && (
         <div className="cg-stats">
-          <div className="cg-stat">
+          <InfoTip className="cg-stat" label="Files" hint={INFO_TIPS.cgFiles}>
             <div className="cg-stat-value">{s.file_count}</div>
-            <div className="cg-stat-label">Files</div>
-          </div>
-          <div className="cg-stat">
+            <div className="cg-stat-label"><InfoLabel text="Files" /></div>
+          </InfoTip>
+          <InfoTip className="cg-stat" label="Functions" hint={INFO_TIPS.cgFunctions}>
             <div className="cg-stat-value">{s.function_count}</div>
-            <div className="cg-stat-label">Functions</div>
-          </div>
-          <div className="cg-stat">
+            <div className="cg-stat-label"><InfoLabel text="Functions" /></div>
+          </InfoTip>
+          <InfoTip className="cg-stat" label="Uncalled files" hint={INFO_TIPS.cgUncalledFiles}>
             <div className="cg-stat-value">{s.uncalled_file_count}</div>
-            <div className="cg-stat-label">Uncalled files</div>
-          </div>
-          <div className="cg-stat">
+            <div className="cg-stat-label"><InfoLabel text="Uncalled files" /></div>
+          </InfoTip>
+          <InfoTip className="cg-stat" label="Uncalled functions" hint={INFO_TIPS.cgUncalledFunctions}>
             <div className="cg-stat-value">{s.uncalled_function_count}</div>
-            <div className="cg-stat-label">Uncalled functions</div>
-          </div>
-          <div className="cg-stat">
+            <div className="cg-stat-label"><InfoLabel text="Uncalled functions" /></div>
+          </InfoTip>
+          <InfoTip className="cg-stat" label="File edges" hint={INFO_TIPS.cgFileEdges}>
             <div className="cg-stat-value">{s.file_edge_count}</div>
-            <div className="cg-stat-label">File edges</div>
-          </div>
-          <div className="cg-stat">
+            <div className="cg-stat-label"><InfoLabel text="File edges" /></div>
+          </InfoTip>
+          <InfoTip className="cg-stat" label="Call edges" hint={INFO_TIPS.cgCallEdges}>
             <div className="cg-stat-value">{s.function_edge_count}</div>
-            <div className="cg-stat-label">Call edges</div>
-          </div>
+            <div className="cg-stat-label"><InfoLabel text="Call edges" /></div>
+          </InfoTip>
         </div>
       )}
 

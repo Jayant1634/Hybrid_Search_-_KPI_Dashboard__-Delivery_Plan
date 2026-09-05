@@ -1,5 +1,7 @@
 import { useState, useCallback } from 'react'
+import InfoTip, { InfoLabel } from '../components/InfoTip'
 import ResultCard from '../components/ResultCard'
+import { INFO_TIPS } from '../infoTips'
 import { search, type DatasetName, type Normalization, type SearchFilters, type SearchResult } from '../api'
 
 function localDateToIso(value: string, endOfDay: boolean): string {
@@ -131,8 +133,8 @@ export default function SearchPage() {
         </div>
 
         <div className="search-params">
-          <div className="param-group">
-            <label className="param-label">Top K</label>
+          <InfoTip className="param-group" label="Top K" hint={INFO_TIPS.topK}>
+            <label className="param-label"><InfoLabel text="Top K" /></label>
             <input
               type="number"
               className="param-input"
@@ -140,11 +142,11 @@ export default function SearchPage() {
               value={topK}
               onChange={e => setTopK(Math.min(50, Math.max(1, Number(e.target.value))))}
             />
-          </div>
+          </InfoTip>
 
-          <div className="param-group param-alpha">
+          <InfoTip className="param-group param-alpha" label="Alpha" hint={INFO_TIPS.alpha}>
             <label className="param-label">
-              Alpha
+              <InfoLabel text="Alpha" />
               <span className="param-value-badge">{alpha.toFixed(2)}</span>
             </label>
             <div className="alpha-range-row">
@@ -158,11 +160,11 @@ export default function SearchPage() {
               />
               <span className="range-end-label">Vector</span>
             </div>
-          </div>
+          </InfoTip>
 
-          <div className="param-group param-alpha">
+          <InfoTip className="param-group param-alpha" label="Min vector" hint={INFO_TIPS.minVector}>
             <label className="param-label">
-              Min vector
+              <InfoLabel text="Min vector" />
               <span className="param-value-badge">{minVectorScore.toFixed(2)}</span>
             </label>
             <div className="alpha-range-row">
@@ -176,10 +178,10 @@ export default function SearchPage() {
               />
               <span className="range-end-label">1.00</span>
             </div>
-          </div>
+          </InfoTip>
 
-          <div className="param-group">
-            <label className="param-label">Dataset</label>
+          <InfoTip className="param-group" label="Dataset" hint={INFO_TIPS.dataset}>
+            <label className="param-label"><InfoLabel text="Dataset" /></label>
             <select
               className="param-select"
               value={dataset}
@@ -189,10 +191,10 @@ export default function SearchPage() {
               <option value="wikipedia">Wikipedia</option>
               <option value="contracts">Kearney Contracts</option>
             </select>
-          </div>
+          </InfoTip>
 
-          <div className="param-group">
-            <label className="param-label">Normalisation</label>
+          <InfoTip className="param-group" label="Normalisation" hint={INFO_TIPS.normalisation}>
+            <label className="param-label"><InfoLabel text="Normalisation" /></label>
             <select
               className="param-select"
               value={normalization}
@@ -202,12 +204,12 @@ export default function SearchPage() {
               <option value="zscore">Z-Score</option>
               <option value="rrf">RRF</option>
             </select>
-          </div>
+          </InfoTip>
 
           {normalization === 'rrf' && (
-            <div className="param-group param-alpha">
+            <InfoTip className="param-group param-alpha" label="RRF k" hint={INFO_TIPS.rrfK}>
               <label className="param-label">
-                RRF k
+                <InfoLabel text="RRF k" />
                 {rrfK.trim() !== '' && (
                   <span className="param-value-badge">{rrfK}</span>
                 )}
@@ -222,12 +224,7 @@ export default function SearchPage() {
                 value={rrfK}
                 onChange={e => setRrfK(e.target.value)}
               />
-              <span className="empty-desc">
-                Score is 1/(k + rank). You type k; nothing is pre-filled.
-                Small k favours the top ranks (0 is 1/rank). Large k flattens
-                the gaps so mid-ranks stay competitive.
-              </span>
-            </div>
+            </InfoTip>
           )}
 
           <button
@@ -243,28 +240,34 @@ export default function SearchPage() {
 
         {showFilters && (
           <div className="filter-row">
-            <label className="param-label">Source contains</label>
-            <input
-              type="text"
-              className="param-input filter-input"
-              placeholder="e.g. wikipedia or msa"
-              value={sourceFilter}
-              onChange={e => setSourceFilter(e.target.value)}
-            />
-            <label className="param-label">Created from</label>
-            <input
-              type="date"
-              className="param-input filter-input"
-              value={createdFrom}
-              onChange={e => setCreatedFrom(e.target.value)}
-            />
-            <label className="param-label">Created to</label>
-            <input
-              type="date"
-              className="param-input filter-input"
-              value={createdTo}
-              onChange={e => setCreatedTo(e.target.value)}
-            />
+            <InfoTip className="param-group" label="Source contains" hint={INFO_TIPS.sourceContains}>
+              <label className="param-label"><InfoLabel text="Source contains" /></label>
+              <input
+                type="text"
+                className="param-input filter-input"
+                placeholder="e.g. wikipedia or msa"
+                value={sourceFilter}
+                onChange={e => setSourceFilter(e.target.value)}
+              />
+            </InfoTip>
+            <InfoTip className="param-group" label="Created from" hint={INFO_TIPS.createdFrom}>
+              <label className="param-label"><InfoLabel text="Created from" /></label>
+              <input
+                type="date"
+                className="param-input filter-input"
+                value={createdFrom}
+                onChange={e => setCreatedFrom(e.target.value)}
+              />
+            </InfoTip>
+            <InfoTip className="param-group" label="Created to" hint={INFO_TIPS.createdTo}>
+              <label className="param-label"><InfoLabel text="Created to" /></label>
+              <input
+                type="date"
+                className="param-input filter-input"
+                value={createdTo}
+                onChange={e => setCreatedTo(e.target.value)}
+              />
+            </InfoTip>
           </div>
         )}
       </div>

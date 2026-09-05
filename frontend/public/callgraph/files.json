@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-09-05T12:04:24Z",
+  "generated_at": "2026-09-05T12:24:58Z",
   "files": {
     "backend/app/__init__.py": {
       "language": "python",
@@ -1165,16 +1165,52 @@
         "frontend/src/components/HealthGrid.tsx::HealthGrid"
       ],
       "imports": [
-        "frontend/src/api.ts"
+        "frontend/src/api.ts",
+        "frontend/src/infoTips.ts",
+        "frontend/src/components/InfoTip.tsx"
       ],
       "imported_by": [
         "frontend/src/pages/HealthPage.tsx"
       ],
       "calls": [
-        "frontend/src/api.ts"
+        "frontend/src/api.ts",
+        "frontend/src/components/InfoTip.tsx",
+        "frontend/src/infoTips.ts"
       ],
       "called_by": [
         "frontend/src/pages/HealthPage.tsx"
+      ]
+    },
+    "frontend/src/components/InfoTip.tsx": {
+      "language": "typescript",
+      "functions": [
+        "frontend/src/components/InfoTip.tsx::placePop",
+        "frontend/src/components/InfoTip.tsx::InfoMark",
+        "frontend/src/components/InfoTip.tsx::InfoLabel",
+        "frontend/src/components/InfoTip.tsx::InfoTip",
+        "frontend/src/components/InfoTip.tsx::show",
+        "frontend/src/components/InfoTip.tsx::hide",
+        "frontend/src/components/InfoTip.tsx::onMove"
+      ],
+      "imports": [],
+      "imported_by": [
+        "frontend/src/components/HealthGrid.tsx",
+        "frontend/src/components/ResultCard.tsx",
+        "frontend/src/pages/DebugPage.tsx",
+        "frontend/src/pages/EvaluationPage.tsx",
+        "frontend/src/pages/KpisPage.tsx",
+        "frontend/src/pages/SearchPage.tsx",
+        "frontend/src/pages/SettingsPage.tsx"
+      ],
+      "calls": [],
+      "called_by": [
+        "frontend/src/components/HealthGrid.tsx",
+        "frontend/src/components/ResultCard.tsx",
+        "frontend/src/pages/DebugPage.tsx",
+        "frontend/src/pages/EvaluationPage.tsx",
+        "frontend/src/pages/KpisPage.tsx",
+        "frontend/src/pages/SearchPage.tsx",
+        "frontend/src/pages/SettingsPage.tsx"
       ]
     },
     "frontend/src/components/Navbar.tsx": {
@@ -1208,6 +1244,8 @@
         "frontend/src/components/ResultCard.tsx::onKey"
       ],
       "imports": [
+        "frontend/src/infoTips.ts",
+        "frontend/src/components/InfoTip.tsx",
         "frontend/src/api.ts",
         "frontend/src/highlight.ts",
         "frontend/src/components/ScoreBar.tsx"
@@ -1217,8 +1255,10 @@
       ],
       "calls": [
         "frontend/src/api.ts",
+        "frontend/src/components/InfoTip.tsx",
         "frontend/src/components/ScoreBar.tsx",
-        "frontend/src/highlight.ts"
+        "frontend/src/highlight.ts",
+        "frontend/src/infoTips.ts"
       ],
       "called_by": [
         "frontend/src/pages/SearchPage.tsx"
@@ -1304,6 +1344,32 @@
         "frontend/src/components/ResultCard.tsx"
       ]
     },
+    "frontend/src/infoTips.ts": {
+      "language": "typescript",
+      "functions": [
+        "frontend/src/infoTips.ts::call"
+      ],
+      "imports": [],
+      "imported_by": [
+        "frontend/src/components/HealthGrid.tsx",
+        "frontend/src/components/ResultCard.tsx",
+        "frontend/src/pages/DebugPage.tsx",
+        "frontend/src/pages/EvaluationPage.tsx",
+        "frontend/src/pages/KpisPage.tsx",
+        "frontend/src/pages/SearchPage.tsx",
+        "frontend/src/pages/SettingsPage.tsx"
+      ],
+      "calls": [],
+      "called_by": [
+        "frontend/src/components/HealthGrid.tsx",
+        "frontend/src/components/ResultCard.tsx",
+        "frontend/src/pages/DebugPage.tsx",
+        "frontend/src/pages/EvaluationPage.tsx",
+        "frontend/src/pages/KpisPage.tsx",
+        "frontend/src/pages/SearchPage.tsx",
+        "frontend/src/pages/SettingsPage.tsx"
+      ]
+    },
     "frontend/src/main.tsx": {
       "language": "typescript",
       "functions": [],
@@ -1334,13 +1400,17 @@
         "frontend/src/pages/DebugPage.tsx::LogRows"
       ],
       "imports": [
+        "frontend/src/components/InfoTip.tsx",
+        "frontend/src/infoTips.ts",
         "frontend/src/api.ts"
       ],
       "imported_by": [
         "frontend/src/App.tsx"
       ],
       "calls": [
-        "frontend/src/api.ts"
+        "frontend/src/api.ts",
+        "frontend/src/components/InfoTip.tsx",
+        "frontend/src/infoTips.ts"
       ],
       "called_by": [
         "frontend/src/App.tsx"
@@ -1358,11 +1428,17 @@
         "frontend/src/pages/EvaluationPage.tsx::EvaluationPage",
         "frontend/src/pages/EvaluationPage.tsx::onSort"
       ],
-      "imports": [],
+      "imports": [
+        "frontend/src/components/InfoTip.tsx",
+        "frontend/src/infoTips.ts"
+      ],
       "imported_by": [
         "frontend/src/App.tsx"
       ],
-      "calls": [],
+      "calls": [
+        "frontend/src/components/InfoTip.tsx",
+        "frontend/src/infoTips.ts"
+      ],
       "called_by": [
         "frontend/src/App.tsx"
       ]
@@ -1424,11 +1500,17 @@
         "frontend/src/pages/KpisPage.tsx::refreshQuietly",
         "frontend/src/pages/KpisPage.tsx::fireBurst"
       ],
-      "imports": [],
+      "imports": [
+        "frontend/src/components/InfoTip.tsx",
+        "frontend/src/infoTips.ts"
+      ],
       "imported_by": [
         "frontend/src/App.tsx"
       ],
-      "calls": [],
+      "calls": [
+        "frontend/src/components/InfoTip.tsx",
+        "frontend/src/infoTips.ts"
+      ],
       "called_by": [
         "frontend/src/App.tsx"
       ]
@@ -1442,6 +1524,8 @@
         "frontend/src/pages/SearchPage.tsx::handleClear"
       ],
       "imports": [
+        "frontend/src/components/InfoTip.tsx",
+        "frontend/src/infoTips.ts",
         "frontend/src/api.ts",
         "frontend/src/components/ResultCard.tsx"
       ],
@@ -1450,7 +1534,9 @@
       ],
       "calls": [
         "frontend/src/api.ts",
-        "frontend/src/components/ResultCard.tsx"
+        "frontend/src/components/InfoTip.tsx",
+        "frontend/src/components/ResultCard.tsx",
+        "frontend/src/infoTips.ts"
       ],
       "called_by": [
         "frontend/src/App.tsx"
@@ -1462,7 +1548,9 @@
         "frontend/src/pages/SettingsPage.tsx::SettingsPage"
       ],
       "imports": [
+        "frontend/src/components/InfoTip.tsx",
         "frontend/src/callgraphTypes.ts",
+        "frontend/src/infoTips.ts",
         "frontend/src/components/CallGraphView.tsx"
       ],
       "imported_by": [
@@ -1470,7 +1558,9 @@
       ],
       "calls": [
         "frontend/src/callgraphTypes.ts",
-        "frontend/src/components/CallGraphView.tsx"
+        "frontend/src/components/CallGraphView.tsx",
+        "frontend/src/components/InfoTip.tsx",
+        "frontend/src/infoTips.ts"
       ],
       "called_by": [
         "frontend/src/App.tsx"

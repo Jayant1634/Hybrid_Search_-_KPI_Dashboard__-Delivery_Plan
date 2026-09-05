@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-09-05T12:04:24Z",
+  "generated_at": "2026-09-05T12:24:58Z",
   "files": [
     {
       "from": "backend/app/__main__.py",
@@ -450,6 +450,14 @@
     {
       "from": "frontend/src/App.tsx::App",
       "to": "frontend/src/pages/DebugPage.tsx::DebugPage"
+    },
+    {
+      "from": "frontend/src/components/InfoTip.tsx::onMove",
+      "to": "frontend/src/components/InfoTip.tsx::placePop"
+    },
+    {
+      "from": "frontend/src/components/InfoTip.tsx::show",
+      "to": "frontend/src/components/InfoTip.tsx::placePop"
     },
     {
       "from": "frontend/src/components/ResultCard.tsx::onKey",

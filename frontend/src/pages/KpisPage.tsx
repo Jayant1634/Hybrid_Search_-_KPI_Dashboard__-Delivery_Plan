@@ -8,6 +8,8 @@ import {
   XAxis,
   YAxis,
 } from 'recharts'
+import InfoTip, { InfoLabel } from '../components/InfoTip'
+import { INFO_TIPS } from '../infoTips'
 
 type TimeWindow = '1h' | '24h' | '7d'
 type DatasetName = 'wikipedia' | 'contracts'
@@ -353,6 +355,9 @@ export default function KpisPage() {
         }
         .kpi-field { display: flex; flex-direction: column; gap: 6px; }
         .kpi-field label {
+          display: flex;
+          align-items: center;
+          gap: 6px;
           font-size: 11px;
           font-weight: 600;
           letter-spacing: 0.06em;
@@ -437,19 +442,21 @@ export default function KpisPage() {
           <button type="button" className="btn-secondary" onClick={() => setDrawerOpen(true)}>
             Test latency
           </button>
-          <div className="cg-toggle" role="group" aria-label="Time window">
-            {WINDOWS.map(option => (
-              <button
-                key={option}
-                type="button"
-                className={option === range ? 'active' : undefined}
-                aria-pressed={option === range}
-                onClick={() => setRange(option)}
-              >
-                {option}
-              </button>
-            ))}
-          </div>
+          <InfoTip label="Time window" hint={INFO_TIPS.timeWindow}>
+            <div className="cg-toggle" role="group" aria-label="Time window">
+              {WINDOWS.map(option => (
+                <button
+                  key={option}
+                  type="button"
+                  className={option === range ? 'active' : undefined}
+                  aria-pressed={option === range}
+                  onClick={() => setRange(option)}
+                >
+                  {option}
+                </button>
+              ))}
+            </div>
+          </InfoTip>
         </div>
       </div>
 
@@ -465,7 +472,7 @@ export default function KpisPage() {
       {data && (
         <>
           <div className="health-grid">
-            <div className="health-card">
+            <InfoTip className="health-card" label="p50 latency" hint={INFO_TIPS.p50}>
               <div className="hc-head">
                 <span className="hc-icon" aria-hidden="true">
                   <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
@@ -473,11 +480,11 @@ export default function KpisPage() {
                     <path d="M8 5v3.2L10 10" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round" />
                   </svg>
                 </span>
-                <div className="hc-eyebrow">p50 latency</div>
+                <div className="hc-eyebrow"><InfoLabel text="p50 latency" /></div>
               </div>
               <div className="hc-metric">{formatMs(data.summary.p50)}</div>
-            </div>
-            <div className="health-card">
+            </InfoTip>
+            <InfoTip className="health-card" label="p95 latency" hint={INFO_TIPS.p95}>
               <div className="hc-head">
                 <span className="hc-icon" aria-hidden="true">
                   <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
@@ -486,22 +493,22 @@ export default function KpisPage() {
                     <path d="M4 13h8" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" />
                   </svg>
                 </span>
-                <div className="hc-eyebrow">p95 latency</div>
+                <div className="hc-eyebrow"><InfoLabel text="p95 latency" /></div>
               </div>
               <div className="hc-metric">{formatMs(data.summary.p95)}</div>
-            </div>
-            <div className="health-card">
+            </InfoTip>
+            <InfoTip className="health-card" label="Total requests" hint={INFO_TIPS.totalRequests}>
               <div className="hc-head">
                 <span className="hc-icon" aria-hidden="true">
                   <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
                     <path d="M3 12V8M8 12V4M13 12V6" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" />
                   </svg>
                 </span>
-                <div className="hc-eyebrow">Total requests</div>
+                <div className="hc-eyebrow"><InfoLabel text="Total requests" /></div>
               </div>
               <div className="hc-metric">{data.summary.total.toLocaleString()}</div>
-            </div>
-            <div className="health-card">
+            </InfoTip>
+            <InfoTip className="health-card" label="Zero results" hint={INFO_TIPS.zeroResults}>
               <div className="hc-head">
                 <span className="hc-icon" aria-hidden="true">
                   <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
@@ -509,10 +516,10 @@ export default function KpisPage() {
                     <path d="M4.2 4.2l7.6 7.6" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" />
                   </svg>
                 </span>
-                <div className="hc-eyebrow">Zero results</div>
+                <div className="hc-eyebrow"><InfoLabel text="Zero results" /></div>
               </div>
               <div className="hc-metric">{data.summary.zero_result_count.toLocaleString()}</div>
-            </div>
+            </InfoTip>
           </div>
 
           {/* <section className="kpi-dash-panel">
@@ -668,8 +675,8 @@ export default function KpisPage() {
                 HTTP multi-user load against <code>/search</code>.
               </p>
 
-              <div className="kpi-field">
-                <label htmlFor="kpi-probe-query">Query</label>
+              <InfoTip className="kpi-field" label="Query" hint={INFO_TIPS.probeQuery}>
+                <label htmlFor="kpi-probe-query"><InfoLabel text="Query" /></label>
                 <input
                   id="kpi-probe-query"
                   value={probeQuery}
@@ -677,10 +684,10 @@ export default function KpisPage() {
                   disabled={firing}
                   maxLength={500}
                 />
-              </div>
+              </InfoTip>
 
-              <div className="kpi-field">
-                <label htmlFor="kpi-probe-count">Concurrent hits</label>
+              <InfoTip className="kpi-field" label="Concurrent hits" hint={INFO_TIPS.concurrentHits}>
+                <label htmlFor="kpi-probe-count"><InfoLabel text="Concurrent hits" /></label>
                 <input
                   id="kpi-probe-count"
                   type="number"
@@ -690,13 +697,10 @@ export default function KpisPage() {
                   onChange={event => setProbeCount(clampCount(Number(event.target.value)))}
                   disabled={firing}
                 />
-                <span className="kpi-field-hint">
-                  {MIN_COUNT}–{MAX_COUNT} requests, all started together.
-                </span>
-              </div>
+              </InfoTip>
 
-              <div className="kpi-field">
-                <label htmlFor="kpi-probe-dataset">Dataset</label>
+              <InfoTip className="kpi-field" label="Dataset" hint={INFO_TIPS.probeDataset}>
+                <label htmlFor="kpi-probe-dataset"><InfoLabel text="Dataset" /></label>
                 <select
                   id="kpi-probe-dataset"
                   value={probeDataset}
@@ -709,7 +713,7 @@ export default function KpisPage() {
                   <option value="wikipedia">Wikipedia</option>
                   <option value="contracts">Contracts</option>
                 </select>
-              </div>
+              </InfoTip>
 
               <div className="kpi-drawer-actions">
                 <button
@@ -726,32 +730,32 @@ export default function KpisPage() {
 
               {burst && (
                 <div className="kpi-burst-grid">
-                  <div className="kpi-burst-tile">
-                    <span>Sent / ok</span>
+                  <InfoTip className="kpi-burst-tile" label="Sent / ok" hint={INFO_TIPS.burstSent}>
+                    <span><InfoLabel text="Sent / ok" /></span>
                     <strong>
                       {burst.sent} / {burst.ok}
                     </strong>
-                  </div>
-                  <div className="kpi-burst-tile">
-                    <span>Failed</span>
+                  </InfoTip>
+                  <InfoTip className="kpi-burst-tile" label="Failed" hint={INFO_TIPS.burstFailed}>
+                    <span><InfoLabel text="Failed" /></span>
                     <strong>{burst.failed}</strong>
-                  </div>
-                  <div className="kpi-burst-tile">
-                    <span>Burst p50</span>
+                  </InfoTip>
+                  <InfoTip className="kpi-burst-tile" label="Burst p50" hint={INFO_TIPS.burstP50}>
+                    <span><InfoLabel text="Burst p50" /></span>
                     <strong>{formatMs(burst.p50)}</strong>
-                  </div>
-                  <div className="kpi-burst-tile">
-                    <span>Burst p95</span>
+                  </InfoTip>
+                  <InfoTip className="kpi-burst-tile" label="Burst p95" hint={INFO_TIPS.burstP95}>
+                    <span><InfoLabel text="Burst p95" /></span>
                     <strong>{formatMs(burst.p95)}</strong>
-                  </div>
-                  <div className="kpi-burst-tile">
-                    <span>Average</span>
+                  </InfoTip>
+                  <InfoTip className="kpi-burst-tile" label="Average" hint={INFO_TIPS.burstAvg}>
+                    <span><InfoLabel text="Average" /></span>
                     <strong>{formatMs(burst.avg_ms)}</strong>
-                  </div>
-                  <div className="kpi-burst-tile">
-                    <span>Wall clock</span>
+                  </InfoTip>
+                  <InfoTip className="kpi-burst-tile" label="Wall clock" hint={INFO_TIPS.burstWall}>
+                    <span><InfoLabel text="Wall clock" /></span>
                     <strong>{formatMs(burst.wall_ms)}</strong>
-                  </div>
+                  </InfoTip>
                 </div>
               )}
             </div>

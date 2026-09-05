@@ -1,4 +1,6 @@
 import { useCallback, useEffect, useState } from 'react'
+import InfoTip, { InfoLabel } from '../components/InfoTip'
+import { INFO_TIPS } from '../infoTips'
 import { getLogs, type LogEntry } from '../api'
 
 type SeverityFilter = 'all' | 'debug' | 'info' | 'warning' | 'error'
@@ -208,8 +210,10 @@ export default function DebugPage() {
 
       <div className="search-panel">
         <div className="search-params" style={{ borderTop: 'none', paddingTop: 0 }}>
-          <div className="param-group">
-            <label className="param-label" htmlFor="debug-severity">Severity</label>
+          <InfoTip className="param-group" label="Severity" hint={INFO_TIPS.severity}>
+            <label className="param-label" htmlFor="debug-severity">
+              <InfoLabel text="Severity" />
+            </label>
             <select
               id="debug-severity"
               className="param-select"
@@ -222,9 +226,11 @@ export default function DebugPage() {
               <option value="warning">warning</option>
               <option value="error">error</option>
             </select>
-          </div>
-          <div className="param-group">
-            <label className="param-label" htmlFor="debug-from">From</label>
+          </InfoTip>
+          <InfoTip className="param-group" label="From" hint={INFO_TIPS.logFrom}>
+            <label className="param-label" htmlFor="debug-from">
+              <InfoLabel text="From" />
+            </label>
             <input
               id="debug-from"
               type="datetime-local"
@@ -232,9 +238,11 @@ export default function DebugPage() {
               value={draft.from}
               onChange={e => setDraft(f => ({ ...f, from: e.target.value }))}
             />
-          </div>
-          <div className="param-group">
-            <label className="param-label" htmlFor="debug-to">To</label>
+          </InfoTip>
+          <InfoTip className="param-group" label="To" hint={INFO_TIPS.logTo}>
+            <label className="param-label" htmlFor="debug-to">
+              <InfoLabel text="To" />
+            </label>
             <input
               id="debug-to"
               type="datetime-local"
@@ -242,9 +250,11 @@ export default function DebugPage() {
               value={draft.to}
               onChange={e => setDraft(f => ({ ...f, to: e.target.value }))}
             />
-          </div>
-          <div className="param-group">
-            <label className="param-label" htmlFor="debug-limit">Limit</label>
+          </InfoTip>
+          <InfoTip className="param-group" label="Limit" hint={INFO_TIPS.logLimit}>
+            <label className="param-label" htmlFor="debug-limit">
+              <InfoLabel text="Limit" />
+            </label>
             <input
               id="debug-limit"
               type="number"
@@ -254,7 +264,7 @@ export default function DebugPage() {
               value={draft.limit}
               onChange={e => setDraft(f => ({ ...f, limit: clampLimit(Number(e.target.value)) }))}
             />
-          </div>
+          </InfoTip>
           <div className="debug-actions">
             <button type="button" className="btn-primary" onClick={apply} disabled={loading}>
               Apply

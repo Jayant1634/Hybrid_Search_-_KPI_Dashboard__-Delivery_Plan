@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-09-05T12:04:24Z",
+  "generated_at": "2026-09-05T12:24:58Z",
   "functions": {
     "backend/app/api/deps.py::_pyproject_path": {
       "file": "backend/app/api/deps.py",
@@ -2982,11 +2982,104 @@
       "file": "frontend/src/components/HealthGrid.tsx",
       "name": "HealthGrid",
       "qualname": "HealthGrid",
-      "lineno": 7,
-      "calls": [],
+      "lineno": 9,
+      "calls": [
+        "frontend/src/components/InfoTip.tsx::InfoTip",
+        "frontend/src/components/InfoTip.tsx::InfoLabel"
+      ],
       "called_by": [
         "frontend/src/pages/HealthPage.tsx::HealthPage"
       ]
+    },
+    "frontend/src/components/InfoTip.tsx::placePop": {
+      "file": "frontend/src/components/InfoTip.tsx",
+      "name": "placePop",
+      "qualname": "placePop",
+      "lineno": 18,
+      "calls": [],
+      "called_by": [
+        "frontend/src/components/InfoTip.tsx::InfoTip",
+        "frontend/src/components/InfoTip.tsx::show",
+        "frontend/src/components/InfoTip.tsx::onMove"
+      ]
+    },
+    "frontend/src/components/InfoTip.tsx::InfoMark": {
+      "file": "frontend/src/components/InfoTip.tsx",
+      "name": "InfoMark",
+      "qualname": "InfoMark",
+      "lineno": 34,
+      "calls": [],
+      "called_by": [
+        "frontend/src/components/InfoTip.tsx::InfoLabel",
+        "frontend/src/pages/EvaluationPage.tsx::EvaluationPage"
+      ]
+    },
+    "frontend/src/components/InfoTip.tsx::InfoLabel": {
+      "file": "frontend/src/components/InfoTip.tsx",
+      "name": "InfoLabel",
+      "qualname": "InfoLabel",
+      "lineno": 55,
+      "calls": [
+        "frontend/src/components/InfoTip.tsx::InfoMark"
+      ],
+      "called_by": [
+        "frontend/src/components/HealthGrid.tsx::HealthGrid",
+        "frontend/src/components/ResultCard.tsx::ResultCard",
+        "frontend/src/pages/DebugPage.tsx::DebugPage",
+        "frontend/src/pages/EvaluationPage.tsx::EvaluationPage",
+        "frontend/src/pages/KpisPage.tsx::KpisPage",
+        "frontend/src/pages/SearchPage.tsx::SearchPage",
+        "frontend/src/pages/SettingsPage.tsx::SettingsPage"
+      ]
+    },
+    "frontend/src/components/InfoTip.tsx::InfoTip": {
+      "file": "frontend/src/components/InfoTip.tsx",
+      "name": "InfoTip",
+      "qualname": "InfoTip",
+      "lineno": 64,
+      "calls": [
+        "frontend/src/components/InfoTip.tsx::placePop",
+        "frontend/src/components/InfoTip.tsx::hide"
+      ],
+      "called_by": [
+        "frontend/src/components/HealthGrid.tsx::HealthGrid",
+        "frontend/src/components/ResultCard.tsx::ResultCard",
+        "frontend/src/pages/DebugPage.tsx::DebugPage",
+        "frontend/src/pages/EvaluationPage.tsx::EvaluationPage",
+        "frontend/src/pages/KpisPage.tsx::KpisPage",
+        "frontend/src/pages/SearchPage.tsx::SearchPage",
+        "frontend/src/pages/SettingsPage.tsx::SettingsPage"
+      ]
+    },
+    "frontend/src/components/InfoTip.tsx::show": {
+      "file": "frontend/src/components/InfoTip.tsx",
+      "name": "show",
+      "qualname": "show",
+      "lineno": 70,
+      "calls": [
+        "frontend/src/components/InfoTip.tsx::placePop"
+      ],
+      "called_by": []
+    },
+    "frontend/src/components/InfoTip.tsx::hide": {
+      "file": "frontend/src/components/InfoTip.tsx",
+      "name": "hide",
+      "qualname": "hide",
+      "lineno": 77,
+      "calls": [],
+      "called_by": [
+        "frontend/src/components/InfoTip.tsx::InfoTip"
+      ]
+    },
+    "frontend/src/components/InfoTip.tsx::onMove": {
+      "file": "frontend/src/components/InfoTip.tsx",
+      "name": "onMove",
+      "qualname": "onMove",
+      "lineno": 81,
+      "calls": [
+        "frontend/src/components/InfoTip.tsx::placePop"
+      ],
+      "called_by": []
     },
     "frontend/src/components/Navbar.tsx::Navbar": {
       "file": "frontend/src/components/Navbar.tsx",
@@ -3002,7 +3095,7 @@
       "file": "frontend/src/components/ResultCard.tsx",
       "name": "Highlighted",
       "qualname": "Highlighted",
-      "lineno": 19,
+      "lineno": 21,
       "calls": [],
       "called_by": [
         "frontend/src/components/ResultCard.tsx::ResultCard"
@@ -3012,7 +3105,7 @@
       "file": "frontend/src/components/ResultCard.tsx",
       "name": "looksLikeUrl",
       "qualname": "looksLikeUrl",
-      "lineno": 23,
+      "lineno": 25,
       "calls": [],
       "called_by": [
         "frontend/src/components/ResultCard.tsx::ResultCard"
@@ -3022,7 +3115,7 @@
       "file": "frontend/src/components/ResultCard.tsx",
       "name": "formatCreatedAt",
       "qualname": "formatCreatedAt",
-      "lineno": 27,
+      "lineno": 29,
       "calls": [],
       "called_by": [
         "frontend/src/components/ResultCard.tsx::ResultCard"
@@ -3032,7 +3125,7 @@
       "file": "frontend/src/components/ResultCard.tsx",
       "name": "ResultCard",
       "qualname": "ResultCard",
-      "lineno": 38,
+      "lineno": 40,
       "calls": [
         "frontend/src/api.ts::submitFeedback",
         "frontend/src/api.ts::getDocument",
@@ -3044,6 +3137,8 @@
         "frontend/src/components/ResultCard.tsx::formatCreatedAt",
         "frontend/src/components/ResultCard.tsx::handleFeedback",
         "frontend/src/components/ResultCard.tsx::Highlighted",
+        "frontend/src/components/InfoTip.tsx::InfoTip",
+        "frontend/src/components/InfoTip.tsx::InfoLabel",
         "frontend/src/components/ScoreBar.tsx::ScoreBar"
       ],
       "called_by": [
@@ -3054,7 +3149,7 @@
       "file": "frontend/src/components/ResultCard.tsx",
       "name": "handleFeedback",
       "qualname": "handleFeedback",
-      "lineno": 46,
+      "lineno": 48,
       "calls": [
         "frontend/src/api.ts::submitFeedback"
       ],
@@ -3066,7 +3161,7 @@
       "file": "frontend/src/components/ResultCard.tsx",
       "name": "openModal",
       "qualname": "openModal",
-      "lineno": 59,
+      "lineno": 61,
       "calls": [],
       "called_by": [
         "frontend/src/components/ResultCard.tsx::ResultCard"
@@ -3076,7 +3171,7 @@
       "file": "frontend/src/components/ResultCard.tsx",
       "name": "closeModal",
       "qualname": "closeModal",
-      "lineno": 60,
+      "lineno": 62,
       "calls": [],
       "called_by": [
         "frontend/src/components/ResultCard.tsx::ResultCard",
@@ -3087,7 +3182,7 @@
       "file": "frontend/src/components/ResultCard.tsx",
       "name": "onKey",
       "qualname": "onKey",
-      "lineno": 87,
+      "lineno": 89,
       "calls": [
         "frontend/src/components/ResultCard.tsx::closeModal"
       ],
@@ -3179,11 +3274,19 @@
         "frontend/src/components/ResultCard.tsx::ResultCard"
       ]
     },
+    "frontend/src/infoTips.ts::call": {
+      "file": "frontend/src/infoTips.ts",
+      "name": "call",
+      "qualname": "call",
+      "lineno": 56,
+      "calls": [],
+      "called_by": []
+    },
     "frontend/src/pages/DebugPage.tsx::clampLimit": {
       "file": "frontend/src/pages/DebugPage.tsx",
       "name": "clampLimit",
       "qualname": "clampLimit",
-      "lineno": 24,
+      "lineno": 26,
       "calls": [],
       "called_by": [
         "frontend/src/pages/DebugPage.tsx::DebugPage",
@@ -3194,7 +3297,7 @@
       "file": "frontend/src/pages/DebugPage.tsx",
       "name": "levelParam",
       "qualname": "levelParam",
-      "lineno": 29,
+      "lineno": 31,
       "calls": [],
       "called_by": []
     },
@@ -3202,7 +3305,7 @@
       "file": "frontend/src/pages/DebugPage.tsx",
       "name": "parseTs",
       "qualname": "parseTs",
-      "lineno": 34,
+      "lineno": 36,
       "calls": [],
       "called_by": []
     },
@@ -3210,7 +3313,7 @@
       "file": "frontend/src/pages/DebugPage.tsx",
       "name": "inRange",
       "qualname": "inRange",
-      "lineno": 39,
+      "lineno": 41,
       "calls": [],
       "called_by": []
     },
@@ -3218,7 +3321,7 @@
       "file": "frontend/src/pages/DebugPage.tsx",
       "name": "fetchLogs",
       "qualname": "fetchLogs",
-      "lineno": 52,
+      "lineno": 54,
       "calls": [],
       "called_by": [
         "frontend/src/pages/DebugPage.tsx::DebugPage"
@@ -3228,7 +3331,7 @@
       "file": "frontend/src/pages/DebugPage.tsx",
       "name": "formatTime",
       "qualname": "formatTime",
-      "lineno": 64,
+      "lineno": 66,
       "calls": [],
       "called_by": []
     },
@@ -3236,7 +3339,7 @@
       "file": "frontend/src/pages/DebugPage.tsx",
       "name": "extraJson",
       "qualname": "extraJson",
-      "lineno": 70,
+      "lineno": 72,
       "calls": [],
       "called_by": []
     },
@@ -3244,7 +3347,7 @@
       "file": "frontend/src/pages/DebugPage.tsx",
       "name": "rowKey",
       "qualname": "rowKey",
-      "lineno": 78,
+      "lineno": 80,
       "calls": [],
       "called_by": [
         "frontend/src/pages/DebugPage.tsx::DebugPage"
@@ -3254,7 +3357,7 @@
       "file": "frontend/src/pages/DebugPage.tsx",
       "name": "severityClass",
       "qualname": "severityClass",
-      "lineno": 82,
+      "lineno": 84,
       "calls": [],
       "called_by": []
     },
@@ -3262,13 +3365,15 @@
       "file": "frontend/src/pages/DebugPage.tsx",
       "name": "DebugPage",
       "qualname": "DebugPage",
-      "lineno": 89,
+      "lineno": 91,
       "calls": [
         "frontend/src/pages/DebugPage.tsx::fetchLogs",
         "frontend/src/pages/DebugPage.tsx::apply",
         "frontend/src/pages/DebugPage.tsx::clampLimit",
         "frontend/src/pages/DebugPage.tsx::reset",
         "frontend/src/pages/DebugPage.tsx::rowKey",
+        "frontend/src/components/InfoTip.tsx::InfoTip",
+        "frontend/src/components/InfoTip.tsx::InfoLabel",
         "frontend/src/pages/DebugPage.tsx::LogRows"
       ],
       "called_by": [
@@ -3279,7 +3384,7 @@
       "file": "frontend/src/pages/DebugPage.tsx",
       "name": "apply",
       "qualname": "apply",
-      "lineno": 115,
+      "lineno": 117,
       "calls": [
         "frontend/src/pages/DebugPage.tsx::clampLimit"
       ],
@@ -3291,7 +3396,7 @@
       "file": "frontend/src/pages/DebugPage.tsx",
       "name": "reset",
       "qualname": "reset",
-      "lineno": 122,
+      "lineno": 124,
       "calls": [],
       "called_by": [
         "frontend/src/pages/DebugPage.tsx::DebugPage"
@@ -3301,7 +3406,7 @@
       "file": "frontend/src/pages/DebugPage.tsx",
       "name": "LogRows",
       "qualname": "LogRows",
-      "lineno": 324,
+      "lineno": 334,
       "calls": [],
       "called_by": [
         "frontend/src/pages/DebugPage.tsx::DebugPage"
@@ -3311,7 +3416,7 @@
       "file": "frontend/src/pages/EvaluationPage.tsx",
       "name": "fetchExperiments",
       "qualname": "fetchExperiments",
-      "lineno": 67,
+      "lineno": 69,
       "calls": [],
       "called_by": [
         "frontend/src/pages/EvaluationPage.tsx::EvaluationPage"
@@ -3321,7 +3426,7 @@
       "file": "frontend/src/pages/EvaluationPage.tsx",
       "name": "parseTime",
       "qualname": "parseTime",
-      "lineno": 76,
+      "lineno": 78,
       "calls": [],
       "called_by": [
         "frontend/src/pages/EvaluationPage.tsx::EvaluationPage"
@@ -3331,7 +3436,7 @@
       "file": "frontend/src/pages/EvaluationPage.tsx",
       "name": "formatTime",
       "qualname": "formatTime",
-      "lineno": 81,
+      "lineno": 83,
       "calls": [],
       "called_by": [
         "frontend/src/pages/EvaluationPage.tsx::EvaluationPage"
@@ -3341,7 +3446,7 @@
       "file": "frontend/src/pages/EvaluationPage.tsx",
       "name": "formatMetric",
       "qualname": "formatMetric",
-      "lineno": 92,
+      "lineno": 94,
       "calls": [],
       "called_by": [
         "frontend/src/pages/EvaluationPage.tsx::EvaluationPage"
@@ -3351,7 +3456,7 @@
       "file": "frontend/src/pages/EvaluationPage.tsx",
       "name": "compareRows",
       "qualname": "compareRows",
-      "lineno": 97,
+      "lineno": 99,
       "calls": [],
       "called_by": [
         "frontend/src/pages/EvaluationPage.tsx::EvaluationPage"
@@ -3361,7 +3466,7 @@
       "file": "frontend/src/pages/EvaluationPage.tsx",
       "name": "ExperimentTooltip",
       "qualname": "ExperimentTooltip",
-      "lineno": 115,
+      "lineno": 117,
       "calls": [],
       "called_by": [
         "frontend/src/pages/EvaluationPage.tsx::EvaluationPage"
@@ -3371,7 +3476,7 @@
       "file": "frontend/src/pages/EvaluationPage.tsx",
       "name": "EvaluationPage",
       "qualname": "EvaluationPage",
-      "lineno": 149,
+      "lineno": 151,
       "calls": [
         "frontend/src/pages/EvaluationPage.tsx::fetchExperiments",
         "frontend/src/pages/EvaluationPage.tsx::parseTime",
@@ -3379,7 +3484,10 @@
         "frontend/src/pages/EvaluationPage.tsx::compareRows",
         "frontend/src/pages/EvaluationPage.tsx::onSort",
         "frontend/src/pages/EvaluationPage.tsx::formatMetric",
-        "frontend/src/pages/EvaluationPage.tsx::ExperimentTooltip"
+        "frontend/src/components/InfoTip.tsx::InfoTip",
+        "frontend/src/components/InfoTip.tsx::InfoLabel",
+        "frontend/src/pages/EvaluationPage.tsx::ExperimentTooltip",
+        "frontend/src/components/InfoTip.tsx::InfoMark"
       ],
       "called_by": [
         "frontend/src/App.tsx::App"
@@ -3389,7 +3497,7 @@
       "file": "frontend/src/pages/EvaluationPage.tsx",
       "name": "onSort",
       "qualname": "onSort",
-      "lineno": 197,
+      "lineno": 199,
       "calls": [],
       "called_by": [
         "frontend/src/pages/EvaluationPage.tsx::EvaluationPage"
@@ -3425,7 +3533,7 @@
       "file": "frontend/src/pages/KpisPage.tsx",
       "name": "fetchJson",
       "qualname": "fetchJson",
-      "lineno": 67,
+      "lineno": 69,
       "calls": [],
       "called_by": []
     },
@@ -3433,7 +3541,7 @@
       "file": "frontend/src/pages/KpisPage.tsx",
       "name": "loadKpis",
       "qualname": "loadKpis",
-      "lineno": 76,
+      "lineno": 78,
       "calls": [],
       "called_by": [
         "frontend/src/pages/KpisPage.tsx::KpisPage",
@@ -3445,7 +3553,7 @@
       "file": "frontend/src/pages/KpisPage.tsx",
       "name": "runLoadTest",
       "qualname": "runLoadTest",
-      "lineno": 87,
+      "lineno": 89,
       "calls": [],
       "called_by": [
         "frontend/src/pages/KpisPage.tsx::KpisPage",
@@ -3456,7 +3564,7 @@
       "file": "frontend/src/pages/KpisPage.tsx",
       "name": "formatMs",
       "qualname": "formatMs",
-      "lineno": 105,
+      "lineno": 107,
       "calls": [],
       "called_by": [
         "frontend/src/pages/KpisPage.tsx::KpisPage"
@@ -3466,7 +3574,7 @@
       "file": "frontend/src/pages/KpisPage.tsx",
       "name": "parseBucket",
       "qualname": "parseBucket",
-      "lineno": 109,
+      "lineno": 111,
       "calls": [],
       "called_by": []
     },
@@ -3474,7 +3582,7 @@
       "file": "frontend/src/pages/KpisPage.tsx",
       "name": "formatBucket",
       "qualname": "formatBucket",
-      "lineno": 119,
+      "lineno": 121,
       "calls": [],
       "called_by": [
         "frontend/src/pages/KpisPage.tsx::KpisPage"
@@ -3484,7 +3592,7 @@
       "file": "frontend/src/pages/KpisPage.tsx",
       "name": "formatSeen",
       "qualname": "formatSeen",
-      "lineno": 133,
+      "lineno": 135,
       "calls": [],
       "called_by": [
         "frontend/src/pages/KpisPage.tsx::KpisPage"
@@ -3494,7 +3602,7 @@
       "file": "frontend/src/pages/KpisPage.tsx",
       "name": "clampCount",
       "qualname": "clampCount",
-      "lineno": 139,
+      "lineno": 141,
       "calls": [],
       "called_by": [
         "frontend/src/pages/KpisPage.tsx::KpisPage",
@@ -3505,7 +3613,7 @@
       "file": "frontend/src/pages/KpisPage.tsx",
       "name": "KpisPage",
       "qualname": "KpisPage",
-      "lineno": 144,
+      "lineno": 146,
       "calls": [
         "frontend/src/pages/KpisPage.tsx::loadKpis",
         "frontend/src/pages/KpisPage.tsx::run",
@@ -3515,7 +3623,9 @@
         "frontend/src/pages/KpisPage.tsx::formatBucket",
         "frontend/src/pages/KpisPage.tsx::formatMs",
         "frontend/src/pages/KpisPage.tsx::formatSeen",
-        "frontend/src/pages/KpisPage.tsx::fireBurst"
+        "frontend/src/pages/KpisPage.tsx::fireBurst",
+        "frontend/src/components/InfoTip.tsx::InfoTip",
+        "frontend/src/components/InfoTip.tsx::InfoLabel"
       ],
       "called_by": [
         "frontend/src/App.tsx::App"
@@ -3525,7 +3635,7 @@
       "file": "frontend/src/pages/KpisPage.tsx",
       "name": "run",
       "qualname": "run",
-      "lineno": 161,
+      "lineno": 163,
       "calls": [
         "frontend/src/pages/KpisPage.tsx::loadKpis"
       ],
@@ -3537,7 +3647,7 @@
       "file": "frontend/src/pages/KpisPage.tsx",
       "name": "onKey",
       "qualname": "onKey",
-      "lineno": 191,
+      "lineno": 193,
       "calls": [],
       "called_by": []
     },
@@ -3545,7 +3655,7 @@
       "file": "frontend/src/pages/KpisPage.tsx",
       "name": "refreshQuietly",
       "qualname": "refreshQuietly",
-      "lineno": 198,
+      "lineno": 200,
       "calls": [
         "frontend/src/pages/KpisPage.tsx::loadKpis"
       ],
@@ -3558,7 +3668,7 @@
       "file": "frontend/src/pages/KpisPage.tsx",
       "name": "fireBurst",
       "qualname": "fireBurst",
-      "lineno": 209,
+      "lineno": 211,
       "calls": [
         "frontend/src/pages/KpisPage.tsx::runLoadTest",
         "frontend/src/pages/KpisPage.tsx::clampCount",
@@ -3572,7 +3682,7 @@
       "file": "frontend/src/pages/SearchPage.tsx",
       "name": "localDateToIso",
       "qualname": "localDateToIso",
-      "lineno": 5,
+      "lineno": 7,
       "calls": [],
       "called_by": [
         "frontend/src/pages/SearchPage.tsx::SearchPage"
@@ -3582,10 +3692,12 @@
       "file": "frontend/src/pages/SearchPage.tsx",
       "name": "SearchPage",
       "qualname": "SearchPage",
-      "lineno": 10,
+      "lineno": 12,
       "calls": [
         "frontend/src/pages/SearchPage.tsx::localDateToIso",
         "frontend/src/api.ts::search",
+        "frontend/src/components/InfoTip.tsx::InfoTip",
+        "frontend/src/components/InfoTip.tsx::InfoLabel",
         "frontend/src/components/ResultCard.tsx::ResultCard"
       ],
       "called_by": [
@@ -3596,7 +3708,7 @@
       "file": "frontend/src/pages/SearchPage.tsx",
       "name": "handleKeyDown",
       "qualname": "handleKeyDown",
-      "lineno": 77,
+      "lineno": 79,
       "calls": [],
       "called_by": []
     },
@@ -3604,7 +3716,7 @@
       "file": "frontend/src/pages/SearchPage.tsx",
       "name": "handleClear",
       "qualname": "handleClear",
-      "lineno": 81,
+      "lineno": 83,
       "calls": [],
       "called_by": []
     },
@@ -3612,8 +3724,10 @@
       "file": "frontend/src/pages/SettingsPage.tsx",
       "name": "SettingsPage",
       "qualname": "SettingsPage",
-      "lineno": 5,
+      "lineno": 7,
       "calls": [
+        "frontend/src/components/InfoTip.tsx::InfoTip",
+        "frontend/src/components/InfoTip.tsx::InfoLabel",
         "frontend/src/components/CallGraphView.tsx::CallGraphView"
       ],
       "called_by": [

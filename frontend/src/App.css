@@ -313,6 +313,63 @@
   color: var(--c-secondary);
   letter-spacing: 0.01em;
 }
+
+.info-tip {
+  position: relative;
+}
+.info-tip-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+}
+.info-tip-mark {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 16px;
+  height: 16px;
+  padding: 0;
+  border: none;
+  border-radius: 99px;
+  background: transparent;
+  color: var(--c-muted);
+  cursor: help;
+  flex-shrink: 0;
+  line-height: 1;
+}
+.info-tip:hover .info-tip-mark,
+.info-tip:focus-within .info-tip-mark,
+.info-tip-mark:hover,
+.info-tip-mark:focus-visible {
+  color: var(--purple);
+}
+.info-tip-pop {
+  position: fixed;
+  z-index: 90;
+  padding: 10px 12px;
+  background: var(--c-surface);
+  border: 1px solid var(--c-border);
+  border-radius: 8px;
+  box-shadow: var(--shadow-md);
+  pointer-events: none;
+}
+.info-tip-pop.is-above {
+  transform: translateY(-100%);
+}
+.info-tip-pop-label {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--purple);
+  margin-bottom: 4px;
+}
+.info-tip-pop-body {
+  margin: 0;
+  font-size: 12px;
+  line-height: 1.45;
+  color: var(--c-text);
+}
 .param-value-badge {
   font-family: var(--mono);
   font-size: 11px;
@@ -363,7 +420,7 @@
 
 .filter-row {
   display: flex;
-  align-items: center;
+  align-items: flex-end;
   flex-wrap: wrap;
   gap: 12px;
   border-top: 1px solid var(--c-border);
@@ -530,7 +587,7 @@ a.result-title:hover {
   gap: 12px;
 }
 .score-label {
-  width: 56px;
+  width: 80px;
   flex-shrink: 0;
   font-size: 11px;
   font-weight: 600;

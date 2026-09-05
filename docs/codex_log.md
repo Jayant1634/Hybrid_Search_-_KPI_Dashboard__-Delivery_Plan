@@ -3717,3 +3717,118 @@ Review:
 Commit:
 
 ---
+
+Date: 2026-09-05
+Prompt id: p-sentence-embeddings
+Prompt:
+also tell me how the embedding_model works, 
+
+does it embeds based of the file, or on sentences or words ?
+
+Search uses one vector per document, not per sentence and not per word.
+
+embedding_model is the Hugging Face name of the sentence-transformers model to load. It comes from HSS_EMBEDDING_MODEL (default all-MiniLM-L6-v2 in .env / app/config.py). SentenceTransformerEmbedder loads that model on CPU and exposes encode(list[str]) -> (n, dim) L2-normalised float32 vectors. For MiniLM that dimension is 384.
+
+What this app embeds. At index time, build_indexes calls encode once per ingested Doc with the string "{title} {text}". One source file becomes one Doc (after cleaning and a 20,000-character cap). There is no sentence chunking and no word-level index. Query time does the same: the whole query string becomes one vector, then FAISS IndexFlatIP ranks documents by cosine similarity (inner product of unit vectors).
+
+What the model does inside that string. “Sentence” transformer means “one string in, one vector out.” Internally it:
+
+Tokenizes the string into subword tokens (BERT WordPiece for MiniLM).
+Runs a transformer over those tokens.
+Mean-pools the token hidden states into a single 384-d vector.
+L2-normalises it.
+So the model is token-based under the hood, but this project never stores those token vectors. It only keeps the pooled document vector.
+
+Caveat. all-MiniLM-L6-v2 was trained on sentences / short paragraphs and has a 256-token max length. A long article is still one embedding, but the model only sees the first ~256 tokens of title + text. The rest of the file does not enter the vector.
+
+Not search, but related. --sentence-split on ingest only inserts newlines; it still produces one Doc and one embedding. Semantic highlighting (closest_document_words) separately embeds individual words to find near-matches of the query. That is snippet decoration, not ranking.
+
+BM25 is the word/token side of hybrid search. The embedding side is document-level meaning.
+
+Explain how embedding_model works validated: n/a (explanation only)
+
+so it means that embedding are made one for a doc, right ?
+
+can we make it something like sentences in doc ?
+and what would be the profit in it ? and any cons ?
+Model: Cursor Grok 4.6
+Files: docs/codex_log.md
+What came back:
+Yes. Search stores **one embedding per document**.
+
+`build_indexes` calls `encode` once per ingested `Doc` on `"{title} {text}"`. FAISS `IndexFlatIP` ranks those document vectors. The query is also one string → one vector. There is no sentence index and no word index for ranking.
+
+`--sentence-split` only inserts newlines. It still writes one `Doc` and one vector. `closest_document_words` embeds individual words only to decorate snippets. BM25 is the lexical side.
+
+Yes, we can index sentences (or short chunks). That is a retrieval-design change, not a setting on `embedding_model`. The model already accepts any list of strings. Today we pass one string per file; we would pass one string per sentence (or chunk) and keep a pointer from each vector back to the parent `doc_id`.
+
+How it would work here:
+
+1. Split `doc.text` (we already have `split_sentences`).
+2. `encode` each piece. FAISS grows from N docs to N sentences.
+3. Query is still one vector.
+4. Rank sentences by cosine, then roll up to documents — usually the **max** sentence score for that `doc_id`.
+5. Return one `SearchResult` per document so the same article does not appear twenty times.
+
+**Profit**
+
+- Fixes MiniLM’s 256-token window. A long article is one embedding today, but the model only sees the first ~256 tokens of title + text. Later sections never enter the vector. Sentence or chunk vectors put those later parts in the index.
+- Better match for specific queries. “When did X erupt?” can hit a buried sentence instead of the article’s opening overview.
+- The model was trained on sentences / short paragraphs, so the inputs match what MiniLM is good at.
+- You know which sentence matched, so snippets can show the real hit instead of a lexical window near the top.
+- `min_vector_score` becomes more meaningful: a relevant buried sentence can score high even if the rest of the page is unrelated.
+
+**Cons**
+
+- Index size and build time. A wiki page can be 50–200 sentences, so FAISS and CPU encode cost grow ~20–100×. `IndexFlatIP` is exact and scans every vector, so query time grows with that count.
+- Short sentences are noisy. “It erupted.” or “See also.” can match the wrong query, or match too weakly to help.
+- You lose a single “what this page is about” vector. Overview queries can rank a page because one lucky sentence matched, not because the document as a whole is about the topic. Max-pooling especially does this.
+- Aggregation is a new design choice (max vs mean vs top-k mean). Wrong choice changes ranking a lot.
+- This codebase assumes one vector per `doc_id`: `VectorIndex`, hybrid union, filters, eval gold, dashboard, snippets. Sentence indexing is a real architecture change, not a flag.
+
+A better middle ground than raw sentences is **overlapping chunks** of ~200–256 tokens (a few sentences, with a little overlap). That stays inside MiniLM’s window, keeps enough context that a sentence is not ambiguous, and still covers the whole file.
+
+Not implemented. This turn is explanation only. Say if you want chunk-level vectors built.
+Review:
+Commit:
+
+---
+
+Date: 2026-09-05
+Prompt id: p-kpi-hover-info
+Prompt:
+cehck the codebase and fix the UI of this :
+when hover on a KPI, it a info pop appear, that what it is , 
+not currently text shown below, 
+check the codebase and implmenet this info to all the pages, and KPI and where user want to know what it is, make it
+Model: Cursor Grok 4.6
+Files: frontend/src/components/InfoTip.tsx, frontend/src/infoTips.ts, frontend/src/pages/SearchPage.tsx, frontend/src/pages/KpisPage.tsx, frontend/src/pages/EvaluationPage.tsx, frontend/src/pages/DebugPage.tsx, frontend/src/pages/SettingsPage.tsx, frontend/src/components/HealthGrid.tsx, frontend/src/components/ResultCard.tsx, frontend/src/App.css, backend/tests/test_info_tips.py, frontend/public/callgraph/*.json, docs/codex_log.md
+What came back:
+Hovering a KPI now opens a short info popover. The old RRF k paragraph under the field is gone.
+
+Search used to keep that “Score is 1/(k + rank)…” copy under the RRF k input. That text now lives in the hover pop, same as Top K, Alpha, Min vector, Dataset, Normalisation, and the date/source filters. Each control has a small (i) mark so it is obvious help is there. Hover the label, the mark, or the control itself.
+
+The same pattern is on the other pages where a label needs an explanation:
+
+- KPIs: p50, p95, total requests, zero results, time window, and the latency-burst fields/tiles
+- Evaluation: chart metric plus every experiment-table column (nDCG@10, Recall@10, MRR@10, alpha, …)
+- Health: API status, version, commit, index model, documents, embedding dim, built-at, corpus hash
+- Call graph: file/function/edge counts
+- Debug: severity, from, to, limit
+- Result cards: BM25 / Vector / Hybrid score rows, and the Related KPIs tiles (Rank, Hybrid, BM25, Vector, Closest)
+
+Help copy is in `frontend/src/infoTips.ts`. The popover is `InfoTip`: hover or keyboard focus, portal so it is not clipped, flips above the control near the bottom of the viewport.
+
+I could not click through the UI in a browser here (no browser tools in this session). Refresh the running app and hover Top K / RRF k on Search, then the KPI tiles, to confirm the pop.
+
+```
+....                                                                     [100%]
+4 passed in 0.04s
+```
+
+(`backend/tests/test_info_tips.py`.) Frontend `tsc -b` is clean. Regenerated `frontend/public/callgraph/*.json`.
+Review:
+Commit:
+
+---
+
