@@ -1,0 +1,4 @@
+* text=auto
+
+# Reviewer machines and Git Bash need LF; Windows checkout must not convert these to CRLF.
+*.sh text eol=lf

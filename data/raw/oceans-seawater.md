@@ -1,0 +1,22 @@
+---
+title: "Salt water"
+source: "https://simple.wikipedia.org/wiki/Salt_water"
+license: "CC BY-SA 4.0"
+topic: "oceans"
+fetched: "2026-09-03"
+---
+
+Salt water (or saline water) is water with a large amount of salt in it. It usually means the water from the seas and oceans (sea water). Almost all the water on Earth is saline. River water, however, is usually not saline.
+Salt water used for making or preserving food, is usually saltier than sea water and is called brine. Drinking sea water alone is dangerous. A summary of 163 life raft voyages showed the risk of death at 39% for those who drank seawater, compared to 3% for those who did not. Experiments on rats showed the danger.
+When scientists measure salt in water, they are testing the salinity of the water. Salinity is measured in parts per thousand or ppt. Most sea water is about 35 ppt salt. Salt lakes can be up to ten times as salty. Above that level precipitation creates a salt plain.
+Brackish water, in contrast, is less salty than seawater.
+Salt water is more dense than fresh water. Fresh water has a density of 1 g/ml, while salty seawater has an average density of about 1.025 g/ml.
+
+
+Related pages
+Desalination
+Fresh water
+Water cycle
+
+
+References

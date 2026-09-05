@@ -1,0 +1,238 @@
+/* ============================================================
+   Kearney-Inspired Design System
+   Monochromatic foundation · Kearney purple accent
+   ============================================================ */
+
+:root {
+  /* Brand */
+  --purple:       #7823DC;
+  --purple-dark:  #5E18B5;
+  --purple-light: #AF7DEA;
+  --purple-tint:  rgba(120, 35, 220, 0.08);
+  --hl-lex-bg:    rgba(120, 35, 220, 0.18);
+  --hl-lex-fg:    #4A148C;
+  --hl-sem-bg:    rgba(196, 122, 0, 0.22);
+  --hl-sem-fg:    #8A5500;
+
+  /* Semantic */
+  --success: #16834B;
+  --warning: #C47A00;
+  --error:   #C93636;
+  --info:    #3568C9;
+
+  /* Light theme surfaces */
+  --c-bg:          #FFFFFF;
+  --c-bg-alt:      #FAFAFA;
+  --c-surface:     #FFFFFF;
+  --c-surface-2:   #F5F5F5;
+  --c-border:      #E2E2E2;
+  --c-border-strong: #D9D9D9;
+
+  /* Light theme text */
+  --c-heading:  #111111;
+  --c-text:     #252525;
+  --c-secondary:#626262;
+  --c-muted:    #858585;
+  --c-on-dark:  #FFFFFF;
+
+  /* Sidebar (constant dark) */
+  --sb-bg:        #111111;
+  --sb-surface:   #1A1A1A;
+  --sb-text:      #FFFFFF;
+  --sb-inactive:  rgba(255, 255, 255, 0.62);
+  --sb-border:    rgba(255, 255, 255, 0.10);
+
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.06);
+  --shadow-md: 0 2px 8px rgba(0, 0, 0, 0.06);
+
+  --font: 'Helvetica Neue', Arial, Helvetica, 'Inter', sans-serif;
+  --mono: ui-monospace, 'SF Mono', Consolas, monospace;
+
+  font-family: var(--font);
+  font-size: 15px;
+  line-height: 1.5;
+  color: var(--c-text);
+  background: var(--c-bg-alt);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+
+:root[data-theme='dark'] {
+  --c-bg:          #111111;
+  --c-bg-alt:      #0D0D0D;
+  --c-surface:     #171717;
+  --c-surface-2:   #1F1F1F;
+  --c-border:      #2A2A2A;
+  --c-border-strong: #333333;
+
+  --c-heading:  #FFFFFF;
+  --c-text:     #E8E8E8;
+  --c-secondary:#A5A5A5;
+  --c-muted:    #7A7A7A;
+
+  --purple-tint: rgba(175, 125, 234, 0.12);
+  --hl-lex-bg:   rgba(175, 125, 234, 0.45);
+  --hl-lex-fg:   #F6ECFF;
+  --hl-sem-bg:   rgba(255, 196, 80, 0.42);
+  --hl-sem-fg:   #FFE7A3;
+
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.4);
+  --shadow-md: 0 2px 8px rgba(0, 0, 0, 0.5);
+}
+
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  min-height: 100svh;
+  background: var(--c-bg-alt);
+}
+
+#root {
+  min-height: 100svh;
+}
+
+h1, h2, h3, h4 {
+  font-family: var(--font);
+  color: var(--c-heading);
+  font-weight: 600;
+}
+
+button {
+  font-family: inherit;
+  cursor: pointer;
+}
+
+input, select, textarea {
+  font-family: inherit;
+  color: var(--c-text);
+}
+
+code {
+  font-family: var(--mono);
+}
+
+a {
+  color: var(--purple);
+  text-decoration: none;
+}
+
+/* ── Buttons ─────────────────────────────────────────────── */
+
+.btn-primary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  height: 42px;
+  padding: 0 22px;
+  background: var(--purple);
+  color: #fff;
+  border: 1px solid var(--purple);
+  border-radius: 5px;
+  font-size: 14px;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  transition: background 0.15s, border-color 0.15s;
+}
+.btn-primary:hover:not(:disabled) {
+  background: var(--purple-dark);
+  border-color: var(--purple-dark);
+}
+.btn-primary:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.btn-secondary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  height: 42px;
+  padding: 0 20px;
+  background: var(--c-surface);
+  color: var(--c-heading);
+  border: 1px solid var(--c-border-strong);
+  border-radius: 5px;
+  font-size: 14px;
+  font-weight: 600;
+  transition: background 0.15s, border-color 0.15s;
+}
+.btn-secondary:hover:not(:disabled) {
+  background: var(--c-surface-2);
+}
+.btn-secondary:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.btn-ghost {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  height: 38px;
+  padding: 0 14px;
+  background: transparent;
+  color: var(--c-secondary);
+  border: 1px solid transparent;
+  border-radius: 5px;
+  font-size: 13px;
+  font-weight: 600;
+  transition: color 0.15s, background 0.15s;
+}
+.btn-ghost:hover {
+  color: var(--purple);
+  background: var(--purple-tint);
+}
+
+/* ── Spinner ─────────────────────────────────────────────── */
+
+.spinner {
+  width: 15px;
+  height: 15px;
+  border: 2px solid rgba(255, 255, 255, 0.35);
+  border-top-color: #fff;
+  border-radius: 50%;
+  animation: spin 0.65s linear infinite;
+  display: inline-block;
+}
+.spinner-dark {
+  border-color: rgba(120, 35, 220, 0.25);
+  border-top-color: var(--purple);
+}
+.spinner-lg {
+  width: 26px;
+  height: 26px;
+  border-width: 3px;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* ── Error banner ────────────────────────────────────────── */
+
+.error-banner {
+  background: rgba(201, 54, 54, 0.08);
+  border: 1px solid rgba(201, 54, 54, 0.3);
+  border-left: 3px solid var(--error);
+  border-radius: 5px;
+  padding: 13px 16px;
+  font-size: 13px;
+  color: var(--error);
+  font-weight: 500;
+  font-family: var(--mono);
+  word-break: break-word;
+}
+
+/* ── Scrollbar ───────────────────────────────────────────── */
+
+::-webkit-scrollbar { width: 8px; height: 8px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb {
+  background: var(--c-border-strong);
+  border-radius: 99px;
+}
+::-webkit-scrollbar-thumb:hover { background: var(--c-muted); }

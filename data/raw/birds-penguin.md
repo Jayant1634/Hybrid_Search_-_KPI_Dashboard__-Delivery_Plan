@@ -1,0 +1,79 @@
+---
+title: "Penguin"
+source: "https://simple.wikipedia.org/wiki/Penguin"
+license: "CC BY-SA 4.0"
+topic: "birds"
+fetched: "2026-09-03"
+---
+
+Penguins are seabirds in the family Spheniscidae. They use their flippers to swim underwater, but they cannot fly in the air. They eat fish and other seafood. Penguins lay their eggs and raise their babies on land.
+Penguins in the wild only live in the Southern Hemisphere: Antarctica, New Zealand, Australia, South Africa and South America, except Galápagos penguins. The furthest north they get is the Galapagos Islands, where the cold Humboldt Current flows past.
+
+
+Name
+
+The word penguin was first used in the 16th century as another word for the great auk. When Europeans first found penguins, they saw a similar look to the great auk and named them after this bird, but they are not related.
+The etymology of the word penguin is debated. The word in English is not French, Breton, or Spanish origin. but is first used in English or Dutch.
+A group of penguins are called a raft sometimes.
+
+
+Physical description
+All penguins have a white belly and a dark, mostly black, back. This is a type of camouflage to keep them safe when they swim because it makes them blend in with their background. The white and black colour make an effect called countershading. While a predator looking from below sees the white belly and wings of a swimming penguin, it can't see the penguin well because the light is coming from above. However, when seen from above, the penguin's black back blends in with the dark water below, so they are hard to see from both angles.
+The biggest penguins, emperor penguins, may stand nearly 4 feet tall (110 cm) and can weigh almost 100 pounds (40 kg) but the smallest, little penguins, are only about one foot tall (32 cm) tall.
+Penguins have a thick layer of blubber that helps them keep warm and their feathers are very tightly packed to make another cover. They also have a layer of woolly down feathers, under the outer veined feathers that are coated with a type of oil that makes them waterproof.
+Penguins have webbed feet used for paddling in the water. They cannot walk well, so they waddle. Penguins cannot fly, but they can swim very well. Their wings have become stiff and small swimming flippers. They have good hearing and can see underwater.
+
+
+Life
+Most penguins lay two eggs per year but emperor penguins lay only one. After the penguins mate, the mother lays her egg or eggs and soon goes to the ocean to eat. The father and mother take turns keeping the eggs warm and the chicks warm after hatching. The parent on baby duty has nothing to eat. Parent penguins call to find each other amongst the thousands of birds when they return from the feeding grounds. The time one parent is alone with the eggs or chicks and going hungry may be weeks or months depending on what kind of penguin they are. If one parent does not return, the other must leave the egg behind to go and eat. Climate change is a threat to penguins along with other antarctic animals. 70% of king penguins are expected to relocate or disappear in less than eighty years, due to the effects of climate change.
+
+
+Diet
+Penguins eat krill, fish, squid and other small animals from the ocean. They are at home in the ocean. They come up on the land or ice to lay their eggs and raise the chicks. They live in places where the land has no food for them. In most species, the birds all nest together in a huge group called a rookery. They usually make nests on the ground with rocks or mud.
+Penguins cannot taste fish. This was discovered when a research team noticed they were missing some key genes for taste. A closer look at the DNA of penguins showed that all species lack functioning genes for the receptors of sweet, umami, and bitter tastes. It doesn't matter to them, because they swallow the fish whole. Birds do not swallow straight into their stomachs, as we do. They have a crop for storage and a gizzard with swallowed stones for grinding food. This compensates for their lack of teeth. 
+Penguins love to eat krill, squid, and other sea animals. They dive into the sea, and bite their prey and quickly swim out of the ocean.
+
+
+Different penguin species
+There are 15–20 living species of penguins. The white-flippered penguin is today generally considered a subspecies of the little penguin. It is still unclear if the royal penguin is a subspecies of the macaroni penguin. Scientists are also uncertain whether rockhopper penguins are one, two, or three species. King penguins live up to 25 years.
+
+
+List of penguins
+Aptenodytes
+King penguin (Aptenodytes patagonicus)
+Emperor penguin (Aptenodytes forsteri)
+Pygoscelis
+Adélie penguin (Pygoscelis adeliae)
+Chinstrap penguin (Pygoscelis Antarctica)
+Gentoo penguin (Pygoscelis papua)
+Eudyptes (crested penguins)
+Rockhopper penguin (Eudyptes chrysocome)
+Fiordland penguin (Eudyptes pachyrhynchus)
+Snares penguin (Eudyptes robustus)
+Royal penguin (Eudyptes schlegeli)
+Erect-crested penguin (Eudyptes sclateri)
+Macaroni penguin (Eudyptes chrysolophus)
+Megadyptes
+Yellow-eyed penguin (Megadyptes antipodes)
+Eudyptula
+Little penguin (Eudyptula minor)
+White-flippered penguin (Eudyptula minor albosignata)
+African penguin (Spheniscus demersus)
+Magellanic penguin (Spheniscus magellanicus)
+Humboldt penguin (Spheniscus humboldti)
+Galápagos penguin (Spheniscus mendiculus)
+
+
+Images
+
+
+Related pages
+Tux (Linux mascot)
+
+
+References
+
+
+Other websites
+
+Penguin at Citizendium

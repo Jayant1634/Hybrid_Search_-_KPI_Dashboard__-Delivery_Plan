@@ -1,0 +1,1784 @@
+{
+  "generated_at": "2026-09-05T06:59:10Z",
+  "files": {
+    "roots": [
+      "backend/app/__init__.py",
+      "backend/app/__main__.py",
+      "backend/app/api/main.py",
+      "backend/app/api/ratelimit.py",
+      "backend/app/callgraph/__init__.py",
+      "backend/app/callgraph/__main__.py",
+      "backend/app/eval/__main__.py",
+      "backend/app/index/__main__.py",
+      "backend/app/ingest/__main__.py",
+      "backend/app/loadtest/__init__.py",
+      "backend/app/loadtest/locustfile.py",
+      "backend/app/observability/logging.py",
+      "frontend/src/main.tsx",
+      "scripts/_check_titles.py",
+      "scripts/fetch_until_done.py",
+      "scripts/generate_contracts.py",
+      "scripts/qrels_helper.py"
+    ],
+    "layers": [
+      [
+        "backend/app/__init__.py",
+        "backend/app/__main__.py",
+        "backend/app/api/main.py",
+        "backend/app/api/ratelimit.py",
+        "backend/app/callgraph/__init__.py",
+        "backend/app/callgraph/__main__.py",
+        "backend/app/eval/__main__.py",
+        "backend/app/index/__main__.py",
+        "backend/app/ingest/__main__.py",
+        "backend/app/loadtest/__init__.py",
+        "backend/app/loadtest/locustfile.py",
+        "backend/app/observability/logging.py",
+        "frontend/src/main.tsx",
+        "scripts/_check_titles.py",
+        "scripts/fetch_until_done.py",
+        "scripts/generate_contracts.py",
+        "scripts/qrels_helper.py"
+      ],
+      [
+        "backend/app/run.py",
+        "backend/app/api/deps.py",
+        "backend/app/api/middleware.py",
+        "backend/app/api/routes_dashboard.py",
+        "backend/app/api/routes_search.py",
+        "backend/app/config.py",
+        "backend/app/search/embedder.py",
+        "backend/app/storage/db.py",
+        "backend/app/callgraph/analyze.py",
+        "backend/app/eval/runner.py",
+        "backend/app/index/metadata.py",
+        "backend/app/ingest/writer.py",
+        "backend/app/search/bm25.py",
+        "backend/app/search/vector.py",
+        "backend/app/ingest/__init__.py",
+        "backend/app/loadtest/burst.py",
+        "backend/app/storage/repo.py",
+        "frontend/src/App.tsx",
+        "scripts/fetch_corpus.py"
+      ]
+    ],
+    "edges": [
+      {
+        "from": "backend/app/__main__.py",
+        "to": "backend/app/run.py"
+      },
+      {
+        "from": "backend/app/api/main.py",
+        "to": "backend/app/api/deps.py"
+      },
+      {
+        "from": "backend/app/api/main.py",
+        "to": "backend/app/api/middleware.py"
+      },
+      {
+        "from": "backend/app/api/main.py",
+        "to": "backend/app/api/routes_dashboard.py"
+      },
+      {
+        "from": "backend/app/api/main.py",
+        "to": "backend/app/api/routes_search.py"
+      },
+      {
+        "from": "backend/app/api/main.py",
+        "to": "backend/app/config.py"
+      },
+      {
+        "from": "backend/app/api/main.py",
+        "to": "backend/app/search/embedder.py"
+      },
+      {
+        "from": "backend/app/api/main.py",
+        "to": "backend/app/storage/db.py"
+      },
+      {
+        "from": "backend/app/api/ratelimit.py",
+        "to": "backend/app/config.py"
+      },
+      {
+        "from": "backend/app/callgraph/__init__.py",
+        "to": "backend/app/callgraph/analyze.py"
+      },
+      {
+        "from": "backend/app/callgraph/__main__.py",
+        "to": "backend/app/callgraph/analyze.py"
+      },
+      {
+        "from": "backend/app/eval/__main__.py",
+        "to": "backend/app/config.py"
+      },
+      {
+        "from": "backend/app/eval/__main__.py",
+        "to": "backend/app/eval/runner.py"
+      },
+      {
+        "from": "backend/app/eval/__main__.py",
+        "to": "backend/app/index/metadata.py"
+      },
+      {
+        "from": "backend/app/index/__main__.py",
+        "to": "backend/app/config.py"
+      },
+      {
+        "from": "backend/app/index/__main__.py",
+        "to": "backend/app/index/metadata.py"
+      },
+      {
+        "from": "backend/app/index/__main__.py",
+        "to": "backend/app/ingest/writer.py"
+      },
+      {
+        "from": "backend/app/index/__main__.py",
+        "to": "backend/app/search/bm25.py"
+      },
+      {
+        "from": "backend/app/index/__main__.py",
+        "to": "backend/app/search/embedder.py"
+      },
+      {
+        "from": "backend/app/index/__main__.py",
+        "to": "backend/app/search/vector.py"
+      },
+      {
+        "from": "backend/app/ingest/__main__.py",
+        "to": "backend/app/ingest/__init__.py"
+      },
+      {
+        "from": "backend/app/loadtest/__init__.py",
+        "to": "backend/app/loadtest/burst.py"
+      },
+      {
+        "from": "backend/app/loadtest/locustfile.py",
+        "to": "backend/app/loadtest/burst.py"
+      },
+      {
+        "from": "backend/app/observability/logging.py",
+        "to": "backend/app/storage/repo.py"
+      },
+      {
+        "from": "frontend/src/main.tsx",
+        "to": "frontend/src/App.tsx"
+      },
+      {
+        "from": "scripts/fetch_until_done.py",
+        "to": "scripts/fetch_corpus.py"
+      }
+    ],
+    "hops": [
+      {
+        "from": "backend/app/__main__.py",
+        "to": "backend/app/run.py"
+      },
+      {
+        "from": "backend/app/api/main.py",
+        "to": "backend/app/api/deps.py"
+      },
+      {
+        "from": "backend/app/api/main.py",
+        "to": "backend/app/api/middleware.py"
+      },
+      {
+        "from": "backend/app/api/main.py",
+        "to": "backend/app/api/routes_dashboard.py"
+      },
+      {
+        "from": "backend/app/api/main.py",
+        "to": "backend/app/api/routes_search.py"
+      },
+      {
+        "from": "backend/app/api/main.py",
+        "to": "backend/app/config.py"
+      },
+      {
+        "from": "backend/app/api/main.py",
+        "to": "backend/app/search/embedder.py"
+      },
+      {
+        "from": "backend/app/api/main.py",
+        "to": "backend/app/storage/db.py"
+      },
+      {
+        "from": "backend/app/api/ratelimit.py",
+        "to": "backend/app/config.py"
+      },
+      {
+        "from": "backend/app/callgraph/__init__.py",
+        "to": "backend/app/callgraph/analyze.py"
+      },
+      {
+        "from": "backend/app/callgraph/__main__.py",
+        "to": "backend/app/callgraph/analyze.py"
+      },
+      {
+        "from": "backend/app/eval/__main__.py",
+        "to": "backend/app/config.py"
+      },
+      {
+        "from": "backend/app/eval/__main__.py",
+        "to": "backend/app/eval/runner.py"
+      },
+      {
+        "from": "backend/app/eval/__main__.py",
+        "to": "backend/app/index/metadata.py"
+      },
+      {
+        "from": "backend/app/index/__main__.py",
+        "to": "backend/app/config.py"
+      },
+      {
+        "from": "backend/app/index/__main__.py",
+        "to": "backend/app/index/metadata.py"
+      },
+      {
+        "from": "backend/app/index/__main__.py",
+        "to": "backend/app/ingest/writer.py"
+      },
+      {
+        "from": "backend/app/index/__main__.py",
+        "to": "backend/app/search/bm25.py"
+      },
+      {
+        "from": "backend/app/index/__main__.py",
+        "to": "backend/app/search/embedder.py"
+      },
+      {
+        "from": "backend/app/index/__main__.py",
+        "to": "backend/app/search/vector.py"
+      },
+      {
+        "from": "backend/app/ingest/__main__.py",
+        "to": "backend/app/ingest/__init__.py"
+      },
+      {
+        "from": "backend/app/loadtest/__init__.py",
+        "to": "backend/app/loadtest/burst.py"
+      },
+      {
+        "from": "backend/app/loadtest/locustfile.py",
+        "to": "backend/app/loadtest/burst.py"
+      },
+      {
+        "from": "backend/app/observability/logging.py",
+        "to": "backend/app/storage/repo.py"
+      },
+      {
+        "from": "frontend/src/main.tsx",
+        "to": "frontend/src/App.tsx"
+      },
+      {
+        "from": "scripts/fetch_until_done.py",
+        "to": "scripts/fetch_corpus.py"
+      }
+    ],
+    "topo": [
+      "backend/app/__init__.py",
+      "backend/app/__main__.py",
+      "backend/app/api/main.py",
+      "backend/app/api/ratelimit.py",
+      "backend/app/callgraph/__init__.py",
+      "backend/app/callgraph/__main__.py",
+      "backend/app/eval/__main__.py",
+      "backend/app/index/__main__.py",
+      "backend/app/ingest/__main__.py",
+      "backend/app/loadtest/__init__.py",
+      "backend/app/loadtest/locustfile.py",
+      "backend/app/observability/logging.py",
+      "frontend/src/main.tsx",
+      "scripts/_check_titles.py",
+      "scripts/fetch_until_done.py",
+      "scripts/generate_contracts.py",
+      "scripts/qrels_helper.py",
+      "backend/app/run.py",
+      "backend/app/api/deps.py",
+      "backend/app/api/middleware.py",
+      "backend/app/api/routes_dashboard.py",
+      "backend/app/api/routes_search.py",
+      "backend/app/storage/db.py",
+      "backend/app/callgraph/analyze.py",
+      "backend/app/eval/runner.py",
+      "backend/app/config.py",
+      "backend/app/index/metadata.py",
+      "backend/app/ingest/writer.py",
+      "backend/app/search/bm25.py",
+      "backend/app/search/embedder.py",
+      "backend/app/search/vector.py",
+      "backend/app/ingest/__init__.py",
+      "backend/app/loadtest/burst.py",
+      "backend/app/storage/repo.py",
+      "frontend/src/App.tsx",
+      "scripts/fetch_corpus.py"
+    ],
+    "nodes": [
+      "backend/app/__init__.py",
+      "backend/app/__main__.py",
+      "backend/app/api/main.py",
+      "backend/app/api/ratelimit.py",
+      "backend/app/callgraph/__init__.py",
+      "backend/app/callgraph/__main__.py",
+      "backend/app/eval/__main__.py",
+      "backend/app/index/__main__.py",
+      "backend/app/ingest/__main__.py",
+      "backend/app/loadtest/__init__.py",
+      "backend/app/loadtest/locustfile.py",
+      "backend/app/observability/logging.py",
+      "frontend/src/main.tsx",
+      "scripts/_check_titles.py",
+      "scripts/fetch_until_done.py",
+      "scripts/generate_contracts.py",
+      "scripts/qrels_helper.py",
+      "backend/app/run.py",
+      "backend/app/api/deps.py",
+      "backend/app/api/middleware.py",
+      "backend/app/api/routes_dashboard.py",
+      "backend/app/api/routes_search.py",
+      "backend/app/config.py",
+      "backend/app/search/embedder.py",
+      "backend/app/storage/db.py",
+      "backend/app/callgraph/analyze.py",
+      "backend/app/eval/runner.py",
+      "backend/app/index/metadata.py",
+      "backend/app/ingest/writer.py",
+      "backend/app/search/bm25.py",
+      "backend/app/search/vector.py",
+      "backend/app/ingest/__init__.py",
+      "backend/app/loadtest/burst.py",
+      "backend/app/storage/repo.py",
+      "frontend/src/App.tsx",
+      "scripts/fetch_corpus.py"
+    ]
+  },
+  "functions": {
+    "roots": [
+      "backend/app/api/deps.py::SearchService.__init__",
+      "backend/app/api/main.py::create_app",
+      "backend/app/api/middleware.py::RequestContextMiddleware.dispatch",
+      "backend/app/api/ratelimit.py::RateLimiter.__call__",
+      "backend/app/api/ratelimit.py::RateLimiter.__init__",
+      "backend/app/api/ratelimit.py::RateLimiter.allow",
+      "backend/app/api/ratelimit.py::rate_limit",
+      "backend/app/api/routes_dashboard.py::dashboard_experiments",
+      "backend/app/api/routes_dashboard.py::dashboard_kpi_load_test",
+      "backend/app/api/routes_dashboard.py::dashboard_kpi_summary",
+      "backend/app/api/routes_dashboard.py::dashboard_kpi_top_queries",
+      "backend/app/api/routes_dashboard.py::dashboard_kpi_volume",
+      "backend/app/api/routes_dashboard.py::dashboard_kpi_zero_results",
+      "backend/app/api/routes_dashboard.py::dashboard_logs",
+      "backend/app/api/routes_search.py::feedback",
+      "backend/app/api/routes_search.py::get_document",
+      "backend/app/api/routes_search.py::health",
+      "backend/app/api/routes_search.py::metrics",
+      "backend/app/api/routes_search.py::search",
+      "backend/app/api/schemas.py::SearchFiltersModel._must_be_iso8601",
+      "backend/app/api/schemas.py::_default_alpha",
+      "backend/app/api/schemas.py::_default_normalization",
+      "backend/app/callgraph/__main__.py::main",
+      "backend/app/callgraph/analyze.py::_CallCollector.__init__",
+      "backend/app/callgraph/analyze.py::_CallCollector.visit_Call",
+      "backend/app/eval/__main__.py::main",
+      "backend/app/index/__main__.py::main",
+      "backend/app/index/metadata.py::IndexMetadata.save",
+      "backend/app/ingest/__init__.py::main",
+      "backend/app/loadtest/burst.py::_one_search",
+      "backend/app/loadtest/locustfile.py::SearchUser.search",
+      "backend/app/observability/logging.py::JsonFormatter.format",
+      "backend/app/observability/logging.py::SqliteLogHandler.__init__",
+      "backend/app/observability/logging.py::SqliteLogHandler.emit",
+      "backend/app/observability/logging.py::configure",
+      "backend/app/observability/metrics.py::reset",
+      "backend/app/run.py::main",
+      "backend/app/search/bm25.py::BM25Index.__init__",
+      "backend/app/search/bm25.py::BM25Index.query",
+      "backend/app/search/bm25.py::BM25Index.save",
+      "backend/app/search/bm25.py::BM25Index.scores_for_all",
+      "backend/app/search/embedder.py::Embedder.encode",
+      "backend/app/search/embedder.py::SentenceTransformerEmbedder.__init__",
+      "backend/app/search/embedder.py::SentenceTransformerEmbedder.encode",
+      "backend/app/search/highlight.py::highlight_containing",
+      "backend/app/search/hybrid.py::HybridSearcher.__init__",
+      "backend/app/search/hybrid.py::HybridSearcher.embedder",
+      "backend/app/search/hybrid.py::HybridSearcher.search",
+      "backend/app/search/normalize.py::z_score",
+      "backend/app/search/vector.py::VectorIndex.__init__",
+      "backend/app/search/vector.py::VectorIndex.dimension",
+      "backend/app/search/vector.py::VectorIndex.query",
+      "backend/app/search/vector.py::VectorIndex.save",
+      "backend/app/storage/repo.py::select_feedback",
+      "backend/app/storage/repo.py::select_requests",
+      "frontend/src/App.tsx::App",
+      "frontend/src/api.ts::_fetch",
+      "frontend/src/api.ts::getExperiments",
+      "frontend/src/api.ts::getKpiSummary",
+      "frontend/src/api.ts::getKpiVolume",
+      "frontend/src/api.ts::getLogs",
+      "frontend/src/api.ts::getTopQueries",
+      "frontend/src/api.ts::getZeroResultQueries",
+      "frontend/src/components/CallGraphView.tsx::resetView",
+      "frontend/src/components/CallGraphView.tsx::shortFile",
+      "frontend/src/components/ResultCard.tsx::onKey",
+      "frontend/src/highlight.ts::escapeHtml",
+      "frontend/src/highlight.ts::queryTerms",
+      "frontend/src/highlight.ts::termMatchesWord",
+      "frontend/src/pages/DebugPage.tsx::extraJson",
+      "frontend/src/pages/DebugPage.tsx::formatTime",
+      "frontend/src/pages/DebugPage.tsx::inRange",
+      "frontend/src/pages/DebugPage.tsx::levelParam",
+      "frontend/src/pages/DebugPage.tsx::parseTs",
+      "frontend/src/pages/DebugPage.tsx::severityClass",
+      "frontend/src/pages/DebugPage.tsx::windowFromSince",
+      "frontend/src/pages/KpisPage.tsx::fetchJson",
+      "frontend/src/pages/KpisPage.tsx::onKey",
+      "frontend/src/pages/KpisPage.tsx::parseBucket",
+      "frontend/src/pages/SearchPage.tsx::handleClear",
+      "frontend/src/pages/SearchPage.tsx::handleKeyDown",
+      "scripts/fetch_until_done.py::main",
+      "scripts/generate_contracts.py::created_at_for",
+      "scripts/generate_contracts.py::main",
+      "scripts/qrels_helper.py::main"
+    ],
+    "layers": [
+      [
+        "backend/app/api/deps.py::SearchService.__init__",
+        "backend/app/api/main.py::create_app",
+        "backend/app/api/middleware.py::RequestContextMiddleware.dispatch",
+        "backend/app/api/ratelimit.py::RateLimiter.__call__",
+        "backend/app/api/ratelimit.py::RateLimiter.__init__",
+        "backend/app/api/ratelimit.py::RateLimiter.allow",
+        "backend/app/api/ratelimit.py::rate_limit",
+        "backend/app/api/routes_dashboard.py::dashboard_experiments",
+        "backend/app/api/routes_dashboard.py::dashboard_kpi_load_test",
+        "backend/app/api/routes_dashboard.py::dashboard_kpi_summary",
+        "backend/app/api/routes_dashboard.py::dashboard_kpi_top_queries",
+        "backend/app/api/routes_dashboard.py::dashboard_kpi_volume",
+        "backend/app/api/routes_dashboard.py::dashboard_kpi_zero_results",
+        "backend/app/api/routes_dashboard.py::dashboard_logs",
+        "backend/app/api/routes_search.py::feedback",
+        "backend/app/api/routes_search.py::get_document",
+        "backend/app/api/routes_search.py::health",
+        "backend/app/api/routes_search.py::metrics",
+        "backend/app/api/routes_search.py::search",
+        "backend/app/api/schemas.py::SearchFiltersModel._must_be_iso8601",
+        "backend/app/api/schemas.py::_default_alpha",
+        "backend/app/api/schemas.py::_default_normalization",
+        "backend/app/callgraph/__main__.py::main",
+        "backend/app/callgraph/analyze.py::_CallCollector.__init__",
+        "backend/app/callgraph/analyze.py::_CallCollector.visit_Call",
+        "backend/app/eval/__main__.py::main",
+        "backend/app/index/__main__.py::main",
+        "backend/app/index/metadata.py::IndexMetadata.save",
+        "backend/app/ingest/__init__.py::main",
+        "backend/app/loadtest/burst.py::_one_search",
+        "backend/app/loadtest/locustfile.py::SearchUser.search",
+        "backend/app/observability/logging.py::JsonFormatter.format",
+        "backend/app/observability/logging.py::SqliteLogHandler.__init__",
+        "backend/app/observability/logging.py::SqliteLogHandler.emit",
+        "backend/app/observability/logging.py::configure",
+        "backend/app/observability/metrics.py::reset",
+        "backend/app/run.py::main",
+        "backend/app/search/bm25.py::BM25Index.__init__",
+        "backend/app/search/bm25.py::BM25Index.query",
+        "backend/app/search/bm25.py::BM25Index.save",
+        "backend/app/search/bm25.py::BM25Index.scores_for_all",
+        "backend/app/search/embedder.py::Embedder.encode",
+        "backend/app/search/embedder.py::SentenceTransformerEmbedder.__init__",
+        "backend/app/search/embedder.py::SentenceTransformerEmbedder.encode",
+        "backend/app/search/highlight.py::highlight_containing",
+        "backend/app/search/hybrid.py::HybridSearcher.__init__",
+        "backend/app/search/hybrid.py::HybridSearcher.embedder",
+        "backend/app/search/hybrid.py::HybridSearcher.search",
+        "backend/app/search/normalize.py::z_score",
+        "backend/app/search/vector.py::VectorIndex.__init__",
+        "backend/app/search/vector.py::VectorIndex.dimension",
+        "backend/app/search/vector.py::VectorIndex.query",
+        "backend/app/search/vector.py::VectorIndex.save",
+        "backend/app/storage/repo.py::select_feedback",
+        "backend/app/storage/repo.py::select_requests",
+        "frontend/src/App.tsx::App",
+        "frontend/src/api.ts::_fetch",
+        "frontend/src/api.ts::getExperiments",
+        "frontend/src/api.ts::getKpiSummary",
+        "frontend/src/api.ts::getKpiVolume",
+        "frontend/src/api.ts::getLogs",
+        "frontend/src/api.ts::getTopQueries",
+        "frontend/src/api.ts::getZeroResultQueries",
+        "frontend/src/components/CallGraphView.tsx::resetView",
+        "frontend/src/components/CallGraphView.tsx::shortFile",
+        "frontend/src/components/ResultCard.tsx::onKey",
+        "frontend/src/highlight.ts::escapeHtml",
+        "frontend/src/highlight.ts::queryTerms",
+        "frontend/src/highlight.ts::termMatchesWord",
+        "frontend/src/pages/DebugPage.tsx::extraJson",
+        "frontend/src/pages/DebugPage.tsx::formatTime",
+        "frontend/src/pages/DebugPage.tsx::inRange",
+        "frontend/src/pages/DebugPage.tsx::levelParam",
+        "frontend/src/pages/DebugPage.tsx::parseTs",
+        "frontend/src/pages/DebugPage.tsx::severityClass",
+        "frontend/src/pages/DebugPage.tsx::windowFromSince",
+        "frontend/src/pages/KpisPage.tsx::fetchJson",
+        "frontend/src/pages/KpisPage.tsx::onKey",
+        "frontend/src/pages/KpisPage.tsx::parseBucket",
+        "frontend/src/pages/SearchPage.tsx::handleClear",
+        "frontend/src/pages/SearchPage.tsx::handleKeyDown",
+        "scripts/fetch_until_done.py::main",
+        "scripts/generate_contracts.py::created_at_for",
+        "scripts/generate_contracts.py::main",
+        "scripts/qrels_helper.py::main"
+      ],
+      [
+        "backend/app/api/deps.py::SearchService.load",
+        "backend/app/storage/db.py::connect",
+        "backend/app/config.py::load_config",
+        "backend/app/storage/db.py::init_schema",
+        "backend/app/api/middleware.py::_read_search_params",
+        "backend/app/api/middleware.py::_persist_search",
+        "backend/app/observability/metrics.py::record_search_latency",
+        "backend/app/observability/metrics.py::record_request",
+        "backend/app/api/middleware.py::_capture_result_count",
+        "backend/app/api/ratelimit.py::RateLimiter.take",
+        "backend/app/api/routes_dashboard.py::_read_experiments",
+        "backend/app/api/routes_dashboard.py::_db",
+        "backend/app/loadtest/burst.py::run_search_burst",
+        "backend/app/api/routes_dashboard.py::parse_window",
+        "backend/app/storage/repo.py::kpi_summary",
+        "backend/app/storage/repo.py::top_queries",
+        "backend/app/storage/repo.py::request_volume",
+        "backend/app/storage/repo.py::zero_result_queries",
+        "backend/app/storage/repo.py::select_logs",
+        "backend/app/api/routes_search.py::_get_service",
+        "backend/app/storage/repo.py::insert_feedback",
+        "backend/app/search/tokenize.py::tokenize",
+        "backend/app/search/highlight.py::closest_document_words",
+        "backend/app/search/highlight.py::highlight_document",
+        "backend/app/search/highlight.py::count_occurrences",
+        "backend/app/api/deps.py::get_version",
+        "backend/app/api/deps.py::get_commit",
+        "backend/app/api/routes_search.py::_index_metadata",
+        "backend/app/observability/metrics.py::render",
+        "backend/app/callgraph/analyze.py::find_repo_root",
+        "backend/app/callgraph/analyze.py::write_callgraph_json",
+        "backend/app/callgraph/analyze.py::_call_name",
+        "backend/app/eval/__main__.py::_build_parser",
+        "backend/app/eval/__main__.py::check_model",
+        "backend/app/eval/__main__.py::_search_normalization",
+        "backend/app/eval/__main__.py::_resolve_path",
+        "backend/app/eval/runner.py::load_queries",
+        "backend/app/eval/runner.py::load_qrels",
+        "backend/app/eval/runner.py::run_eval",
+        "backend/app/eval/__main__.py::_commit",
+        "backend/app/eval/runner.py::append_experiment",
+        "backend/app/index/__main__.py::_build_parser",
+        "backend/app/index/__main__.py::_resolve_path",
+        "backend/app/ingest/writer.py::read_jsonl",
+        "backend/app/ingest/writer.py::corpus_hash",
+        "backend/app/index/metadata.py::is_up_to_date",
+        "backend/app/index/__main__.py::build_indexes",
+        "backend/app/ingest/__init__.py::_build_parser",
+        "backend/app/ingest/__init__.py::_resolve_path",
+        "backend/app/ingest/__init__.py::ingest",
+        "backend/app/storage/repo.py::insert_log",
+        "backend/app/observability/logging.py::_find_flagged",
+        "backend/app/run.py::ensure_venv",
+        "backend/app/search/filters.py::apply",
+        "backend/app/search/normalize.py::normalize",
+        "backend/app/search/highlight.py::make_snippet",
+        "backend/app/search/normalize.py::min_max",
+        "frontend/src/App.tsx::useTheme",
+        "frontend/src/api.ts::getHealth",
+        "frontend/src/pages/HomePage.tsx::HomePage",
+        "frontend/src/components/Sidebar.tsx::Sidebar",
+        "frontend/src/pages/SearchPage.tsx::SearchPage",
+        "frontend/src/pages/HealthPage.tsx::HealthPage",
+        "frontend/src/pages/SettingsPage.tsx::SettingsPage",
+        "frontend/src/pages/KpisPage.tsx::KpisPage",
+        "frontend/src/pages/EvaluationPage.tsx::EvaluationPage",
+        "frontend/src/pages/DebugPage.tsx::DebugPage",
+        "frontend/src/components/ResultCard.tsx::closeModal",
+        "scripts/fetch_until_done.py::parse_args",
+        "scripts/fetch_corpus.py::repo_root",
+        "scripts/fetch_corpus.py::read_seed",
+        "scripts/fetch_corpus.py::pending_rows",
+        "scripts/fetch_corpus.py::write_attribution",
+        "scripts/fetch_corpus.py::main",
+        "scripts/generate_contracts.py::parse_args",
+        "scripts/generate_contracts.py::repo_root",
+        "scripts/generate_contracts.py::generate_specs",
+        "scripts/generate_contracts.py::write_contracts",
+        "scripts/qrels_helper.py::label_queries",
+        "scripts/qrels_helper.py::read_queries"
+      ]
+    ],
+    "edges": [
+      {
+        "from": "backend/app/api/main.py::create_app",
+        "to": "backend/app/api/deps.py::SearchService.load"
+      },
+      {
+        "from": "backend/app/api/main.py::create_app",
+        "to": "backend/app/storage/db.py::connect"
+      },
+      {
+        "from": "backend/app/api/main.py::create_app",
+        "to": "backend/app/config.py::load_config"
+      },
+      {
+        "from": "backend/app/api/main.py::create_app",
+        "to": "backend/app/storage/db.py::init_schema"
+      },
+      {
+        "from": "backend/app/api/middleware.py::RequestContextMiddleware.dispatch",
+        "to": "backend/app/api/middleware.py::_read_search_params"
+      },
+      {
+        "from": "backend/app/api/middleware.py::RequestContextMiddleware.dispatch",
+        "to": "backend/app/api/middleware.py::_persist_search"
+      },
+      {
+        "from": "backend/app/api/middleware.py::RequestContextMiddleware.dispatch",
+        "to": "backend/app/observability/metrics.py::record_search_latency"
+      },
+      {
+        "from": "backend/app/api/middleware.py::RequestContextMiddleware.dispatch",
+        "to": "backend/app/observability/metrics.py::record_request"
+      },
+      {
+        "from": "backend/app/api/middleware.py::RequestContextMiddleware.dispatch",
+        "to": "backend/app/api/middleware.py::_capture_result_count"
+      },
+      {
+        "from": "backend/app/api/ratelimit.py::RateLimiter.__call__",
+        "to": "backend/app/api/ratelimit.py::RateLimiter.take"
+      },
+      {
+        "from": "backend/app/api/ratelimit.py::RateLimiter.__init__",
+        "to": "backend/app/config.py::load_config"
+      },
+      {
+        "from": "backend/app/api/ratelimit.py::RateLimiter.allow",
+        "to": "backend/app/api/ratelimit.py::RateLimiter.take"
+      },
+      {
+        "from": "backend/app/api/routes_dashboard.py::dashboard_experiments",
+        "to": "backend/app/api/routes_dashboard.py::_read_experiments"
+      },
+      {
+        "from": "backend/app/api/routes_dashboard.py::dashboard_kpi_load_test",
+        "to": "backend/app/api/routes_dashboard.py::_db"
+      },
+      {
+        "from": "backend/app/api/routes_dashboard.py::dashboard_kpi_load_test",
+        "to": "backend/app/loadtest/burst.py::run_search_burst"
+      },
+      {
+        "from": "backend/app/api/routes_dashboard.py::dashboard_kpi_summary",
+        "to": "backend/app/api/routes_dashboard.py::parse_window"
+      },
+      {
+        "from": "backend/app/api/routes_dashboard.py::dashboard_kpi_summary",
+        "to": "backend/app/api/routes_dashboard.py::_db"
+      },
+      {
+        "from": "backend/app/api/routes_dashboard.py::dashboard_kpi_summary",
+        "to": "backend/app/storage/repo.py::kpi_summary"
+      },
+      {
+        "from": "backend/app/api/routes_dashboard.py::dashboard_kpi_top_queries",
+        "to": "backend/app/api/routes_dashboard.py::parse_window"
+      },
+      {
+        "from": "backend/app/api/routes_dashboard.py::dashboard_kpi_top_queries",
+        "to": "backend/app/api/routes_dashboard.py::_db"
+      },
+      {
+        "from": "backend/app/api/routes_dashboard.py::dashboard_kpi_top_queries",
+        "to": "backend/app/storage/repo.py::top_queries"
+      },
+      {
+        "from": "backend/app/api/routes_dashboard.py::dashboard_kpi_volume",
+        "to": "backend/app/api/routes_dashboard.py::parse_window"
+      },
+      {
+        "from": "backend/app/api/routes_dashboard.py::dashboard_kpi_volume",
+        "to": "backend/app/api/routes_dashboard.py::_db"
+      },
+      {
+        "from": "backend/app/api/routes_dashboard.py::dashboard_kpi_volume",
+        "to": "backend/app/storage/repo.py::request_volume"
+      },
+      {
+        "from": "backend/app/api/routes_dashboard.py::dashboard_kpi_zero_results",
+        "to": "backend/app/api/routes_dashboard.py::parse_window"
+      },
+      {
+        "from": "backend/app/api/routes_dashboard.py::dashboard_kpi_zero_results",
+        "to": "backend/app/api/routes_dashboard.py::_db"
+      },
+      {
+        "from": "backend/app/api/routes_dashboard.py::dashboard_kpi_zero_results",
+        "to": "backend/app/storage/repo.py::zero_result_queries"
+      },
+      {
+        "from": "backend/app/api/routes_dashboard.py::dashboard_logs",
+        "to": "backend/app/api/routes_dashboard.py::parse_window"
+      },
+      {
+        "from": "backend/app/api/routes_dashboard.py::dashboard_logs",
+        "to": "backend/app/api/routes_dashboard.py::_db"
+      },
+      {
+        "from": "backend/app/api/routes_dashboard.py::dashboard_logs",
+        "to": "backend/app/storage/repo.py::select_logs"
+      },
+      {
+        "from": "backend/app/api/routes_search.py::feedback",
+        "to": "backend/app/api/routes_search.py::_get_service"
+      },
+      {
+        "from": "backend/app/api/routes_search.py::feedback",
+        "to": "backend/app/storage/repo.py::insert_feedback"
+      },
+      {
+        "from": "backend/app/api/routes_search.py::get_document",
+        "to": "backend/app/api/routes_search.py::_get_service"
+      },
+      {
+        "from": "backend/app/api/routes_search.py::get_document",
+        "to": "backend/app/search/tokenize.py::tokenize"
+      },
+      {
+        "from": "backend/app/api/routes_search.py::get_document",
+        "to": "backend/app/search/highlight.py::closest_document_words"
+      },
+      {
+        "from": "backend/app/api/routes_search.py::get_document",
+        "to": "backend/app/search/highlight.py::highlight_document"
+      },
+      {
+        "from": "backend/app/api/routes_search.py::get_document",
+        "to": "backend/app/search/highlight.py::count_occurrences"
+      },
+      {
+        "from": "backend/app/api/routes_search.py::health",
+        "to": "backend/app/api/deps.py::get_version"
+      },
+      {
+        "from": "backend/app/api/routes_search.py::health",
+        "to": "backend/app/api/deps.py::get_commit"
+      },
+      {
+        "from": "backend/app/api/routes_search.py::health",
+        "to": "backend/app/api/routes_search.py::_index_metadata"
+      },
+      {
+        "from": "backend/app/api/routes_search.py::metrics",
+        "to": "backend/app/observability/metrics.py::render"
+      },
+      {
+        "from": "backend/app/api/routes_search.py::search",
+        "to": "backend/app/api/routes_search.py::_get_service"
+      },
+      {
+        "from": "backend/app/api/schemas.py::_default_alpha",
+        "to": "backend/app/config.py::load_config"
+      },
+      {
+        "from": "backend/app/api/schemas.py::_default_normalization",
+        "to": "backend/app/config.py::load_config"
+      },
+      {
+        "from": "backend/app/callgraph/__main__.py::main",
+        "to": "backend/app/callgraph/analyze.py::find_repo_root"
+      },
+      {
+        "from": "backend/app/callgraph/__main__.py::main",
+        "to": "backend/app/callgraph/analyze.py::write_callgraph_json"
+      },
+      {
+        "from": "backend/app/callgraph/analyze.py::_CallCollector.visit_Call",
+        "to": "backend/app/callgraph/analyze.py::_call_name"
+      },
+      {
+        "from": "backend/app/eval/__main__.py::main",
+        "to": "backend/app/config.py::load_config"
+      },
+      {
+        "from": "backend/app/eval/__main__.py::main",
+        "to": "backend/app/eval/__main__.py::_build_parser"
+      },
+      {
+        "from": "backend/app/eval/__main__.py::main",
+        "to": "backend/app/eval/__main__.py::check_model"
+      },
+      {
+        "from": "backend/app/eval/__main__.py::main",
+        "to": "backend/app/eval/__main__.py::_search_normalization"
+      },
+      {
+        "from": "backend/app/eval/__main__.py::main",
+        "to": "backend/app/eval/__main__.py::_resolve_path"
+      },
+      {
+        "from": "backend/app/eval/__main__.py::main",
+        "to": "backend/app/eval/runner.py::load_queries"
+      },
+      {
+        "from": "backend/app/eval/__main__.py::main",
+        "to": "backend/app/eval/runner.py::load_qrels"
+      },
+      {
+        "from": "backend/app/eval/__main__.py::main",
+        "to": "backend/app/eval/runner.py::run_eval"
+      },
+      {
+        "from": "backend/app/eval/__main__.py::main",
+        "to": "backend/app/eval/__main__.py::_commit"
+      },
+      {
+        "from": "backend/app/eval/__main__.py::main",
+        "to": "backend/app/eval/runner.py::append_experiment"
+      },
+      {
+        "from": "backend/app/index/__main__.py::main",
+        "to": "backend/app/config.py::load_config"
+      },
+      {
+        "from": "backend/app/index/__main__.py::main",
+        "to": "backend/app/index/__main__.py::_build_parser"
+      },
+      {
+        "from": "backend/app/index/__main__.py::main",
+        "to": "backend/app/index/__main__.py::_resolve_path"
+      },
+      {
+        "from": "backend/app/index/__main__.py::main",
+        "to": "backend/app/ingest/writer.py::read_jsonl"
+      },
+      {
+        "from": "backend/app/index/__main__.py::main",
+        "to": "backend/app/ingest/writer.py::corpus_hash"
+      },
+      {
+        "from": "backend/app/index/__main__.py::main",
+        "to": "backend/app/index/metadata.py::is_up_to_date"
+      },
+      {
+        "from": "backend/app/index/__main__.py::main",
+        "to": "backend/app/index/__main__.py::build_indexes"
+      },
+      {
+        "from": "backend/app/ingest/__init__.py::main",
+        "to": "backend/app/config.py::load_config"
+      },
+      {
+        "from": "backend/app/ingest/__init__.py::main",
+        "to": "backend/app/ingest/__init__.py::_build_parser"
+      },
+      {
+        "from": "backend/app/ingest/__init__.py::main",
+        "to": "backend/app/ingest/__init__.py::_resolve_path"
+      },
+      {
+        "from": "backend/app/ingest/__init__.py::main",
+        "to": "backend/app/ingest/__init__.py::ingest"
+      },
+      {
+        "from": "backend/app/observability/logging.py::SqliteLogHandler.emit",
+        "to": "backend/app/storage/repo.py::insert_log"
+      },
+      {
+        "from": "backend/app/observability/logging.py::configure",
+        "to": "backend/app/observability/logging.py::_find_flagged"
+      },
+      {
+        "from": "backend/app/run.py::main",
+        "to": "backend/app/run.py::ensure_venv"
+      },
+      {
+        "from": "backend/app/run.py::main",
+        "to": "backend/app/config.py::load_config"
+      },
+      {
+        "from": "backend/app/search/bm25.py::BM25Index.query",
+        "to": "backend/app/search/tokenize.py::tokenize"
+      },
+      {
+        "from": "backend/app/search/bm25.py::BM25Index.scores_for_all",
+        "to": "backend/app/search/tokenize.py::tokenize"
+      },
+      {
+        "from": "backend/app/search/embedder.py::SentenceTransformerEmbedder.__init__",
+        "to": "backend/app/config.py::load_config"
+      },
+      {
+        "from": "backend/app/search/highlight.py::highlight_containing",
+        "to": "backend/app/search/highlight.py::highlight_document"
+      },
+      {
+        "from": "backend/app/search/hybrid.py::HybridSearcher.search",
+        "to": "backend/app/search/filters.py::apply"
+      },
+      {
+        "from": "backend/app/search/hybrid.py::HybridSearcher.search",
+        "to": "backend/app/search/normalize.py::normalize"
+      },
+      {
+        "from": "backend/app/search/hybrid.py::HybridSearcher.search",
+        "to": "backend/app/search/tokenize.py::tokenize"
+      },
+      {
+        "from": "backend/app/search/hybrid.py::HybridSearcher.search",
+        "to": "backend/app/search/highlight.py::make_snippet"
+      },
+      {
+        "from": "backend/app/search/normalize.py::z_score",
+        "to": "backend/app/search/normalize.py::min_max"
+      },
+      {
+        "from": "frontend/src/App.tsx::App",
+        "to": "frontend/src/App.tsx::useTheme"
+      },
+      {
+        "from": "frontend/src/App.tsx::App",
+        "to": "frontend/src/api.ts::getHealth"
+      },
+      {
+        "from": "frontend/src/App.tsx::App",
+        "to": "frontend/src/pages/HomePage.tsx::HomePage"
+      },
+      {
+        "from": "frontend/src/App.tsx::App",
+        "to": "frontend/src/components/Sidebar.tsx::Sidebar"
+      },
+      {
+        "from": "frontend/src/App.tsx::App",
+        "to": "frontend/src/pages/SearchPage.tsx::SearchPage"
+      },
+      {
+        "from": "frontend/src/App.tsx::App",
+        "to": "frontend/src/pages/HealthPage.tsx::HealthPage"
+      },
+      {
+        "from": "frontend/src/App.tsx::App",
+        "to": "frontend/src/pages/SettingsPage.tsx::SettingsPage"
+      },
+      {
+        "from": "frontend/src/App.tsx::App",
+        "to": "frontend/src/pages/KpisPage.tsx::KpisPage"
+      },
+      {
+        "from": "frontend/src/App.tsx::App",
+        "to": "frontend/src/pages/EvaluationPage.tsx::EvaluationPage"
+      },
+      {
+        "from": "frontend/src/App.tsx::App",
+        "to": "frontend/src/pages/DebugPage.tsx::DebugPage"
+      },
+      {
+        "from": "frontend/src/components/ResultCard.tsx::onKey",
+        "to": "frontend/src/components/ResultCard.tsx::closeModal"
+      },
+      {
+        "from": "scripts/fetch_until_done.py::main",
+        "to": "scripts/fetch_until_done.py::parse_args"
+      },
+      {
+        "from": "scripts/fetch_until_done.py::main",
+        "to": "scripts/fetch_corpus.py::repo_root"
+      },
+      {
+        "from": "scripts/fetch_until_done.py::main",
+        "to": "scripts/fetch_corpus.py::read_seed"
+      },
+      {
+        "from": "scripts/fetch_until_done.py::main",
+        "to": "scripts/fetch_corpus.py::pending_rows"
+      },
+      {
+        "from": "scripts/fetch_until_done.py::main",
+        "to": "scripts/fetch_corpus.py::write_attribution"
+      },
+      {
+        "from": "scripts/fetch_until_done.py::main",
+        "to": "scripts/fetch_corpus.py::main"
+      },
+      {
+        "from": "scripts/generate_contracts.py::main",
+        "to": "scripts/generate_contracts.py::parse_args"
+      },
+      {
+        "from": "scripts/generate_contracts.py::main",
+        "to": "scripts/generate_contracts.py::repo_root"
+      },
+      {
+        "from": "scripts/generate_contracts.py::main",
+        "to": "scripts/generate_contracts.py::generate_specs"
+      },
+      {
+        "from": "scripts/generate_contracts.py::main",
+        "to": "scripts/generate_contracts.py::write_contracts"
+      },
+      {
+        "from": "scripts/qrels_helper.py::main",
+        "to": "scripts/qrels_helper.py::label_queries"
+      },
+      {
+        "from": "scripts/qrels_helper.py::main",
+        "to": "scripts/qrels_helper.py::read_queries"
+      }
+    ],
+    "hops": [
+      {
+        "from": "backend/app/api/main.py::create_app",
+        "to": "backend/app/api/deps.py::SearchService.load"
+      },
+      {
+        "from": "backend/app/api/main.py::create_app",
+        "to": "backend/app/storage/db.py::connect"
+      },
+      {
+        "from": "backend/app/api/main.py::create_app",
+        "to": "backend/app/config.py::load_config"
+      },
+      {
+        "from": "backend/app/api/main.py::create_app",
+        "to": "backend/app/storage/db.py::init_schema"
+      },
+      {
+        "from": "backend/app/api/middleware.py::RequestContextMiddleware.dispatch",
+        "to": "backend/app/api/middleware.py::_read_search_params"
+      },
+      {
+        "from": "backend/app/api/middleware.py::RequestContextMiddleware.dispatch",
+        "to": "backend/app/api/middleware.py::_persist_search"
+      },
+      {
+        "from": "backend/app/api/middleware.py::RequestContextMiddleware.dispatch",
+        "to": "backend/app/observability/metrics.py::record_search_latency"
+      },
+      {
+        "from": "backend/app/api/middleware.py::RequestContextMiddleware.dispatch",
+        "to": "backend/app/observability/metrics.py::record_request"
+      },
+      {
+        "from": "backend/app/api/middleware.py::RequestContextMiddleware.dispatch",
+        "to": "backend/app/api/middleware.py::_capture_result_count"
+      },
+      {
+        "from": "backend/app/api/ratelimit.py::RateLimiter.__call__",
+        "to": "backend/app/api/ratelimit.py::RateLimiter.take"
+      },
+      {
+        "from": "backend/app/api/ratelimit.py::RateLimiter.__init__",
+        "to": "backend/app/config.py::load_config"
+      },
+      {
+        "from": "backend/app/api/ratelimit.py::RateLimiter.allow",
+        "to": "backend/app/api/ratelimit.py::RateLimiter.take"
+      },
+      {
+        "from": "backend/app/api/routes_dashboard.py::dashboard_experiments",
+        "to": "backend/app/api/routes_dashboard.py::_read_experiments"
+      },
+      {
+        "from": "backend/app/api/routes_dashboard.py::dashboard_kpi_load_test",
+        "to": "backend/app/api/routes_dashboard.py::_db"
+      },
+      {
+        "from": "backend/app/api/routes_dashboard.py::dashboard_kpi_load_test",
+        "to": "backend/app/loadtest/burst.py::run_search_burst"
+      },
+      {
+        "from": "backend/app/api/routes_dashboard.py::dashboard_kpi_summary",
+        "to": "backend/app/api/routes_dashboard.py::parse_window"
+      },
+      {
+        "from": "backend/app/api/routes_dashboard.py::dashboard_kpi_summary",
+        "to": "backend/app/api/routes_dashboard.py::_db"
+      },
+      {
+        "from": "backend/app/api/routes_dashboard.py::dashboard_kpi_summary",
+        "to": "backend/app/storage/repo.py::kpi_summary"
+      },
+      {
+        "from": "backend/app/api/routes_dashboard.py::dashboard_kpi_top_queries",
+        "to": "backend/app/api/routes_dashboard.py::parse_window"
+      },
+      {
+        "from": "backend/app/api/routes_dashboard.py::dashboard_kpi_top_queries",
+        "to": "backend/app/api/routes_dashboard.py::_db"
+      },
+      {
+        "from": "backend/app/api/routes_dashboard.py::dashboard_kpi_top_queries",
+        "to": "backend/app/storage/repo.py::top_queries"
+      },
+      {
+        "from": "backend/app/api/routes_dashboard.py::dashboard_kpi_volume",
+        "to": "backend/app/api/routes_dashboard.py::parse_window"
+      },
+      {
+        "from": "backend/app/api/routes_dashboard.py::dashboard_kpi_volume",
+        "to": "backend/app/api/routes_dashboard.py::_db"
+      },
+      {
+        "from": "backend/app/api/routes_dashboard.py::dashboard_kpi_volume",
+        "to": "backend/app/storage/repo.py::request_volume"
+      },
+      {
+        "from": "backend/app/api/routes_dashboard.py::dashboard_kpi_zero_results",
+        "to": "backend/app/api/routes_dashboard.py::parse_window"
+      },
+      {
+        "from": "backend/app/api/routes_dashboard.py::dashboard_kpi_zero_results",
+        "to": "backend/app/api/routes_dashboard.py::_db"
+      },
+      {
+        "from": "backend/app/api/routes_dashboard.py::dashboard_kpi_zero_results",
+        "to": "backend/app/storage/repo.py::zero_result_queries"
+      },
+      {
+        "from": "backend/app/api/routes_dashboard.py::dashboard_logs",
+        "to": "backend/app/api/routes_dashboard.py::parse_window"
+      },
+      {
+        "from": "backend/app/api/routes_dashboard.py::dashboard_logs",
+        "to": "backend/app/api/routes_dashboard.py::_db"
+      },
+      {
+        "from": "backend/app/api/routes_dashboard.py::dashboard_logs",
+        "to": "backend/app/storage/repo.py::select_logs"
+      },
+      {
+        "from": "backend/app/api/routes_search.py::feedback",
+        "to": "backend/app/api/routes_search.py::_get_service"
+      },
+      {
+        "from": "backend/app/api/routes_search.py::feedback",
+        "to": "backend/app/storage/repo.py::insert_feedback"
+      },
+      {
+        "from": "backend/app/api/routes_search.py::get_document",
+        "to": "backend/app/api/routes_search.py::_get_service"
+      },
+      {
+        "from": "backend/app/api/routes_search.py::get_document",
+        "to": "backend/app/search/tokenize.py::tokenize"
+      },
+      {
+        "from": "backend/app/api/routes_search.py::get_document",
+        "to": "backend/app/search/highlight.py::closest_document_words"
+      },
+      {
+        "from": "backend/app/api/routes_search.py::get_document",
+        "to": "backend/app/search/highlight.py::highlight_document"
+      },
+      {
+        "from": "backend/app/api/routes_search.py::get_document",
+        "to": "backend/app/search/highlight.py::count_occurrences"
+      },
+      {
+        "from": "backend/app/api/routes_search.py::health",
+        "to": "backend/app/api/deps.py::get_version"
+      },
+      {
+        "from": "backend/app/api/routes_search.py::health",
+        "to": "backend/app/api/deps.py::get_commit"
+      },
+      {
+        "from": "backend/app/api/routes_search.py::health",
+        "to": "backend/app/api/routes_search.py::_index_metadata"
+      },
+      {
+        "from": "backend/app/api/routes_search.py::metrics",
+        "to": "backend/app/observability/metrics.py::render"
+      },
+      {
+        "from": "backend/app/api/routes_search.py::search",
+        "to": "backend/app/api/routes_search.py::_get_service"
+      },
+      {
+        "from": "backend/app/api/schemas.py::_default_alpha",
+        "to": "backend/app/config.py::load_config"
+      },
+      {
+        "from": "backend/app/api/schemas.py::_default_normalization",
+        "to": "backend/app/config.py::load_config"
+      },
+      {
+        "from": "backend/app/callgraph/__main__.py::main",
+        "to": "backend/app/callgraph/analyze.py::find_repo_root"
+      },
+      {
+        "from": "backend/app/callgraph/__main__.py::main",
+        "to": "backend/app/callgraph/analyze.py::write_callgraph_json"
+      },
+      {
+        "from": "backend/app/callgraph/analyze.py::_CallCollector.visit_Call",
+        "to": "backend/app/callgraph/analyze.py::_call_name"
+      },
+      {
+        "from": "backend/app/eval/__main__.py::main",
+        "to": "backend/app/config.py::load_config"
+      },
+      {
+        "from": "backend/app/eval/__main__.py::main",
+        "to": "backend/app/eval/__main__.py::_build_parser"
+      },
+      {
+        "from": "backend/app/eval/__main__.py::main",
+        "to": "backend/app/eval/__main__.py::check_model"
+      },
+      {
+        "from": "backend/app/eval/__main__.py::main",
+        "to": "backend/app/eval/__main__.py::_search_normalization"
+      },
+      {
+        "from": "backend/app/eval/__main__.py::main",
+        "to": "backend/app/eval/__main__.py::_resolve_path"
+      },
+      {
+        "from": "backend/app/eval/__main__.py::main",
+        "to": "backend/app/eval/runner.py::load_queries"
+      },
+      {
+        "from": "backend/app/eval/__main__.py::main",
+        "to": "backend/app/eval/runner.py::load_qrels"
+      },
+      {
+        "from": "backend/app/eval/__main__.py::main",
+        "to": "backend/app/eval/runner.py::run_eval"
+      },
+      {
+        "from": "backend/app/eval/__main__.py::main",
+        "to": "backend/app/eval/__main__.py::_commit"
+      },
+      {
+        "from": "backend/app/eval/__main__.py::main",
+        "to": "backend/app/eval/runner.py::append_experiment"
+      },
+      {
+        "from": "backend/app/index/__main__.py::main",
+        "to": "backend/app/config.py::load_config"
+      },
+      {
+        "from": "backend/app/index/__main__.py::main",
+        "to": "backend/app/index/__main__.py::_build_parser"
+      },
+      {
+        "from": "backend/app/index/__main__.py::main",
+        "to": "backend/app/index/__main__.py::_resolve_path"
+      },
+      {
+        "from": "backend/app/index/__main__.py::main",
+        "to": "backend/app/ingest/writer.py::read_jsonl"
+      },
+      {
+        "from": "backend/app/index/__main__.py::main",
+        "to": "backend/app/ingest/writer.py::corpus_hash"
+      },
+      {
+        "from": "backend/app/index/__main__.py::main",
+        "to": "backend/app/index/metadata.py::is_up_to_date"
+      },
+      {
+        "from": "backend/app/index/__main__.py::main",
+        "to": "backend/app/index/__main__.py::build_indexes"
+      },
+      {
+        "from": "backend/app/ingest/__init__.py::main",
+        "to": "backend/app/config.py::load_config"
+      },
+      {
+        "from": "backend/app/ingest/__init__.py::main",
+        "to": "backend/app/ingest/__init__.py::_build_parser"
+      },
+      {
+        "from": "backend/app/ingest/__init__.py::main",
+        "to": "backend/app/ingest/__init__.py::_resolve_path"
+      },
+      {
+        "from": "backend/app/ingest/__init__.py::main",
+        "to": "backend/app/ingest/__init__.py::ingest"
+      },
+      {
+        "from": "backend/app/observability/logging.py::SqliteLogHandler.emit",
+        "to": "backend/app/storage/repo.py::insert_log"
+      },
+      {
+        "from": "backend/app/observability/logging.py::configure",
+        "to": "backend/app/observability/logging.py::_find_flagged"
+      },
+      {
+        "from": "backend/app/run.py::main",
+        "to": "backend/app/run.py::ensure_venv"
+      },
+      {
+        "from": "backend/app/run.py::main",
+        "to": "backend/app/config.py::load_config"
+      },
+      {
+        "from": "backend/app/search/bm25.py::BM25Index.query",
+        "to": "backend/app/search/tokenize.py::tokenize"
+      },
+      {
+        "from": "backend/app/search/bm25.py::BM25Index.scores_for_all",
+        "to": "backend/app/search/tokenize.py::tokenize"
+      },
+      {
+        "from": "backend/app/search/embedder.py::SentenceTransformerEmbedder.__init__",
+        "to": "backend/app/config.py::load_config"
+      },
+      {
+        "from": "backend/app/search/highlight.py::highlight_containing",
+        "to": "backend/app/search/highlight.py::highlight_document"
+      },
+      {
+        "from": "backend/app/search/hybrid.py::HybridSearcher.search",
+        "to": "backend/app/search/filters.py::apply"
+      },
+      {
+        "from": "backend/app/search/hybrid.py::HybridSearcher.search",
+        "to": "backend/app/search/normalize.py::normalize"
+      },
+      {
+        "from": "backend/app/search/hybrid.py::HybridSearcher.search",
+        "to": "backend/app/search/tokenize.py::tokenize"
+      },
+      {
+        "from": "backend/app/search/hybrid.py::HybridSearcher.search",
+        "to": "backend/app/search/highlight.py::make_snippet"
+      },
+      {
+        "from": "backend/app/search/normalize.py::z_score",
+        "to": "backend/app/search/normalize.py::min_max"
+      },
+      {
+        "from": "frontend/src/App.tsx::App",
+        "to": "frontend/src/App.tsx::useTheme"
+      },
+      {
+        "from": "frontend/src/App.tsx::App",
+        "to": "frontend/src/api.ts::getHealth"
+      },
+      {
+        "from": "frontend/src/App.tsx::App",
+        "to": "frontend/src/pages/HomePage.tsx::HomePage"
+      },
+      {
+        "from": "frontend/src/App.tsx::App",
+        "to": "frontend/src/components/Sidebar.tsx::Sidebar"
+      },
+      {
+        "from": "frontend/src/App.tsx::App",
+        "to": "frontend/src/pages/SearchPage.tsx::SearchPage"
+      },
+      {
+        "from": "frontend/src/App.tsx::App",
+        "to": "frontend/src/pages/HealthPage.tsx::HealthPage"
+      },
+      {
+        "from": "frontend/src/App.tsx::App",
+        "to": "frontend/src/pages/SettingsPage.tsx::SettingsPage"
+      },
+      {
+        "from": "frontend/src/App.tsx::App",
+        "to": "frontend/src/pages/KpisPage.tsx::KpisPage"
+      },
+      {
+        "from": "frontend/src/App.tsx::App",
+        "to": "frontend/src/pages/EvaluationPage.tsx::EvaluationPage"
+      },
+      {
+        "from": "frontend/src/App.tsx::App",
+        "to": "frontend/src/pages/DebugPage.tsx::DebugPage"
+      },
+      {
+        "from": "frontend/src/components/ResultCard.tsx::onKey",
+        "to": "frontend/src/components/ResultCard.tsx::closeModal"
+      },
+      {
+        "from": "scripts/fetch_until_done.py::main",
+        "to": "scripts/fetch_until_done.py::parse_args"
+      },
+      {
+        "from": "scripts/fetch_until_done.py::main",
+        "to": "scripts/fetch_corpus.py::repo_root"
+      },
+      {
+        "from": "scripts/fetch_until_done.py::main",
+        "to": "scripts/fetch_corpus.py::read_seed"
+      },
+      {
+        "from": "scripts/fetch_until_done.py::main",
+        "to": "scripts/fetch_corpus.py::pending_rows"
+      },
+      {
+        "from": "scripts/fetch_until_done.py::main",
+        "to": "scripts/fetch_corpus.py::write_attribution"
+      },
+      {
+        "from": "scripts/fetch_until_done.py::main",
+        "to": "scripts/fetch_corpus.py::main"
+      },
+      {
+        "from": "scripts/generate_contracts.py::main",
+        "to": "scripts/generate_contracts.py::parse_args"
+      },
+      {
+        "from": "scripts/generate_contracts.py::main",
+        "to": "scripts/generate_contracts.py::repo_root"
+      },
+      {
+        "from": "scripts/generate_contracts.py::main",
+        "to": "scripts/generate_contracts.py::generate_specs"
+      },
+      {
+        "from": "scripts/generate_contracts.py::main",
+        "to": "scripts/generate_contracts.py::write_contracts"
+      },
+      {
+        "from": "scripts/qrels_helper.py::main",
+        "to": "scripts/qrels_helper.py::label_queries"
+      },
+      {
+        "from": "scripts/qrels_helper.py::main",
+        "to": "scripts/qrels_helper.py::read_queries"
+      }
+    ],
+    "topo": [
+      "backend/app/api/deps.py::SearchService.__init__",
+      "backend/app/api/main.py::create_app",
+      "backend/app/api/middleware.py::RequestContextMiddleware.dispatch",
+      "backend/app/api/ratelimit.py::RateLimiter.__call__",
+      "backend/app/api/ratelimit.py::RateLimiter.__init__",
+      "backend/app/api/ratelimit.py::RateLimiter.allow",
+      "backend/app/api/ratelimit.py::rate_limit",
+      "backend/app/api/routes_dashboard.py::dashboard_experiments",
+      "backend/app/api/routes_dashboard.py::dashboard_kpi_load_test",
+      "backend/app/api/routes_dashboard.py::dashboard_kpi_summary",
+      "backend/app/api/routes_dashboard.py::dashboard_kpi_top_queries",
+      "backend/app/api/routes_dashboard.py::dashboard_kpi_volume",
+      "backend/app/api/routes_dashboard.py::dashboard_kpi_zero_results",
+      "backend/app/api/routes_dashboard.py::dashboard_logs",
+      "backend/app/api/routes_search.py::feedback",
+      "backend/app/api/routes_search.py::get_document",
+      "backend/app/api/routes_search.py::health",
+      "backend/app/api/routes_search.py::metrics",
+      "backend/app/api/routes_search.py::search",
+      "backend/app/api/schemas.py::SearchFiltersModel._must_be_iso8601",
+      "backend/app/api/schemas.py::_default_alpha",
+      "backend/app/api/schemas.py::_default_normalization",
+      "backend/app/callgraph/__main__.py::main",
+      "backend/app/callgraph/analyze.py::_CallCollector.__init__",
+      "backend/app/callgraph/analyze.py::_CallCollector.visit_Call",
+      "backend/app/eval/__main__.py::main",
+      "backend/app/index/__main__.py::main",
+      "backend/app/index/metadata.py::IndexMetadata.save",
+      "backend/app/ingest/__init__.py::main",
+      "backend/app/loadtest/burst.py::_one_search",
+      "backend/app/loadtest/locustfile.py::SearchUser.search",
+      "backend/app/observability/logging.py::JsonFormatter.format",
+      "backend/app/observability/logging.py::SqliteLogHandler.__init__",
+      "backend/app/observability/logging.py::SqliteLogHandler.emit",
+      "backend/app/observability/logging.py::configure",
+      "backend/app/observability/metrics.py::reset",
+      "backend/app/run.py::main",
+      "backend/app/search/bm25.py::BM25Index.__init__",
+      "backend/app/search/bm25.py::BM25Index.query",
+      "backend/app/search/bm25.py::BM25Index.save",
+      "backend/app/search/bm25.py::BM25Index.scores_for_all",
+      "backend/app/search/embedder.py::Embedder.encode",
+      "backend/app/search/embedder.py::SentenceTransformerEmbedder.__init__",
+      "backend/app/search/embedder.py::SentenceTransformerEmbedder.encode",
+      "backend/app/search/highlight.py::highlight_containing",
+      "backend/app/search/hybrid.py::HybridSearcher.__init__",
+      "backend/app/search/hybrid.py::HybridSearcher.embedder",
+      "backend/app/search/hybrid.py::HybridSearcher.search",
+      "backend/app/search/normalize.py::z_score",
+      "backend/app/search/vector.py::VectorIndex.__init__",
+      "backend/app/search/vector.py::VectorIndex.dimension",
+      "backend/app/search/vector.py::VectorIndex.query",
+      "backend/app/search/vector.py::VectorIndex.save",
+      "backend/app/storage/repo.py::select_feedback",
+      "backend/app/storage/repo.py::select_requests",
+      "frontend/src/App.tsx::App",
+      "frontend/src/api.ts::_fetch",
+      "frontend/src/api.ts::getExperiments",
+      "frontend/src/api.ts::getKpiSummary",
+      "frontend/src/api.ts::getKpiVolume",
+      "frontend/src/api.ts::getLogs",
+      "frontend/src/api.ts::getTopQueries",
+      "frontend/src/api.ts::getZeroResultQueries",
+      "frontend/src/components/CallGraphView.tsx::resetView",
+      "frontend/src/components/CallGraphView.tsx::shortFile",
+      "frontend/src/components/ResultCard.tsx::onKey",
+      "frontend/src/highlight.ts::escapeHtml",
+      "frontend/src/highlight.ts::queryTerms",
+      "frontend/src/highlight.ts::termMatchesWord",
+      "frontend/src/pages/DebugPage.tsx::extraJson",
+      "frontend/src/pages/DebugPage.tsx::formatTime",
+      "frontend/src/pages/DebugPage.tsx::inRange",
+      "frontend/src/pages/DebugPage.tsx::levelParam",
+      "frontend/src/pages/DebugPage.tsx::parseTs",
+      "frontend/src/pages/DebugPage.tsx::severityClass",
+      "frontend/src/pages/DebugPage.tsx::windowFromSince",
+      "frontend/src/pages/KpisPage.tsx::fetchJson",
+      "frontend/src/pages/KpisPage.tsx::onKey",
+      "frontend/src/pages/KpisPage.tsx::parseBucket",
+      "frontend/src/pages/SearchPage.tsx::handleClear",
+      "frontend/src/pages/SearchPage.tsx::handleKeyDown",
+      "scripts/fetch_until_done.py::main",
+      "scripts/generate_contracts.py::created_at_for",
+      "scripts/generate_contracts.py::main",
+      "scripts/qrels_helper.py::main",
+      "backend/app/api/deps.py::SearchService.load",
+      "backend/app/storage/db.py::connect",
+      "backend/app/storage/db.py::init_schema",
+      "backend/app/api/middleware.py::_capture_result_count",
+      "backend/app/api/middleware.py::_persist_search",
+      "backend/app/api/middleware.py::_read_search_params",
+      "backend/app/observability/metrics.py::record_request",
+      "backend/app/observability/metrics.py::record_search_latency",
+      "backend/app/api/ratelimit.py::RateLimiter.take",
+      "backend/app/api/routes_dashboard.py::_read_experiments",
+      "backend/app/loadtest/burst.py::run_search_burst",
+      "backend/app/storage/repo.py::kpi_summary",
+      "backend/app/storage/repo.py::top_queries",
+      "backend/app/storage/repo.py::request_volume",
+      "backend/app/storage/repo.py::zero_result_queries",
+      "backend/app/api/routes_dashboard.py::_db",
+      "backend/app/api/routes_dashboard.py::parse_window",
+      "backend/app/storage/repo.py::select_logs",
+      "backend/app/storage/repo.py::insert_feedback",
+      "backend/app/search/highlight.py::closest_document_words",
+      "backend/app/search/highlight.py::count_occurrences",
+      "backend/app/api/deps.py::get_commit",
+      "backend/app/api/deps.py::get_version",
+      "backend/app/api/routes_search.py::_index_metadata",
+      "backend/app/observability/metrics.py::render",
+      "backend/app/api/routes_search.py::_get_service",
+      "backend/app/callgraph/analyze.py::find_repo_root",
+      "backend/app/callgraph/analyze.py::write_callgraph_json",
+      "backend/app/callgraph/analyze.py::_call_name",
+      "backend/app/eval/__main__.py::_build_parser",
+      "backend/app/eval/__main__.py::_commit",
+      "backend/app/eval/__main__.py::_resolve_path",
+      "backend/app/eval/__main__.py::_search_normalization",
+      "backend/app/eval/__main__.py::check_model",
+      "backend/app/eval/runner.py::append_experiment",
+      "backend/app/eval/runner.py::load_qrels",
+      "backend/app/eval/runner.py::load_queries",
+      "backend/app/eval/runner.py::run_eval",
+      "backend/app/index/__main__.py::_build_parser",
+      "backend/app/index/__main__.py::_resolve_path",
+      "backend/app/index/__main__.py::build_indexes",
+      "backend/app/index/metadata.py::is_up_to_date",
+      "backend/app/ingest/writer.py::corpus_hash",
+      "backend/app/ingest/writer.py::read_jsonl",
+      "backend/app/ingest/__init__.py::_build_parser",
+      "backend/app/ingest/__init__.py::_resolve_path",
+      "backend/app/ingest/__init__.py::ingest",
+      "backend/app/storage/repo.py::insert_log",
+      "backend/app/observability/logging.py::_find_flagged",
+      "backend/app/run.py::ensure_venv",
+      "backend/app/config.py::load_config",
+      "backend/app/search/highlight.py::highlight_document",
+      "backend/app/search/filters.py::apply",
+      "backend/app/search/highlight.py::make_snippet",
+      "backend/app/search/normalize.py::normalize",
+      "backend/app/search/tokenize.py::tokenize",
+      "backend/app/search/normalize.py::min_max",
+      "frontend/src/App.tsx::useTheme",
+      "frontend/src/api.ts::getHealth",
+      "frontend/src/components/Sidebar.tsx::Sidebar",
+      "frontend/src/pages/DebugPage.tsx::DebugPage",
+      "frontend/src/pages/EvaluationPage.tsx::EvaluationPage",
+      "frontend/src/pages/HealthPage.tsx::HealthPage",
+      "frontend/src/pages/HomePage.tsx::HomePage",
+      "frontend/src/pages/KpisPage.tsx::KpisPage",
+      "frontend/src/pages/SearchPage.tsx::SearchPage",
+      "frontend/src/pages/SettingsPage.tsx::SettingsPage",
+      "frontend/src/components/ResultCard.tsx::closeModal",
+      "scripts/fetch_corpus.py::main",
+      "scripts/fetch_corpus.py::pending_rows",
+      "scripts/fetch_corpus.py::read_seed",
+      "scripts/fetch_corpus.py::repo_root",
+      "scripts/fetch_corpus.py::write_attribution",
+      "scripts/fetch_until_done.py::parse_args",
+      "scripts/generate_contracts.py::generate_specs",
+      "scripts/generate_contracts.py::parse_args",
+      "scripts/generate_contracts.py::repo_root",
+      "scripts/generate_contracts.py::write_contracts",
+      "scripts/qrels_helper.py::label_queries",
+      "scripts/qrels_helper.py::read_queries"
+    ],
+    "nodes": [
+      "backend/app/api/deps.py::SearchService.__init__",
+      "backend/app/api/main.py::create_app",
+      "backend/app/api/middleware.py::RequestContextMiddleware.dispatch",
+      "backend/app/api/ratelimit.py::RateLimiter.__call__",
+      "backend/app/api/ratelimit.py::RateLimiter.__init__",
+      "backend/app/api/ratelimit.py::RateLimiter.allow",
+      "backend/app/api/ratelimit.py::rate_limit",
+      "backend/app/api/routes_dashboard.py::dashboard_experiments",
+      "backend/app/api/routes_dashboard.py::dashboard_kpi_load_test",
+      "backend/app/api/routes_dashboard.py::dashboard_kpi_summary",
+      "backend/app/api/routes_dashboard.py::dashboard_kpi_top_queries",
+      "backend/app/api/routes_dashboard.py::dashboard_kpi_volume",
+      "backend/app/api/routes_dashboard.py::dashboard_kpi_zero_results",
+      "backend/app/api/routes_dashboard.py::dashboard_logs",
+      "backend/app/api/routes_search.py::feedback",
+      "backend/app/api/routes_search.py::get_document",
+      "backend/app/api/routes_search.py::health",
+      "backend/app/api/routes_search.py::metrics",
+      "backend/app/api/routes_search.py::search",
+      "backend/app/api/schemas.py::SearchFiltersModel._must_be_iso8601",
+      "backend/app/api/schemas.py::_default_alpha",
+      "backend/app/api/schemas.py::_default_normalization",
+      "backend/app/callgraph/__main__.py::main",
+      "backend/app/callgraph/analyze.py::_CallCollector.__init__",
+      "backend/app/callgraph/analyze.py::_CallCollector.visit_Call",
+      "backend/app/eval/__main__.py::main",
+      "backend/app/index/__main__.py::main",
+      "backend/app/index/metadata.py::IndexMetadata.save",
+      "backend/app/ingest/__init__.py::main",
+      "backend/app/loadtest/burst.py::_one_search",
+      "backend/app/loadtest/locustfile.py::SearchUser.search",
+      "backend/app/observability/logging.py::JsonFormatter.format",
+      "backend/app/observability/logging.py::SqliteLogHandler.__init__",
+      "backend/app/observability/logging.py::SqliteLogHandler.emit",
+      "backend/app/observability/logging.py::configure",
+      "backend/app/observability/metrics.py::reset",
+      "backend/app/run.py::main",
+      "backend/app/search/bm25.py::BM25Index.__init__",
+      "backend/app/search/bm25.py::BM25Index.query",
+      "backend/app/search/bm25.py::BM25Index.save",
+      "backend/app/search/bm25.py::BM25Index.scores_for_all",
+      "backend/app/search/embedder.py::Embedder.encode",
+      "backend/app/search/embedder.py::SentenceTransformerEmbedder.__init__",
+      "backend/app/search/embedder.py::SentenceTransformerEmbedder.encode",
+      "backend/app/search/highlight.py::highlight_containing",
+      "backend/app/search/hybrid.py::HybridSearcher.__init__",
+      "backend/app/search/hybrid.py::HybridSearcher.embedder",
+      "backend/app/search/hybrid.py::HybridSearcher.search",
+      "backend/app/search/normalize.py::z_score",
+      "backend/app/search/vector.py::VectorIndex.__init__",
+      "backend/app/search/vector.py::VectorIndex.dimension",
+      "backend/app/search/vector.py::VectorIndex.query",
+      "backend/app/search/vector.py::VectorIndex.save",
+      "backend/app/storage/repo.py::select_feedback",
+      "backend/app/storage/repo.py::select_requests",
+      "frontend/src/App.tsx::App",
+      "frontend/src/api.ts::_fetch",
+      "frontend/src/api.ts::getExperiments",
+      "frontend/src/api.ts::getKpiSummary",
+      "frontend/src/api.ts::getKpiVolume",
+      "frontend/src/api.ts::getLogs",
+      "frontend/src/api.ts::getTopQueries",
+      "frontend/src/api.ts::getZeroResultQueries",
+      "frontend/src/components/CallGraphView.tsx::resetView",
+      "frontend/src/components/CallGraphView.tsx::shortFile",
+      "frontend/src/components/ResultCard.tsx::onKey",
+      "frontend/src/highlight.ts::escapeHtml",
+      "frontend/src/highlight.ts::queryTerms",
+      "frontend/src/highlight.ts::termMatchesWord",
+      "frontend/src/pages/DebugPage.tsx::extraJson",
+      "frontend/src/pages/DebugPage.tsx::formatTime",
+      "frontend/src/pages/DebugPage.tsx::inRange",
+      "frontend/src/pages/DebugPage.tsx::levelParam",
+      "frontend/src/pages/DebugPage.tsx::parseTs",
+      "frontend/src/pages/DebugPage.tsx::severityClass",
+      "frontend/src/pages/DebugPage.tsx::windowFromSince",
+      "frontend/src/pages/KpisPage.tsx::fetchJson",
+      "frontend/src/pages/KpisPage.tsx::onKey",
+      "frontend/src/pages/KpisPage.tsx::parseBucket",
+      "frontend/src/pages/SearchPage.tsx::handleClear",
+      "frontend/src/pages/SearchPage.tsx::handleKeyDown",
+      "scripts/fetch_until_done.py::main",
+      "scripts/generate_contracts.py::created_at_for",
+      "scripts/generate_contracts.py::main",
+      "scripts/qrels_helper.py::main",
+      "backend/app/api/deps.py::SearchService.load",
+      "backend/app/storage/db.py::connect",
+      "backend/app/config.py::load_config",
+      "backend/app/storage/db.py::init_schema",
+      "backend/app/api/middleware.py::_read_search_params",
+      "backend/app/api/middleware.py::_persist_search",
+      "backend/app/observability/metrics.py::record_search_latency",
+      "backend/app/observability/metrics.py::record_request",
+      "backend/app/api/middleware.py::_capture_result_count",
+      "backend/app/api/ratelimit.py::RateLimiter.take",
+      "backend/app/api/routes_dashboard.py::_read_experiments",
+      "backend/app/api/routes_dashboard.py::_db",
+      "backend/app/loadtest/burst.py::run_search_burst",
+      "backend/app/api/routes_dashboard.py::parse_window",
+      "backend/app/storage/repo.py::kpi_summary",
+      "backend/app/storage/repo.py::top_queries",
+      "backend/app/storage/repo.py::request_volume",
+      "backend/app/storage/repo.py::zero_result_queries",
+      "backend/app/storage/repo.py::select_logs",
+      "backend/app/api/routes_search.py::_get_service",
+      "backend/app/storage/repo.py::insert_feedback",
+      "backend/app/search/tokenize.py::tokenize",
+      "backend/app/search/highlight.py::closest_document_words",
+      "backend/app/search/highlight.py::highlight_document",
+      "backend/app/search/highlight.py::count_occurrences",
+      "backend/app/api/deps.py::get_version",
+      "backend/app/api/deps.py::get_commit",
+      "backend/app/api/routes_search.py::_index_metadata",
+      "backend/app/observability/metrics.py::render",
+      "backend/app/callgraph/analyze.py::find_repo_root",
+      "backend/app/callgraph/analyze.py::write_callgraph_json",
+      "backend/app/callgraph/analyze.py::_call_name",
+      "backend/app/eval/__main__.py::_build_parser",
+      "backend/app/eval/__main__.py::check_model",
+      "backend/app/eval/__main__.py::_search_normalization",
+      "backend/app/eval/__main__.py::_resolve_path",
+      "backend/app/eval/runner.py::load_queries",
+      "backend/app/eval/runner.py::load_qrels",
+      "backend/app/eval/runner.py::run_eval",
+      "backend/app/eval/__main__.py::_commit",
+      "backend/app/eval/runner.py::append_experiment",
+      "backend/app/index/__main__.py::_build_parser",
+      "backend/app/index/__main__.py::_resolve_path",
+      "backend/app/ingest/writer.py::read_jsonl",
+      "backend/app/ingest/writer.py::corpus_hash",
+      "backend/app/index/metadata.py::is_up_to_date",
+      "backend/app/index/__main__.py::build_indexes",
+      "backend/app/ingest/__init__.py::_build_parser",
+      "backend/app/ingest/__init__.py::_resolve_path",
+      "backend/app/ingest/__init__.py::ingest",
+      "backend/app/storage/repo.py::insert_log",
+      "backend/app/observability/logging.py::_find_flagged",
+      "backend/app/run.py::ensure_venv",
+      "backend/app/search/filters.py::apply",
+      "backend/app/search/normalize.py::normalize",
+      "backend/app/search/highlight.py::make_snippet",
+      "backend/app/search/normalize.py::min_max",
+      "frontend/src/App.tsx::useTheme",
+      "frontend/src/api.ts::getHealth",
+      "frontend/src/pages/HomePage.tsx::HomePage",
+      "frontend/src/components/Sidebar.tsx::Sidebar",
+      "frontend/src/pages/SearchPage.tsx::SearchPage",
+      "frontend/src/pages/HealthPage.tsx::HealthPage",
+      "frontend/src/pages/SettingsPage.tsx::SettingsPage",
+      "frontend/src/pages/KpisPage.tsx::KpisPage",
+      "frontend/src/pages/EvaluationPage.tsx::EvaluationPage",
+      "frontend/src/pages/DebugPage.tsx::DebugPage",
+      "frontend/src/components/ResultCard.tsx::closeModal",
+      "scripts/fetch_until_done.py::parse_args",
+      "scripts/fetch_corpus.py::repo_root",
+      "scripts/fetch_corpus.py::read_seed",
+      "scripts/fetch_corpus.py::pending_rows",
+      "scripts/fetch_corpus.py::write_attribution",
+      "scripts/fetch_corpus.py::main",
+      "scripts/generate_contracts.py::parse_args",
+      "scripts/generate_contracts.py::repo_root",
+      "scripts/generate_contracts.py::generate_specs",
+      "scripts/generate_contracts.py::write_contracts",
+      "scripts/qrels_helper.py::label_queries",
+      "scripts/qrels_helper.py::read_queries"
+    ]
+  }
+}

@@ -1,0 +1,225 @@
+from __future__ import annotations
+
+import sqlite3
+from pathlib import Path
+
+import pytest
+from fastapi.testclient import TestClient
+
+from app.api.deps import SearchService
+from app.api.main import create_app
+from app.config import load_config
+from app.index.__main__ import build_indexes
+from app.ingest.writer import Doc, write_jsonl
+from app.storage.db import connect
+from app.storage.repo import select_feedback
+
+
+@pytest.fixture
+def client(
+    tmp_repo: Path,
+    fake_embedder,
+    sample_docs: list[dict[str, str]],
+) -> TestClient:
+    settings = load_config()
+    docs = [Doc(**doc) for doc in sample_docs]
+    write_jsonl(docs, settings.processed_dir / "docs.jsonl")
+    build_indexes(docs, settings.index_dir, fake_embedder, settings.embedding_model)
+
+    service = SearchService.load(fake_embedder)
+    app = create_app(search_service=service)
+    with TestClient(app) as test_client:
+        yield test_client
+
+
+def _feedback_rows(request_id: str | None = None) -> list[sqlite3.Row]:
+    conn = connect(load_config().sqlite_path)
+    try:
+        return select_feedback(conn, request_id=request_id)
+    finally:
+        conn.close()
+
+
+def test_health_has_version_and_commit(client: TestClient) -> None:
+    resp = client.get("/health")
+    assert resp.status_code == 200
+    body = resp.json()
+    assert body["status"] == "ok"
+    assert body["version"]
+    assert body["commit"]
+    assert body["index"]["doc_count"] == 6
+
+
+def test_search_returns_score_breakdown_and_snippet(client: TestClient) -> None:
+    resp = client.post(
+        "/search", json={"query": "volcano erupts lava", "min_vector_score": 0}
+    )
+    assert resp.status_code == 200
+    body = resp.json()
+    assert "request_id" in body
+    assert isinstance(body["took_ms"], (int, float))
+    assert body["results"]
+    first = body["results"][0]
+    for field in (
+        "bm25_score",
+        "vector_score",
+        "hybrid_score",
+        "snippet",
+        "source",
+        "created_at",
+    ):
+        assert field in first
+    assert first["source"] == "sample"
+    assert first["created_at"]
+
+
+def test_top_k_is_respected(client: TestClient) -> None:
+    resp = client.post(
+        "/search", json={"query": "volcano", "top_k": 2, "min_vector_score": 0}
+    )
+    assert resp.status_code == 200
+    assert len(resp.json()["results"]) == 2
+
+
+def test_alpha_extremes_give_different_orders(client: TestClient) -> None:
+    query = {
+        "query": "bread flour water yeast crust",
+        "top_k": 6,
+        "min_vector_score": 0,
+    }
+    bm25_only = client.post("/search", json={**query, "alpha": 1.0}).json()
+    vector_only = client.post("/search", json={**query, "alpha": 0.0}).json()
+
+    bm25_order = [r["doc_id"] for r in bm25_only["results"]]
+    vector_order = [r["doc_id"] for r in vector_only["results"]]
+    assert bm25_order != vector_order
+
+
+@pytest.mark.parametrize(
+    ("payload", "field"),
+    [
+        ({"query": ""}, "query"),
+        ({"query": "x" * 501}, "query"),
+        ({"query": "q", "top_k": 0}, "top_k"),
+        ({"query": "q", "top_k": 51}, "top_k"),
+        ({"query": "q", "alpha": -0.1}, "alpha"),
+        ({"query": "q", "alpha": 1.1}, "alpha"),
+        ({"query": "q", "min_vector_score": -0.1}, "min_vector_score"),
+        ({"query": "q", "min_vector_score": 1.1}, "min_vector_score"),
+        ({"query": "q", "normalization": "foo"}, "normalization"),
+        ({"query": "q", "filters": {"created_from": "not-a-date"}}, "created_from"),
+        ({"query": "q", "filters": {"dataset": "patents"}}, "dataset"),
+    ],
+)
+def test_search_validation_errors(
+    client: TestClient, payload: dict[str, object], field: str
+) -> None:
+    resp = client.post("/search", json=payload)
+    assert resp.status_code == 422
+    assert field in resp.text
+
+
+def test_min_vector_score_can_empty_results(client: TestClient) -> None:
+    ungated = client.post(
+        "/search", json={"query": "volcano", "min_vector_score": 0}
+    )
+    assert ungated.status_code == 200
+    assert ungated.json()["results"]
+
+    gated = client.post("/search", json={"query": "volcano"})
+    assert gated.status_code == 200
+    assert all(row["vector_score"] >= 0.2 for row in gated.json()["results"])
+    assert len(gated.json()["results"]) <= len(ungated.json()["results"])
+
+    blocked = client.post(
+        "/search", json={"query": "volcano", "min_vector_score": 1.0}
+    )
+    assert blocked.status_code == 200
+    assert blocked.json()["results"] == []
+
+
+def test_dataset_contracts_on_sample_is_empty(client: TestClient) -> None:
+    resp = client.post(
+        "/search",
+        json={"query": "volcano", "filters": {"dataset": "contracts"}},
+    )
+    assert resp.status_code == 200
+    assert resp.json()["results"] == []
+
+
+def test_feedback_stores_row(client: TestClient) -> None:
+    resp = client.post(
+        "/feedback",
+        json={
+            "request_id": "req-1",
+            "doc_id": "doc-001",
+            "relevant": True,
+            "comment": "good hit",
+        },
+    )
+    assert resp.status_code == 200
+    assert resp.json() == {"ok": True}
+    rows = _feedback_rows(request_id="req-1")
+    assert len(rows) == 1
+    assert rows[0]["doc_id"] == "doc-001"
+    assert rows[0]["relevant"] == 1
+
+
+def test_get_document_returns_text_and_occurrences(client: TestClient) -> None:
+    resp = client.get("/documents/doc-001", params={"q": "lava"})
+    assert resp.status_code == 200
+    body = resp.json()
+    assert body["doc_id"] == "doc-001"
+    assert body["title"] == "Volcanoes"
+    assert body["source"] == "sample"
+    assert "lava" in body["text"]
+    assert "<em>lava</em>" in body["highlighted_text"]
+    by_term = {row["term"]: row["count"] for row in body["occurrences"]}
+    assert by_term["lava"] == 1
+    assert "closest" in body
+    assert isinstance(body["closest"], list)
+
+
+def test_get_document_closest_word_is_not_the_query(
+    client: TestClient,
+) -> None:
+    resp = client.get("/documents/doc-001", params={"q": "lava"})
+    assert resp.status_code == 200
+    closest = resp.json()["closest"]
+    assert all(row["term"] != "lava" for row in closest)
+    if closest:
+        top = closest[0]
+        assert top["count"] >= 1
+        assert top["score"] >= 0.2
+        assert f'<em class="sem">{top["term"]}</em>' in resp.json()["highlighted_text"]
+
+
+def test_get_document_unknown_id_is_404(client: TestClient) -> None:
+    resp = client.get("/documents/doc-missing")
+    assert resp.status_code == 404
+
+
+def test_get_document_without_query_has_no_occurrences(
+    client: TestClient,
+) -> None:
+    resp = client.get("/documents/doc-001")
+    assert resp.status_code == 200
+    body = resp.json()
+    assert body["occurrences"] == []
+    assert body["closest"] == []
+    assert "<em>" not in body["highlighted_text"]
+    assert "lava" in body["text"]
+
+
+def test_feedback_unknown_doc_is_404(client: TestClient) -> None:
+    resp = client.post(
+        "/feedback",
+        json={
+            "request_id": "req-1",
+            "doc_id": "doc-missing",
+            "relevant": False,
+        },
+    )
+    assert resp.status_code == 404
+    rows = _feedback_rows()
+    assert rows == []

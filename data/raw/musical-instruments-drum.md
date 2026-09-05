@@ -1,0 +1,31 @@
+---
+title: "Drum"
+source: "https://simple.wikipedia.org/wiki/Drum"
+license: "CC BY-SA 4.0"
+topic: "musical instruments"
+fetched: "2026-09-03"
+---
+
+A drum is a musical instrument. It is played with the hands, sometimes using a drum stick (a stick for hitting a drum). A collection of drums and cymbals is called a drum kit, or drum set. 
+
+
+Overview
+Drums are used to keep a steady beat in a song. They give music of many kinds a sense of feeling. For example, to make a song to be slow or fast, the drums play slower or faster. A drum is a percussion instrument, which means it makes a noise by being hit.  There are many types such as cymbals and bells; even a simple piece of wood can be used as a percussion instrument. The drum kit is a group of drums and cymbals to make beats for music. Drum kits are used in most types of popular music, including rock, jazz, country, blues, and many others.
+
+
+Acoustic Drums
+Acoustic drum kit is a set of drums and cymbals designed to be played as one instrument. A standard drum kit is made from a bass drum, snare drum, set of tom toms, hi hat cymbals, a ride cymbal and a crash cymbal. The sound is produced by striking the drums or cymbals with a drum stick or mallet.
+
+
+Electric Drums
+An electric drum kit is essentially a collection of sample pads set up in the same way as an acoustic drum kit. The pads themselves are designed to produce little acoustic sound, other than the dead sound of the wooden drum sticks hitting rubber. The drum kit sends electrical signals to an amplifier, speaker, or pair of headphones to be heard.  This makes them ideal for practicing quietly.  Recording electronic drums is very easy.  They may be connected using a USB cable or an audio interface. 
+
+
+Related pages
+Cymbal
+Pop music
+Rock music
+Classical music
+
+
+References

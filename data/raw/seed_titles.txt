@@ -1,0 +1,360 @@
+volcanoes	Volcano
+volcanoes	Lava
+volcanoes	Magma
+volcanoes	Mount Vesuvius
+volcanoes	Krakatoa
+volcanoes	Mount Etna
+volcanoes	Mount Fuji
+volcanoes	Pompeii
+volcanoes	Mauna Loa
+volcanoes	Ring of Fire
+volcanoes	Mount St. Helens
+volcanoes	Caldera
+earthquakes	Earthquake
+earthquakes	Tsunami
+earthquakes	Plate tectonics
+earthquakes	Seismometer
+earthquakes	Richter magnitude scale
+earthquakes	Fault (geology)
+earthquakes	Epicenter
+earthquakes	Seismic wave
+earthquakes	2004 Indian Ocean earthquake and tsunami
+earthquakes	San Andreas Fault
+earthquakes	Aftershock
+earthquakes	1906 San Francisco earthquake
+weather	Weather
+weather	Rain
+weather	Snow
+weather	Thunderstorm
+weather	Tornado
+weather	Tropical cyclone
+weather	Cloud
+weather	Wind
+weather	Lightning
+weather	Fog
+weather	Hail
+weather	Climate
+oceans	Ocean
+oceans	Pacific Ocean
+oceans	Atlantic Ocean
+oceans	Indian Ocean
+oceans	Arctic Ocean
+oceans	Southern Ocean
+oceans	Great Barrier Reef
+oceans	Tide
+oceans	Coral reef
+oceans	Seawater
+oceans	Ocean current
+oceans	Mariana Trench
+planets	Planet
+planets	Mercury (planet)
+planets	Venus
+planets	Earth
+planets	Mars
+planets	Jupiter
+planets	Saturn
+planets	Uranus
+planets	Neptune
+planets	Pluto
+planets	Solar System
+planets	Dwarf planet
+stars	Star
+stars	Sun
+stars	Sirius
+stars	Betelgeuse
+stars	Supernova
+stars	Red giant
+stars	White dwarf
+stars	Neutron star
+stars	Black hole
+stars	Nuclear fusion
+stars	Constellation
+stars	Milky Way
+human body	Human body
+human body	Heart
+human body	Brain
+human body	Lung
+human body	Liver
+human body	Kidney
+human body	Skeleton
+human body	Muscle
+human body	Skin
+human body	Blood
+human body	Stomach
+human body	Nervous system
+diseases	Disease
+diseases	Cancer
+diseases	Diabetes
+diseases	Influenza
+diseases	Malaria
+diseases	Tuberculosis
+diseases	Measles
+diseases	Cholera
+diseases	HIV
+diseases	Asthma
+diseases	Pneumonia
+diseases	Smallpox
+nutrition	Nutrition
+nutrition	Vitamin
+nutrition	Protein
+nutrition	Carbohydrate
+nutrition	Fat
+nutrition	Mineral (nutrient)
+nutrition	Water
+nutrition	Dietary fiber
+nutrition	Calcium
+nutrition	Iron
+nutrition	Diet (nutrition)
+nutrition	Sugar
+mammals	Mammal
+mammals	Lion
+mammals	Elephant
+mammals	Tiger
+mammals	Whale
+mammals	Dolphin
+mammals	Bat
+mammals	Kangaroo
+mammals	Bear
+mammals	Wolf
+mammals	Horse
+mammals	Dog
+birds	Bird
+birds	Eagle
+birds	Penguin
+birds	Owl
+birds	Parrot
+birds	Ostrich
+birds	Peafowl
+birds	Duck
+birds	Chicken
+birds	Pigeon
+birds	Hummingbird
+birds	Flamingo
+insects	Insect
+insects	Ant
+insects	Bee
+insects	Butterfly
+insects	Beetle
+insects	Mosquito
+insects	Dragonfly
+insects	Grasshopper
+insects	Wasp
+insects	Cockroach
+insects	Termite
+insects	Moth
+trees	Tree
+trees	Oak
+trees	Pine
+trees	Maple
+trees	Birch
+trees	Willow
+trees	Bamboo
+trees	Sequoia
+trees	Baobab
+trees	Eucalyptus
+trees	Spruce
+trees	Cedar
+ancient egypt	Ancient Egypt
+ancient egypt	Pyramid
+ancient egypt	Great Pyramid of Giza
+ancient egypt	Pharaoh
+ancient egypt	Tutankhamun
+ancient egypt	Cleopatra VII
+ancient egypt	Nile
+ancient egypt	Egyptian hieroglyphs
+ancient egypt	Mummy
+ancient egypt	Ramesses II
+ancient egypt	Great Sphinx of Giza
+ancient egypt	Book of the Dead
+roman empire	Roman Empire
+roman empire	Ancient Rome
+roman empire	Julius Caesar
+roman empire	Augustus
+roman empire	Colosseum
+roman empire	Roman army
+roman empire	Roman Republic
+roman empire	Nero
+roman empire	Latin
+roman empire	Hadrian's Wall
+roman empire	Gladiator
+roman empire	Aqueduct
+world war 2	World War II
+world war 2	Adolf Hitler
+world war 2	Nazi Germany
+world war 2	Winston Churchill
+world war 2	Attack on Pearl Harbor
+world war 2	Normandy landings
+world war 2	The Holocaust
+world war 2	Atomic bombings of Hiroshima and Nagasaki
+world war 2	Battle of Stalingrad
+world war 2	Joseph Stalin
+world war 2	Franklin D. Roosevelt
+world war 2	Blitzkrieg
+inventions	Invention
+inventions	Wheel
+inventions	Printing press
+inventions	Telephone
+inventions	Incandescent light bulb
+inventions	Steam engine
+inventions	Airplane
+inventions	Electrical telegraph
+inventions	Camera
+inventions	Radio
+inventions	Television
+inventions	Gunpowder
+computers	Computer
+computers	Central processing unit
+computers	Operating system
+computers	Software
+computers	Computer hardware
+computers	Programming language
+computers	Personal computer
+computers	Laptop
+computers	Microprocessor
+computers	Computer memory
+computers	Algorithm
+computers	Binary number
+internet	Internet
+internet	World Wide Web
+internet	Website
+internet	Web browser
+internet	Email
+internet	Web search engine
+internet	IP address
+internet	Hypertext Transfer Protocol
+internet	Social media
+internet	Wi-Fi
+internet	Router (computing)
+internet	Domain name
+mathematics	Mathematics
+mathematics	Algebra
+mathematics	Geometry
+mathematics	Arithmetic
+mathematics	Number
+mathematics	Calculus
+mathematics	Fraction (mathematics)
+mathematics	Probability
+mathematics	Statistics
+mathematics	Pi
+mathematics	Prime number
+mathematics	Trigonometry
+chemical elements	Chemical element
+chemical elements	Hydrogen
+chemical elements	Helium
+chemical elements	Oxygen
+chemical elements	Carbon
+chemical elements	Nitrogen
+chemical elements	Iron
+chemical elements	Gold
+chemical elements	Silver
+chemical elements	Copper
+chemical elements	Sodium
+chemical elements	Uranium
+energy	Energy
+energy	Kinetic energy
+energy	Potential energy
+energy	Electricity
+energy	Solar energy
+energy	Nuclear power
+energy	Wind power
+energy	Fossil fuel
+energy	Coal
+energy	Petroleum
+energy	Renewable energy
+energy	Hydroelectricity
+transport	Transport
+transport	Car
+transport	Train
+transport	Airplane
+transport	Ship
+transport	Bicycle
+transport	Bus
+transport	Truck
+transport	Helicopter
+transport	Motorcycle
+transport	Rapid transit
+transport	Boat
+musical instruments	Musical instrument
+musical instruments	Piano
+musical instruments	Guitar
+musical instruments	Violin
+musical instruments	Drum
+musical instruments	Flute
+musical instruments	Trumpet
+musical instruments	Saxophone
+musical instruments	Cello
+musical instruments	Harp
+musical instruments	Clarinet
+musical instruments	Trombone
+sports	Sport
+sports	Association football
+sports	Basketball
+sports	Cricket
+sports	Tennis
+sports	Baseball
+sports	Golf
+sports	Swimming (sport)
+sports	Boxing
+sports	Rugby football
+sports	Volleyball
+sports	Ice hockey
+painting	Painting
+painting	Leonardo da Vinci
+painting	Mona Lisa
+painting	Vincent van Gogh
+painting	Pablo Picasso
+painting	Michelangelo
+painting	Rembrandt
+painting	Claude Monet
+painting	Watercolor painting
+painting	Oil painting
+painting	Fresco
+painting	Impressionism
+architecture	Architecture
+architecture	Building
+architecture	Skyscraper
+architecture	Gothic architecture
+architecture	Cathedral
+architecture	Bridge
+architecture	Dome
+architecture	Taj Mahal
+architecture	Eiffel Tower
+architecture	Colosseum
+architecture	Castle
+architecture	Arch
+cooking	Cooking
+cooking	Baking
+cooking	Bread
+cooking	Cheese
+cooking	Rice
+cooking	Soup
+cooking	Frying
+cooking	Boiling
+cooking	Spice
+cooking	Chocolate
+cooking	Cake
+cooking	Butter
+african countries	Nigeria
+african countries	Egypt
+african countries	South Africa
+african countries	Kenya
+african countries	Ethiopia
+african countries	Ghana
+african countries	Morocco
+african countries	Algeria
+african countries	Tanzania
+african countries	Uganda
+african countries	Sudan
+african countries	Democratic Republic of the Congo
+rivers	River
+rivers	Nile
+rivers	Amazon River
+rivers	Yangtze
+rivers	Mississippi River
+rivers	Ganges
+rivers	Danube
+rivers	Congo River
+rivers	Volga
+rivers	Rhine
+rivers	Thames
+rivers	Yellow River

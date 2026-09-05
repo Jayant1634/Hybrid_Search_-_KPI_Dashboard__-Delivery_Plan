@@ -1,0 +1,74 @@
+---
+title: "Owl"
+source: "https://simple.wikipedia.org/wiki/Owl"
+license: "CC BY-SA 4.0"
+topic: "birds"
+fetched: "2026-09-03"
+---
+
+Owls are birds in the order Strigiformes. There are 200 species, and they are all animals of prey. Most of them are solitary and nocturnal; in fact, they are the only large group of birds which hunt at night. Owls are specialists night-time hunters. They feed on small mammals such as rodents, insects, and other birds, and a few species like to eat fish as well. 
+As a group, owls are very successful. They are found in all parts of the world except Antarctica, most of Greenland, and some small islands.
+
+
+Owl families
+There are two families of owls: the true owls and the barn owls:
+
+True owls: the family Strigidae (185 species in 25 genera)
+Barn owls: the family Tytonidae. This contains the genus Tyto, especially Tyto alba, with its many sub-species. The genus Pholidus has only a couple of species, known as bay-owls. It hunts mainly by sound.
+
+
+Appearance
+An owl has a big head, flat face, hooked beak, short tail, and sharp talons, The wings of an owl are long. Owls have brown, gray, or white plumage with streaks or spots.
+
+
+Adaptations
+Owls have a suite of adaptations which help them to be successful.
+Owls have large eyes and holes for ears, a hawk-like beak, and a rather flat face. Most birds of prey have eyes on the sides of their heads, but the owl's eyes are facing forwards to help it see better in the dark. Their eyes are also fixed inside their sockets, so they have to turn their whole head to look at other things. Owls can rotate their heads and necks up to 270 degrees in both directions. 
+Owls are good at looking at things far from its eyes, but it cannot see anything clearly within a few centimeters of their eyes. Owls use small feathers on the beak and the feet that help it feel the prey it catches.
+
+
+Hunting
+Most owls hunt at night, and in twilight (dawn and dusk). A few owls are also active during the day.
+The owls' hunting depends on surprising its prey. Their most important adaptation is their almost silent flight. The feathers are soft, with fringes on the back edge, and the base of each is downy. This all muffles noise, and makes for silence. Also, they glide when coming in for the kill. 
+The dull colors of the owls' feathers make them less visible by camouflaging the owl. This helps them as they roost during the day. 
+Owls have fantastic hearing. The shape of the head helps slight sounds reach the ears. The feathers of the facial disc are arranged in order to increase sound delivered to the ears. Their ears are asymmetrical allowing the owl to locate a sound. They can hear a mouse move in the grass. 
+An owl's sharp beak and powerful talons allow it to kill its prey before swallowing it whole, unless it is too big. Owls usually regurgitate the parts of their prey that they cannot digest. These parts include bones, scales, and fur. Scientists who study the things that owls eat can get clues by studying the parts that the owl spit back out, called "owl pellets". These "owl pellets" are sold by supply companies to schools for use in the students' biology and ecology lessons.
+
+
+Winter larder
+Many animals store food during times of plenty to prepare for leaner times. Owls may store dead mice for winter.
+
+
+Swivelling the head
+Owls have special adaptations which help them swivel their heads 270 degrees. They have 14 neck vertebrae instead of our seven. Also, the big carotid arteries, instead of being on the side of the neck as in humans, are carried close to the centre of rotation just in front of the spine. So these arteries get much less twisting and stretching, and the potential for damage is greatly reduced. This arrangement  is seen in other birds, but in owls the vertebral arteries – the vessels that travel through channels in the neck bones – are given extra space.
+Owls also have wide parts in their carotid arteries just under the base of the skull. Researchers found these could dilate and fill with a reservoir of blood. "We believe this is kind of a new structure not really known before", said a researcher. "It's probably a way to pool blood and get some continuity of flow even if there is disruption below at the next level".
+
+
+Owls in culture
+Mythology and stories that include owls are: 
+
+The owl is the symbol of the wisdom of Greek goddess Athena (Minerva to the Romans)
+In Hindu culture, the owl is associated with Lakshmi, the goddess of wealth and prosperity.
+Nursery rhyme: "The wise old owl sat in an oak, the more he heard, the less he spoke".
+Poem by Tennyson: "The wise owl in the belfry sits..."
+"Wol" is a character from the Winnie the Pooh books by A.A. Milne.
+Owls carry the mail in the Harry Potter books by J.K. Rowling.
+Owls are featured in the book series Guardians of Ga'hoole by Kathryn Lasky  with most of the series' characters being owls.
+
+
+Gallery
+
+
+Related pages
+Great horned owl
+Northern pygmy owl
+Barred owl
+Nocturnal animals
+Barn owl
+
+
+References
+
+
+Other websites
+Facts about Owls Archived 2011-04-19 at the Wayback Machine

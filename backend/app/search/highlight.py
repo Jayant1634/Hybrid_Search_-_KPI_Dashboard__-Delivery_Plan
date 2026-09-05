@@ -1,0 +1,259 @@
+"""Build HTML snippets that highlight query terms inside a longer text.
+
+``make_snippet`` HTML-escapes the source text, finds whole-word matches of the
+query terms, then picks the ``window``-wide slice containing the most matches.
+Matches are wrapped in ``<em>`` tags and a horizontal ellipsis (``…``) marks any
+end that was cut away from the surrounding text. When no term matches we fall
+back to the start of the text.
+"""
+
+from __future__ import annotations
+
+import html
+import re
+from collections.abc import Iterable
+
+import numpy as np
+
+from .embedder import Embedder
+from .tokenize import tokenize
+
+ELLIPSIS = "\u2026"
+
+
+def _clip_end(text: str, limit: int) -> int:
+    """Return an end index <= ``limit`` that never splits a word in ``text``."""
+    if limit >= len(text):
+        return len(text)
+    if limit <= 0:
+        return 0
+    # A clean cut lands on whitespace or just after a word.
+    if text[limit].isspace() or text[limit - 1].isspace():
+        return limit
+    # Inside a word: back up to drop the partial trailing word.
+    cut = limit
+    while cut > 0 and not text[cut - 1].isspace():
+        cut -= 1
+    return cut
+
+
+def _snap_start(text: str, index: int, upper: int) -> int:
+    """Move ``index`` forward to a word start, never past ``upper``."""
+    if index <= 0:
+        return 0
+    if index >= upper:
+        return upper
+    if text[index - 1].isspace():
+        return index
+    cut = index
+    while cut < upper and not text[cut].isspace():
+        cut += 1
+    while cut < upper and text[cut].isspace():
+        cut += 1
+    return cut
+
+
+def make_snippet(text: str, terms: Iterable[str], window: int = 240) -> str:
+    """Return an HTML snippet of ``text`` highlighting whole-word ``terms``.
+
+    The text is HTML-escaped first, so the result is safe to drop into markup.
+    The ``window``-character slice with the most whole-word term matches is
+    chosen; matched words are wrapped in ``<em>`` tags and ``…`` marks any cut
+    end. With no matches the snippet starts at the beginning of the text.
+    """
+    escaped = html.escape(text)
+    cleaned = [term for term in terms if term and term.strip()]
+
+    matches: list[re.Match[str]] = []
+    if cleaned:
+        pattern = re.compile(
+            r"\b(?:" + "|".join(re.escape(term) for term in cleaned) + r")\b",
+            re.IGNORECASE,
+        )
+        matches = list(pattern.finditer(escaped))
+
+    if not matches:
+        end = _clip_end(escaped, window)
+        body = escaped[:end]
+        if end < len(escaped):
+            body = body.rstrip() + ELLIPSIS
+        return body
+
+    # Anchor a window at each match start, count matches fully inside it, and
+    # keep the earliest window with the highest count.
+    best_start = matches[0].start()
+    best_count = -1
+    best_last = matches[0].end()
+    for anchor in matches:
+        start = anchor.start()
+        stop = start + window
+        inside = [m for m in matches if m.start() >= start and m.end() <= stop]
+        if len(inside) > best_count:
+            best_count = len(inside)
+            best_start = start
+            best_last = inside[-1].end()
+
+    # Right-align the window on the last covered match so we keep as much
+    # leading context as fits, then snap the ends to word boundaries.
+    win_start = max(0, best_last - window)
+    win_start = _snap_start(escaped, win_start, best_start)
+    win_end = _clip_end(escaped, win_start + window)
+
+    included = [
+        m for m in matches if m.start() >= win_start and m.end() <= win_end
+    ]
+
+    parts: list[str] = []
+    cursor = win_start
+    for m in included:
+        parts.append(escaped[cursor : m.start()])
+        parts.append("<em>")
+        parts.append(escaped[m.start() : m.end()])
+        parts.append("</em>")
+        cursor = m.end()
+    parts.append(escaped[cursor:win_end])
+    body = "".join(parts)
+
+    prefix = ELLIPSIS if win_start > 0 else ""
+    suffix = ELLIPSIS if win_end < len(escaped) else ""
+    return f"{prefix}{body}{suffix}"
+
+
+_WORD_RE = re.compile(r"\w+")
+
+
+def unique_terms(terms: Iterable[str]) -> list[str]:
+    """Lowercased, stripped terms with blanks and duplicates removed."""
+    seen: set[str] = set()
+    out: list[str] = []
+    for term in terms:
+        cleaned = term.strip().lower()
+        if not cleaned or cleaned in seen:
+            continue
+        seen.add(cleaned)
+        out.append(cleaned)
+    return out
+
+
+def term_matches_word(term: str, word: str) -> bool:
+    """True if ``term`` should highlight ``word`` (both already lowercased).
+
+    Exact tokens always match. A term of at least three characters also
+    matches when it appears inside the word (including as a prefix), so
+    ``chem`` still lights up ``Chemical``. A shared prefix alone is not
+    enough: ``chica`` must not match ``chilli``.
+    """
+    if not term or not word:
+        return False
+    if word == term:
+        return True
+    return len(term) >= 3 and term in word
+
+
+def count_occurrences(text: str, terms: Iterable[str]) -> list[tuple[str, int]]:
+    """Count how many words in ``text`` match each query term."""
+    needles = unique_terms(terms)
+    words = _WORD_RE.findall(text.lower())
+    return [
+        (term, sum(1 for word in words if term_matches_word(term, word)))
+        for term in needles
+    ]
+
+
+def highlight_containing(text: str, terms: Iterable[str]) -> str:
+    """HTML-escape ``text`` and wrap every word that matches a query term.
+
+    Unlike ``make_snippet`` this is not limited to whole-word equality, so a
+    query like ``chem`` highlights ``Chemical``. Empty terms leave the escaped
+    text unchanged. The result is safe to drop into markup.
+    """
+    return highlight_document(text, terms, [])
+
+
+def highlight_document(
+    text: str,
+    lexical: Iterable[str],
+    semantic: Iterable[str] | None = None,
+) -> str:
+    """Escape ``text`` and wrap lexical hits in ``<em>``, semantic in ``<em class="sem">``.
+
+    Lexical matches win when a word qualifies for both. Semantic wrapping is
+    exact token equality so a neighbour like ``batman`` does not light up
+    unrelated prefixes. Empty term lists leave the escaped text unchanged.
+    """
+    escaped = html.escape(text)
+    lex = unique_terms(lexical)
+    sem = [term for term in unique_terms(semantic or []) if term not in lex]
+    if not lex and not sem:
+        return escaped
+
+    parts: list[str] = []
+    cursor = 0
+    for match in _WORD_RE.finditer(escaped):
+        word = match.group()
+        low = word.lower()
+        if any(term_matches_word(term, low) for term in lex):
+            parts.append(escaped[cursor : match.start()])
+            parts.append("<em>")
+            parts.append(word)
+            parts.append("</em>")
+            cursor = match.end()
+        elif any(term == low for term in sem):
+            parts.append(escaped[cursor : match.start()])
+            parts.append('<em class="sem">')
+            parts.append(word)
+            parts.append("</em>")
+            cursor = match.end()
+    parts.append(escaped[cursor:])
+    return "".join(parts)
+
+
+def closest_document_words(
+    text: str,
+    query: str,
+    embedder: Embedder,
+    *,
+    limit: int = 1,
+    min_score: float = 0.2,
+    max_vocab: int = 250,
+) -> list[tuple[str, int, float]]:
+    """Return the document tokens nearest the query embedding.
+
+    Query terms and their lexical containers are skipped so the neighbour is
+    a semantic near-miss, not the typed word. Tokens below ``min_score`` are
+    dropped. Each row is ``(term, occurrence_count, cosine)``.
+    """
+    query_terms = unique_terms(tokenize(query))
+    if not query_terms or limit <= 0:
+        return []
+
+    counts: dict[str, int] = {}
+    for token in tokenize(text):
+        counts[token] = counts.get(token, 0) + 1
+    candidates = [
+        word
+        for word in counts
+        if len(word) >= 4
+        and not any(term_matches_word(term, word) for term in query_terms)
+    ]
+    candidates = sorted(candidates, key=lambda word: (-counts[word], word))
+    candidates = candidates[:max_vocab]
+    if not candidates:
+        return []
+
+    vectors = embedder.encode([query, *candidates])
+    query_vec = vectors[0]
+    scores = np.asarray(vectors[1:] @ query_vec, dtype=np.float64)
+    ranked = sorted(
+        zip(candidates, scores),
+        key=lambda pair: (-float(pair[1]), pair[0]),
+    )
+    out: list[tuple[str, int, float]] = []
+    for word, score in ranked:
+        value = float(score)
+        if value < min_score:
+            continue
+        out.append((word, counts[word], value))
+        if len(out) >= limit:
+            break
+    return out
