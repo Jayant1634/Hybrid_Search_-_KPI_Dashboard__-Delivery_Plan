@@ -10,10 +10,15 @@ import {
 } from 'recharts'
 
 type TimeWindow = '1h' | '24h' | '7d'
+type DatasetName = 'wikipedia' | 'contracts'
 
 const WINDOWS: TimeWindow[] = ['1h', '24h', '7d']
 const REFRESH_MS = 30_000
 const PURPLE = '#7823DC'
+const DEFAULT_QUERY = 'volcano'
+const MIN_COUNT = 2
+const MAX_COUNT = 200
+const DEFAULT_COUNT = 20
 
 interface KpiSummary {
   total: number
@@ -47,8 +52,20 @@ interface KpiData {
   zeroQueries: ZeroResultQuery[]
 }
 
-async function fetchJson<T>(url: string): Promise<T> {
-  const res = await fetch(url)
+interface LoadTestResult {
+  sent: number
+  ok: number
+  failed: number
+  wall_ms: number
+  p50: number
+  p95: number
+  avg_ms: number
+  min_ms: number
+  max_ms: number
+}
+
+async function fetchJson<T>(url: string, init?: RequestInit): Promise<T> {
+  const res = await fetch(url, init)
   if (!res.ok) {
     const body = await res.text()
     throw new Error(`HTTP ${res.status}: ${body}`)
@@ -65,6 +82,24 @@ async function loadKpis(range: TimeWindow): Promise<KpiData> {
     fetchJson<ZeroResultQuery[]>(`/api/dashboard/kpi/zero-results?${q}&limit=10`),
   ])
   return { summary, volume, topQueries, zeroQueries }
+}
+
+async function runLoadTest(body: {
+  query: string
+  count: number
+  dataset: DatasetName | ''
+}): Promise<LoadTestResult> {
+  const payload: Record<string, string | number> = {
+    query: body.query,
+    count: body.count,
+  }
+  return fetchJson<LoadTestResult>('/api/dashboard/kpi/load-test', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(
+      body.dataset ? { ...payload, dataset: body.dataset } : payload,
+    ),
+  })
 }
 
 function formatMs(value: number): string {
@@ -101,12 +136,24 @@ function formatSeen(value: string): string {
   return date.toLocaleString()
 }
 
+function clampCount(value: number): number {
+  if (!Number.isFinite(value)) return DEFAULT_COUNT
+  return Math.min(MAX_COUNT, Math.max(MIN_COUNT, Math.trunc(value)))
+}
+
 export default function KpisPage() {
   const [range, setRange] = useState<TimeWindow>('24h')
   const [data, setData] = useState<KpiData | null>(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [lastChecked, setLastChecked] = useState<string | null>(null)
+  const [drawerOpen, setDrawerOpen] = useState(false)
+  const [probeQuery, setProbeQuery] = useState(DEFAULT_QUERY)
+  const [probeCount, setProbeCount] = useState(DEFAULT_COUNT)
+  const [probeDataset, setProbeDataset] = useState<DatasetName | ''>('')
+  const [firing, setFiring] = useState(false)
+  const [burst, setBurst] = useState<LoadTestResult | null>(null)
+  const [burstError, setBurstError] = useState<string | null>(null)
 
   useEffect(() => {
     let cancelled = false
@@ -138,6 +185,46 @@ export default function KpisPage() {
       window.clearInterval(id)
     }
   }, [range])
+
+  useEffect(() => {
+    if (!drawerOpen) return
+    const onKey = (event: KeyboardEvent) => {
+      if (event.key === 'Escape' && !firing) setDrawerOpen(false)
+    }
+    window.addEventListener('keydown', onKey)
+    return () => window.removeEventListener('keydown', onKey)
+  }, [drawerOpen, firing])
+
+  const refreshQuietly = async () => {
+    try {
+      const next = await loadKpis(range)
+      setData(next)
+      setError(null)
+      setLastChecked(new Date().toLocaleTimeString())
+    } catch (err) {
+      setError(err instanceof Error ? err.message : String(err))
+    }
+  }
+
+  const fireBurst = async () => {
+    const query = probeQuery.trim()
+    if (!query || firing) return
+    setFiring(true)
+    setBurstError(null)
+    try {
+      const result = await runLoadTest({
+        query,
+        count: clampCount(probeCount),
+        dataset: probeDataset,
+      })
+      setBurst(result)
+      await refreshQuietly()
+    } catch (err) {
+      setBurstError(err instanceof Error ? err.message : String(err))
+    } finally {
+      setFiring(false)
+    }
+  }
 
   const chartData = (data?.volume ?? []).map(point => ({
     ...point,
@@ -197,6 +284,137 @@ export default function KpisPage() {
           color: var(--c-secondary);
           padding: 12px 0 4px;
         }
+        .kpi-latency-row {
+          display: flex;
+          align-items: flex-start;
+          justify-content: space-between;
+          gap: 16px;
+        }
+        .kpi-latency-copy { max-width: 640px; }
+        .kpi-latency-copy p {
+          margin: 0;
+          font-size: 13px;
+          color: var(--c-secondary);
+          line-height: 1.5;
+        }
+        .kpi-drawer-root {
+          position: fixed;
+          inset: 0;
+          z-index: 40;
+          display: flex;
+          justify-content: flex-end;
+        }
+        .kpi-drawer-dim {
+          position: absolute;
+          inset: 0;
+          background: rgba(10, 10, 10, 0.42);
+          border: none;
+          padding: 0;
+          cursor: pointer;
+        }
+        .kpi-drawer {
+          position: relative;
+          width: min(440px, 100vw);
+          height: 100%;
+          background: var(--c-surface);
+          border-left: 1px solid var(--c-border);
+          box-shadow: -12px 0 40px rgba(0, 0, 0, 0.18);
+          display: flex;
+          flex-direction: column;
+        }
+        .kpi-drawer-head {
+          display: flex;
+          align-items: flex-start;
+          justify-content: space-between;
+          gap: 12px;
+          padding: 22px 22px 16px;
+          border-bottom: 1px solid var(--c-border);
+        }
+        .kpi-drawer-head h2 {
+          margin: 0 0 4px;
+          font-size: 20px;
+          font-weight: 700;
+          letter-spacing: -0.02em;
+          color: var(--c-heading);
+        }
+        .kpi-drawer-head p {
+          margin: 0;
+          font-size: 13px;
+          color: var(--c-secondary);
+          line-height: 1.45;
+        }
+        .kpi-drawer-body {
+          flex: 1;
+          overflow: auto;
+          padding: 20px 22px 28px;
+          display: flex;
+          flex-direction: column;
+          gap: 16px;
+        }
+        .kpi-field { display: flex; flex-direction: column; gap: 6px; }
+        .kpi-field label {
+          font-size: 11px;
+          font-weight: 600;
+          letter-spacing: 0.06em;
+          text-transform: uppercase;
+          color: var(--c-muted);
+        }
+        .kpi-field input, .kpi-field select {
+          width: 100%;
+          height: 40px;
+          padding: 0 12px;
+          background: var(--c-bg);
+          border: 1px solid var(--c-border-strong);
+          border-radius: 5px;
+          font-size: 14px;
+          color: var(--c-heading);
+          outline: none;
+        }
+        .kpi-field input:focus, .kpi-field select:focus {
+          border-color: var(--purple);
+          box-shadow: 0 0 0 3px var(--purple-tint);
+        }
+        .kpi-field-hint { font-size: 12px; color: var(--c-muted); }
+        .kpi-drawer-note {
+          font-size: 13px;
+          color: var(--c-secondary);
+          line-height: 1.5;
+          background: var(--c-surface-2);
+          border: 1px solid var(--c-border);
+          border-radius: 6px;
+          padding: 12px 14px;
+        }
+        .kpi-drawer-actions {
+          display: flex;
+          gap: 10px;
+          padding-top: 4px;
+        }
+        .kpi-burst-grid {
+          display: grid;
+          grid-template-columns: 1fr 1fr;
+          gap: 10px;
+        }
+        .kpi-burst-tile {
+          background: var(--c-bg);
+          border: 1px solid var(--c-border);
+          border-radius: 6px;
+          padding: 12px 14px;
+        }
+        .kpi-burst-tile span {
+          display: block;
+          font-size: 11px;
+          font-weight: 600;
+          letter-spacing: 0.06em;
+          text-transform: uppercase;
+          color: var(--c-muted);
+          margin-bottom: 6px;
+        }
+        .kpi-burst-tile strong {
+          font-size: 18px;
+          font-weight: 700;
+          font-family: var(--mono);
+          color: var(--c-heading);
+        }
       `}</style>
 
       <div className="page-header page-header-row">
@@ -209,6 +427,9 @@ export default function KpisPage() {
         </div>
         <div className="header-actions">
           {lastChecked && <span className="last-checked">Checked {lastChecked}</span>}
+          <button type="button" className="btn-secondary" onClick={() => setDrawerOpen(true)}>
+            Test latency
+          </button>
           <div className="cg-toggle" role="group" aria-label="Time window">
             {WINDOWS.map(option => (
               <button
@@ -254,6 +475,23 @@ export default function KpisPage() {
               <div className="hc-metric">{data.summary.zero_result_count.toLocaleString()}</div>
             </div>
           </div>
+
+          <section className="kpi-dash-panel">
+            <div className="kpi-latency-row">
+              <div className="kpi-latency-copy">
+                <h2>Latency load test</h2>
+                <p>
+                  Fire a burst of concurrent hybrid searches so p50 / p95 are measured
+                  on many hits at once, not a single click. Each hit is stored in
+                  SQLite like a live search. Locust is the CLI driver for longer
+                  multi-user HTTP soaks.
+                </p>
+              </div>
+              <button type="button" className="btn-primary" onClick={() => setDrawerOpen(true)}>
+                Open test
+              </button>
+            </div>
+          </section>
 
           <section className="kpi-dash-panel">
             <h2>Volume per bucket</h2>
@@ -350,6 +588,136 @@ export default function KpisPage() {
             </section>
           </div>
         </>
+      )}
+
+      {drawerOpen && (
+        <div className="kpi-drawer-root">
+          <button
+            type="button"
+            className="kpi-drawer-dim"
+            aria-label="Close latency test"
+            disabled={firing}
+            onClick={() => {
+              if (!firing) setDrawerOpen(false)
+            }}
+          />
+          <aside
+            className="kpi-drawer"
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="kpi-load-title"
+          >
+            <header className="kpi-drawer-head">
+              <div>
+                <h2 id="kpi-load-title">Latency burst</h2>
+                <p>Send the hits together, then read p50 / p95 from this run.</p>
+              </div>
+              <button
+                type="button"
+                className="btn-ghost"
+                disabled={firing}
+                onClick={() => setDrawerOpen(false)}
+              >
+                Close
+              </button>
+            </header>
+            <div className="kpi-drawer-body">
+              <p className="kpi-drawer-note">
+                The API starts every search at the same time on the loaded indexes,
+                times each one, and writes a <code>requests</code> row so the tiles
+                here refresh. Use Locust from a second process when you want real
+                HTTP multi-user load against <code>/search</code>.
+              </p>
+
+              <div className="kpi-field">
+                <label htmlFor="kpi-probe-query">Query</label>
+                <input
+                  id="kpi-probe-query"
+                  value={probeQuery}
+                  onChange={event => setProbeQuery(event.target.value)}
+                  disabled={firing}
+                  maxLength={500}
+                />
+              </div>
+
+              <div className="kpi-field">
+                <label htmlFor="kpi-probe-count">Concurrent hits</label>
+                <input
+                  id="kpi-probe-count"
+                  type="number"
+                  min={MIN_COUNT}
+                  max={MAX_COUNT}
+                  value={probeCount}
+                  onChange={event => setProbeCount(clampCount(Number(event.target.value)))}
+                  disabled={firing}
+                />
+                <span className="kpi-field-hint">
+                  {MIN_COUNT}–{MAX_COUNT} requests, all started together.
+                </span>
+              </div>
+
+              <div className="kpi-field">
+                <label htmlFor="kpi-probe-dataset">Dataset</label>
+                <select
+                  id="kpi-probe-dataset"
+                  value={probeDataset}
+                  onChange={event =>
+                    setProbeDataset(event.target.value as DatasetName | '')
+                  }
+                  disabled={firing}
+                >
+                  <option value="">All corpora</option>
+                  <option value="wikipedia">Wikipedia</option>
+                  <option value="contracts">Contracts</option>
+                </select>
+              </div>
+
+              <div className="kpi-drawer-actions">
+                <button
+                  type="button"
+                  className="btn-primary"
+                  onClick={() => void fireBurst()}
+                  disabled={firing || !probeQuery.trim()}
+                >
+                  {firing ? 'Firing…' : `Fire ${clampCount(probeCount)} hits`}
+                </button>
+              </div>
+
+              {burstError && <div className="error-banner">{burstError}</div>}
+
+              {burst && (
+                <div className="kpi-burst-grid">
+                  <div className="kpi-burst-tile">
+                    <span>Sent / ok</span>
+                    <strong>
+                      {burst.sent} / {burst.ok}
+                    </strong>
+                  </div>
+                  <div className="kpi-burst-tile">
+                    <span>Failed</span>
+                    <strong>{burst.failed}</strong>
+                  </div>
+                  <div className="kpi-burst-tile">
+                    <span>Burst p50</span>
+                    <strong>{formatMs(burst.p50)}</strong>
+                  </div>
+                  <div className="kpi-burst-tile">
+                    <span>Burst p95</span>
+                    <strong>{formatMs(burst.p95)}</strong>
+                  </div>
+                  <div className="kpi-burst-tile">
+                    <span>Average</span>
+                    <strong>{formatMs(burst.avg_ms)}</strong>
+                  </div>
+                  <div className="kpi-burst-tile">
+                    <span>Wall clock</span>
+                    <strong>{formatMs(burst.wall_ms)}</strong>
+                  </div>
+                </div>
+              )}
+            </div>
+          </aside>
+        </div>
       )}
     </div>
   )

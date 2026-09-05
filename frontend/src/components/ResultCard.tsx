@@ -99,6 +99,8 @@ export default function ResultCard({ result, requestId, rank, query }: Props) {
   const snippetHtml = highlightContaining(decodeSnippet(result.snippet), query)
   const titleHtml = highlightContaining(result.title, query)
   const fileName = doc?.title || result.title
+  const closest = doc?.closest ?? []
+  const occurrences = doc?.occurrences ?? []
   const source = result.source || doc?.source || ''
   const createdAt = result.created_at
   const titleIsUrl = looksLikeUrl(result.source)
@@ -239,9 +241,9 @@ export default function ResultCard({ result, requestId, rank, query }: Props) {
                 <h3 className="doc-modal-label">Word occurrences</h3>
                 {docLoading && !doc ? (
                   <p className="doc-modal-muted">Counting matches…</p>
-                ) : doc && doc.occurrences.length > 0 ? (
+                ) : doc && occurrences.length > 0 ? (
                   <ul className="occur-list">
-                    {doc.occurrences.map(row => (
+                    {occurrences.map(row => (
                       <li key={row.term} className="occur-chip">
                         <em>{row.term}</em>
                         <span>{row.count}</span>
@@ -250,6 +252,19 @@ export default function ResultCard({ result, requestId, rank, query }: Props) {
                   </ul>
                 ) : (
                   <p className="doc-modal-muted">No query-term matches in this file.</p>
+                )}
+                {closest.length > 0 && (
+                  <>
+                    <h3 className="doc-modal-label occur-sem-label">Closest words</h3>
+                    <ul className="occur-list">
+                      {closest.map(row => (
+                        <li key={row.term} className="occur-chip occur-chip-sem">
+                          <em className="sem">{row.term}</em>
+                          <span>{row.count}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  </>
                 )}
               </section>
 
@@ -273,6 +288,19 @@ export default function ResultCard({ result, requestId, rank, query }: Props) {
                     <span className="kpi-tile-label">Vector</span>
                     <span className="kpi-tile-value">{result.vector_score.toFixed(3)}</span>
                     <span className="kpi-tile-sub">norm {result.vector_norm.toFixed(3)}</span>
+                  </div>
+                  <div className="kpi-tile">
+                    <span className="kpi-tile-label">Closest</span>
+                    <span className="kpi-tile-value kpi-tile-word">
+                      {closest[0]?.term ?? '—'}
+                    </span>
+                    <span className="kpi-tile-sub">
+                      {closest[0]
+                        ? `${closest[0].count}× · ${closest[0].score.toFixed(3)}`
+                        : docLoading
+                          ? '…'
+                          : 'no neighbour ≥ 0.2'}
+                    </span>
                   </div>
                 </div>
               </section>

@@ -1,6 +1,10 @@
 {
-  "generated_at": "2026-09-03T23:46:45Z",
+  "generated_at": "2026-09-05T06:59:10Z",
   "files": [
+    {
+      "from": "backend/app/__main__.py",
+      "to": "backend/app/run.py"
+    },
     {
       "from": "backend/app/api/main.py",
       "to": "backend/app/api/deps.py"
@@ -82,6 +86,14 @@
       "to": "backend/app/ingest/__init__.py"
     },
     {
+      "from": "backend/app/loadtest/__init__.py",
+      "to": "backend/app/loadtest/burst.py"
+    },
+    {
+      "from": "backend/app/loadtest/locustfile.py",
+      "to": "backend/app/loadtest/burst.py"
+    },
+    {
       "from": "backend/app/observability/logging.py",
       "to": "backend/app/storage/repo.py"
     },
@@ -146,6 +158,14 @@
     {
       "from": "backend/app/api/routes_dashboard.py::dashboard_experiments",
       "to": "backend/app/api/routes_dashboard.py::_read_experiments"
+    },
+    {
+      "from": "backend/app/api/routes_dashboard.py::dashboard_kpi_load_test",
+      "to": "backend/app/api/routes_dashboard.py::_db"
+    },
+    {
+      "from": "backend/app/api/routes_dashboard.py::dashboard_kpi_load_test",
+      "to": "backend/app/loadtest/burst.py::run_search_burst"
     },
     {
       "from": "backend/app/api/routes_dashboard.py::dashboard_kpi_summary",
@@ -225,7 +245,11 @@
     },
     {
       "from": "backend/app/api/routes_search.py::get_document",
-      "to": "backend/app/search/highlight.py::highlight_containing"
+      "to": "backend/app/search/highlight.py::closest_document_words"
+    },
+    {
+      "from": "backend/app/api/routes_search.py::get_document",
+      "to": "backend/app/search/highlight.py::highlight_document"
     },
     {
       "from": "backend/app/api/routes_search.py::get_document",
@@ -364,6 +388,14 @@
       "to": "backend/app/observability/logging.py::_find_flagged"
     },
     {
+      "from": "backend/app/run.py::main",
+      "to": "backend/app/run.py::ensure_venv"
+    },
+    {
+      "from": "backend/app/run.py::main",
+      "to": "backend/app/config.py::load_config"
+    },
+    {
       "from": "backend/app/search/bm25.py::BM25Index.query",
       "to": "backend/app/search/tokenize.py::tokenize"
     },
@@ -374,6 +406,10 @@
     {
       "from": "backend/app/search/embedder.py::SentenceTransformerEmbedder.__init__",
       "to": "backend/app/config.py::load_config"
+    },
+    {
+      "from": "backend/app/search/highlight.py::highlight_containing",
+      "to": "backend/app/search/highlight.py::highlight_document"
     },
     {
       "from": "backend/app/search/hybrid.py::HybridSearcher.search",
@@ -462,6 +498,22 @@
     {
       "from": "scripts/fetch_until_done.py::main",
       "to": "scripts/fetch_corpus.py::main"
+    },
+    {
+      "from": "scripts/generate_contracts.py::main",
+      "to": "scripts/generate_contracts.py::parse_args"
+    },
+    {
+      "from": "scripts/generate_contracts.py::main",
+      "to": "scripts/generate_contracts.py::repo_root"
+    },
+    {
+      "from": "scripts/generate_contracts.py::main",
+      "to": "scripts/generate_contracts.py::generate_specs"
+    },
+    {
+      "from": "scripts/generate_contracts.py::main",
+      "to": "scripts/generate_contracts.py::write_contracts"
     },
     {
       "from": "scripts/qrels_helper.py::main",

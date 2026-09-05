@@ -13,6 +13,11 @@ import html
 import re
 from collections.abc import Iterable
 
+import numpy as np
+
+from .embedder import Embedder
+from .tokenize import tokenize
+
 ELLIPSIS = "\u2026"
 
 
@@ -133,26 +138,16 @@ def unique_terms(terms: Iterable[str]) -> list[str]:
 def term_matches_word(term: str, word: str) -> bool:
     """True if ``term`` should highlight ``word`` (both already lowercased).
 
-    Exact tokens always match. Otherwise the term must be at least three
-    characters and either appear inside the word, prefix it, or share a
-    three-character stem so ``chec`` still lights up ``Chemical``.
+    Exact tokens always match. A term of at least three characters also
+    matches when it appears inside the word (including as a prefix), so
+    ``chem`` still lights up ``Chemical``. A shared prefix alone is not
+    enough: ``chica`` must not match ``chilli``.
     """
     if not term or not word:
         return False
     if word == term:
         return True
-    if len(term) >= 3 and (term in word or word.startswith(term)):
-        return True
-    if len(word) >= 3 and term.startswith(word):
-        return True
-    if len(term) < 3:
-        return False
-    shared = 0
-    for left, right in zip(term, word, strict=False):
-        if left != right:
-            break
-        shared += 1
-    return shared >= 3
+    return len(term) >= 3 and term in word
 
 
 def count_occurrences(text: str, terms: Iterable[str]) -> list[tuple[str, int]]:
@@ -169,12 +164,27 @@ def highlight_containing(text: str, terms: Iterable[str]) -> str:
     """HTML-escape ``text`` and wrap every word that matches a query term.
 
     Unlike ``make_snippet`` this is not limited to whole-word equality, so a
-    query like ``chec`` highlights ``Chemical``. Empty terms leave the escaped
+    query like ``chem`` highlights ``Chemical``. Empty terms leave the escaped
     text unchanged. The result is safe to drop into markup.
     """
+    return highlight_document(text, terms, [])
+
+
+def highlight_document(
+    text: str,
+    lexical: Iterable[str],
+    semantic: Iterable[str] | None = None,
+) -> str:
+    """Escape ``text`` and wrap lexical hits in ``<em>``, semantic in ``<em class="sem">``.
+
+    Lexical matches win when a word qualifies for both. Semantic wrapping is
+    exact token equality so a neighbour like ``batman`` does not light up
+    unrelated prefixes. Empty term lists leave the escaped text unchanged.
+    """
     escaped = html.escape(text)
-    needles = unique_terms(terms)
-    if not needles:
+    lex = unique_terms(lexical)
+    sem = [term for term in unique_terms(semantic or []) if term not in lex]
+    if not lex and not sem:
         return escaped
 
     parts: list[str] = []
@@ -182,11 +192,68 @@ def highlight_containing(text: str, terms: Iterable[str]) -> str:
     for match in _WORD_RE.finditer(escaped):
         word = match.group()
         low = word.lower()
-        if any(term_matches_word(term, low) for term in needles):
+        if any(term_matches_word(term, low) for term in lex):
             parts.append(escaped[cursor : match.start()])
             parts.append("<em>")
             parts.append(word)
             parts.append("</em>")
             cursor = match.end()
+        elif any(term == low for term in sem):
+            parts.append(escaped[cursor : match.start()])
+            parts.append('<em class="sem">')
+            parts.append(word)
+            parts.append("</em>")
+            cursor = match.end()
     parts.append(escaped[cursor:])
     return "".join(parts)
+
+
+def closest_document_words(
+    text: str,
+    query: str,
+    embedder: Embedder,
+    *,
+    limit: int = 1,
+    min_score: float = 0.2,
+    max_vocab: int = 250,
+) -> list[tuple[str, int, float]]:
+    """Return the document tokens nearest the query embedding.
+
+    Query terms and their lexical containers are skipped so the neighbour is
+    a semantic near-miss, not the typed word. Tokens below ``min_score`` are
+    dropped. Each row is ``(term, occurrence_count, cosine)``.
+    """
+    query_terms = unique_terms(tokenize(query))
+    if not query_terms or limit <= 0:
+        return []
+
+    counts: dict[str, int] = {}
+    for token in tokenize(text):
+        counts[token] = counts.get(token, 0) + 1
+    candidates = [
+        word
+        for word in counts
+        if len(word) >= 4
+        and not any(term_matches_word(term, word) for term in query_terms)
+    ]
+    candidates = sorted(candidates, key=lambda word: (-counts[word], word))
+    candidates = candidates[:max_vocab]
+    if not candidates:
+        return []
+
+    vectors = embedder.encode([query, *candidates])
+    query_vec = vectors[0]
+    scores = np.asarray(vectors[1:] @ query_vec, dtype=np.float64)
+    ranked = sorted(
+        zip(candidates, scores),
+        key=lambda pair: (-float(pair[1]), pair[0]),
+    )
+    out: list[tuple[str, int, float]] = []
+    for word, score in ranked:
+        value = float(score)
+        if value < min_score:
+            continue
+        out.append((word, counts[word], value))
+        if len(out) >= limit:
+            break
+    return out

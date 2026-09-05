@@ -1,8 +1,9 @@
 {
-  "generated_at": "2026-09-03T23:46:45Z",
+  "generated_at": "2026-09-05T06:59:10Z",
   "files": {
     "roots": [
       "backend/app/__init__.py",
+      "backend/app/__main__.py",
       "backend/app/api/main.py",
       "backend/app/api/ratelimit.py",
       "backend/app/callgraph/__init__.py",
@@ -10,15 +11,19 @@
       "backend/app/eval/__main__.py",
       "backend/app/index/__main__.py",
       "backend/app/ingest/__main__.py",
+      "backend/app/loadtest/__init__.py",
+      "backend/app/loadtest/locustfile.py",
       "backend/app/observability/logging.py",
       "frontend/src/main.tsx",
       "scripts/_check_titles.py",
       "scripts/fetch_until_done.py",
+      "scripts/generate_contracts.py",
       "scripts/qrels_helper.py"
     ],
     "layers": [
       [
         "backend/app/__init__.py",
+        "backend/app/__main__.py",
         "backend/app/api/main.py",
         "backend/app/api/ratelimit.py",
         "backend/app/callgraph/__init__.py",
@@ -26,13 +31,17 @@
         "backend/app/eval/__main__.py",
         "backend/app/index/__main__.py",
         "backend/app/ingest/__main__.py",
+        "backend/app/loadtest/__init__.py",
+        "backend/app/loadtest/locustfile.py",
         "backend/app/observability/logging.py",
         "frontend/src/main.tsx",
         "scripts/_check_titles.py",
         "scripts/fetch_until_done.py",
+        "scripts/generate_contracts.py",
         "scripts/qrels_helper.py"
       ],
       [
+        "backend/app/run.py",
         "backend/app/api/deps.py",
         "backend/app/api/middleware.py",
         "backend/app/api/routes_dashboard.py",
@@ -47,12 +56,17 @@
         "backend/app/search/bm25.py",
         "backend/app/search/vector.py",
         "backend/app/ingest/__init__.py",
+        "backend/app/loadtest/burst.py",
         "backend/app/storage/repo.py",
         "frontend/src/App.tsx",
         "scripts/fetch_corpus.py"
       ]
     ],
     "edges": [
+      {
+        "from": "backend/app/__main__.py",
+        "to": "backend/app/run.py"
+      },
       {
         "from": "backend/app/api/main.py",
         "to": "backend/app/api/deps.py"
@@ -132,6 +146,14 @@
       {
         "from": "backend/app/ingest/__main__.py",
         "to": "backend/app/ingest/__init__.py"
+      },
+      {
+        "from": "backend/app/loadtest/__init__.py",
+        "to": "backend/app/loadtest/burst.py"
+      },
+      {
+        "from": "backend/app/loadtest/locustfile.py",
+        "to": "backend/app/loadtest/burst.py"
       },
       {
         "from": "backend/app/observability/logging.py",
@@ -148,6 +170,10 @@
     ],
     "hops": [
       {
+        "from": "backend/app/__main__.py",
+        "to": "backend/app/run.py"
+      },
+      {
         "from": "backend/app/api/main.py",
         "to": "backend/app/api/deps.py"
       },
@@ -228,6 +254,14 @@
         "to": "backend/app/ingest/__init__.py"
       },
       {
+        "from": "backend/app/loadtest/__init__.py",
+        "to": "backend/app/loadtest/burst.py"
+      },
+      {
+        "from": "backend/app/loadtest/locustfile.py",
+        "to": "backend/app/loadtest/burst.py"
+      },
+      {
         "from": "backend/app/observability/logging.py",
         "to": "backend/app/storage/repo.py"
       },
@@ -242,6 +276,7 @@
     ],
     "topo": [
       "backend/app/__init__.py",
+      "backend/app/__main__.py",
       "backend/app/api/main.py",
       "backend/app/api/ratelimit.py",
       "backend/app/callgraph/__init__.py",
@@ -249,11 +284,15 @@
       "backend/app/eval/__main__.py",
       "backend/app/index/__main__.py",
       "backend/app/ingest/__main__.py",
+      "backend/app/loadtest/__init__.py",
+      "backend/app/loadtest/locustfile.py",
       "backend/app/observability/logging.py",
       "frontend/src/main.tsx",
       "scripts/_check_titles.py",
       "scripts/fetch_until_done.py",
+      "scripts/generate_contracts.py",
       "scripts/qrels_helper.py",
+      "backend/app/run.py",
       "backend/app/api/deps.py",
       "backend/app/api/middleware.py",
       "backend/app/api/routes_dashboard.py",
@@ -268,12 +307,14 @@
       "backend/app/search/embedder.py",
       "backend/app/search/vector.py",
       "backend/app/ingest/__init__.py",
+      "backend/app/loadtest/burst.py",
       "backend/app/storage/repo.py",
       "frontend/src/App.tsx",
       "scripts/fetch_corpus.py"
     ],
     "nodes": [
       "backend/app/__init__.py",
+      "backend/app/__main__.py",
       "backend/app/api/main.py",
       "backend/app/api/ratelimit.py",
       "backend/app/callgraph/__init__.py",
@@ -281,11 +322,15 @@
       "backend/app/eval/__main__.py",
       "backend/app/index/__main__.py",
       "backend/app/ingest/__main__.py",
+      "backend/app/loadtest/__init__.py",
+      "backend/app/loadtest/locustfile.py",
       "backend/app/observability/logging.py",
       "frontend/src/main.tsx",
       "scripts/_check_titles.py",
       "scripts/fetch_until_done.py",
+      "scripts/generate_contracts.py",
       "scripts/qrels_helper.py",
+      "backend/app/run.py",
       "backend/app/api/deps.py",
       "backend/app/api/middleware.py",
       "backend/app/api/routes_dashboard.py",
@@ -300,6 +345,7 @@
       "backend/app/search/bm25.py",
       "backend/app/search/vector.py",
       "backend/app/ingest/__init__.py",
+      "backend/app/loadtest/burst.py",
       "backend/app/storage/repo.py",
       "frontend/src/App.tsx",
       "scripts/fetch_corpus.py"
@@ -315,6 +361,7 @@
       "backend/app/api/ratelimit.py::RateLimiter.allow",
       "backend/app/api/ratelimit.py::rate_limit",
       "backend/app/api/routes_dashboard.py::dashboard_experiments",
+      "backend/app/api/routes_dashboard.py::dashboard_kpi_load_test",
       "backend/app/api/routes_dashboard.py::dashboard_kpi_summary",
       "backend/app/api/routes_dashboard.py::dashboard_kpi_top_queries",
       "backend/app/api/routes_dashboard.py::dashboard_kpi_volume",
@@ -335,11 +382,14 @@
       "backend/app/index/__main__.py::main",
       "backend/app/index/metadata.py::IndexMetadata.save",
       "backend/app/ingest/__init__.py::main",
+      "backend/app/loadtest/burst.py::_one_search",
+      "backend/app/loadtest/locustfile.py::SearchUser.search",
       "backend/app/observability/logging.py::JsonFormatter.format",
       "backend/app/observability/logging.py::SqliteLogHandler.__init__",
       "backend/app/observability/logging.py::SqliteLogHandler.emit",
       "backend/app/observability/logging.py::configure",
       "backend/app/observability/metrics.py::reset",
+      "backend/app/run.py::main",
       "backend/app/search/bm25.py::BM25Index.__init__",
       "backend/app/search/bm25.py::BM25Index.query",
       "backend/app/search/bm25.py::BM25Index.save",
@@ -347,7 +397,9 @@
       "backend/app/search/embedder.py::Embedder.encode",
       "backend/app/search/embedder.py::SentenceTransformerEmbedder.__init__",
       "backend/app/search/embedder.py::SentenceTransformerEmbedder.encode",
+      "backend/app/search/highlight.py::highlight_containing",
       "backend/app/search/hybrid.py::HybridSearcher.__init__",
+      "backend/app/search/hybrid.py::HybridSearcher.embedder",
       "backend/app/search/hybrid.py::HybridSearcher.search",
       "backend/app/search/normalize.py::z_score",
       "backend/app/search/vector.py::VectorIndex.__init__",
@@ -378,10 +430,13 @@
       "frontend/src/pages/DebugPage.tsx::severityClass",
       "frontend/src/pages/DebugPage.tsx::windowFromSince",
       "frontend/src/pages/KpisPage.tsx::fetchJson",
+      "frontend/src/pages/KpisPage.tsx::onKey",
       "frontend/src/pages/KpisPage.tsx::parseBucket",
       "frontend/src/pages/SearchPage.tsx::handleClear",
       "frontend/src/pages/SearchPage.tsx::handleKeyDown",
       "scripts/fetch_until_done.py::main",
+      "scripts/generate_contracts.py::created_at_for",
+      "scripts/generate_contracts.py::main",
       "scripts/qrels_helper.py::main"
     ],
     "layers": [
@@ -394,6 +449,7 @@
         "backend/app/api/ratelimit.py::RateLimiter.allow",
         "backend/app/api/ratelimit.py::rate_limit",
         "backend/app/api/routes_dashboard.py::dashboard_experiments",
+        "backend/app/api/routes_dashboard.py::dashboard_kpi_load_test",
         "backend/app/api/routes_dashboard.py::dashboard_kpi_summary",
         "backend/app/api/routes_dashboard.py::dashboard_kpi_top_queries",
         "backend/app/api/routes_dashboard.py::dashboard_kpi_volume",
@@ -414,11 +470,14 @@
         "backend/app/index/__main__.py::main",
         "backend/app/index/metadata.py::IndexMetadata.save",
         "backend/app/ingest/__init__.py::main",
+        "backend/app/loadtest/burst.py::_one_search",
+        "backend/app/loadtest/locustfile.py::SearchUser.search",
         "backend/app/observability/logging.py::JsonFormatter.format",
         "backend/app/observability/logging.py::SqliteLogHandler.__init__",
         "backend/app/observability/logging.py::SqliteLogHandler.emit",
         "backend/app/observability/logging.py::configure",
         "backend/app/observability/metrics.py::reset",
+        "backend/app/run.py::main",
         "backend/app/search/bm25.py::BM25Index.__init__",
         "backend/app/search/bm25.py::BM25Index.query",
         "backend/app/search/bm25.py::BM25Index.save",
@@ -426,7 +485,9 @@
         "backend/app/search/embedder.py::Embedder.encode",
         "backend/app/search/embedder.py::SentenceTransformerEmbedder.__init__",
         "backend/app/search/embedder.py::SentenceTransformerEmbedder.encode",
+        "backend/app/search/highlight.py::highlight_containing",
         "backend/app/search/hybrid.py::HybridSearcher.__init__",
+        "backend/app/search/hybrid.py::HybridSearcher.embedder",
         "backend/app/search/hybrid.py::HybridSearcher.search",
         "backend/app/search/normalize.py::z_score",
         "backend/app/search/vector.py::VectorIndex.__init__",
@@ -457,10 +518,13 @@
         "frontend/src/pages/DebugPage.tsx::severityClass",
         "frontend/src/pages/DebugPage.tsx::windowFromSince",
         "frontend/src/pages/KpisPage.tsx::fetchJson",
+        "frontend/src/pages/KpisPage.tsx::onKey",
         "frontend/src/pages/KpisPage.tsx::parseBucket",
         "frontend/src/pages/SearchPage.tsx::handleClear",
         "frontend/src/pages/SearchPage.tsx::handleKeyDown",
         "scripts/fetch_until_done.py::main",
+        "scripts/generate_contracts.py::created_at_for",
+        "scripts/generate_contracts.py::main",
         "scripts/qrels_helper.py::main"
       ],
       [
@@ -475,8 +539,9 @@
         "backend/app/api/middleware.py::_capture_result_count",
         "backend/app/api/ratelimit.py::RateLimiter.take",
         "backend/app/api/routes_dashboard.py::_read_experiments",
-        "backend/app/api/routes_dashboard.py::parse_window",
         "backend/app/api/routes_dashboard.py::_db",
+        "backend/app/loadtest/burst.py::run_search_burst",
+        "backend/app/api/routes_dashboard.py::parse_window",
         "backend/app/storage/repo.py::kpi_summary",
         "backend/app/storage/repo.py::top_queries",
         "backend/app/storage/repo.py::request_volume",
@@ -485,7 +550,8 @@
         "backend/app/api/routes_search.py::_get_service",
         "backend/app/storage/repo.py::insert_feedback",
         "backend/app/search/tokenize.py::tokenize",
-        "backend/app/search/highlight.py::highlight_containing",
+        "backend/app/search/highlight.py::closest_document_words",
+        "backend/app/search/highlight.py::highlight_document",
         "backend/app/search/highlight.py::count_occurrences",
         "backend/app/api/deps.py::get_version",
         "backend/app/api/deps.py::get_commit",
@@ -514,6 +580,7 @@
         "backend/app/ingest/__init__.py::ingest",
         "backend/app/storage/repo.py::insert_log",
         "backend/app/observability/logging.py::_find_flagged",
+        "backend/app/run.py::ensure_venv",
         "backend/app/search/filters.py::apply",
         "backend/app/search/normalize.py::normalize",
         "backend/app/search/highlight.py::make_snippet",
@@ -535,6 +602,10 @@
         "scripts/fetch_corpus.py::pending_rows",
         "scripts/fetch_corpus.py::write_attribution",
         "scripts/fetch_corpus.py::main",
+        "scripts/generate_contracts.py::parse_args",
+        "scripts/generate_contracts.py::repo_root",
+        "scripts/generate_contracts.py::generate_specs",
+        "scripts/generate_contracts.py::write_contracts",
         "scripts/qrels_helper.py::label_queries",
         "scripts/qrels_helper.py::read_queries"
       ]
@@ -593,6 +664,14 @@
         "to": "backend/app/api/routes_dashboard.py::_read_experiments"
       },
       {
+        "from": "backend/app/api/routes_dashboard.py::dashboard_kpi_load_test",
+        "to": "backend/app/api/routes_dashboard.py::_db"
+      },
+      {
+        "from": "backend/app/api/routes_dashboard.py::dashboard_kpi_load_test",
+        "to": "backend/app/loadtest/burst.py::run_search_burst"
+      },
+      {
         "from": "backend/app/api/routes_dashboard.py::dashboard_kpi_summary",
         "to": "backend/app/api/routes_dashboard.py::parse_window"
       },
@@ -670,7 +749,11 @@
       },
       {
         "from": "backend/app/api/routes_search.py::get_document",
-        "to": "backend/app/search/highlight.py::highlight_containing"
+        "to": "backend/app/search/highlight.py::closest_document_words"
+      },
+      {
+        "from": "backend/app/api/routes_search.py::get_document",
+        "to": "backend/app/search/highlight.py::highlight_document"
       },
       {
         "from": "backend/app/api/routes_search.py::get_document",
@@ -809,6 +892,14 @@
         "to": "backend/app/observability/logging.py::_find_flagged"
       },
       {
+        "from": "backend/app/run.py::main",
+        "to": "backend/app/run.py::ensure_venv"
+      },
+      {
+        "from": "backend/app/run.py::main",
+        "to": "backend/app/config.py::load_config"
+      },
+      {
         "from": "backend/app/search/bm25.py::BM25Index.query",
         "to": "backend/app/search/tokenize.py::tokenize"
       },
@@ -819,6 +910,10 @@
       {
         "from": "backend/app/search/embedder.py::SentenceTransformerEmbedder.__init__",
         "to": "backend/app/config.py::load_config"
+      },
+      {
+        "from": "backend/app/search/highlight.py::highlight_containing",
+        "to": "backend/app/search/highlight.py::highlight_document"
       },
       {
         "from": "backend/app/search/hybrid.py::HybridSearcher.search",
@@ -907,6 +1002,22 @@
       {
         "from": "scripts/fetch_until_done.py::main",
         "to": "scripts/fetch_corpus.py::main"
+      },
+      {
+        "from": "scripts/generate_contracts.py::main",
+        "to": "scripts/generate_contracts.py::parse_args"
+      },
+      {
+        "from": "scripts/generate_contracts.py::main",
+        "to": "scripts/generate_contracts.py::repo_root"
+      },
+      {
+        "from": "scripts/generate_contracts.py::main",
+        "to": "scripts/generate_contracts.py::generate_specs"
+      },
+      {
+        "from": "scripts/generate_contracts.py::main",
+        "to": "scripts/generate_contracts.py::write_contracts"
       },
       {
         "from": "scripts/qrels_helper.py::main",
@@ -971,6 +1082,14 @@
         "to": "backend/app/api/routes_dashboard.py::_read_experiments"
       },
       {
+        "from": "backend/app/api/routes_dashboard.py::dashboard_kpi_load_test",
+        "to": "backend/app/api/routes_dashboard.py::_db"
+      },
+      {
+        "from": "backend/app/api/routes_dashboard.py::dashboard_kpi_load_test",
+        "to": "backend/app/loadtest/burst.py::run_search_burst"
+      },
+      {
         "from": "backend/app/api/routes_dashboard.py::dashboard_kpi_summary",
         "to": "backend/app/api/routes_dashboard.py::parse_window"
       },
@@ -1048,7 +1167,11 @@
       },
       {
         "from": "backend/app/api/routes_search.py::get_document",
-        "to": "backend/app/search/highlight.py::highlight_containing"
+        "to": "backend/app/search/highlight.py::closest_document_words"
+      },
+      {
+        "from": "backend/app/api/routes_search.py::get_document",
+        "to": "backend/app/search/highlight.py::highlight_document"
       },
       {
         "from": "backend/app/api/routes_search.py::get_document",
@@ -1187,6 +1310,14 @@
         "to": "backend/app/observability/logging.py::_find_flagged"
       },
       {
+        "from": "backend/app/run.py::main",
+        "to": "backend/app/run.py::ensure_venv"
+      },
+      {
+        "from": "backend/app/run.py::main",
+        "to": "backend/app/config.py::load_config"
+      },
+      {
         "from": "backend/app/search/bm25.py::BM25Index.query",
         "to": "backend/app/search/tokenize.py::tokenize"
       },
@@ -1197,6 +1328,10 @@
       {
         "from": "backend/app/search/embedder.py::SentenceTransformerEmbedder.__init__",
         "to": "backend/app/config.py::load_config"
+      },
+      {
+        "from": "backend/app/search/highlight.py::highlight_containing",
+        "to": "backend/app/search/highlight.py::highlight_document"
       },
       {
         "from": "backend/app/search/hybrid.py::HybridSearcher.search",
@@ -1287,6 +1422,22 @@
         "to": "scripts/fetch_corpus.py::main"
       },
       {
+        "from": "scripts/generate_contracts.py::main",
+        "to": "scripts/generate_contracts.py::parse_args"
+      },
+      {
+        "from": "scripts/generate_contracts.py::main",
+        "to": "scripts/generate_contracts.py::repo_root"
+      },
+      {
+        "from": "scripts/generate_contracts.py::main",
+        "to": "scripts/generate_contracts.py::generate_specs"
+      },
+      {
+        "from": "scripts/generate_contracts.py::main",
+        "to": "scripts/generate_contracts.py::write_contracts"
+      },
+      {
         "from": "scripts/qrels_helper.py::main",
         "to": "scripts/qrels_helper.py::label_queries"
       },
@@ -1304,6 +1455,7 @@
       "backend/app/api/ratelimit.py::RateLimiter.allow",
       "backend/app/api/ratelimit.py::rate_limit",
       "backend/app/api/routes_dashboard.py::dashboard_experiments",
+      "backend/app/api/routes_dashboard.py::dashboard_kpi_load_test",
       "backend/app/api/routes_dashboard.py::dashboard_kpi_summary",
       "backend/app/api/routes_dashboard.py::dashboard_kpi_top_queries",
       "backend/app/api/routes_dashboard.py::dashboard_kpi_volume",
@@ -1324,11 +1476,14 @@
       "backend/app/index/__main__.py::main",
       "backend/app/index/metadata.py::IndexMetadata.save",
       "backend/app/ingest/__init__.py::main",
+      "backend/app/loadtest/burst.py::_one_search",
+      "backend/app/loadtest/locustfile.py::SearchUser.search",
       "backend/app/observability/logging.py::JsonFormatter.format",
       "backend/app/observability/logging.py::SqliteLogHandler.__init__",
       "backend/app/observability/logging.py::SqliteLogHandler.emit",
       "backend/app/observability/logging.py::configure",
       "backend/app/observability/metrics.py::reset",
+      "backend/app/run.py::main",
       "backend/app/search/bm25.py::BM25Index.__init__",
       "backend/app/search/bm25.py::BM25Index.query",
       "backend/app/search/bm25.py::BM25Index.save",
@@ -1336,7 +1491,9 @@
       "backend/app/search/embedder.py::Embedder.encode",
       "backend/app/search/embedder.py::SentenceTransformerEmbedder.__init__",
       "backend/app/search/embedder.py::SentenceTransformerEmbedder.encode",
+      "backend/app/search/highlight.py::highlight_containing",
       "backend/app/search/hybrid.py::HybridSearcher.__init__",
+      "backend/app/search/hybrid.py::HybridSearcher.embedder",
       "backend/app/search/hybrid.py::HybridSearcher.search",
       "backend/app/search/normalize.py::z_score",
       "backend/app/search/vector.py::VectorIndex.__init__",
@@ -1367,10 +1524,13 @@
       "frontend/src/pages/DebugPage.tsx::severityClass",
       "frontend/src/pages/DebugPage.tsx::windowFromSince",
       "frontend/src/pages/KpisPage.tsx::fetchJson",
+      "frontend/src/pages/KpisPage.tsx::onKey",
       "frontend/src/pages/KpisPage.tsx::parseBucket",
       "frontend/src/pages/SearchPage.tsx::handleClear",
       "frontend/src/pages/SearchPage.tsx::handleKeyDown",
       "scripts/fetch_until_done.py::main",
+      "scripts/generate_contracts.py::created_at_for",
+      "scripts/generate_contracts.py::main",
       "scripts/qrels_helper.py::main",
       "backend/app/api/deps.py::SearchService.load",
       "backend/app/storage/db.py::connect",
@@ -1382,6 +1542,7 @@
       "backend/app/observability/metrics.py::record_search_latency",
       "backend/app/api/ratelimit.py::RateLimiter.take",
       "backend/app/api/routes_dashboard.py::_read_experiments",
+      "backend/app/loadtest/burst.py::run_search_burst",
       "backend/app/storage/repo.py::kpi_summary",
       "backend/app/storage/repo.py::top_queries",
       "backend/app/storage/repo.py::request_volume",
@@ -1390,8 +1551,8 @@
       "backend/app/api/routes_dashboard.py::parse_window",
       "backend/app/storage/repo.py::select_logs",
       "backend/app/storage/repo.py::insert_feedback",
+      "backend/app/search/highlight.py::closest_document_words",
       "backend/app/search/highlight.py::count_occurrences",
-      "backend/app/search/highlight.py::highlight_containing",
       "backend/app/api/deps.py::get_commit",
       "backend/app/api/deps.py::get_version",
       "backend/app/api/routes_search.py::_index_metadata",
@@ -1420,7 +1581,9 @@
       "backend/app/ingest/__init__.py::ingest",
       "backend/app/storage/repo.py::insert_log",
       "backend/app/observability/logging.py::_find_flagged",
+      "backend/app/run.py::ensure_venv",
       "backend/app/config.py::load_config",
+      "backend/app/search/highlight.py::highlight_document",
       "backend/app/search/filters.py::apply",
       "backend/app/search/highlight.py::make_snippet",
       "backend/app/search/normalize.py::normalize",
@@ -1443,6 +1606,10 @@
       "scripts/fetch_corpus.py::repo_root",
       "scripts/fetch_corpus.py::write_attribution",
       "scripts/fetch_until_done.py::parse_args",
+      "scripts/generate_contracts.py::generate_specs",
+      "scripts/generate_contracts.py::parse_args",
+      "scripts/generate_contracts.py::repo_root",
+      "scripts/generate_contracts.py::write_contracts",
       "scripts/qrels_helper.py::label_queries",
       "scripts/qrels_helper.py::read_queries"
     ],
@@ -1455,6 +1622,7 @@
       "backend/app/api/ratelimit.py::RateLimiter.allow",
       "backend/app/api/ratelimit.py::rate_limit",
       "backend/app/api/routes_dashboard.py::dashboard_experiments",
+      "backend/app/api/routes_dashboard.py::dashboard_kpi_load_test",
       "backend/app/api/routes_dashboard.py::dashboard_kpi_summary",
       "backend/app/api/routes_dashboard.py::dashboard_kpi_top_queries",
       "backend/app/api/routes_dashboard.py::dashboard_kpi_volume",
@@ -1475,11 +1643,14 @@
       "backend/app/index/__main__.py::main",
       "backend/app/index/metadata.py::IndexMetadata.save",
       "backend/app/ingest/__init__.py::main",
+      "backend/app/loadtest/burst.py::_one_search",
+      "backend/app/loadtest/locustfile.py::SearchUser.search",
       "backend/app/observability/logging.py::JsonFormatter.format",
       "backend/app/observability/logging.py::SqliteLogHandler.__init__",
       "backend/app/observability/logging.py::SqliteLogHandler.emit",
       "backend/app/observability/logging.py::configure",
       "backend/app/observability/metrics.py::reset",
+      "backend/app/run.py::main",
       "backend/app/search/bm25.py::BM25Index.__init__",
       "backend/app/search/bm25.py::BM25Index.query",
       "backend/app/search/bm25.py::BM25Index.save",
@@ -1487,7 +1658,9 @@
       "backend/app/search/embedder.py::Embedder.encode",
       "backend/app/search/embedder.py::SentenceTransformerEmbedder.__init__",
       "backend/app/search/embedder.py::SentenceTransformerEmbedder.encode",
+      "backend/app/search/highlight.py::highlight_containing",
       "backend/app/search/hybrid.py::HybridSearcher.__init__",
+      "backend/app/search/hybrid.py::HybridSearcher.embedder",
       "backend/app/search/hybrid.py::HybridSearcher.search",
       "backend/app/search/normalize.py::z_score",
       "backend/app/search/vector.py::VectorIndex.__init__",
@@ -1518,10 +1691,13 @@
       "frontend/src/pages/DebugPage.tsx::severityClass",
       "frontend/src/pages/DebugPage.tsx::windowFromSince",
       "frontend/src/pages/KpisPage.tsx::fetchJson",
+      "frontend/src/pages/KpisPage.tsx::onKey",
       "frontend/src/pages/KpisPage.tsx::parseBucket",
       "frontend/src/pages/SearchPage.tsx::handleClear",
       "frontend/src/pages/SearchPage.tsx::handleKeyDown",
       "scripts/fetch_until_done.py::main",
+      "scripts/generate_contracts.py::created_at_for",
+      "scripts/generate_contracts.py::main",
       "scripts/qrels_helper.py::main",
       "backend/app/api/deps.py::SearchService.load",
       "backend/app/storage/db.py::connect",
@@ -1534,8 +1710,9 @@
       "backend/app/api/middleware.py::_capture_result_count",
       "backend/app/api/ratelimit.py::RateLimiter.take",
       "backend/app/api/routes_dashboard.py::_read_experiments",
-      "backend/app/api/routes_dashboard.py::parse_window",
       "backend/app/api/routes_dashboard.py::_db",
+      "backend/app/loadtest/burst.py::run_search_burst",
+      "backend/app/api/routes_dashboard.py::parse_window",
       "backend/app/storage/repo.py::kpi_summary",
       "backend/app/storage/repo.py::top_queries",
       "backend/app/storage/repo.py::request_volume",
@@ -1544,7 +1721,8 @@
       "backend/app/api/routes_search.py::_get_service",
       "backend/app/storage/repo.py::insert_feedback",
       "backend/app/search/tokenize.py::tokenize",
-      "backend/app/search/highlight.py::highlight_containing",
+      "backend/app/search/highlight.py::closest_document_words",
+      "backend/app/search/highlight.py::highlight_document",
       "backend/app/search/highlight.py::count_occurrences",
       "backend/app/api/deps.py::get_version",
       "backend/app/api/deps.py::get_commit",
@@ -1573,6 +1751,7 @@
       "backend/app/ingest/__init__.py::ingest",
       "backend/app/storage/repo.py::insert_log",
       "backend/app/observability/logging.py::_find_flagged",
+      "backend/app/run.py::ensure_venv",
       "backend/app/search/filters.py::apply",
       "backend/app/search/normalize.py::normalize",
       "backend/app/search/highlight.py::make_snippet",
@@ -1594,6 +1773,10 @@
       "scripts/fetch_corpus.py::pending_rows",
       "scripts/fetch_corpus.py::write_attribution",
       "scripts/fetch_corpus.py::main",
+      "scripts/generate_contracts.py::parse_args",
+      "scripts/generate_contracts.py::repo_root",
+      "scripts/generate_contracts.py::generate_specs",
+      "scripts/generate_contracts.py::write_contracts",
       "scripts/qrels_helper.py::label_queries",
       "scripts/qrels_helper.py::read_queries"
     ]

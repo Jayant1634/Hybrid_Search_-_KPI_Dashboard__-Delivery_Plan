@@ -137,3 +137,88 @@ Consequences:
 Search and eval without `--alpha` now blend 30% BM25 / 70% vector. Phase 20
 Scenario C still uses a paraphrase query; alpha 0.3 will lean on the vector
 side there, which is what we want.
+
+## 2026-09-05 — semantic confidence gate
+
+Context:
+A contracts-only search for an unmatched query (`Bruce wayne`, `supernova`)
+still returned rank 1 with hybrid 1.0000. Word counts were 0. BM25 raw was
+0.000. Vector raw was ~0.047. Min-max then mapped both sides to 1.0 because
+the candidate pool was all equally weak. The assignment (s6.3) asks for a
+ranked `top_k` list with explainable scores. It does not require returning
+hits when nothing is relevant. s6.4 / FR-15 even asks the KPI page to track
+zero-result queries, which the always-return-`top_k` path never produced
+except when a metadata filter wiped the set.
+
+Options:
+1. Leave it. Hybrid 1.0 on noise is “best of a bad pool,” but it looks like
+   a perfect match and hides the empty-result KPI.
+2. Gate on raw vector cosine before normalisation. Drop any candidate whose
+   `vector_raw` is below `min_vector_score`. Default 0.2 on `/search` and the
+   Search page. 0.0 disables the gate (eval and existing unit tests).
+3. Gate on hybrid or BM25 instead. A lexical miss already scores BM25 0;
+   the misleading 1.0 comes from normalising that zero pool plus a near-zero
+   cosine. Hybrid after min-max cannot tell “confident” from “least bad.”
+
+Decision:
+Option 2. `POST /search` now accepts `min_vector_score` (0..1, default 0.2).
+`HybridSearcher.search` drops candidates with `vector_raw < min_vector_score`
+before min-max / z-score, then ranks what remains. If none remain, the API
+returns `results: []` so the Search empty state and KPI zero-result tile can
+fire. The Search page exposes a Min vector slider (Off … 1.00), default 0.20.
+
+0.2 sits above the ~0.05 noise floor seen on unmatched contract queries and
+below real MiniLM hits (volcano-style queries were ~0.39). Set the slider to
+Off (0.00) to recover the old always-return-`top_k` behaviour.
+
+Consequences:
+Nonsense queries against contracts now come back empty at the default.
+Strong BM25-only hits with a weak vector score are also dropped unless the
+user lowers the slider. Eval still calls the searcher without the field, so
+the layer default 0.0 leaves nDCG / Recall / MRR unchanged.
+
+## 2026-09-05 — KPI latency burst (Locust + in-process)
+
+Context:
+KPI p50/p95 looked thin or wrong because they came from a handful of
+sequential `/search` clicks. Needed a way to send many hits at once, a
+library for bigger multi-user load, and a written decision for that
+testing approach.
+
+Options:
+1. Embed Locust (gevent `HttpUser`) inside FastAPI and hit localhost
+   `/search`. Same worker, real HTTP.
+2. Locust as the CLI/library for multi-user HTTP. KPI button uses an
+   in-process concurrent `HybridSearcher.search` burst and persists
+   `requests` rows. Cap the burst so one click cannot lock the CPU.
+3. Browser `Promise.all` of `/search` only, no Python load tool.
+
+Decision:
+Option 2. Locust 2.42.6 is the out-of-process driver
+(`locust -f app/loadtest/locustfile.py --host http://127.0.0.1:8000`).
+The KPI drawer calls `POST /api/dashboard/kpi/load-test`, which runs N
+hybrid searches together, records `latency_ms` (searcher wall time, same
+clock as `took_ms`), and lets the existing KPI aggregations recompute.
+
+The first burst cap was 50. That was only a safety default, not an
+assignment rule. 50 concurrent searches is too small to judge p95 under
+load, so the cap is 200 (minimum still 2, default still 20). Locust
+remains the path for longer HTTP soaks.
+
+Results:
+- Nested ASGI and Locust-in-process hung or broke pytest (gevent
+  monkey-patch). Those paths were dropped.
+- `pytest tests/test_loadtest.py tests/test_api_dashboard.py`: 15 passed
+  in 3.23s on the first burst (n=4, query `volcano`, 4/4 ok, KPI total
+  +4).
+- Count 1 stays 422. Count above the cap stays 422.
+
+Consequences:
+Burst rows mix with live Search-page rows. Burst latency is searcher
+time, not full HTTP middleware time. True HTTP multi-user load stays on
+the Locust CLI. Restart the API before using the new route or the new
+cap.
+
+
+
+

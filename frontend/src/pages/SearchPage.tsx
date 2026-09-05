@@ -1,13 +1,22 @@
 import { useState, useCallback } from 'react'
 import ResultCard from '../components/ResultCard'
-import { search, type SearchResult } from '../api'
+import { search, type DatasetName, type SearchFilters, type SearchResult } from '../api'
+
+function localDateToIso(value: string, endOfDay: boolean): string {
+  if (!value) return ''
+  return endOfDay ? `${value}T23:59:59` : `${value}T00:00:00`
+}
 
 export default function SearchPage() {
   const [query, setQuery] = useState('')
   const [topK, setTopK] = useState(10)
   const [alpha, setAlpha] = useState(0.5)
   const [normalization, setNormalization] = useState<'minmax' | 'zscore'>('minmax')
+  const [minVectorScore, setMinVectorScore] = useState(0.2)
+  const [dataset, setDataset] = useState<'' | DatasetName>('')
   const [sourceFilter, setSourceFilter] = useState('')
+  const [createdFrom, setCreatedFrom] = useState('')
+  const [createdTo, setCreatedTo] = useState('')
   const [showFilters, setShowFilters] = useState(false)
 
   const [loading, setLoading] = useState(false)
@@ -23,13 +32,21 @@ export default function SearchPage() {
     setLoading(true)
     setError(null)
     setSearched(true)
+    const filters: SearchFilters = {}
+    if (dataset) filters.dataset = dataset
+    if (sourceFilter.trim()) filters.source_contains = sourceFilter.trim()
+    if (createdFrom) filters.created_from = localDateToIso(createdFrom, false)
+    if (createdTo) filters.created_to = localDateToIso(createdTo, true)
+    const hasFilters = Object.keys(filters).length > 0
+
     try {
       const resp = await search({
         query: q,
         top_k: topK,
         alpha,
         normalization,
-        filters: sourceFilter.trim() ? { source_contains: sourceFilter.trim() } : null,
+        min_vector_score: minVectorScore,
+        filters: hasFilters ? filters : null,
       })
       setResults(resp.results)
       setRequestId(resp.request_id)
@@ -40,7 +57,7 @@ export default function SearchPage() {
     } finally {
       setLoading(false)
     }
-  }, [query, topK, alpha, normalization, sourceFilter])
+  }, [query, topK, alpha, normalization, minVectorScore, dataset, sourceFilter, createdFrom, createdTo])
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === 'Enter') handleSearch()
@@ -61,6 +78,7 @@ export default function SearchPage() {
         <h1 className="page-title">Search Documents</h1>
         <p className="page-desc">
           BM25 + vector fusion retrieval with explainable per-document scoring.
+          Choose a dataset to search Wikipedia, Kearney contracts, or both.
         </p>
       </div>
 
@@ -127,6 +145,37 @@ export default function SearchPage() {
             </div>
           </div>
 
+          <div className="param-group param-alpha">
+            <label className="param-label">
+              Min vector
+              <span className="param-value-badge">{minVectorScore.toFixed(2)}</span>
+            </label>
+            <div className="alpha-range-row">
+              <span className="range-end-label">Off</span>
+              <input
+                type="range"
+                className="param-range"
+                min={0} max={1} step={0.05}
+                value={minVectorScore}
+                onChange={e => setMinVectorScore(Number(e.target.value))}
+              />
+              <span className="range-end-label">1.00</span>
+            </div>
+          </div>
+
+          <div className="param-group">
+            <label className="param-label">Dataset</label>
+            <select
+              className="param-select"
+              value={dataset}
+              onChange={e => setDataset(e.target.value as '' | DatasetName)}
+            >
+              <option value="">All datasets</option>
+              <option value="wikipedia">Wikipedia</option>
+              <option value="contracts">Kearney Contracts</option>
+            </select>
+          </div>
+
           <div className="param-group">
             <label className="param-label">Normalisation</label>
             <select
@@ -156,9 +205,23 @@ export default function SearchPage() {
             <input
               type="text"
               className="param-input filter-input"
-              placeholder="e.g. wikipedia"
+              placeholder="e.g. wikipedia or msa"
               value={sourceFilter}
               onChange={e => setSourceFilter(e.target.value)}
+            />
+            <label className="param-label">Created from</label>
+            <input
+              type="date"
+              className="param-input filter-input"
+              value={createdFrom}
+              onChange={e => setCreatedFrom(e.target.value)}
+            />
+            <label className="param-label">Created to</label>
+            <input
+              type="date"
+              className="param-input filter-input"
+              value={createdTo}
+              onChange={e => setCreatedTo(e.target.value)}
             />
           </div>
         )}
@@ -202,7 +265,7 @@ export default function SearchPage() {
             </svg>
           </div>
           <p className="empty-title">No results</p>
-          <p className="empty-desc">No documents matched <strong>"{query}"</strong>. Try adjusting alpha or filters.</p>
+          <p className="empty-desc">No documents matched <strong>"{query}"</strong>. Try lowering min vector or adjusting filters.</p>
         </div>
       )}
     </div>

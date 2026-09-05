@@ -347,11 +347,13 @@
 .filter-row {
   display: flex;
   align-items: center;
+  flex-wrap: wrap;
   gap: 12px;
   border-top: 1px solid var(--c-border);
   padding-top: 16px;
 }
 .filter-input { width: 260px; }
+.filter-input[type="date"] { width: 160px; }
 
 /* ── Results ─────────────────────────────────────────────── */
 
@@ -422,13 +424,21 @@
 .doc-body em,
 .occur-chip em,
 .doc-modal-title em {
-  background: rgba(120, 35, 220, 0.16);
-  color: inherit;
+  background: var(--hl-lex-bg);
+  color: var(--hl-lex-fg);
   font-style: normal;
   font-weight: 650;
   padding: 0 2px;
   border-radius: 2px;
   box-decoration-break: clone;
+}
+.result-snippet em.sem,
+.result-title em.sem,
+.doc-body em.sem,
+.occur-chip em.sem,
+.doc-modal-title em.sem {
+  background: var(--hl-sem-bg);
+  color: var(--hl-sem-fg);
 }
 .result-rank {
   flex-shrink: 0;
@@ -686,10 +696,23 @@ a.result-title:hover {
   font-weight: 700;
   color: var(--purple);
 }
+.occur-sem-label { margin-top: 12px; }
+.occur-chip-sem {
+  border-color: var(--hl-sem-bg);
+}
+.occur-chip-sem span {
+  color: var(--hl-sem-fg);
+}
 .kpi-grid {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
+  grid-template-columns: repeat(auto-fit, minmax(110px, 1fr));
   gap: 10px;
+}
+.kpi-tile-word {
+  font-size: 15px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 .kpi-tile {
   background: var(--c-surface-2);

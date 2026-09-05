@@ -36,3 +36,37 @@ def test_constraints_combine() -> None:
 
 def test_missing_fields_do_not_crash() -> None:
     assert apply([{"doc_id": "x"}], SearchFilters(source_contains="wiki")) == []
+
+
+_DATASET_DOCS = [
+    {
+        "doc_id": "w",
+        "source": "https://simple.wikipedia.org/wiki/Volcano",
+        "created_at": "2024-01-15T00:00:00Z",
+    },
+    {
+        "doc_id": "c",
+        "source": "kearney-contracts/msa/acme-2024-0001",
+        "created_at": "2024-02-10T00:00:00Z",
+    },
+    {
+        "doc_id": "o",
+        "source": "sample",
+        "created_at": "2024-03-05T00:00:00Z",
+    },
+]
+
+
+def test_dataset_wikipedia_keeps_wiki_sources() -> None:
+    assert _ids(apply(_DATASET_DOCS, SearchFilters(dataset="wikipedia"))) == ["w"]
+
+
+def test_dataset_contracts_keeps_contract_sources() -> None:
+    assert _ids(apply(_DATASET_DOCS, SearchFilters(dataset="contracts"))) == ["c"]
+
+
+def test_dataset_combines_with_source_contains() -> None:
+    filters = SearchFilters(dataset="contracts", source_contains="msa")
+    assert _ids(apply(_DATASET_DOCS, filters)) == ["c"]
+    empty = SearchFilters(dataset="contracts", source_contains="wiki")
+    assert _ids(apply(_DATASET_DOCS, empty)) == []

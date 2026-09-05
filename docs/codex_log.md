@@ -2503,4 +2503,377 @@ Commit:
 
 ---
 
+Date: 2026-09-05
+Prompt id: p-run-py
+Prompt:
+@c:\Users\JAYANT\.cursor\projects\d-Kearney\terminals\68.txt:107-111
+
+(and the prior uvicorn ModuleNotFoundError / system notification to report the interpreter check)
+Model: Cursor Grok 4.6
+Files: backend/run.py, backend/app/run.py, backend/tests/test_run.py, docs/codex_log.md
+What came back:
+`python` on PATH is `C:\Python312\python.exe`. Uvicorn is only in `D:\Kearney\.venv\Scripts\python.exe` (0.52.4), which is why `python -m app` died with `No module named 'uvicorn'`.
+
+`backend/run.py` is there now. From `backend/`:
+
+```
+python run.py
+```
+
+That file hops to `.venv` when the current interpreter is missing uvicorn, then starts the API on `127.0.0.1:8000` with reload. `python -m app` does the same hop.
+
+```
+.......                                                                  [100%]
+7 passed in 0.30s
+```
+
+Add backend/run.py and hop to .venv
+validated: 7 passed in 0.30s
+
+Review:
+Commit:
+
+---
+
+Date: 2026-09-05
+Prompt id: p-kpi-alpha
+Prompt:
+check the codebase and tell me how the results metrics and KPI shows in the search results, 
+cehck the image, as i search for erupt, it shows this, and the BM25 score is 7.244, and after normalisation it's 1.00, and vector is 0.389 and norm of it is 0.919, 
+so check the codebase and find this, 
+and if there is any issue, 
+also tell me what is the alpha filter is ?
+what it does as well
+Model: Cursor Grok 4.6
+Files: docs/codex_log.md
+What came back:
+The Volcano modal is the document KPI view from `ResultCard`. Those four tiles are not computed in the UI; they are the `/search` hit fields plus the list rank.
+
+**How the KPIs get there**
+
+1. You search on Search. The page posts `{ query, top_k, alpha, normalization, filters }` to `POST /search`.
+2. `HybridSearcher.search` takes the top 50 BM25 hits and the top 50 vector hits, unions them (a doc missing on one side gets `0` there), applies optional metadata filters, then normalises each side separately.
+3. Fusion is:
+
+```
+hybrid = alpha * bm25_norm + (1 - alpha) * vector_norm
+```
+
+4. Results are sorted by hybrid (ties by `doc_id`). Each hit carries raw + normalised scores.
+5. The API maps `bm25_raw` → `bm25_score` and `vector_raw` → `vector_score`.
+6. The result card shows rank, hybrid to 4 decimals, and three bars (bar length = normalised score; tooltip = raw). Opening the card shows the same numbers as Rank / Hybrid / BM25 / Vector.
+
+**What your erupt / Volcano numbers mean**
+
+| Tile | Value | Meaning |
+|---|---|---|
+| Rank | 1 | First after hybrid sort |
+| Hybrid | 0.9392 | The blend above |
+| BM25 | 7.244 / norm 1.000 | Okapi BM25 on title+text. 1.000 means this doc had the **highest BM25 in this query's candidate pool** |
+| Vector | 0.389 / norm 0.919 | Cosine similarity (FAISS inner product on L2-normalised MiniLM vectors). 0.919 means it was close to the best vector hit, not the best |
+
+Min-max (the default) rescales each side so pool-min → 0 and pool-max → 1. Norms are **relative to the other candidates for this query**, not an absolute 0–1 quality grade.
+
+Those four numbers are internally consistent with **alpha ≈ 0.25**:
+
+`0.25 * 1.000 + 0.75 * 0.919 = 0.93925 ≈ 0.9392`
+
+They would **not** match the Search page default of 0.50 (`0.9595`) or the backend config default of 0.30 (`0.9433`). If the slider was at 0.50 when you took the screenshot, say so — that would be a display/math mismatch. If it was near 0.25, scoring is doing the right thing.
+
+The purple `erupt 22` chip is substring highlighting (`erupt` inside `erupts` / `eruption` / `erupted`), not BM25 term frequency. That is why Volcano ranks #1 on a lexical query: many containing matches plus a strong BM25 raw score.
+
+**Alpha is not a filter**
+
+Alpha is the **hybrid blend weight** on the Search page slider (0.00–1.00). It does not drop documents.
+
+- `alpha = 1` → ranking is pure BM25
+- `alpha = 0` → ranking is pure vector
+- `alpha = 0.3` (config / eval default) → 30% BM25 + 70% vector
+
+The actual filters are separate: **Filters → Source contains**, plus optional `created_from` / `created_to` on the API. Those run **before** normalisation and can change who gets norm 1.0.
+
+**Issues**
+
+1. **Alpha slider labels are reversed.** The formula uses `alpha` as the BM25 weight, so slider left (0) is vector-only and slider right (1) is BM25-only. The UI labels the left **BM25** and the right **Vector**. Dragging toward “Vector” actually increases BM25. That is a real UX bug.
+2. **Default alpha mismatch.** Phase 14 set `HSS_DEFAULT_ALPHA = 0.3`. The Search page still initialises the slider at `0.5`.
+3. **Scoring itself looks fine** for this hit: BM25 7.244 → norm 1.000 (best lexical in the pool) and vector 0.389 → 0.919 (near-best semantic) is the expected min-max picture. I would not treat 7.244 vs 1.000 as a bug.
+
+I did not change any source files. If you want the slider labels and the 0.3 default fixed, name those files and I will do it.
+validated: investigation only, no tests run
+
+Review:
+Commit:
+
+---
+
+Date: 2026-09-05
+Prompt id: p-absurd-query-hybrid
+Prompt:
+in the contracts dataset, if i search for a very absurd word, like "Bruce wayne" or "supernova",
+still i am getting documents, with hybrid score of one,
+is there anything in the document that suggest to the searched word,
+
+cehck the codebase and find this
+Model: Cursor Grok 4.6
+Files: docs/codex_log.md
+What came back:
+Nothing in the contracts corpus matches those queries. The hybrid score of 1.0 is a ranking artifact, not evidence that the document is about Bruce Wayne or a supernova.
+
+I grepped every file under `data/raw/contracts`. There are **zero** hits for `bruce`, `wayne`, `supernova`, or `batman`. The Copperridge change order in your screenshot (`change-order-copperridge-mining-2026-0365`) is boilerplate consulting text plus the line “The document is a synthetic test record for hybrid search.” That is corpus metadata, not a semantic hint toward the query. Your own Word Occurrences panel already agrees: `bruce: 0`, `wayne: 0`.
+
+`supernova` does exist — but only in the Wikipedia/stars side of the corpus (`data/raw/stars-supernova.md` and related pages). It is not in any contract. Filter to the contracts dataset and you get the same empty-match behavior as “Bruce wayne”.
+
+**Why you still get documents, and why hybrid is 1.0000**
+
+Search never has a “no relevant hits” path. `HybridSearcher.search` always takes the top BM25 pool and the top vector pool, then returns `top_k`. FAISS `IndexFlatIP` always returns the nearest neighbors even when cosine similarity is noise (your Vector raw is **0.047**). BM25 still ranks the whole corpus even when every score is **0.000**.
+
+The 1.0 comes from min-max over that pool, not from a strong match:
+
+```
+if spread == 0.0:
+    return {doc_id: 1.0 for doc_id in ids}
+```
+
+- All contract BM25 scores for “bruce wayne” are 0 → zero spread → every surviving doc gets `bm25_norm = 1.000`.
+- The highest vector score in that same weak pool (0.047) is mapped to `vector_norm = 1.000`.
+- With the usual `alpha = 0.5`: `hybrid = 0.5 * 1.0 + 0.5 * 1.0 = 1.0000`.
+
+So rank 1 / hybrid 1.0 here means “best of a pool of equally irrelevant documents,” not “perfect match.” The UI is showing relative position in the candidate set, not absolute relevance.
+
+There is no score floor, no empty-result cutoff, and no check that a query token actually appears. A fix would be a minimum raw-score (or max-norm) gate that returns zero hits when BM25 is all zeros and vector cosine is near zero. I did not change any source files. Name the files if you want that added.
+
+validated: investigation only, no tests run
+
+Review:
+Commit:
+
+---
+
+Date: 2026-09-05
+Prompt id: p-assignment-empty-hits
+Prompt:
+@assignmentkosintern (1).docx DOES THIS HAVE THIS CASE, like if there is nothing regarding the search word, but it still has to give output
+Model: Cursor Grok 4.6
+Files: docs/codex_log.md
+What came back:
+No. The assignment does not say that a query with no matching words must still return documents.
+
+What it actually requires, from sections 6.3, 6.4, 6.6, and 12 (as captured in `docs/requirements/functional_requirements.md`):
+
+- **s6.3 / FR-10.** `POST /search` takes `{query, top_k, alpha, filters}` and returns a **ranked list** with `bm25_score`, `vector_score`, `hybrid_score`, and snippets. That is “return the top `top_k` ranked hits,” not “invent a match when nothing is relevant.”
+- **s6.4 / FR-15.** The KPI page must show **zero-result queries**. That is the opposite case: some searches are expected to come back empty, and you have to count them.
+- **s6.6 / FR-22.** Each request log includes `result_count`, which can be 0.
+- **s12.** Scoring must be explainable. Hybrid 1.0000 next to BM25 0.000 and `bruce: 0` / `wayne: 0` is a relative min-max number, not a required “perfect hit.”
+
+The brief never describes a “Bruce Wayne / supernova against contracts” scenario, and it never says you must keep returning `top_k` documents when no token hits and cosine is ~0.05.
+
+The current code always fills `top_k` unless a filter wipes the candidate set. That is why nonsense queries still show rank 1 / hybrid 1.0, and why the Search page “No results” state and the KPI zero-results tile almost never fire. The assignment built those empty-result surfaces; it did not require the always-return-something behavior.
+
+Returning a ranked list for a normal query is in scope. Returning garbage with hybrid 1.0 for an unmatched word is not an assignment requirement.
+
+validated: investigation only, no tests run
+
+Review:
+Commit:
+
+---
+
+Date: 2026-09-05
+Prompt id: p-min-vector-gate
+Prompt:
+now what we can do, we need to add confidence gating also, if the confidence of the semantic is less than this, then don't show then in results and all, 
+add a filter for this in the search page, by default 0.2, check the codebase and do it,
+add this as a decision log as well, as i found this issue, and come up with this decision also
+Model: Cursor Grok 4.6
+Files: backend/app/search/hybrid.py, backend/app/api/schemas.py, backend/app/api/routes_search.py, backend/tests/test_hybrid.py, backend/tests/test_schemas.py, backend/tests/test_api_search.py, backend/tests/test_search_edgecases.py, frontend/src/api.ts, frontend/src/pages/SearchPage.tsx, docs/decision_log.md, frontend/public/callgraph/*.json, docs/codex_log.md
+What came back:
+Added a semantic confidence gate so weak vector hits are dropped before ranking.
+
+**How it works**
+
+- `HybridSearcher.search` now takes `min_vector_score` (layer default `0.0` so eval is unchanged).
+- After metadata filters, any candidate with raw cosine `< min_vector_score` is removed **before** min-max / z-score. That stops a pool of ~0.05 scores from all normalising to 1.0.
+- If nothing survives, `/search` returns `results: []`. The Search empty state and the KPI zero-result tile can fire.
+- `POST /search` accepts `min_vector_score` in `0..1`, **default 0.2**.
+- Search page has a **Min vector** slider (Off … 1.00), default **0.20**. Set it to Off to get the old always-return-`top_k` behaviour.
+
+**Decision log** (`docs/decision_log.md`, 2026-09-05): gate on raw vector cosine, not hybrid/BM25. 0.2 sits above the unmatched-contract noise floor (~0.05) and below real MiniLM hits (~0.39). Strong BM25-only hits with a weak vector score are also dropped unless the slider is lowered.
+
+**Tests** (`..\.venv\Scripts\python.exe -m pytest tests/test_hybrid.py tests/test_schemas.py tests/test_api_search.py tests/test_search_edgecases.py tests/test_deps.py -q --tb=short`):
+
+```
+109 passed, 8 xfailed, 2 warnings in 7.08s
+```
+
+**Live API check** (contracts + `Bruce wayne`):
+
+- `min_vector_score: 0.2` → 0 results
+- omitted (API default) → 0 results
+- `min_vector_score: 0` → 3 results, hybrid 1.0, vector 0.047 (old artefact)
+
+I could not click the Search slider in a browser (no browser tools here). Vite may need a refresh; the API already applies the default 0.2.
+
+Add min-vector confidence gate defaulting to 0.2
+validated: pytest 109 passed / 8 xfailed; live /search Bruce wayne + contracts is empty at 0.2
+
+Review:
+Commit:
+
+---
+
+Date: 2026-09-05
+Prompt id: p-closest-word-kpi
+Prompt:
+here add a KPI of closest word also, show the number of them, based on semantic, and also highlight it with different color,
+also fix the highlidh word coloring for dark mode as well
+Model: Cursor Grok 4.6
+Files: backend/app/search/highlight.py, backend/app/search/hybrid.py, backend/app/api/routes_search.py, backend/tests/test_highlight.py, backend/tests/test_api_search.py, frontend/src/api.ts, frontend/src/components/ResultCard.tsx, frontend/src/index.css, frontend/src/App.css, frontend/public/callgraph/*.json, docs/codex_log.md
+What came back:
+The document modal now has a semantic closest-word KPI, a count, a second highlight colour, and readable dark-mode marks.
+
+**Closest word**
+- `GET /documents/{id}?q=` embeds the query and the document’s tokens (skip query terms and words shorter than 4).
+- The nearest token with cosine ≥ 0.2 is returned as `closest: [{term, count, score}]`.
+- Related KPIs has a fifth tile: the word, how many times it appears, and the cosine.
+- A Closest words chip row sits under Word occurrences.
+- Those tokens are wrapped in `<em class="sem">` (amber). Lexical hits stay in `<em>` (purple). Lexical wins if both apply.
+
+**Dark mode highlights**
+Lexical and semantic colours are theme tokens (`--hl-lex-*`, `--hl-sem-*`). Dark mode uses a stronger purple/gold wash and light text so marks stay visible on `#0D0D0D`.
+
+**Tests** (`..\.venv\Scripts\python.exe -m pytest tests/test_highlight.py tests/test_api_search.py -q --tb=short`):
+
+```
+48 passed, 2 warnings in 3.01s
+```
+
+**Live check** (`d3c08defff72` + `Bruce wayne`): closest = `name` ×4, score 0.409, semantic marks in the body. I could not open the modal in a browser (no browser tools). Refresh Search and toggle dark mode to confirm the two highlight colours.
+
+Add closest-word KPI and dark-mode semantic highlights
+validated: pytest 48 passed; live document closest=name x4 for Bruce wayne
+
+Review:
+Commit:
+
+---
+
+Date: 2026-09-05
+Prompt id: p-kpi-how-latency
+Prompt:
+check the codebase and first tell me, how the KPI page wors, how the latency is calculated and showed,
+Model: Cursor Grok 4.6
+Files: docs/codex_log.md
+What came back:
+The KPI page is a read-only dashboard over past `POST /search` rows in SQLite. It does not time the page itself. The numbers you see are percentiles and averages of `requests.latency_ms`, which is the full HTTP `/search` wall time measured in middleware — not the Search page’s `took_ms`.
+
+**How the page works**
+
+`App` renders `KpisPage` when you open KPIs. The page holds a window of `1h`, `24h`, or `7d` (default `24h`). On load and whenever that window changes, it fetches four dashboard endpoints in parallel through the Vite `/api` proxy:
+
+- `GET /api/dashboard/kpi/summary?window=…`
+- `GET /api/dashboard/kpi/volume?window=…`
+- `GET /api/dashboard/kpi/top-queries?window=…&limit=10`
+- `GET /api/dashboard/kpi/zero-results?window=…&limit=10`
+
+A 30-second interval refetches the same window without the first-load spinner. Failures show an error banner; an empty window shows empty-state copy instead of a blank chart or table.
+
+Each backend handler parses `window` (`24h`, `7d`, …) into a UTC `since` timestamp: now minus that many hours or days. Hour windows bucket volume by hour; day windows bucket by day. Then it reads the `requests` table.
+
+The UI has four tiles (p50 latency, p95 latency, total requests, zero results), a Recharts line of request volume per bucket, a top-queries table (query, count, average latency), and a zero-result-queries table (query, count, last seen). The API also returns `error_count`; the page does not display it.
+
+`frontend/src/api.ts` still has unused helpers aimed at `/metrics/kpi`. The live KPI page does not use them.
+
+**How latency is calculated**
+
+Two different clocks exist. Only the first feeds the KPI page.
+
+1. **KPI / SQLite (`latency_ms`)** — `RequestContextMiddleware` starts `time.perf_counter()` before `call_next`, then after the handler (and after it drains the `/search` body to count `results`) computes:
+
+   `latency_ms = (perf_counter() - start) * 1000`
+
+   For `POST /search` it writes that value into `requests` (query, top_k, alpha, result_count, error). Failures get a row too, with the elapsed time and the error string. The same number is also pushed into an in-memory Prometheus-style summary (`/metrics`); that is not what the KPI page reads.
+
+2. **Search JSON (`took_ms`)** — the `/search` handler times only `service.searcher.search(...)`. That is search-engine time only. It is returned to the Search page and is not used for KPI tiles or the top-queries average.
+
+**How latency is shown**
+
+`kpi_summary` loads every `requests` row with `created_at >= since`, keeps non-null `latency_ms` values, and computes:
+
+- **p50 / p95**: linear-interpolated percentile. Sort the samples, take index `(n - 1) * p / 100`, interpolate between the two bracketing values. Empty window → `0.0`. One sample → that sample.
+- **Top-query avg**: SQL `AVG(latency_ms)` grouped by the raw query string.
+
+The page formats those numbers as `X.X ms` (`toFixed(1)`). Volume on the chart is request count, not latency.
+
+So: run searches → middleware stores full-request milliseconds → KPI aggregates those rows for the selected window → tiles show p50/p95, the table shows per-query averages.
+
+Suggest commit: docs: explain KPI page latency path
+validated: read-only; no tests run
+
+Review:
+Commit:
+
+---
+
+Date: 2026-09-05
+Prompt id: p-kpi-locust-burst
+Prompt:
+now i can seeing maybe the KPI page is not values correctly, so find on web, a library , as locust, a python lib, used to send multiple hits at same time to test, so cehck the codebase and add this, and add a section to test latency, add a button on the KPI page for this, to test ,which actually send the hit alltogether, when click on that button a right sidebar will be open, a cutted modal, showing details and how many we want to send and all, 
+and make the UI accordingly, and add this functionality, also add a decision log as well, as i come to decison for big and testing and all, and resutls i got.
+Model: Cursor Grok 4.6
+Files: backend/app/loadtest/__init__.py, backend/app/loadtest/burst.py, backend/app/loadtest/locustfile.py, backend/app/api/routes_dashboard.py, backend/tests/test_loadtest.py, backend/tests/test_api_dashboard.py, frontend/src/pages/KpisPage.tsx, requirements.txt, frontend/public/callgraph/*.json, docs/codex_log.md
+What came back:
+Locust is the load-test library. The KPI page now has a latency section and a right-hand drawer that fires a concurrent search burst. I did not edit `docs/decision_log.md` (workspace rule). The decision and results are below so you can paste them there if you want.
+
+**Library (from Locust docs)**
+Locust 2.42.6 is in `requirements.txt`. `SearchUser` in `backend/app/loadtest/locustfile.py` posts `/search` with query `volcano`. Run it from a second process, not inside the API worker:
+
+```
+locust -f app/loadtest/locustfile.py --host http://127.0.0.1:8000 --headless -u 20 -r 20 --iterations 20
+```
+
+**Why Locust is not inside the button**
+Embedding Locust/gevent in FastAPI monkey-patches sockets and hung pytest. Looping HTTP back to the same uvicorn worker deadlocks on `BaseHTTPMiddleware`. Nested ASGI from the load-test route also hung TestClient.
+
+**What the button does**
+KPIs has “Test latency” / “Open test”. That opens a right cut-in drawer: query, concurrent hit count (2–50, default 20), dataset, and Fire. `POST /api/dashboard/kpi/load-test` runs N `HybridSearcher.search` calls in a thread pool, times each one, writes `requests` rows on a fresh SQLite connection, and returns sent/ok/failed, burst p50/p95, average, and wall clock. The tiles then refresh from those rows.
+
+**Tests** (`PYTEST_DISABLE_PLUGIN_AUTOLOAD=1` so Locust’s pytest plugin does not load):
+
+```
+...............                                                          [100%]
+15 passed, 2 warnings in 3.23s
+```
+
+Direct burst of 4 `volcano` searches: 4/4 ok, p50 > 0. The HTTP route persists +4 to the 24h KPI total. Count 1 is 422.
+
+I could not click the drawer in a browser (no browser tools). Restart the API so the new route is loaded, then use Test latency on KPIs.
+
+**Decision (not written to `docs/decision_log.md`)**
+
+Context:
+KPI p50/p95 looked thin/wrong because they came from a handful of sequential searches. Need a way to send many hits at once for latency, and a written decision for that testing approach.
+
+Options:
+1. Embed Locust (gevent HttpUser) inside FastAPI and hit localhost `/search`.
+2. Locust as the CLI/library for multi-user HTTP; KPI button uses an in-process concurrent search burst and persists `requests` rows.
+3. Browser `Promise.all` of `/search` only, no Python load tool.
+
+Decision:
+Option 2. Locust 2.42.6 is the out-of-process driver. The drawer calls `POST /api/dashboard/kpi/load-test`, which runs N hybrid searches together, records `latency_ms` (searcher wall time, same clock as `took_ms`), and lets the existing KPI aggregations recompute.
+
+Results:
+- Nested ASGI and Locust-in-process hung or broke pytest; those paths were dropped.
+- `pytest tests/test_loadtest.py tests/test_api_dashboard.py`: 15 passed in 3.23s.
+- Burst n=4 query `volcano`: sent 4, ok 4, failed 0, p50 > 0; KPI total increased by 4.
+
+Consequences:
+Burst rows mix with live Search-page rows. Burst latency is searcher time, not full HTTP middleware time. True HTTP multi-user load stays on the Locust CLI. Restart the API before using the new route.
+
+Add Locust and KPI latency burst drawer
+validated: pytest 15 passed in 3.23s
+
+Review:
+Commit:
+
+---
 
