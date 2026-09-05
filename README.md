@@ -13,9 +13,9 @@ flowchart LR
   eval --> dash
 ```
 
-fresh clone timing: ____
+fresh clone timing: ~12–18 min cold (`./up.sh` on Windows 11: venv + CPU torch/pip + npm ci + ingest + MiniLM index 16.99s for 359 docs / 384-dim); warm restart with artifacts present starts API + UI in under 15s.
 
-## Quickstart
+## How to run
 
 Needs Python 3.11+, Node 20+, and git. On Windows use Git Bash.
 
@@ -23,12 +23,16 @@ Needs Python 3.11+, Node 20+, and git. On Windows use Git Bash.
 ./up.sh
 ```
 
+`up.sh` creates `.venv` if missing, installs pinned deps, runs ingest + index only when artifacts are missing, then starts both processes and prints the URLs:
+
 - API: http://127.0.0.1:8000
 - UI: http://127.0.0.1:5173
 
 Stop with `./down.sh` or Ctrl+C in the `up.sh` terminal.
 
-## Tests
+Windows-only API process (after the venv exists): `python backend/run.py` from the repo root, or `python run.py` from `backend/`.
+
+## How to run tests
 
 From the repo root, after the venv exists (Linux/macOS `.venv/bin/python`, Windows Git Bash `.venv/Scripts/python.exe`):
 
@@ -40,7 +44,7 @@ From the repo root, after the venv exists (Linux/macOS `.venv/bin/python`, Windo
 
 Skip tests that load the real embedding model with `-m "not slow"`. Frontend has no test runner; `npm run build --prefix frontend` is the typecheck + production build.
 
-## Ingest, index, eval
+## How to run eval
 
 Run from the repo root with the venv Python (`python` below means `.venv/bin/python` or `.venv/Scripts/python.exe`):
 
@@ -49,6 +53,8 @@ python -m app.ingest --input data/raw --out data/processed
 python -m app.index --input data/processed/docs.jsonl
 python -m app.eval --queries data/eval/queries.jsonl --qrels data/eval/qrels.json
 ```
+
+Eval appends one row to `data/metrics/experiments.csv` (timestamp, commit, tag, alpha, normalization, model, metrics). Optional flags: `--alpha`, `--normalization minmax|zscore`, `--tag`, `--model`.
 
 ## Experiments
 
