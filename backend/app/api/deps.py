@@ -15,6 +15,8 @@ import tomllib
 from pathlib import Path
 
 from app.config import Settings, load_config
+from app.index.__main__ import build_indexes
+from app.index.metadata import IndexMetadata
 from app.ingest.writer import Doc, read_jsonl
 from app.search.bm25 import BM25Index
 from app.search.embedder import Embedder
@@ -118,7 +120,42 @@ class SearchService:
             for doc in docs
         }
 
+        meta = IndexMetadata.load(settings.index_dir)
+        _reconcile_index(meta, embedder, docs, settings)
+
         bm25 = BM25Index.load(bm25_dir)
         vector = VectorIndex.load(vector_dir)
         searcher = HybridSearcher(bm25, vector, embedder, docs_by_id)
         return cls(searcher, docs_by_id)
+
+
+def _reconcile_index(
+    meta: IndexMetadata,
+    embedder: Embedder,
+    docs: list[Doc],
+    settings: Settings,
+) -> None:
+    """Guard against loading an index built with a different embedder.
+
+    Compares the built index's model name and dimension against the currently
+    configured model and the loaded embedder. When they match, returns quietly.
+    On a mismatch the behaviour follows ``HSS_INDEX_ON_MISMATCH``: ``rebuild``
+    rebuilds the index in place with the current embedder; anything else
+    (the default ``fail``) raises ``RuntimeError`` naming both models, both
+    dimensions, and the rebuild command.
+    """
+    current_model = settings.embedding_model
+    current_dim = embedder.dimension
+    if meta.model == current_model and meta.dimension == current_dim:
+        return
+
+    if settings.index_on_mismatch.strip().lower() == "rebuild":
+        build_indexes(docs, settings.index_dir, embedder, current_model)
+        return
+
+    raise RuntimeError(
+        "index/embedder mismatch: index was built with model "
+        f"{meta.model!r} (dimension {meta.dimension}) but the loaded embedder "
+        f"is model {current_model!r} (dimension {current_dim}). Rebuild the "
+        f"index with: {_INDEX_CMD} (or set HSS_INDEX_ON_MISMATCH=rebuild)."
+    )

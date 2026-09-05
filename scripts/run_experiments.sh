@@ -5,6 +5,13 @@ set -euo pipefail
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 cd "$ROOT"
 
+if [[ -f backend/.env ]]; then
+  set -a
+  # shellcheck disable=SC1091
+  . ./backend/.env
+  set +a
+fi
+
 if [[ -x .venv/bin/python ]]; then
   PYTHON=".venv/bin/python"
 elif [[ -x .venv/Scripts/python.exe ]]; then
