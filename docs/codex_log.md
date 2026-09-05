@@ -2877,3 +2877,523 @@ Commit:
 
 ---
 
+Date: 2026-09-05
+Prompt id: p-break-a-continue
+Prompt:
+continue
+Model: Cursor Grok 4.6
+Files: .env, docs/break_fix_log.md, docs/codex_log.md
+What came back:
+You did not have a `.env`. I added one at the repo root (same settings as `.env.example`, with the Albert model). You also have `backend/.env` with the same line.
+
+**Env**
+
+```
+HSS_EMBEDDING_MODEL=sentence-transformers/paraphrase-albert-small-v2
+```
+
+`python run.py` does not load `.env` on its own. I exported the root `.env` into the process, then started the API. No index rebuild.
+
+**API**
+
+Startup completed with Albert (25 weights). `/health` is 200. The loaded index is still `all-MiniLM-L6-v2`, dimension 384, 759 docs.
+
+**Search**
+
+`POST /search` `{"query":"volcano","top_k":5}` returned **500**:
+
+```
+{"request_id":"6a3b6daef7eb4f968a66844cc4597799","detail":"internal server error"}
+```
+
+Server log: `request failed` then `POST /search HTTP/1.1 500`. SQLite `requests` row:
+
+```
+error: query vector dimension 768 vs index 384
+latency_ms: 1081.65
+```
+
+Same error on the earlier attempt (`request_id` `b4d69ad900e54b89aee45d3a39bc805b`).
+
+That output is in `docs/break_fix_log.md` Scenario A (`What I broke` / `What happened`). Root cause / fix / verified / commits left empty.
+
+The API is still running on http://127.0.0.1:8000 with the mismatched model.
+
+Add .env Albert model; log s9.1 search 500
+validated: API up; POST /search 500; dim 768 vs 384 in sqlite; break_fix Scenario A filled
+Review:
+Commit:
+
+---
+
+Date: 2026-09-05
+Prompt id: p-port8000-notify
+Prompt:
+Briefly inform the user about the task result and perform any follow-up actions (if needed). If there's no follow-ups needed, don't explicitly say that.
+Model: Cursor Grok 4.6
+Files: docs/codex_log.md
+What came back:
+That port check finished: at the time, something was already listening on `127.0.0.1:8000` (PID 47436). That was the earlier API process we then used for the Albert-model search.
+
+Note port 8000 listener from earlier API
+validated: netstat showed LISTENING pid 47436; already used for s9.1 search
+Review:
+Commit:
+
+---
+
+Date: 2026-09-05
+Prompt id: p-check-backend-env
+Prompt:
+check the codebase, i have added env in the backend, is env even used by the backend, check this
+Model: Cursor Grok 4.6
+Files: docs/codex_log.md
+What came back:
+The backend uses **environment variables**, not the `backend/.env` file.
+
+`backend/.env` is never opened. There is no `python-dotenv`, no `load_dotenv`, and nothing in `run.py` or the FastAPI app that reads a `.env` file. Config only calls `os.environ.get(...)` in `backend/app/config.py`. If those `HSS_*` keys are not already in the process environment, `load_config()` falls back to hardcoded defaults (`all-MiniLM-L6-v2`, alpha `0.3`, port `8000`, and so on).
+
+That means the Albert model line in `backend/.env` (`HSS_EMBEDDING_MODEL=sentence-transformers/paraphrase-albert-small-v2`) does nothing unless you export it yourself before starting the process.
+
+**What does load a `.env` file:** only `up.sh`, and it sources the **repo-root** `.env`, not `backend/.env`. On Windows, `python run.py` from `backend/` is the usual start path, and that path never sources either file.
+
+**Settings that are actually consumed** once they are in the process env:
+
+- `HSS_EMBEDDING_MODEL` — embedder, index build, eval
+- `HSS_DEFAULT_ALPHA` / `HSS_NORMALISATION` — search request defaults, eval, loadtest
+- `HSS_API_PORT` — `python run.py` uvicorn port
+- `HSS_RATE_LIMIT_PER_MINUTE` — API rate limiter
+- `HSS_REPO_ROOT` — repo-root override
+- `HSS_COMMIT` — build-info fallback
+
+**Loaded into `Settings` but unused by the backend app:** `HSS_UI_PORT` (only `up.sh` uses it) and `HSS_LOG_LEVEL` (stored, never applied to logging).
+
+So: putting values in `backend/.env` alone will not change the running API. Export the vars, use `up.sh` with a root `.env`, or add a dotenv load in `config.py` / `run.py` if you want the file to take effect.
+
+check env usage; backend .env unused
+validated: no load_dotenv; config reads os.environ only; up.sh sources root .env
+Review:
+Commit:
+
+---
+
+Date: 2026-09-05
+Prompt id: p-run-py-dotenv
+Prompt:
+continue
+Model: Cursor Grok 4.6
+Files: backend/app/run.py, backend/tests/test_run.py, frontend/public/callgraph/*.json, docs/codex_log.md
+What came back:
+`python run.py` now loads `.env` before it reads settings.
+
+`main()` in `backend/app/run.py` calls `load_dotenv()`, then clears the `load_config` cache so the file values are visible. There is still no `python-dotenv` dependency: a small parser in `run.py` reads `KEY=VALUE` lines, `#` comments, optional `export `, and quoted values.
+
+Load order (existing process env always wins):
+
+1. `backend/.env`
+2. repo-root `.env`
+
+So the Albert line in `backend/.env` is picked up when you start with `python run.py` or `python -m app`. Already-exported `HSS_*` variables are not overwritten. `up.sh` is unchanged: it still sources only the repo-root `.env`.
+
+`HSS_LOG_LEVEL` and `HSS_UI_PORT` are still only stored on `Settings`; this change does not wire them to logging or Vite.
+
+Tests (`D:\Kearney\.venv\Scripts\python.exe -m pytest tests/test_run.py -v --tb=short`):
+
+```
+============================= 12 passed in 0.31s ==============================
+```
+
+Callgraph regenerated after the `backend/app` change.
+
+Load .env in run.py before config
+validated: 12 passed in 0.31s; callgraph rewritten
+Review:
+Commit:
+
+---
+
+Date: 2026-09-05
+Prompt id: p-albert-mismatch
+Prompt:
+set HSS_EMBEDDING_MODEL to
+sentence-transformers/paraphrase-albert-small-v2 in .env, dont rebuild. start the api, run a
+search, paste whatever happens into break_fix_log.md. commit with type break.
+Model: Claude Opus 4.8
+Files: .env, docs/codex_log.md
+What came back:
+Created repo-root `.env` with `HSS_EMBEDDING_MODEL=sentence-transformers/paraphrase-albert-small-v2` (other keys copied from `.env.example`). Did not rebuild the index.
+
+Started the API with `python run.py` from `backend/`. `run.py` loads `.env`, so the Albert model was used. Startup succeeded: the 768-dim Albert weights loaded and `Application startup complete` was logged. Uvicorn ran on `http://127.0.0.1:8000`.
+
+`GET /health` (built index metadata):
+
+```
+{"status":"ok","version":"0.1.0","commit":"d76276a","index":{"model":"all-MiniLM-L6-v2","dimension":384,"corpus_hash":"sha256:ecbe92d2ed9b56c4edbfc1c75950162fd9df68c02a7ef8e37ffcd3423f926c33","doc_count":759,"built_at":"2026-09-04T21:56:59.778314+00:00"}}
+```
+
+`POST /search {"query":"software license agreement","top_k":5}`:
+
+```
+STATUS 500
+REQUEST-ID 5e8afe71ec084eeb8ab94f08f087afd7
+BODY {"request_id":"5e8afe71ec084eeb8ab94f08f087afd7","detail":"internal server error"}
+```
+
+Persisted error (from the `requests` table):
+
+```
+query vector dimension 768 does not match index dimension 384
+```
+
+Root cause: the running embedder (`paraphrase-albert-small-v2`, 768-dim) does not match the on-disk faiss index built with `all-MiniLM-L6-v2` (384-dim). `VectorIndex.query` rejects the mismatch, the middleware turns it into a 500, and the request row records the message.
+
+CONFLICT / STOP: the prompt asks to paste this into `break_fix_log.md`, but the workspace rule `Never edit docs/break_fix_log.md` forbids it. I did not edit `docs/break_fix_log.md` and did not commit. Asked the user whether to override the rule before writing Scenario A (s9.1) and committing with type `break`. Server stopped after capturing output.
+
+set albert model without rebuild; capture 500 dim mismatch
+validated: /search 500 "query vector dimension 768 does not match index dimension 384"; break_fix_log.md not edited (rule), not committed
+Review:
+Commit:
+
+---
+
+Date: 2026-09-05
+Prompt id: p-index-mismatch-startup
+Prompt:
+i changed the embedding model to paraphrase-albert-small-v2 in .env without rebuilding the
+index and search now fails like this:
+
+<traceback>
+
+i want this caught at startup, not on the first query. in deps.py, after loading the
+metadata and the embedder, compare model name and dimension. add a setting
+HSS_INDEX_ON_MISMATCH with values fail or rebuild, default fail. fail means raise with a
+message naming both models and both dimensions and the rebuild command. rebuild means run
+the index build and load again. write the two tests in test_deps.py first, then the fix.
+only deps.py and config.py.
+Model: Claude Opus 4.8
+Files: backend/app/api/deps.py, backend/app/config.py, backend/tests/test_deps.py, frontend/public/callgraph/*.json, docs/codex_log.md
+What came back:
+The embedder/index mismatch is now caught at startup instead of on the first query.
+
+`config.py`: added a `HSS_INDEX_ON_MISMATCH` setting (`Settings.index_on_mismatch`, `_env_str("HSS_INDEX_ON_MISMATCH", "fail")`), default `fail`.
+
+`deps.py`: in `SearchService.load`, after reading the corpus it loads `IndexMetadata` and calls a new `_reconcile_index(meta, embedder, docs, settings)` before loading the BM25/vector indexes. `_reconcile_index` compares the built index's `model`/`dimension` against `settings.embedding_model` and `embedder.dimension`:
+
+- match -> returns quietly.
+- mismatch + `HSS_INDEX_ON_MISMATCH=rebuild` -> `build_indexes(docs, settings.index_dir, embedder, current_model)`, then load continues (picks up the fresh index).
+- mismatch + `fail` (default, or any other value) -> raises `RuntimeError` naming both models, both dimensions, and the rebuild command, e.g.:
+
+```
+index/embedder mismatch: index was built with model 'model-a' (dimension 8) but the loaded embedder is model 'model-b' (dimension 4). Rebuild the index with: python -m app.index (or set HSS_INDEX_ON_MISMATCH=rebuild).
+```
+
+Tests written first in `test_deps.py`: `test_mismatch_fail_raises_naming_models_and_dims` and `test_mismatch_rebuild_rebuilds_and_loads`, plus a small `_DimEmbedder(dimension)` helper.
+
+Tests (`D:\Kearney\.venv\Scripts\python.exe -m pytest tests/test_deps.py -v --tb=short`):
+
+```
+tests/test_deps.py::test_mismatch_fail_raises_naming_models_and_dims PASSED
+tests/test_deps.py::test_mismatch_rebuild_rebuilds_and_loads PASSED
+============================== 9 passed in 0.41s ==============================
+```
+
+Full suite: 323 passed, 8 xfailed. Callgraph regenerated after the `backend/app` change.
+
+catch embedder/index mismatch at startup with HSS_INDEX_ON_MISMATCH
+validated: 9 passed in 0.41s (2 new); full suite 323 passed, 8 xfailed; callgraph rewritten
+Review:
+Commit:
+
+---
+
+Date: 2026-09-05
+Prompt id: p-update-break-fix-log
+Prompt:
+update break fix log
+Model: Claude Opus 4.8
+Files: docs/break_fix_log.md, docs/codex_log.md
+What came back:
+Filled in the remaining Scenario A (s9.1) headings in `docs/break_fix_log.md`:
+
+- `Fix`: the startup guard — `HSS_INDEX_ON_MISMATCH` in `config.py` and `_reconcile_index` in `deps.py` (match -> continue; `rebuild` -> rebuild in place; `fail` default -> raise naming both models, both dimensions, and the rebuild command).
+- `How I verified`: the two new `test_deps.py` tests (9 passed in 0.41s) and the full suite (323 passed, 8 xfailed), plus the recovery options.
+- `Commits`: the two intended commit messages (SHAs pending; not yet committed).
+
+`What I broke` / `What happened` / `Root cause` were already recorded in the earlier turn. No source under `backend/app` changed, so the callgraph was not regenerated.
+
+fill Scenario A fix/verify/commits in break_fix_log
+validated: docs only; no code change; break_fix_log Scenario A complete
+Review:
+Commit:
+
+---
+
+Date: 2026-09-05
+Prompt id: p-revert-model-fix-startup
+Prompt:
+error searching :
+@c:\Users\JAYANT\.cursor\projects\d-Kearney\terminals\11.txt:51-96
+Model: Claude Opus 4.8
+Files: backend/.env, docs/codex_log.md
+What came back:
+The startup traceback was the new `_reconcile_index` guard firing correctly, not a regression: the on-disk index is `all-MiniLM-L6-v2` (384-dim) but the loaded embedder was `paraphrase-albert-small-v2` (768-dim), so lifespan startup raised.
+
+User chose to revert the model. The effective file was `backend/.env`, not the repo-root `.env`: `run.py` `load_dotenv()` loads `backend/.env` first and existing keys win, so `backend/.env` (still albert) was shadowing the repo-root `.env` (already MiniLM). Set `HSS_EMBEDDING_MODEL=all-MiniLM-L6-v2` in `backend/.env`.
+
+Restarted `python run.py` and verified:
+
+```
+INFO:     Application startup complete.
+```
+
+`POST /search {"query":"software license agreement","top_k":3}`:
+
+```
+STATUS 200
+took_ms 156.9
+results 3
+ - e651ef8f8ee4 0.7   Teaming and Alliance Agreement ...
+ - 9edaed398b8b 0.555 Analytics Tooling License ...
+ - c2df7e770385 0.544 Teaming and Alliance Agreement ...
+```
+
+Server stopped and temp output files removed afterwards.
+
+revert backend/.env model to MiniLM; startup + search work
+validated: startup complete; POST /search 200 with 3 results
+Review:
+Commit:
+
+---
+
+Date: 2026-09-05
+Prompt id: p-check-scenario-a
+Prompt:
+set HSS_EMBEDDING_MODEL to
+sentence-transformers/paraphrase-albert-small-v2 in .env, dont rebuild. start the api, run a
+search, paste whatever happens into break_fix_log.md. commit with type break.
+
+i changed the embedding model to paraphrase-albert-small-v2 in .env without rebuilding the
+index and search now fails like this:
+
+i want this caught at startup, not on the first query. in deps.py, after loading the
+metadata and the embedder, compare model name and dimension. add a setting
+HSS_INDEX_ON_MISMATCH with values fail or rebuild, default fail. fail means raise with a
+message naming both models and both dimensions and the rebuild command. rebuild means run
+the index build and load again. write the two tests in test_deps.py first, then the fix.
+only deps.py and config.py.
+
+(me) show both modes working, fill root cause / fix / verification in the log. give me a one liner commit message, type fix
+
+cehck is this implemented and update the scenario A, breakfixlog
+Model: Cursor Grok 4.6
+Files: docs/break_fix_log.md, docs/codex_log.md
+What came back:
+Yes — this is implemented. The embedder/index mismatch is caught in `SearchService.load` at startup, not on the first query.
+
+**What's in place**
+- `config.py`: `Settings.index_on_mismatch` from `HSS_INDEX_ON_MISMATCH`, default `fail`.
+- `deps.py`: after loading `IndexMetadata`, `_reconcile_index` compares `meta.model` / `meta.dimension` to `settings.embedding_model` / `embedder.dimension`.
+- `test_deps.py`: both mode tests exist and pass.
+
+**Both modes working**
+
+`fail` (default) against the real MiniLM index (384-dim) with Albert named as the running model (768-dim), no rebuild:
+
+```
+index/embedder mismatch: index was built with model 'all-MiniLM-L6-v2' (dimension 384) but the loaded embedder is model 'sentence-transformers/paraphrase-albert-small-v2' (dimension 768). Rebuild the index with: python -m app.index (or set HSS_INDEX_ON_MISMATCH=rebuild).
+```
+
+`rebuild` via the unit test: `model-a`/8-dim index, load as `model-b`/4-dim with `HSS_INDEX_ON_MISMATCH=rebuild` → metadata becomes `model-b`/4 and a query succeeds.
+
+```
+tests/test_deps.py::test_mismatch_fail_raises_naming_models_and_dims PASSED
+tests/test_deps.py::test_mismatch_rebuild_rebuilds_and_loads PASSED
+============================== 2 passed in 0.95s ==============================
+```
+
+I did not rebuild the real corpus index.
+
+**Scenario A** in `docs/break_fix_log.md` is updated: root cause / fix / verification (both modes) / commits.
+
+`backend/.env` still has the Albert model. Starting via `python run.py` will now fail at lifespan startup with that mismatch error (the fix), not with a 500 on `/search`. The uvicorn process started from the repo root without `run.py` does not load `.env`, so it is still on MiniLM.
+
+fix: catch embedder/index mismatch at startup via HSS_INDEX_ON_MISMATCH
+validated: 2 passed in 0.95s; fail mode raised naming both models and both dims; Scenario A updated
+Review:
+Commit:
+
+---
+
+Date: 2026-09-05
+Prompt id: p-schema-client-id-break
+Prompt:
+add a client_id TEXT NOT NULL column to the requests table in db.py and to the insert in
+repo.py. restart against the existing db. search, open the KPI page. paste the error and a
+screenshot note into the log. type break
+Model: Cursor Grok 4.6
+Files: backend/app/storage/db.py, backend/app/storage/repo.py, backend/tests/test_db.py, backend/tests/test_repo.py, frontend/public/callgraph/*.json, docs/break_fix_log.md, docs/codex_log.md
+What came back:
+Added `client_id TEXT NOT NULL` to `requests` in `db.py` and to the `INSERT` in `repo.py` (`insert_request(..., client_id: str = "")`). Restarted against the existing `data/hss.sqlite` (reload; no migrate). `CREATE TABLE IF NOT EXISTS` left the on-disk table on the old schema (no `client_id`; 175 rows).
+
+Search returned 200 with results, but the row was not written (count stayed 175). Server:
+
+```
+failed to persist request row
+sqlite3.OperationalError: table requests has no column named client_id
+INFO:     127.0.0.1:56500 - "POST /search HTTP/1.1" 200 OK
+```
+
+KPI tiles still loaded (`GET /api/dashboard/kpi/summary?window=24h` 200, total 149). The new search is missing from those totals. KPI latency burst (`POST /api/dashboard/kpi/load-test`) 500s:
+
+```
+STATUS 500
+REQUEST-ID f3674cfea44b4d1fbf0ab20ba6714953
+BODY {"request_id":"f3674cfea44b4d1fbf0ab20ba6714953","detail":"internal server error"}
+```
+
+Screenshot note: KPIs page still shows the existing 24h cards; no red banner on first paint. After Search, the new query is absent from volume / top queries. Test latency → Fire hits shows `HTTP 500: {"detail":"internal server error"}` in the drawer. No PNG (no browser tool).
+
+Pasted into Scenario B of `docs/break_fix_log.md`. Matching tests updated. Callgraph regenerated.
+
+```
+============================= 16 passed in 0.24s ==============================
+```
+
+break: add requests.client_id without migrating existing sqlite
+validated: 16 passed in 0.24s; /search 200 persist fail "no column named client_id"; KPI load-test 500
+Review:
+Commit:
+
+---
+
+Date: 2026-09-05
+Prompt id: p-sqlite-migrations
+Prompt:
+i added a NOT NULL column to the requests table and the insert, restarted against the
+existing db, and every search now logs this:
+
+<error: sqlite3.OperationalError: table requests has no column named client_id>
+
+create-if-not-exists cant deal with this. lets do real migrations but keep them simple: a
+migrations folder next to db.py with numbered sql files, 001 is the current v1 schema, 002
+adds client_id with a default. a schema_version table, and a migrate() that applies whatever
+is above the current version, each file in its own transaction. init_schema just calls
+migrate. tests: a fresh db ends at version 2 with the column, a db built from 001 only
+upgrades and takes an insert, running migrate twice does nothing.
+
+check the codebase and fix this
+Model: Claude Opus 4.8
+Files: backend/app/storage/db.py, backend/app/storage/migrations/001_initial.sql, backend/app/storage/migrations/002_add_client_id.sql, backend/tests/test_db.py, frontend/public/callgraph/*.json, docs/codex_log.md
+What came back:
+Replaced the `CREATE TABLE IF NOT EXISTS` block in `db.py` with numbered SQL migrations. `_SCHEMA` is gone; `db.py` now discovers `migrations/NNN_*.sql`, tracks a `schema_version` table, and applies each pending file in its own transaction.
+
+New `backend/app/storage/migrations/`:
+- `001_initial.sql` — the v1 schema (the three original tables; `requests` without `client_id`), still `CREATE TABLE IF NOT EXISTS` so it is a no-op on the already-created production tables.
+- `002_add_client_id.sql` — `ALTER TABLE requests ADD COLUMN client_id TEXT NOT NULL DEFAULT ''` (a default is required for a NOT NULL add).
+
+`db.py`:
+- `migrate(conn, migrations_dir=None)` — creates `schema_version(version, applied_at)` if missing, reads the current max version, then applies every discovered file whose number is higher. It flips `isolation_level` to `None` and wraps each file in an explicit `BEGIN … COMMIT` (so DDL is included), `ROLLBACK` on error, and records the version in the same transaction. Returns the resulting version.
+- `init_schema(conn)` now just calls `migrate(conn)`, so `main.py`'s lifespan is unchanged and existing callers keep working.
+
+Applied to the live `data/hss.sqlite` (the reloading server had already run it via lifespan): `client_id` present, `schema_version` at 2, all 175 rows preserved, second `migrate()` a no-op.
+
+Live re-check: `POST /search` → 200 and the row now persists (175 → 176); `POST /api/dashboard/kpi/load-test` → 200 (was 500).
+
+Tests (`tests/test_db.py`, `tests/test_repo.py`):
+
+```
+============================= 19 passed in 0.29s ==============================
+```
+
+The three requested cases: `test_fresh_db_migrates_to_version_2_with_client_id`, `test_db_built_from_001_only_upgrades_and_takes_insert`, `test_migrate_twice_is_a_noop`.
+
+Full suite: 327 passed, 8 xfailed. Callgraph regenerated. Did not touch `docs/break_fix_log.md` (not named this turn; Scenario B still records the break).
+
+break: fix... — see commit line below.
+validated: 19 passed in 0.29s (3 new); full suite 327 passed, 8 xfailed; live /search persists (175->176) and KPI load-test 200; callgraph rewritten
+Review:
+Commit:
+
+---
+
+Date: 2026-09-05
+Prompt id: p-arch-sqlite-migrations
+Prompt:
+update the sqlite section in docs/architecture.md, mention the migrations and where they live.
+Model: Cursor Grok 4.6
+Files: docs/architecture.md, docs/codex_log.md
+What came back:
+Updated the SQLite section in `docs/architecture.md`. It still shows the v1 `CREATE TABLE` dump (matching `001_initial.sql` / the LLD), and now says schema is no longer a create-if-not-exists block in `db.py`. Numbered files live in `backend/app/storage/migrations/`: `001_initial.sql` is that v1 schema, `002_add_client_id.sql` adds `requests.client_id TEXT NOT NULL DEFAULT ''`. `db.py` keeps `schema_version` and `migrate()` applies every file above the current version, each in its own transaction; `init_schema()` just calls `migrate()`.
+
+No source under `backend/app` changed, so the callgraph was not regenerated. Docs only; no tests.
+
+Document sqlite numbered migrations in architecture.md
+validated: docs only; no code change
+Review:
+Commit:
+
+---
+
+Date: 2026-09-05
+Prompt id: p-fix-minmax-nan
+Prompt:
+i removed the equal-scores guard from min_max and searched for "<query>", which has no word
+overlap with the corpus so every bm25 score is 0. norm_bm25 and hybrid_score come back NaN
+and eval drops:
+
+b3c8c5cce368 bm25_raw 8.664376396292608 bm25_norm 0.7701340656606754 hybrid 0.9004598768663721
+526a9cbc8e95 bm25_raw 6.455011516422769 bm25_norm 0.573754421051731 hybrid 0.8505047235971112
+dc0972cbcaf4 bm25_raw 4.678811896008004 bm25_norm 0.41587671900726697 hybrid 0.82476301570218
+af01a6734158 bm25_raw 4.525935623807316 bm25_norm 0.40228829444351627 hybrid 0.80629885872199
+1a0ec239a1df bm25_raw 4.9528884906061865 bm25_norm 0.4402380477914883 hybrid 0.7451710057602393
+
+
+
+FAILED tests/test_normalize.py::test_min_max_constant_scores_all_one
+AssertionError: assert {'a': nan, 'b': nan} == {'a': 1.0, 'b': 1.0}
+FAILED tests/test_search_edgecases.py::test_normalize_single_score_is_one
+AssertionError: assert {'a': nan} == {'a': 1.0}
+2 failed, 7 passed, 4 warnings in 1.89s
+
+tests first: in test_normalize.py, constant input returns zeros for both normalisers. in
+test_hybrid.py, a query with no overlap with the fixture docs never produces a non finite
+score. run them, they should fail. then fix normalize.py, and in hybrid.py replace any non
+finite normalised score with 0 and log a warning with the query. nothing else.
+
+check the codebase and fix this
+Model: Cursor Grok 4.6
+Files: backend/tests/test_normalize.py, backend/tests/test_hybrid.py, backend/app/search/normalize.py, backend/app/search/hybrid.py, frontend/public/callgraph/*.json, docs/codex_log.md
+What came back:
+Wrote the tests first, ran them (both failed), then fixed only `normalize.py` and `hybrid.py`.
+
+`min_max` and `z_score` now map a zero-spread / constant input to `0.0` instead of dividing by zero (NaN) or returning `1.0`. After each side is normalised, `HybridSearcher.search` replaces any non-finite norm with `0.0` and logs a warning that includes the query.
+
+Tests before the fix:
+
+```
+FAILED tests/test_normalize.py::test_constant_input_returns_zeros_for_both_normalisers
+AssertionError: assert {'a': nan, 'b': nan} == {'a': 0.0, 'b': 0.0}
+FAILED tests/test_hybrid.py::test_no_overlap_query_never_produces_non_finite_score
+assert False
+ +  where False = <built-in function isfinite>(nan)
+2 failed, 2 warnings in 0.35s
+```
+
+Tests after the fix:
+
+```
+..................                                                       [100%]
+18 passed in 0.23s
+```
+
+(`test_normalize.py` + `test_hybrid.py`, including the two new cases.)
+
+`backend/tests/test_search_edgecases.py` still expects a single score to map to `1.0`. That file was not named, so it was not edited; it now fails with `{'a': 0.0} == {'a': 1.0}`. It needs to expect `0.0` to match the new contract.
+
+fix: map constant scores to 0 and clamp non-finite hybrid norms
+validated: 18 passed in 0.23s (test_normalize + test_hybrid); edgecases single-score test still fails (unnamed)
+Review:
+Commit:
+
+---

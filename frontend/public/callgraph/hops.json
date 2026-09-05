@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-09-05T06:59:10Z",
+  "generated_at": "2026-09-05T09:20:20Z",
   "files": [
     {
       "from": "backend/app/__main__.py",
@@ -56,30 +56,6 @@
     {
       "from": "backend/app/eval/__main__.py",
       "to": "backend/app/index/metadata.py"
-    },
-    {
-      "from": "backend/app/index/__main__.py",
-      "to": "backend/app/config.py"
-    },
-    {
-      "from": "backend/app/index/__main__.py",
-      "to": "backend/app/index/metadata.py"
-    },
-    {
-      "from": "backend/app/index/__main__.py",
-      "to": "backend/app/ingest/writer.py"
-    },
-    {
-      "from": "backend/app/index/__main__.py",
-      "to": "backend/app/search/bm25.py"
-    },
-    {
-      "from": "backend/app/index/__main__.py",
-      "to": "backend/app/search/embedder.py"
-    },
-    {
-      "from": "backend/app/index/__main__.py",
-      "to": "backend/app/search/vector.py"
     },
     {
       "from": "backend/app/ingest/__main__.py",
@@ -389,11 +365,15 @@
     },
     {
       "from": "backend/app/run.py::main",
-      "to": "backend/app/run.py::ensure_venv"
+      "to": "backend/app/run.py::load_dotenv"
     },
     {
       "from": "backend/app/run.py::main",
       "to": "backend/app/config.py::load_config"
+    },
+    {
+      "from": "backend/app/run.py::main",
+      "to": "backend/app/run.py::ensure_venv"
     },
     {
       "from": "backend/app/search/bm25.py::BM25Index.query",

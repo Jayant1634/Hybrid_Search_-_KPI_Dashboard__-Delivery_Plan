@@ -35,6 +35,7 @@ def test_insert_and_select_request(conn: sqlite3.Connection) -> None:
         top_k=10,
         alpha=0.5,
         result_count=3,
+        client_id="web",
     )
     assert rowid > 0
     rows = select_requests(conn)
@@ -42,6 +43,7 @@ def test_insert_and_select_request(conn: sqlite3.Connection) -> None:
     assert rows[0]["request_id"] == "r1"
     assert rows[0]["query"] == "hello"
     assert rows[0]["result_count"] == 3
+    assert rows[0]["client_id"] == "web"
     assert rows[0]["created_at"]
 
 

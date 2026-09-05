@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-09-05T06:59:10Z",
+  "generated_at": "2026-09-05T09:20:20Z",
   "files": [
     "backend/app/__init__.py",
     "backend/app/__main__.py",
@@ -8,7 +8,6 @@
     "backend/app/callgraph/__init__.py",
     "backend/app/callgraph/__main__.py",
     "backend/app/eval/__main__.py",
-    "backend/app/index/__main__.py",
     "backend/app/ingest/__main__.py",
     "backend/app/loadtest/__init__.py",
     "backend/app/loadtest/locustfile.py",

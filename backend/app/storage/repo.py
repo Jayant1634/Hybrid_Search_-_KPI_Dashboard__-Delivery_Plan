@@ -64,6 +64,7 @@ def insert_request(
     result_count: int | None = None,
     error: str | None = None,
     created_at: str | None = None,
+    client_id: str = "",
 ) -> int:
     """Insert one row into ``requests`` and return its rowid."""
 
@@ -71,8 +72,8 @@ def insert_request(
         """
         INSERT INTO requests
             (request_id, query, latency_ms, top_k, alpha, result_count,
-             error, created_at)
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+             error, created_at, client_id)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
         """,
         (
             request_id,
@@ -83,6 +84,7 @@ def insert_request(
             result_count,
             error,
             created_at or _now(),
+            client_id,
         ),
     )
     conn.commit()

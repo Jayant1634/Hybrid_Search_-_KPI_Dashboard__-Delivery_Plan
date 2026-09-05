@@ -8,6 +8,8 @@ exactly why a document ranked where it did.
 
 from __future__ import annotations
 
+import logging
+import math
 from collections.abc import Mapping
 from dataclasses import dataclass
 
@@ -20,6 +22,7 @@ from .tokenize import tokenize
 from .vector import VectorIndex
 
 _CANDIDATE_POOL = 50
+logger = logging.getLogger(__name__)
 
 
 @dataclass(frozen=True)
@@ -102,6 +105,22 @@ class HybridSearcher:
 
         bm25_norm = normalize(normalization, bm25_union)
         vector_norm = normalize(normalization, vector_union)
+        if any(
+            not math.isfinite(value)
+            for value in (*bm25_norm.values(), *vector_norm.values())
+        ):
+            logger.warning(
+                "non-finite normalised score for query %r; replaced with 0",
+                query,
+            )
+            bm25_norm = {
+                doc_id: value if math.isfinite(value) else 0.0
+                for doc_id, value in bm25_norm.items()
+            }
+            vector_norm = {
+                doc_id: value if math.isfinite(value) else 0.0
+                for doc_id, value in vector_norm.items()
+            }
 
         hybrid = {
             doc_id: alpha * bm25_norm[doc_id]
